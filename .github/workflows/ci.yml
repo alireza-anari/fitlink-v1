@@ -59,7 +59,14 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U fitlink -d fitlink"
           --health-interval 3s --health-timeout 3s --health-retries 30
+      redis:
+        image: redis@sha256:c6eabf748fc7a61dbb5a705c78bcf3d6377b1127a97d0ce965c11c44ba46896f
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 3s --health-timeout 3s --health-retries 30
     env:
+      OTP_RATE_REDIS_URL: 'redis://127.0.0.1:6379/4'
       POSTGRES_HOST: '127.0.0.1'
       POSTGRES_PORT: '5432'
       POSTGRES_DB: fitlink
@@ -84,4 +91,4 @@ jobs:
           uv run --frozen python manage.py sqlmigrate governance 0002 --settings=config.settings.test
           uv run --frozen python manage.py sqlmigrate governance 0003 --settings=config.settings.test
       - name: Real PostgreSQL account upgrade and constraint contracts
-        run: uv run --frozen pytest tests/integration/c02/test_account_migrations.py tests/integration/test_initial_migration.py tests/integration/c02/test_audit_transactions.py tests/integration/c02/test_staff_authority.py -q --strict-markers
+        run: uv run --frozen pytest tests/integration/c02/test_account_migrations.py tests/integration/test_initial_migration.py tests/integration/c02/test_audit_transactions.py tests/integration/c02/test_staff_authority.py tests/integration/c02/test_otp_limits.py tests/integration/c02/test_limiter_failures.py -q --strict-markers

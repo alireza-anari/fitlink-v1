@@ -16,8 +16,9 @@
 ## Task states
 1. COMPLETE — input/configuration contracts; Cloud and actual CI green.
 2. COMPLETE — additive schema/upgrade; Cloud, PostgreSQL and full Foundation CI green.
-3. IN_PROGRESS — audit/outbox/staff authority RED preparation.
-4–16. UNSTARTED.
+3. COMPLETE — audit/outbox/staff; payload findings fixed with real PostgreSQL GREEN.
+4. IN_PROGRESS — limiter RED preparation.
+5–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -123,3 +124,14 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Fixed original audit JSON shape validation and OutboxEvent model validation. Governance0003 adds IMMUTABLE metadata check functions + DB constraints: audit is bounded array of allowed names, outbox object has event-specific UUID string keys/values only. Bulk/direct insertion cannot retain arbitrary private JSON. No caller flag/retention bypass.
 
 - Payload fix Cloud GREEN:13 audit/provider/model contracts; full123 units pass. Ruff/format110 files, mypy30 files, Django/production/drift pass. Real SQL insertion fix and full current-head regression remain PENDING_CI.
+
+### Task3 completion boundary
+- Remote sync: local9df9fd2bf612b1d4f5d539e2f5b2599bfe393b57 -> GitHub bfdeea8aff171eddef588d5ad8103ae6c5570750; treeefb0bb7275d51c252695994ba6e196c562813612 equality verified before non-forced update.
+- Run37323034017/job111806661619 SUCCESS:25 actual PostgreSQL cases passed4.65s; emitted0003SQL inspected. Both Important payload findings fixed RED→GREEN; no remaining focused review finding.
+- Current Foundation job111806661280 static/config/123units passed, Compose ongoing, not yet claimed PASS. Relevant C01 migration regression passed in25-case gate. Task3 required PostgreSQL transaction/SQL/role gates complete. Wider regression remains mandatory; any failure must be fixed.
+- Task3 task-done14 focused units pass; Task4 next.
+
+## Task4 RED preparation
+- BASE9df9fd2, whole Task4 brief read. Cloud RED6missing atomic limiter contract assertions; before implementation.
+- Actual PostgreSQL/Redis fixture gates cover exact phone/IP send/failure quotas, boundaries, normalized identity, first-anchor/PG-only guard races with24separate DB connections, successful failure-slot release, Redis unavailable/NOSCRIPT/key reset, retained-key aggregation, crashed process after real Redis reservation, aborted DB admission and cleanup failure. Required actual RED pendingCI.
+- Ruling: recovery intake separately configurable engineering defaults3phone/10IP/hour — plan requires separately configured limits but specifies no numeric values — keeps conservative abuse bound and does not change ADR OTP quotas; operational tuning remains release review.
