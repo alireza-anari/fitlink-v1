@@ -112,3 +112,6 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Initial PostgreSQL run37321714246/job111802165945 SUCCESS (initial23 cases); SQL immutability/role denials inspected. Wider Foundation in progress.
 - Independent review Important accepted: model save coerced changed_fields dict to tuple(keys), allowing private values to remain in original persisted JSON; bulk/direct insert had no JSON-shape guard. No other concrete finding. Task3 remains IN_PROGRESS.
 - Cloud reproducer RED1: original dict passes model validator; expected ValueError not raised. Added real bulk/SQL insertion reproducer before schema fix; actual RED pending CI.
+
+- Remote sync: local57be071fdfb444b08c4329cd1bae4b20d0324680 -> GitHub0507e5071800ce37d2cc8d76afc2b4b1548094f0; treedd91e4ffd2c8e9b831d3fa6e26553611637e302d matched before expected-parent non-forced update.
+- Additional security inspection identified analogous direct OutboxEvent model/bulk insertion payload validation gap, despite safe append_outbox. New model RED reproducer1fails expected ValueError not raised; DB bulk insertion reproducer added before fix. Treat as Important within same Task3 fix pass, not scope expansion.

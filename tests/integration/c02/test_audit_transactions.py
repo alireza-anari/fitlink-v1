@@ -140,3 +140,28 @@ def test_database_audit_json_rejects_private_values_even_on_bulk_and_sql():
                 [uuid4(), uuid4(), json.dumps(changed)],
             )
     assert not model.objects.exists()
+
+
+def test_database_outbox_payload_is_id_only_on_bulk_insert():
+    modules()
+    model = apps.get_model("governance", "OutboxEvent")
+    for payload in [
+        {"phone": "private"},
+        {"user_uuid": "private"},
+        {"user_uuid": {"body": "private"}},
+        [],
+        "private",
+    ]:
+        with pytest.raises(IntegrityError), transaction.atomic():
+            model.objects.bulk_create(
+                [
+                    model(
+                        event_type="account.security_changed",
+                        aggregate_uuid=uuid4(),
+                        aggregate_version=1,
+                        payload=payload,
+                        dedup_key="test:" + uuid4().hex,
+                    )
+                ]
+            )
+    assert not model.objects.exists()

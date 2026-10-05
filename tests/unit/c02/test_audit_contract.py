@@ -119,3 +119,20 @@ def test_audit_original_json_shape_cannot_hide_private_values(monkeypatch):
                 correlation_id=uuid4(),
                 changed_fields=changed,
             ).save()
+
+
+def test_outbox_model_rejects_private_values_before_save(monkeypatch):
+    from django.apps import apps
+    from django.db.models import Model
+
+    contract()
+    model = apps.get_model("governance", "OutboxEvent")
+    monkeypatch.setattr(Model, "save", lambda self, *args, **kwargs: None)
+    with pytest.raises(ValueError, match="Invalid outbox metadata"):
+        model(
+            event_type="account.security_changed",
+            aggregate_uuid=uuid4(),
+            aggregate_version=1,
+            payload={"phone": "private"},
+            dedup_key="test:1",
+        ).save()
