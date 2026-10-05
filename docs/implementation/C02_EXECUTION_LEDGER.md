@@ -20,7 +20,7 @@
 4. COMPLETE — real dual-store quotas, races, outage/reset/process/restart; one deferred retry hint minor.
 5. COMPLETE — digest-only issuance, ambient boundary fix; Cloud/service gates green.
 6. COMPLETE — atomic proof/adult/race/application service gates green.
-7. IN_PROGRESS — versioned session/policy RED preparation.
+7. COMPLETE — versioned sessions, rotation/outage findings fixed RED→GREEN.
 8–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
@@ -259,3 +259,11 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Actual RED run37349401287/job111896136180:2 expected failures (late permission-query OperationalError and same-User session_control_digest IntegrityError),85passed17.11s. Tracebacks inspected before fix.
 - Explicitly revoke the old cookie's retained-key controls, flush old Django key/payload and persist a fresh key each login. This also prevents cached prior request store from retaining control authority. Cookie-based old-control revocation changes no other User identity/state; only login User row is involved in this effect. Proof callback now saves controls before verification audit append, honoring control-before-audit ordering.
 - Fresh DRF authority DB failure now raises a503 APIException with only status=unavailable; no exception text/data reflected. Existing middleware outage/liveness checks retained. Actual GREEN pendingCI.
+
+### Task7 completion boundary
+- Remote sync: localb392f88de10088b48273a43a05265b404b5442c7 -> GitHub7769602dce07e4edeb32d1c5bc0f2a52f268c6be; treef0ca5ab6e37dc5c0e89d975aecb043a534bf05f8 equality checked before expected-parent non-forced update.
+- Actual final service run37349888522/job111897773416 SUCCESS; full logs inspected. Both review findings fixed RED→GREEN; focused independent rereview confirms no remaining finding or concrete lock-order cycle.
+- Foundation111897773033 full SUCCESS:152units/257combinedbackend/2+2browser/5Redis-Celery-Channels/1MinIO. Completed logs inspected. Final service87passed20.76s plus actual Redis restart. Task7 complete.
+
+## Task8 RED preparation
+- BASEb392f88; whole Task8 brief read. Cloud3 expected missing recovery/schema/metadata failures; real receipt/staff/self-approval/evidence/apply/rollback/history/uniqueness/suspension race contracts authored. Actual RED pendingCI before implementation. No completed work reset or repeated.
