@@ -25,7 +25,8 @@
 9. COMPLETE — published dual-possession implementation and required CI verified during recovery.
 10. COMPLETE — Cloud RED→GREEN; current-source Foundation CI includes all23Consent PostgreSQL cases and full regression gates, inspected genuine success.
 11. COMPLETE — Cloud RED→GREEN; retry37369811515 attempt2 both required jobs SUCCESS, actual logs inspected.
-12–16. UNSTARTED.
+12. IN_PROGRESS — Cloud RED→GREEN; real PostgreSQL intake/hold/race and Foundation gates pending.
+13–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -375,3 +376,13 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - c02-migrations job111997366271 SUCCESS: additive SQL inspected including accounts0013/governance0007..0008;185 real PostgreSQL cases passed28.41s including all21 flag/referral cases, independent-connection flag-version and first-attribution races, disabled seeds, fail-closed reads and authority/rollback/cookie contracts. Redis durable quota prepare/restart/verify passed.
 - foundation job111997366742 SUCCESS:183units11.94s, Ruff/format171files/mypy70files/Django/production and frozen/static checks passed; fresh migrations including new flag/referral schema applied, no drift;386combinedbackend132.36s,2browser before restart,5Redis/Celery/Channels recovery,1MinIO recovery,2browser after restart. No selected skips. Full required regression evidence inspected.
 - Task11 COMPLETE. Tasks1–10 preserved. Task12 next;13–16 unstarted. No merge/deploy/C03.
+
+## Task12 Cloud checkpoint
+- BASEd46347e43904f7444cef8d9b89ef49457ee50e41 maps to ledger-only remote2f0007027ba03f656fbfa4f98cf4eafc19b7c89c/tree20b759d59ece6ac3ddb30985f9980992b6bf83bc. Task11 completed before Task12 edits; all prior rulings preserved.
+- Cloud RED9expected missing privacy/hold contracts; GREEN9focused and192fullunits9.06s. Real PostgreSQL tests authored before implementation;28intake/hold cases cover owned status/list/count, confirmation and authoritative600s authentication, open-request idempotence, deletion invalidation/consent revocation, failure rollback, independent-connection intake/delete/logout/grant/recovery races, bounded holds and policy authority. Collection is not service execution.
+- Governance PrivacyRequest/RetentionPolicy/RecordHold additive0009; no User/initial migration replacement or future domains. Composition supplies account restriction callback, synchronous audit/outbox and existing Consent revocations in the same transaction. Old session/OTP controls become unusable before return; no file generation/purge/provider/C18 execution.
+- Ruling: expose explicit confirmed=True keyword on the server-owned intake command; default denies — plan requires explicit confirmation though its listed signature omits it — cost if wrong: later adapters must forward validated confirmation explicitly.
+- Ruling: only installed record/case hold validator is privacy_request with exact owner/version/case UUID; no account-wide or future sensitive subjects — avoids inventing absent feature records — cost if wrong: future stages need reviewed validators before applying holds.
+- Ruling: overdue review never silently releases retained evidence; expiry or authorized release ends this bounded hold — review is a staff obligation, not implicit erasure authorization — cost if wrong: policy owners must define escalation before C18.
+- Retention policies start draft with duration unset; approval requires explicit positive duration and versioned backup reference, named privacy_operations capability plus policy/case-bound fresh step-up. Test durations are synthetic only; no live policy seeded. Existing effective policy is preserved; supersession remains denied until a reviewed command exists.
+- Cloud Ruff/format179files, mypy75files, Django/production, frozen lock, JS and drift checks pass. Local unavailable PostgreSQL history warning is not migration execution evidence. Required actual PostgreSQL and full Foundation CI PENDING; Task12 NOT COMPLETE,13–16unstarted.

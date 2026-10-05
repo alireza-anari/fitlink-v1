@@ -42,6 +42,9 @@ def test_only_foundation_routes_and_identity_model():
         "FeatureFlag",
         "InviteReferralLink",
         "ReferralAttribution",
+        "PrivacyRequest",
+        "RetentionPolicy",
+        "RecordHold",
     }
     user = apps.get_model("accounts", "User")
     assert {field.name for field in user._meta.get_fields()} == {
