@@ -9,6 +9,7 @@ pytestmark = pytest.mark.unit
 def test_only_foundation_routes_and_identity_model():
     assert {str(route.pattern) for route in get_resolver().url_patterns} == {
         "",
+        "i/<str:token>/",
         "health/live/",
         "health/ready/",
         "api/v1/status/",
@@ -38,6 +39,9 @@ def test_only_foundation_routes_and_identity_model():
         "PhoneChangeIntent",
         "Consent",
         "ConsentScope",
+        "FeatureFlag",
+        "InviteReferralLink",
+        "ReferralAttribution",
     }
     user = apps.get_model("accounts", "User")
     assert {field.name for field in user._meta.get_fields()} == {

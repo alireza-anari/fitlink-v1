@@ -93,6 +93,7 @@ from .recovery_models import (  # noqa: E402, F401
     RecoveryEvidenceMetadata,
     RecoveryRequest,
 )
+from .referral_models import InviteReferralLink, ReferralAttribution  # noqa: E402, F401
 from .security_models import (  # noqa: E402, F401
     AccountSessionControl,
     OTPChallenge,

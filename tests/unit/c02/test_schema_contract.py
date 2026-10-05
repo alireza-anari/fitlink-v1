@@ -47,6 +47,8 @@ def test_registered_security_contracts():
         "RecoveryEvidenceMetadata",
         "PhoneChangeHistory",
         "PhoneChangeIntent",
+        "InviteReferralLink",
+        "ReferralAttribution",
     }
     for name in SECURITY_MODELS:
         model = apps.get_model("accounts", name)

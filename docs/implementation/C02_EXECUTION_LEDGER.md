@@ -23,8 +23,9 @@
 7. COMPLETE — versioned sessions, rotation/outage findings fixed RED→GREEN.
 8. COMPLETE — real recovery/receipt/staff/history/race/rollback/audited-read gates GREEN.
 9. COMPLETE — published dual-possession implementation and required CI verified during recovery.
-10. BLOCKED_PENDING_CI — Consent Cloud RED→GREEN; required real PostgreSQL/Foundation jobs queued during verified GitHub hosted-runner incident.
-11–16. UNSTARTED.
+10. COMPLETE — Cloud RED→GREEN; current-source Foundation CI includes all23Consent PostgreSQL cases and full regression gates, inspected genuine success.
+11. IN_PROGRESS — Cloud RED→GREEN; real PostgreSQL races/current-source CI pending.
+12–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -346,3 +347,24 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Current source head GitHuba127df0dc6ac519ae5973aad609832a0dd7ce37a, exact tree3e4ec667e9d7083269fc926234be1879340371c5. Required current-source run37366520349 queued; earlier37365997159 likewise queued. No job step or log has executed; neither is a failed run or PASS. Do not rerun blindly or advance Task11.
 - Verified official GitHub Status unresolved incident3q1yb5m7ltvb (https://www.githubstatus.com/api/v2/incidents/unresolved.json): investigating hosted-runner assignment delays since2026-10-05T19:11:58Z, latest update19:50:50Z still investigating across runner configurations. This corroborates an external CI-start blocker; it does not prove an application defect.
 - STOP at required Task10 PostgreSQL/Foundation CI boundary. Tasks1–9 remain COMPLETE; Task10 implementation is Cloud-verified but NOT COMPLETE;11–16 UNSTARTED. Full C02 review/upgrade/clean final migration gates remain unexecuted and mandatory. Resume by inspecting current-source run37366520349 exact job/step/log when runners execute; no repository rematerialization or Task1–9 repetition.
+
+## Task10 CI reconciliation — 2026-10-05
+- Remote accounts/c02-cloud80fe1218b7604c4d50610661eb0190194b44ebf8/tree819d070027f307bfede8f2165fb36891652ef9f9 verified against clean localb3eaae6. Only ledger documentation differs from source heada127df0dc6ac519ae5973aad609832a0dd7ce37a. No Task10 source was rewritten or repeated.
+- Current-source run37366520349 Foundation111952925131 SUCCESS. Full decoded logs inspected: checkouta127df0;169units9.19s, Ruff/format159files/mypy62files/Django/production, fresh PostgreSQL migration governance0004..0006OK/no drift,351combinedbackend79.53s,2browser before restart,5actualRedis/Celery/Channels recovery,1privateMinIO recovery,2browser after restart. docker/verify_foundation.sh runs all tests/unit+tests/integration against actual PostgreSQL with fresh test DB and no reuse; all23Consent cases are selected within351. Root conftest fails any selected skip; no skips reported.
+- Earlier run37365997159 Foundation111951190151 SUCCESS:169units11.63s/349combinedbackend114.77s (before2extraConsent cases),2+2browser/5transport/1MinIO; complete logs inspected.
+- Dedicated migration jobs111951190437 and111952924987 CANCELLED before runner assignment, no steps; raw current-source job runner_id0, runner_nameempty. Log fetch404BlobNotFound confirms no executed log. Documentation run37366672604 both jobs CANCELLED before execution. Workflow conclusions FAILURE from cancelled jobs, not a demonstrated implementation/test failure. No blind rerun or production fix.
+- Ruling: apply existing per-task gate precisely: Task10 requires real PostgreSQL Consent scope/version/expiry/rollback/cross-user/race tests, all executed successfully in current-source Foundation351suite — standalone duplicate migration-job cancellation does not erase that actual evidence; explicit emitted-SQL/durable limiter restart job remains mandatory at final fullCI — cost if wrong: finalTask16must reconcile every workflow job, not claim globalC02PASS from Task10.
+- Task10 COMPLETE;Task11next;12–16unstarted. No whole-workflow PASS claimed;C02notPASS.
+
+
+## Task11 Cloud implementation checkpoint
+- Resumed existing recovered checkout; Task10 actual CI reconciled before any Task11 code. Existing Task10 implementation/commits preserved.
+- Cloud behavioral RED:14 expected missing flag/referral contract failures before implementation. GREEN:14 focused contracts and183 full unit cases (9.51s).
+- Four exact FeatureFlag keys, disabled data migration defaults, current authoritative reads with database failure disabled, optimistic row version and named feature_flags capability plus flag-bound fresh staff step-up. Same transaction audited ID-only feature_flag.changed outbox; no object authority or profile/capability creation.
+- Digest-only256-bit opaque referrals with retained key lookup, expiry/revocation, anonymous link-UUID-only descriptor and no private identity. Current active adult issuer/recipient checks and ordered identity locks serialize unique first attribution; no future-domain FKs, rewards or lead conversion.
+- Canonical first-party /i/<str:token>/ landing redirects to constant /, no-referrer/no-store, Secure HttpOnly SameSite=Strict signed UUID attribution cookie. Later cookie binding rechecks current issuer/recipient and link expiry/revocation; no raw token persistence/audit.
+- Ruling: referral engineering lifetime30days, bounded signed-cookie lifetime matches; plan specifies expiry but no duration. This is acquisition metadata expiry, not a legal retention period.
+- Ruling: explicit composition root config/use_cases/referral.py preserves accounts→governance import boundary; professional entry service reads only professional_registration, full entry UX remains sequential Task15.
+- PostgreSQL tests cover four independent switches, bare staff/superuser denial, case-bound/stale authority, same-version race, fresh read outage, data seed defaults, digest/expiry/revocation/entropy, anonymous landing/cookie forgery, current restrictions/adult/self denials, first-attribution race, idempotence and audit rollback. They have not run on a real database yet; no Task11 PASS claim.
+- Cloud Ruff/format171files, required mypy69files, Django check, migration drift (unavailable local PG history warning only), production deploy check and JS syntax pass. An over-broad exploratory mypy apps/config invocation reported existing out-of-scope Foundation stub/type errors; exact mandatory CI mypy target set passes unchanged.
+- Task11 remains IN_PROGRESS until actual required PostgreSQL races/failure/current-source CI logs pass. Tasks12–16 unstarted.
