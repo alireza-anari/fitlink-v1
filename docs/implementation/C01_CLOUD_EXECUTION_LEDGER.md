@@ -173,3 +173,13 @@ Ruling: collectstatic must exclude compile-only src/styles.css via
 --ignore=src/styles.css: its Tailwind import is not a browser dependency. Actual
 initial collectstatic failed missing src/tailwindcss; compiled CSS/module collect
 and hashed template paths now pass. No product forms or routes added.
+Mapping: local 34bfdc76be0565205ec851a2295389a895326137 -> GitHub 27b6486f0e13c6155caa353cfd804a77e5add0e2 (tree cc48971065a84c35d1035df3ba80e4dce9d80ab0).
+Task 12: Cloud PASS (57 units; explicit Foundation route/model scope; no C02).
+Both browser cases attempted: initial sandbox /tmp failure; workspace TMPDIR
+removed that failure and confirmed Chromium executable absent. These are setup
+errors, not behavioral TDD red or PASS. Matching browser/system dependencies are
+provided by the e2e image; real two-viewport smoke remains PENDING_CI.
+Failure integration tests include bounded real Redis refused connection and
+redacted PostgreSQL exception/readiness503/live200. Real dependency restart,
+worker/channel/storage recovery and all DB tests PENDING_CI. Pytest fails if any
+selected mandatory case skips; no silent marker exclusion.
