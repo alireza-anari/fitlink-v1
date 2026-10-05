@@ -20,6 +20,11 @@ class UserManager(BaseUserManager["User"]):
         canonical_phone(phone)
         if "password" in extra_fields:
             raise ValueError("Foundation does not provision passwords")
+        # Historical migration models do not yet have account state.
+        if not extra_fields.get("is_active", True) and any(
+            field.name == "state" for field in self.model._meta.fields
+        ):
+            extra_fields.setdefault("state", "suspended")
         user = self.model(phone=phone, **extra_fields)
         user.set_unusable_password()
         user.save(using=self._db)

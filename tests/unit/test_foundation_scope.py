@@ -20,7 +20,15 @@ def test_only_foundation_routes_and_identity_model():
         for model in apps.get_models()
         if model.__module__.startswith("apps.")
     }
-    assert own_models == {"User"}
+    # Precisely the authorized additive C02 security tables, no future profiles.
+    assert own_models == {
+        "User",
+        "OTPPhoneState",
+        "SecurityRateAnchor",
+        "SecurityRateEvent",
+        "OTPChallenge",
+        "AccountSessionControl",
+    }
     user = apps.get_model("accounts", "User")
     assert {field.name for field in user._meta.get_fields()} == {
         "id",
@@ -34,4 +42,14 @@ def test_only_foundation_routes_and_identity_model():
         "is_active",
         "is_staff",
         "date_joined",
+        "birth_date",
+        "adult_attested_at",
+        "adult_attestation_version",
+        "locale",
+        "timezone",
+        "state",
+        "state_version",
+        "auth_version",
+        "otpchallenge",
+        "accountsessioncontrol",
     }

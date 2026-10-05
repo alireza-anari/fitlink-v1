@@ -126,6 +126,7 @@ def test_challenge_and_session_constraints():
         dict(generation=2, purpose="unknown"),
         dict(generation=2, consumed_at=now, delivery_state="pending"),
         dict(generation=2, proof_applied_at=now),
+        dict(generation=2, target_user=user, target_auth_version=None),
     ]:
         reject(challenge, **{**base, **changes})
     session = apps.get_model("accounts", "AccountSessionControl")
