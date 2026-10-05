@@ -14,8 +14,10 @@
 - User authorized implementation/sequential16 tasks, API synchronization and CI only on C02. No Foundation/main edits, merge, deployment, SMS vendor or C03.
 
 ## Task states
-1. IN_PROGRESS — input/configuration contracts, no schema.
-2–16. UNSTARTED.
+1. COMPLETE — input/configuration contracts; Cloud and actual CI green.
+2. COMPLETE — additive schema/upgrade; Cloud, PostgreSQL and full Foundation CI green.
+3. IN_PROGRESS — audit/outbox/staff authority RED preparation.
+4–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -81,3 +83,17 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Fix preserves the overlength denial assertion as DataError and adds bounded unknown 'other' to exercise the CHECK/IntegrityError. No production constraint relaxed.
 - Emitted SQL inspected: additive columns/tables, unique indexes, PROTECT FKs, no User replacement, inactive data mapping precedes consistency check, explicit non-NULL bound auth version.
 - Wider Foundation job on the previous implementation head still in progress; current task not complete until corrected real PostgreSQL tests pass.
+- Remote sync: local 848115c523fec0d482129f0fda6ce1767649a104 -> GitHub b9c835febe635af26b728602d8a1f7a6c1d36a8e; verified tree equality e5c327b7a0bb4d08bf44f8011eca45ba1dbf1f48, non-forced expected-parent update.
+
+### Task2 required gate evidence
+- Corrected run37318999983/job111792948986 SUCCESS: actual PostgreSQL17 emitted SQL and seven migration/constraint cases passed (7 passed in1.33s), logs inspected.
+- Independent read-only security review of C01..848115c: no Critical/Important/Minor finding in Tasks1–2. Reviewed SQL NULL checks, ordering, inactive/DOB preservation, manager historical models, keys/errors, proxy trust and adult/calendar boundaries. Tasks3+ excluded.
+- Previous Foundation run37318536132/job111791364069 failed on the same corrected overlength test fixture:134 passed/1 failed. Not a regression in implementation. Current head Foundation remains pending; Task2 not yet marked complete.
+
+### Task2 completion
+- Run37318999983 SUCCESS, Foundation job111792948381 logs inspected:110 units,135 combined backend,2 browser before restart,5 Redis/Celery/Channels recovery,1 MinIO recovery,2 browser after restart. Dedicated PostgreSQL job7 cases passed. All required gates green, no skips.
+- Task2 COMPLETE. Skill task-done rerun:10 focused unit cases passed. Task3 is next, no later implementation started.
+
+## Task3 RED preparation
+- BASE848115c, whole Task3 brief read. Cloud RED9 expected failures: missing governance audit contract. No governance implementation exists.
+- Added real PostgreSQL transaction/dedup, ORM/SQL immutable audit and restricted NOLOGIN role tests;12 staff cases cover bare superuser, forgery, stale/version/case/user/capability/self-issue/current state. Required actual RED pending CI.
