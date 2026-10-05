@@ -33,6 +33,7 @@ package = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests/unit"]
+pythonpath = ["tests/unit"]
 addopts = "--ds=config.settings.test"
 asyncio_mode = "auto"
 markers = [

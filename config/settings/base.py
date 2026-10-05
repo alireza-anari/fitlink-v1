@@ -166,3 +166,5 @@ LOGGING = {
         "uvicorn.access": {"handlers": [], "propagate": False},
     },
 }
+
+# Account settings are loaded in the concrete overlay.

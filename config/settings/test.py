@@ -1,3 +1,7 @@
+import os
+
+from apps.accounts.security_config import load_security_config
+
 from .base import *  # noqa: F403
 from .base import (
     CELERY_BROKER_URL,
@@ -22,3 +26,6 @@ env.require_local_redis(
 )
 
 STORAGES["default"] = {"BACKEND": "django.core.files.storage.InMemoryStorage"}
+
+
+ACCOUNT_SECURITY = load_security_config(os.environ, production=False)

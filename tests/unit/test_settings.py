@@ -6,6 +6,10 @@ pytestmark = pytest.mark.unit
 
 def production_env():
     return {
+        "ACCOUNT_SECURITY_KEYS_JSON": (
+            '{"validation":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="}'
+        ),
+        "ACCOUNT_SECURITY_ACTIVE_KEY_ID": "validation",
         "DJANGO_SECRET_KEY": (
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
         ),

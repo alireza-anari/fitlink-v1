@@ -1,4 +1,7 @@
+import os
 from urllib.parse import urlsplit
+
+from apps.accounts.security_config import load_security_config
 
 from .base import *  # noqa: F403
 from .base import (
@@ -24,3 +27,6 @@ env.require_local_redis(
 
 if urlsplit(S3_ENDPOINT_URL).hostname not in {"localhost", "127.0.0.1", "minio"}:
     env.invalid("S3_ENDPOINT_URL")
+
+
+ACCOUNT_SECURITY = load_security_config(os.environ, production=False)

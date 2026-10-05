@@ -1,7 +1,10 @@
 import ipaddress
+import os
 import re
 import ssl
 from urllib.parse import urlsplit
+
+from apps.accounts.security_config import load_security_config
 
 from .base import *  # noqa: F403
 from .base import DATABASES, STORAGES, env
@@ -121,3 +124,6 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 CELERY_BROKER_USE_SSL = {"ssl_cert_reqs": ssl.CERT_REQUIRED}
 CELERY_REDIS_BACKEND_USE_SSL = {"ssl_cert_reqs": ssl.CERT_REQUIRED}
+
+
+ACCOUNT_SECURITY = load_security_config(os.environ, production=True)

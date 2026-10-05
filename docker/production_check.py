@@ -1,11 +1,17 @@
 """Offline deploy checks with ephemeral synthetic configuration, never secrets."""
 
+import base64
+import json
 import os
 import secrets
 import subprocess
 import sys
 
 values = {
+    "ACCOUNT_SECURITY_KEYS_JSON": json.dumps(
+        {"validation": base64.b64encode(secrets.token_bytes(32)).decode()}
+    ),
+    "ACCOUNT_SECURITY_ACTIVE_KEY_ID": "validation",
     "DJANGO_SETTINGS_MODULE": "config.settings.production",
     "DJANGO_SECRET_KEY": secrets.token_urlsafe(64),
     "DJANGO_ALLOWED_HOSTS": "foundation.invalid",
