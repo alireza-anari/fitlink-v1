@@ -237,3 +237,8 @@ Independent recheck of269a304 resolved all3 Important findings; no Critical.
 Minor CSRF-origin hostname validation consistency remains optional/deferred.
 Run37287922322 (pre-fix documentation checkpoint) failed the same worker health
 at2026-10-05T09:21:15Z; actual logs inspected. Corrected run37288982520 active.
+Mapping: local e234edcb53fda91463d81f6a56a415b042180d4f -> GitHub d75b1ad7b04b6d2c135e05cd98723f05aa816210 (tree d2cd85c6c41343b6592339d96810e582209a0010).
+Quality correction: e234edc's final Ruff invocation reported E501 for the new
+regression name; the shell sequence continued to commit because it lacked set-e.
+Shorten that name; explicit fail-fast verification now passes lint/format/mypy and
+70 units. No runtime behavior change; prior quality PASS wording is superseded.

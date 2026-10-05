@@ -8,7 +8,7 @@ import pytest
 pytestmark = pytest.mark.unit
 
 
-def test_direct_healthcheck_boots_project_and_fails_with_redacted_diagnostic_without_db():
+def test_direct_healthcheck_boots_project_with_redacted_db_failure():
     result = subprocess.run(
         [sys.executable, "docker/healthcheck.py", "db"],
         env={
