@@ -1,0 +1,16 @@
+services:
+  db:
+    image: library/postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+    environment:
+      POSTGRES_DB: fitlink
+      POSTGRES_USER: fitlink
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?generate local development password}
+    ports: ["127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"]
+    volumes: ["db-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fitlink -d fitlink"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+volumes:
+  db-data:

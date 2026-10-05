@@ -123,3 +123,8 @@ No DB migration execution. Clean PostgreSQL/no auth_user gates PENDING_CI in
 Ruling: makemigrations attempts a migration-history read on absent PostgreSQL;
 connection-refused warning is recorded, generation/drift commands exit0 — Cloud
 proves model state only, CI must prove the real migration graph from zero.
+Mapping: local a9f89200494d78c5d78f2b39fa24ff9c6607c47e -> GitHub ae3f95a9db240eb0ca449dfef82261d6dfa20623 (tree 21eae0b2c2a1e16b231994c3664bacf711545e53).
+Task 4: Cloud PASS (24 unit tests; DB failure probe RED→GREEN; PostgreSQL17 image
+resolved from official registry to immutable digest). Live SELECT1, zero-state
+migration, auth_user absence and timeout/test-DB contracts PENDING_CI. No migrate
+run in Work Cloud. The local/test role may create test_fitlink; never a prod role.
