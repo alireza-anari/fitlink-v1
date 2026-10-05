@@ -274,3 +274,39 @@ focused mypy, Django checks,70 units, offline production checks, shell syntax,
 git diff --check PASS. Model-state drift PASS with expected absent-PostgreSQL
 history warning; not a clean-migration PASS. No Docker/Chromium available here.
 Remote head verifiedf49b7c5; main unchanged8ede9a4; only Foundation ref authorized.
+Mapping: local 377a56b413bf818cff90535ae12d9b409b9aee64 -> GitHub 6e6b46c45b9d043612afd8ff8201e21e9ab451f4 (tree e3f63eb43bc2e3140fa7d1266a9a5a5f06c6f4df).
+Run37295879078 on that exact tree: frozen dependency, static/JS and Cloud quality
+steps succeeded; actual Compose/restart/browser rehearsal in progress.
+
+## Final Foundation exit
+Actual run37295879078/job111716846769 on remote6e6b46c completed SUCCESS; full
+logs inspected. All frozen/static/quality/Django/production steps PASS. Clean
+Compose config/build (including production image) and isolated startup PASS.
+PostgreSQL17 zero-state accounts.0001_initial migration PASS;90 unit/integration
+cases PASS includes custom User identity/relations, accounts_user and no auth_user
+in fresh test_fitlink, PostgreSQL roundtrip, Redis/cache/readiness, non-eager
+worker, Channels and private MinIO unsigned403/valid signed/expired403.
+Exactly one Beat and web/worker/Beat health PASS. Two Playwright viewports PASS
+with active COOP/secure context and all strict error assertions retained.
+Actual Redis restart then worker health and5 transport cases PASS; actual MinIO
+restart/reinit and1 private-storage case PASS; final2 browser viewports PASS.
+No selected mandatory test skipped; no browser errors suppressed.
+Task1–14: complete, all deferred mandatory CI categories now PASS.
+Final review: prior independent review found3 Important/no Critical; all3 fixed
+in269a304 with RED→GREEN regressions. Final specification/scope/evidence review
+covered product, architecture, domain, permissions, ADR001–005, C01 roadmap and
+approved plan; no unresolved Critical/Important finding. Architecture/product
+sources byte-identical to baseline; only User application model and four public
+Foundation routes. No OTP/profile/AI/product workflow.
+Final: minor (deferred): share CSRF-origin host validator for consistency; HTTPS
+and structural origin guards remain enforced, no Foundation login/admin surface.
+Final: minor (deferred): pinned setup actions emit Node20 deprecation warning
+while runner executes Node24; steps succeed. Historical uv temporary-lock warning
+does not establish concurrent mutation safety.
+Ruling: retain the user-authorized Foundation branch and checkout — user explicitly
+forbids main modification/merge/deployment and requires stopping at C01; no finish
+menu or integration action is needed — production release remains separate.
+Final evidence documentation commit changes only approved C01 documentation;
+synchronize exact tree and let the same mandatory CI validate that final head.
+The final documentation commit's local→remote mapping is returned in the final
+report (embedding a commit's own resulting SHA would change its SHA recursively).

@@ -1,6 +1,6 @@
 # Cloud Foundation dependency checkpoint
 
-C01 Cloud checks green; Docker/integration gates PENDING_CI. Current execution
+C01 Cloud and actual Docker/integration gates PASS (Actions run37295879078). Current execution
 evidence is in ../implementation/C01_CLOUD_EXECUTION_LEDGER.md.
 
 ## Verified tooling (2026-10-05)

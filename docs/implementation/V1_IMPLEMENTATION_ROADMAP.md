@@ -23,6 +23,11 @@ Each milestone must leave boot, migration consistency and the previously complet
 - **Tests:** empty-DB migration identity, Django boot, environment failure, DB/Redis/Channels/Celery/storage integration, RTL/static smoke.
 - **Exit:** all Foundation plan gates pass on clean local/CI environment, lockfiles reproducible, no business-domain implementation beyond minimal User.
 
+C01 execution status: **PASS**, 2026-10-05. Cloud checks and actual private
+GitHub Actions run37295879078 passed; final Foundation review has no unresolved
+Critical/Important finding. See execution ledger and Foundation handoff.
+C02 remains unstarted and requires new explicit authorization.
+
 ## C02 — Accounts, OTP, authentication and base authorization
 
 - **Goal:** adult phone entry, sessions and policy primitives safe for subsequent private domains.

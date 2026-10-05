@@ -324,11 +324,11 @@ Common verification after each task: run its named tests/checks plus impacted ea
 
 **Interfaces:** setup/handoff is the downstream contract for C02, including exact pinned tools, env keys/host-vs-Compose mapping, minimal User guarantees, private storage API and all probe commands. No later business plan executed.
 
-- [ ] Document one clean sequence: ignored .env setup/generation → `uv sync --frozen --group dev` → `npm ci` → `npm run build:css` → `docker compose build web worker beat` → `docker compose up -d --wait db redis minio` → `docker compose run --rm minio-init` → `docker compose run --rm web uv run --frozen python manage.py migrate` → `docker compose up -d --wait web worker beat`. Document safe `docker compose down` (without `-v`) for ordinary shutdown; volume deletion is explicit destructive reset, never default.
-- [ ] Create ignored `.env.verify` with the same local contract and separate localhost ports8001/5434/6381/9100/9101 (choose another unused port only if occupied). Rehearse with `docker compose -p fitlink-foundation-verify --env-file .env.verify build web worker beat`, `docker compose -p fitlink-foundation-verify --env-file .env.verify up -d --wait db redis minio`, `docker compose -p fitlink-foundation-verify --env-file .env.verify run --rm minio-init`, `docker compose -p fitlink-foundation-verify --env-file .env.verify run --rm web uv run --frozen python manage.py migrate`, `docker compose -p fitlink-foundation-verify --env-file .env.verify up -d --wait web worker beat`. Project-specific named volumes/internal hosts isolate data from existing local services. Never purge existing volumes. Verify new test DB/no auth_user with the migration integration test.
-- [ ] Run final gates in that project: `uv lock --check`, Ruff/mypy commands in Task13, CSS/JS build, Django check, `makemigrations --check --dry-run`, all unit/integration tests, actual Celery probe, Redis channel delivery and browser smoke. Production settings subprocess tests must pass with fake config; production deploy check is evaluated locally with ephemeral valid secrets/config (`manage.py check --deploy --settings=config.settings.production`), any infrastructure trust warning recorded/fixed rather than ignored globally.
-- [ ] Inspect `git diff --check`, `git status --short`, staged paths and generated artifacts; no credentials/.env/media/node_modules/sources changed. Record command output summaries/selected pins/images/remaining remote-CI limitation in HANDOFF without secret values. Foundation guarantees baseline readiness, not production release certification.
-- [ ] Stage documentation/example only and commit `docs: record verified foundation setup and handoff`. Report C01 exit evidence and stop; do not begin OTP/C02 without next-stage authorization.
+- [x] Document one clean sequence: ignored .env setup/generation → `uv sync --frozen --group dev` → `npm ci` → `npm run build:css` → `docker compose build web worker beat` → `docker compose up -d --wait db redis minio` → `docker compose run --rm minio-init` → `docker compose run --rm web uv run --frozen python manage.py migrate` → `docker compose up -d --wait web worker beat`. Document safe `docker compose down` (without `-v`) for ordinary shutdown; volume deletion is explicit destructive reset, never default.
+- [x] Create ignored `.env.verify` with the same local contract and separate localhost ports8001/5434/6381/9100/9101 (choose another unused port only if occupied). Rehearse with `docker compose -p fitlink-foundation-verify --env-file .env.verify build web worker beat`, `docker compose -p fitlink-foundation-verify --env-file .env.verify up -d --wait db redis minio`, `docker compose -p fitlink-foundation-verify --env-file .env.verify run --rm minio-init`, `docker compose -p fitlink-foundation-verify --env-file .env.verify run --rm web uv run --frozen python manage.py migrate`, `docker compose -p fitlink-foundation-verify --env-file .env.verify up -d --wait web worker beat`. Project-specific named volumes/internal hosts isolate data from existing local services. Never purge existing volumes. Verify new test DB/no auth_user with the migration integration test.
+- [x] Run final gates in that project: `uv lock --check`, Ruff/mypy commands in Task13, CSS/JS build, Django check, `makemigrations --check --dry-run`, all unit/integration tests, actual Celery probe, Redis channel delivery and browser smoke. Production settings subprocess tests must pass with fake config; production deploy check is evaluated locally with ephemeral valid secrets/config (`manage.py check --deploy --settings=config.settings.production`), any infrastructure trust warning recorded/fixed rather than ignored globally.
+- [x] Inspect `git diff --check`, `git status --short`, staged paths and generated artifacts; no credentials/.env/media/node_modules/sources changed. Record command output summaries/selected pins/images/remaining remote-CI limitation in HANDOFF without secret values. Foundation guarantees baseline readiness, not production release certification.
+- [x] Stage documentation/example only and commit `docs: record verified foundation setup and handoff`. Report C01 exit evidence and stop; do not begin OTP/C02 without next-stage authorization.
 
 ### Verification command note
 
@@ -391,3 +391,15 @@ Task 11 collectstatic adds `--ignore=src/styles.css` for compile-only Tailwind
 input. Runtime tests use the separate checks image rather than adding dev tools
 to web/worker/Beat. These Cloud/CI rulings do not change product scope. C02 has not
 started; final review and Docker integration remain pending at this checkpoint.
+
+### Final C01 exit evidence
+Tasks1–14 complete under the authorized Cloud/CI amendment. Actual Actions
+run37295879078 on remote6e6b46c (local377a56b, exact treee3f63eb4) is SUCCESS.
+All named runtime categories, clean PostgreSQL/custom User/no auth_user, real
+Redis/cache/Celery/Beat/Channels/private MinIO, all Docker builds, startup,
+Redis/MinIO restart recovery and both browser viewports genuinely ran and passed.
+70 Cloud units and90 combined backend cases passed; no required cases skipped.
+Final Foundation review: three earlier Important security findings fixed with
+regressions; final scope/evidence check has no unresolved Critical/Important.
+Historical PENDING_CI wording above describes earlier checkpoints and is now
+superseded by this evidence. No C02, main modification, merge or deployment.
