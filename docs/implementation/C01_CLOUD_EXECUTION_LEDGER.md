@@ -136,3 +136,7 @@ Mapping: local e2a72765e5e87a3c1c673d5a0616685cda097573 -> GitHub b6972059eb9dcf
 Task 6: Cloud PASS (31 units; live/readiness/status RED→GREEN; generic no-store
 responses; Django check clean). Real DB/Redis readiness and test-only protected
 session/CSRF behavior PENDING_CI. No product API/auth endpoint.
+Mapping: local a6657f7942add825656ff5c89db7d926140ccfd2 -> GitHub 99452d2278a4ac4f28afcdadb0d1c2506a85a996 (tree e3dfceb7ea39bad450719082e4c8c98352cbf1c0).
+Task 7: Cloud PASS (35 units; Celery namespace/JSON/empty Beat/local apply
+RED→GREEN). Non-eager15s actual worker roundtrip and Beat runtime PENDING_CI.
+Redis result expiry86400s; no business job/schedule/outbox models.
