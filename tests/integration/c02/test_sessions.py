@@ -157,7 +157,6 @@ def test_cross_user_selectors_deny_detail_list_and_count(limiter):
 
 def test_real_cookie_csrf_and_database_failure_closed(limiter):
     service()
-    from config.permissions import AccountActionPermission
     from django.conf import settings
     from django.db import OperationalError, connection
     from django.middleware.csrf import get_token
@@ -167,6 +166,7 @@ def test_real_cookie_csrf_and_database_failure_closed(limiter):
     from rest_framework.views import APIView
 
     from config.health import liveness
+    from config.permissions import AccountActionPermission
 
     class Protected(APIView):
         permission_classes = [AccountActionPermission]
@@ -196,9 +196,40 @@ def test_real_cookie_csrf_and_database_failure_closed(limiter):
         def outage(execute, sql, params, many, context):
             raise OperationalError("private database failure")
 
+        user_reads = [0]
+
+        def later_outage(execute, sql, params, many, context):
+            if sql.lstrip().startswith("SELECT") and '"accounts_user"' in sql:
+                user_reads[0] += 1
+                if user_reads[0] == 3:
+                    raise OperationalError("private late database failure")
+            return execute(sql, params, many, context)
+
+        with connection.execute_wrapper(later_outage):
+            late = client.get("/protected/")
+            assert user_reads[0] == 3
+            assert late.status_code == 503 and late.json() == {"status": "unavailable"}
         with connection.execute_wrapper(outage):
             response = client.get("/protected/")
             assert response.status_code == 503 and response.json() == {
                 "status": "unavailable"
             }
             assert client.get("/health/live/").status_code == 200
+
+
+def test_reauthentication_always_rotates_authenticated_key(limiter, monkeypatch):
+    from datetime import timedelta
+
+    from config.use_cases.identity import verify_login_otp
+
+    first, _ = login(limiter)
+    old = first.session.session_key
+    now = timezone.now() + timedelta(seconds=60)
+    monkeypatch.setattr(timezone, "now", lambda: now)
+    challenge, code = sent(now)
+    again = request_with_session(old)
+    result = verify_login_otp(again, PHONE, challenge, code, "127.0.0.1")
+    assert result.valid and again.session.session_key != old
+    assert service().resolve_session(first, now) is None
+    assert service().resolve_session(request_with_session(old), now) is None
+    assert service().resolve_session(again, now) is not None

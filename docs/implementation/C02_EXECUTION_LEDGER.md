@@ -247,3 +247,9 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Ruling: account_control session TTL bounded by approved recent-auth600s (normal retains Django cookie lifetime), limited self/privacy/logout allowlist. No stock staff permission bypass. State command is internal server-owned, no generic state-edit route.
 
 - Cloud GREEN152units16.04s, mypy42files/Django/productioncheck pass. Nullable current control ID now denied explicitly before query; third-party DRF imports lack stubs, narrowly annotated import-untyped only, typed account core remains checked. CI mypy scope expanded to composition/middleware/adapters. Actual Task7 services and focused security review PENDING.
+
+### Task7 focused review RED fixes
+- Remote sync: local27cf5efbc8fc79982b5146cc3404b3b4b6db5266 -> GitHubce07f114c7e3e108f26a003168a89d624df9e894; tree1e1890cf5fe0d707e83ca07045ac0c0f275699bf equality checked before expected-parent non-forced update.
+- Initial service run37348954456/job111894634840 SUCCESS:86actual PostgreSQL/Redis cases16.14s plus restart prepare/verify. Foundation111894634380 failed solely I001 inner-test import order after last test strengthening; no Compose gate executed. Corrected formatting, no assertion weakened.
+- Independent review Important accepted: Django login retains same-User/hash authenticated key; second OTP entry can collide with session-control digest or retain cookie after key rotation. Require explicit every-login rotation and old control revocation. Added existing authenticated-key regression before fix.
+- Minor accepted for Task7 contract alignment: authority query outage after middleware returns500 instead of generic503; fail-closed but specified status wrong. Added later-query real DB execute-wrapper failure injection before fix. Actual RED pendingCI; Task7 not complete.
