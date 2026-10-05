@@ -106,3 +106,9 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Audit action/result/reason/changed-field allowlists; no unstructured private payload. Audit and ID-only outbox require existing domain atomic transaction; dedup conflict rejected.
 - Named capabilities/current account+version+case-bound fresh step-up; self-issued grants and bare staff/superuser denied. Private bounded single-use memory Mock step-up has no web route, is blocked outside development/test. No production adapter or grant CRUD installed.
 - Additional Mock contract RED2missing-provider/9passed then GREEN11; full Cloud121 units pass, mypy29 files/Django/production/drift green. Drift history unavailable locally is not PG proof. Real transaction/immutability/staff GREEN pendingCI.
+
+### Task3 security finding and RED fix preparation
+- Remote sync: local10ef0807c27eedeac97534dc88b0a5edf0566bb0 -> GitHub f3a734301d38e6ce765fd4252c925133c2b6fed2; tree331adb05605bd86cd5dbcf8f0d954c1e39a39961 matched, non-forced expected-parent update.
+- Initial PostgreSQL run37321714246/job111802165945 SUCCESS (initial23 cases); SQL immutability/role denials inspected. Wider Foundation in progress.
+- Independent review Important accepted: model save coerced changed_fields dict to tuple(keys), allowing private values to remain in original persisted JSON; bulk/direct insert had no JSON-shape guard. No other concrete finding. Task3 remains IN_PROGRESS.
+- Cloud reproducer RED1: original dict passes model validator; expected ValueError not raised. Added real bulk/SQL insertion reproducer before schema fix; actual RED pending CI.

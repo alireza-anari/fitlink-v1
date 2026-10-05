@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 from django.apps import apps
-from django.db import DatabaseError, connection, transaction
+from django.db import DatabaseError, IntegrityError, connection, transaction
 
 from apps.accounts.contracts import SecurityOutcome
 
@@ -102,3 +102,41 @@ def test_runtime_role_can_append_and_read_but_not_mutate():
         with connection.cursor() as cursor:
             cursor.execute(f"DROP OWNED BY {q(role)}")
             cursor.execute(f"DROP ROLE {q(role)}")
+
+
+def test_database_audit_json_rejects_private_values_even_on_bulk_and_sql():
+    modules()
+    import json
+
+    model = apps.get_model("governance", "AuditEvent")
+    for changed in [
+        {"phone": "+989123456789"},
+        "phone",
+        ["body"],
+        [{"phone": "private"}],
+    ]:
+        with pytest.raises(IntegrityError), transaction.atomic():
+            model.objects.bulk_create(
+                [
+                    model(
+                        action="otp.requested",
+                        result="accepted",
+                        correlation_id=uuid4(),
+                        changed_fields=changed,
+                    )
+                ]
+            )
+        with (
+            pytest.raises(IntegrityError),
+            transaction.atomic(),
+            connection.cursor() as cursor,
+        ):
+            cursor.execute(
+                """INSERT INTO governance_auditevent
+                (id, actor_kind, action, result, subject_type, correlation_id,
+                 reason_code, changed_fields, at)
+                VALUES (%s,'system','otp.requested','accepted','account',
+                        %s,'',%s::jsonb,now())""",
+                [uuid4(), uuid4(), json.dumps(changed)],
+            )
+    assert not model.objects.exists()

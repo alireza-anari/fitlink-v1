@@ -99,3 +99,23 @@ def test_no_production_step_up_adapter_is_installed(settings):
     settings.SETTINGS_ENV = "production"
     with pytest.raises(ValueError, match="Step-up adapter unavailable"):
         staff.MockStepUpProvider()
+
+
+def test_audit_original_json_shape_cannot_hide_private_values(monkeypatch):
+    from django.apps import apps
+    from django.db.models import Model
+
+    contract()
+    audit = apps.get_model("governance", "AuditEvent")
+    # Isolate the model boundary without a database; the real insertion guards
+    # are separately exercised on PostgreSQL, including privileged SQL.
+    monkeypatch.setattr(audit, "full_clean", lambda self: None)
+    monkeypatch.setattr(Model, "save", lambda self, *args, **kwargs: None)
+    for changed in [{"phone": "private"}, "phone", ["phone", {"body": "private"}]]:
+        with pytest.raises(ValueError, match="Invalid audit metadata"):
+            audit(
+                action="otp.requested",
+                result="accepted",
+                correlation_id=uuid4(),
+                changed_fields=changed,
+            ).save()
