@@ -48,6 +48,25 @@ def issue_session(
     seconds = int(settings.SESSION_COOKIE_AGE)
     if scope == SessionScope.ACCOUNT_CONTROL:
         seconds = min(seconds, settings.ACCOUNT_SECURITY.policy.recent_auth_seconds)
+    old_key = request.session.session_key
+    if old_key:
+        old_identifiers = Q(pk__isnull=True)
+        for old_id in settings.ACCOUNT_SECURITY.keys.key_ids:
+            old_identifiers |= Q(
+                key_id=old_id,
+                session_digest=security_digest("session", old_key, old_id),
+            )
+        old_controls = (
+            AccountSessionControl.objects.select_for_update()
+            .filter(old_identifiers, revoked_at__isnull=True)
+            .order_by("id")
+        )
+        for old_control in old_controls:
+            old_control.revoked_at = at
+            old_control.save(update_fields=["revoked_at"])
+    # Django login intentionally retains a matching authenticated key. Flush
+    # explicitly so every successful possession proof receives a fresh key.
+    request.session.flush()
     request.session.set_expiry(seconds)
     login(request, current, backend="django.contrib.auth.backends.ModelBackend")
     request.session["fitlink_auth_version"] = current.auth_version

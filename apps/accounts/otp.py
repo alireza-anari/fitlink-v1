@@ -456,6 +456,9 @@ def verify_otp(
         # A later audit failure leaves a durable pending reservation even when
         # Redis cleanup already happened: PostgreSQL remains authoritative.
         finalize_verification(admitted.reservation_id, valid, at)
+        if valid and purpose == "login" and on_login is not None:
+            assert user is not None
+            on_login(user)
         record(
             SecurityOutcome(
                 "otp.verification",
@@ -466,9 +469,6 @@ def verify_otp(
                 "valid_proof" if valid else "invalid_proof",
             )
         )
-        if valid and purpose == "login" and on_login is not None:
-            assert user is not None
-            on_login(user)
     return result
 
 

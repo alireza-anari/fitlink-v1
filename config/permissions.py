@@ -1,10 +1,17 @@
+from django.db import DatabaseError
 from django.utils import timezone
-from rest_framework.permissions import BasePermission  # type: ignore[import-untyped]
+from rest_framework import exceptions, permissions  # type: ignore[import-untyped]
 
 from apps.accounts.sessions import actor_user
 
 
-class AccountActionPermission(BasePermission):
+class AccountUnavailable(exceptions.APIException):
+    status_code = 503
+    default_detail = {"status": "unavailable"}
+    default_code = "unavailable"
+
+
+class AccountActionPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         actor = getattr(request._request, "account_actor", None)
         action = getattr(view, "account_action", None)
@@ -14,4 +21,6 @@ class AccountActionPermission(BasePermission):
             actor_user(actor, action, timezone.now())
         except PermissionError:
             return False
+        except DatabaseError:
+            raise AccountUnavailable() from None
         return True
