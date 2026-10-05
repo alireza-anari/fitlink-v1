@@ -230,3 +230,65 @@ def test_current_restriction_never_reuses_old_consent(target):
     assert not module.has_current_grant(
         user.public_id, grantee.public_id, scope.purpose, scope, at
     )
+
+
+def test_concurrent_new_grant_cannot_reactivate_revoked_row():
+    module, commands, user, grantee, actor, scope, at, consent_id = granted()
+    barrier = threading.Barrier(2)
+
+    def perform(operation):
+        close_old_connections()
+        try:
+            barrier.wait(timeout=10)
+            if operation == "grant":
+                return commands.grant_consent(actor, scope, "metadata-v2", "b" * 64, at)
+            commands.revoke_consent(actor, consent_id, 1, at)
+            return None
+        finally:
+            close_old_connections()
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        outcomes = list(pool.map(perform, ["grant", "revoke"]))
+    model = apps.get_model("governance", "Consent")
+    assert model.objects.get(pk=consent_id).revoked_at == at
+    assert model.objects.get(pk=outcomes[0]).text_version == "metadata-v2"
+    assert model.objects.filter(revoked_at__isnull=True).count() == 1
+
+
+def test_test_only_scope_validators_keep_ai_archive_and_publication_separate(
+    monkeypatch,
+):
+    module, commands, user, grantee, actor, scope, at = prepared()
+
+    # A fixture models a server-validated revision; no live feature object exists.
+    def test_validator(value, subject):
+        return value.object_uuid == subject.public_id and value.object_version == 1
+
+    monkeypatch.setattr(module, "SCOPE_VALIDATORS", {"test_revision": test_validator})
+    scopes = [
+        module.validate_scope(
+            actor,
+            grantee.public_id,
+            purpose,
+            "test_revision",
+            user.public_id,
+            1,
+            scope.expires_at,
+            at,
+        )
+        for purpose in ("ai_feature", "archive_sharing", "case_study")
+    ]
+    ai = commands.grant_consent(actor, scopes[0], "ai-v1", "a" * 64, at)
+    assert module.has_current_grant(
+        user.public_id, grantee.public_id, scopes[0].purpose, scopes[0], at
+    )
+    for value in scopes[1:]:
+        assert not module.has_current_grant(
+            user.public_id, grantee.public_id, value.purpose, value, at
+        )
+        commands.grant_consent(actor, value, "other-v1", "b" * 64, at)
+    commands.revoke_consent(actor, ai, 1, at)
+    for value in scopes[1:]:
+        assert module.has_current_grant(
+            user.public_id, grantee.public_id, value.purpose, value, at
+        )
