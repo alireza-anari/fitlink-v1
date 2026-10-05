@@ -7,7 +7,7 @@ from uuid import UUID
 
 import pytest
 from django.apps import apps
-from django.db import connections
+from django.db import connections, transaction
 from django.utils import timezone
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
@@ -162,3 +162,18 @@ def test_existing_and_restricted_phone_get_same_public_attempt_result(limiter):
         for result in results
     )
     assert len(provider.drain()) == 3 and users.objects.count() == 2
+
+
+def test_ambient_transaction_rejected_before_admission_and_provider_io(limiter):
+    otp, sms = modules()
+    provider = sms.MockSmsProvider()
+    with transaction.atomic(), pytest.raises(otp.OtpUnavailable):
+        issue(otp, provider, timezone.now())
+    assert not provider.drain()
+    for app, name in [
+        ("accounts", "OTPChallenge"),
+        ("accounts", "SecurityRateEvent"),
+        ("accounts", "OTPPhoneState"),
+        ("governance", "AuditEvent"),
+    ]:
+        assert not apps.get_model(app, name).objects.exists()

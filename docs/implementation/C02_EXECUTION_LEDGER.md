@@ -186,3 +186,10 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Digest/pending/generation/cooldown/audit commit before provider I/O; late acknowledgement re-locks phone/User/context/challenge and marks sent only if generation/current expiry/terminal state still valid. Request does not query/create User for login. Audit failures roll back before send; conservative admission remains spent.
 - Ruling: extend request_otp with required keyword provider and optional server-only OtpBinding + context validator for non-login purposes — composition must supply purpose/phone/User/version/case authority rather than accepting client IDs — Task8/9 install their owned validators; unbound non-login issuance denies now. Costs one explicit callable interface, no future-domain model/import.
 - Cloud GREEN8provider/digest contracts; full138unit cases, Ruff/format122files/mypy35files/Django/drift/production checks pass. Real request/resend/late-ack gates PENDING_CI, Task5 not complete.
+
+### Task5 ambient transaction security RED
+- Task4 full Foundation run37326556611/job111818684950 SUCCESS:130units/187combined backend/2+2 browser/5Redis-Celery-Channels/1MinIO recovery, completed logs inspected.
+- Remote sync: local951435fec24d5528122c8d3fa38bf1ca1e495c94 -> GitHub76276f2ae610155186dae16a170877b18062681a; tree2afa40537419c0002ac90cd29ba8736414026964 equality verified before non-forced expected-parent update.
+- Initial Task5 service run37328982947/job111826892712 SUCCESS; full logs inspection pending. Foundation111826892801 ongoing, not PASS.
+- Independent review Important accepted: nested atomic exits only a savepoint; SMS can occur before outer challenge/audit commit and with locks retained, then rollback loses all evidence. Required top-level command boundary before admission/I/O. No other concrete Task5 finding.
+- Added actual PostgreSQL ambient transaction rejection regression before fix; expected OtpUnavailable absent. Actual RED pending CI, no Task6 started.
