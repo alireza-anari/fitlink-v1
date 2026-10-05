@@ -1,6 +1,10 @@
 import re
+from typing import TYPE_CHECKING
 
 from django.contrib.auth.base_user import BaseUserManager
+
+if TYPE_CHECKING:
+    from .models import User as User
 
 
 def canonical_phone(phone: str) -> str:
@@ -9,7 +13,7 @@ def canonical_phone(phone: str) -> str:
     return phone
 
 
-class UserManager(BaseUserManager):
+class UserManager(BaseUserManager["User"]):
     use_in_migrations = True
 
     def create_user(self, phone: str, **extra_fields):

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 from . import env
 
@@ -59,7 +60,7 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 STORAGE_BACKEND = env.str_value("STORAGE_BACKEND", "fake")
-STORAGES = {
+STORAGES: dict[str, dict[str, Any]] = {
     "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
@@ -101,7 +102,7 @@ CELERY_TIMEZONE = "UTC"
 CELERY_ENABLE_UTC = True
 CELERY_RESULT_EXPIRES = 86400
 CELERY_TASK_ALWAYS_EAGER = False
-CELERY_BEAT_SCHEDULE = {}
+CELERY_BEAT_SCHEDULE: dict[str, Any] = {}
 CELERY_IMPORTS = ("config.tasks",)
 CELERY_BROKER_CONNECTION_TIMEOUT = 2
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True

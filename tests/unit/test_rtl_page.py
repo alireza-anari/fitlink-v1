@@ -22,15 +22,25 @@ def test_neutral_rtl_page():
 
 
 def test_manifest_template_paths(tmp_path):
-    from django.test import override_settings
-    from django.core.management import call_command
     import json
 
-    with override_settings(STATIC_ROOT=tmp_path, STORAGES={
-        "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
-        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"},
-    }):
-        call_command("collectstatic", interactive=False, verbosity=0, ignore=["src/styles.css"])
+    from django.core.management import call_command
+    from django.test import override_settings
+
+    with override_settings(
+        STATIC_ROOT=tmp_path,
+        STORAGES={
+            "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
+            "staticfiles": {
+                "BACKEND": (
+                    "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+                )
+            },
+        },
+    ):
+        call_command(
+            "collectstatic", interactive=False, verbosity=0, ignore=["src/styles.css"]
+        )
         manifest = json.loads((tmp_path / "staticfiles.json").read_text())
         assert "src/styles.css" not in manifest["paths"]
         for path in ("dist/app.css", "src/app.js"):

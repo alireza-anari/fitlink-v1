@@ -1,4 +1,8 @@
+from django.conf import settings
 from django.db import DatabaseError, connection
+from django.http import JsonResponse
+from redis import Redis
+from redis.exceptions import RedisError
 
 
 def database_available() -> bool:
@@ -10,11 +14,6 @@ def database_available() -> bool:
         return False
 
 
-from django.conf import settings
-from redis import Redis
-from redis.exceptions import RedisError
-
-
 def redis_available() -> bool:
     try:
         with Redis.from_url(
@@ -23,9 +22,6 @@ def redis_available() -> bool:
             return bool(client.ping())
     except (RedisError, ValueError):
         return False
-
-
-from django.http import JsonResponse
 
 
 def liveness(request):

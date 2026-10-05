@@ -8,7 +8,10 @@ pytestmark = [pytest.mark.integration, pytest.mark.django_db]
 
 
 def test_database_failure_is_generic_and_liveness_survives():
-    with patch("config.health.connection.cursor", side_effect=DatabaseError("secret-password private-host")):
+    with patch(
+        "config.health.connection.cursor",
+        side_effect=DatabaseError("secret-password private-host"),
+    ):
         response = Client().get("/health/ready/")
         assert response.status_code == 503
         assert response.json() == {"status": "unavailable"}

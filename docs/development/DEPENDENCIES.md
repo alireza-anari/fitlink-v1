@@ -88,3 +88,12 @@ MinIO source release2025-10-15 at9e49d5e7; mc release2025-08-13 asset SHA256
 Official MinIO source-build guidance: https://github.com/minio/minio/releases/tag/RELEASE.2025-10-15T17-29-55Z
 Build-only Go and mc artifact currently target Linuxamd64 GitHub runner; additional
 platforms require separately verified official mc checksums. No binaries committed.
+
+CI action refs resolved via authenticated official GitHub API:
+- actions/checkout v4: 11d5960a326750d5838078e36cf38b85af677262
+- actions/setup-node v4: 49933ea5288caeca8642d1e84afbd3f7d6820020
+- astral-sh/setup-uv v6.8.0: d0cc045d04ccac9d8b7881df0226f9e82c39688e
+Checkout does not retain credentials; workflow grants contents:read only and runs
+only on foundation/c01-cloud pushes. No deployment, packages or release steps.
+Celery has no typing marker; its single import has a specific import-untyped
+suppression. Django model managers use explicit User generic; no blanket ignores.

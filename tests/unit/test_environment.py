@@ -15,7 +15,11 @@ def boot(module, values):
         [
             sys.executable,
             "-c",
-            "import importlib,sys\ntry: importlib.import_module(sys.argv[1])\nexcept Exception as e: print(type(e).__name__+': '+str(e),file=sys.stderr);sys.exit(1)",
+            (
+                "import importlib,sys\ntry: importlib.import_module(sys.argv[1])\n"
+                "except Exception as e:\n print(type(e).__name__+': '+str(e),"
+                "file=sys.stderr);sys.exit(1)"
+            ),
             module,
         ],
         env=env,

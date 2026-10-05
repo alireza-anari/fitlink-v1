@@ -183,3 +183,18 @@ Failure integration tests include bounded real Redis refused connection and
 redacted PostgreSQL exception/readiness503/live200. Real dependency restart,
 worker/channel/storage recovery and all DB tests PENDING_CI. Pytest fails if any
 selected mandatory case skips; no silent marker exclusion.
+Mapping: local 84662ca7821f9391987b349d575c1bc7997d1c54 -> GitHub 3ecc385cd75c161aaeab05e145f8cc396978f18f (tree e4b897a687cb9063c0013aeae52a4b94c04581f6).
+Task 13: Cloud PASS (71 Python files Ruff lint/format, focused mypy with Django
+plugin, 57 units, uv lock --check, npm ci/CSS/JS, Django checks, model drift,
+secret-free static manifest and deploy check --fail-level=WARNING).
+Real PostgreSQL migration history remains PENDING_CI; Cloud drift emits connection
+refused history warning (exit0), not a live database PASS. Workflow YAML parsed;
+GitHub host validation/runtime result will be inspected after synchronization.
+CI uses pinned reviewed actions, generated ignored credentials, explicit complete
+unit/integration/e2e discovery and fails skipped cases. Isolated project startup,
+production image build, worker/Beat health, actual Redis/MinIO restarts and
+recovery are mandatory gates. Docker/Playwright runtime PENDING_CI.
+Ruling: quality fixes include generated migration string wrapping only (no state
+change), explicit settings imports, typed User manager and typed settings maps.
+Production offline deploy checks use ephemeral synthetic credentials without
+network access or stored/printed values; zero warnings/errors.
