@@ -121,3 +121,26 @@ CHANNEL_LAYERS = {
         "CONFIG": {"hosts": [CHANNEL_REDIS_URL], "prefix": "fitlink", "expiry": 30},
     }
 }
+
+S3_ENDPOINT_URL = env.str_value("S3_ENDPOINT_URL", "http://127.0.0.1:9000")
+S3_BUCKET_NAME = env.str_value("S3_BUCKET_NAME", "fitlink-private")
+S3_REGION = env.str_value("S3_REGION", "us-east-1")
+S3_ACCESS_KEY_ID = env.str_value("S3_ACCESS_KEY_ID")
+S3_SECRET_ACCESS_KEY = env.str_value("S3_SECRET_ACCESS_KEY")
+S3_ADDRESSING_STYLE = env.str_value("S3_ADDRESSING_STYLE", "path")
+if STORAGE_BACKEND == "s3":
+    STORAGES["default"] = {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "endpoint_url": S3_ENDPOINT_URL,
+            "bucket_name": S3_BUCKET_NAME,
+            "region_name": S3_REGION,
+            "access_key": S3_ACCESS_KEY_ID,
+            "secret_key": S3_SECRET_ACCESS_KEY,
+            "signature_version": "s3v4",
+            "addressing_style": S3_ADDRESSING_STYLE,
+            "default_acl": None,
+            "querystring_auth": True,
+            "querystring_expire": 60,
+        },
+    }

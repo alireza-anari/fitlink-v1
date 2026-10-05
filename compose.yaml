@@ -22,6 +22,37 @@ services:
       interval: 3s
       timeout: 3s
       retries: 30
+  minio:
+    build:
+      context: .
+      dockerfile: docker/Minio.Dockerfile
+      target: minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?generate development root user}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?generate development root password}
+    command: ["minio", "server", "/data", "--console-address", ":9001"]
+    ports: ["127.0.0.1:${MINIO_HOST_PORT:-9000}:9000", "127.0.0.1:${MINIO_CONSOLE_HOST_PORT:-9001}:9001"]
+    volumes: ["minio-data:/data"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/minio/health/ready', timeout=2)"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  minio-init:
+    build:
+      context: .
+      dockerfile: docker/Minio.Dockerfile
+      target: mc
+    depends_on:
+      minio: {condition: service_healthy}
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?generate development root user}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?generate development root password}
+      MINIO_APP_ACCESS_KEY: ${MINIO_APP_ACCESS_KEY:?generate development app key}
+      MINIO_APP_SECRET_KEY: ${MINIO_APP_SECRET_KEY:?generate development app secret}
+    entrypoint: ["sh", "/init/minio-init.sh"]
+    volumes: ["./docker/minio-init.sh:/init/minio-init.sh:ro"]
 volumes:
+  minio-data:
   redis-data:
   db-data:

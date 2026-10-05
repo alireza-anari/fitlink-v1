@@ -11,3 +11,5 @@ if DATABASES["default"]["NAME"] != "fitlink":  # noqa: F405
 env.require_local_redis(
     (REDIS_URL, CELERY_BROKER_URL, CELERY_RESULT_BACKEND, CHANNEL_REDIS_URL)
 )  # noqa: F405
+
+STORAGES["default"] = {"BACKEND": "django.core.files.storage.InMemoryStorage"}  # noqa: F405

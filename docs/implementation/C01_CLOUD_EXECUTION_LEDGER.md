@@ -144,3 +144,13 @@ Mapping: local e65b5c3f927381eb879a721603d07dc27dc8c7ab -> GitHub 1bd7db319eaaef
 Task 8: Cloud PASS (38 units; ASGI HTTP/status, empty product socket routes,
 untrusted-origin rejection RED→GREEN). Redis group send/receive/pool reconnect
 PENDING_CI; actual Redis restart will precede another CI transport roundtrip.
+Mapping: local f6fbaeaae1a3be0c9cd2d23a07f545dc69fd2919 -> GitHub d47709b61a886805dc5efc8e098d4fff89e7e802 (tree 281b260f5aa2fe9925d03380258fe66607ac37f3).
+Task 9: Cloud PASS (49 units; private fake roundtrip/key/expiry and real S3 signing
+without network RED→GREEN). Real MinIO object/signature/expired URL/anonymous403,
+limited app policy and idempotent bucket init PENDING_CI. No Asset model/API.
+Ruling: official MinIO distributions changed — DockerHub/Quay returned401 and
+old dl.min.io archives410; official latest MinIO release instructs source builds
+and fixes a privilege-escalation CVE. Build verified official release source
+RELEASE.2025-10-15T17-29-55Z at9e49d5e7 and use official mc release asset checksum;
+no unofficial mirror/older vulnerable image — Go is build-only and build time grows.
+Docker definitions use the approved MinIO architecture and remain PENDING_CI.
