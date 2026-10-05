@@ -127,3 +127,5 @@ CELERY_REDIS_BACKEND_USE_SSL = {"ssl_cert_reqs": ssl.CERT_REQUIRED}
 
 
 ACCOUNT_SECURITY = load_security_config(os.environ, production=True)
+
+SETTINGS_ENV = "production"

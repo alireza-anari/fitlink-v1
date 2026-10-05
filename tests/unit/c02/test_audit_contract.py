@@ -69,3 +69,33 @@ def test_outbox_rejects_sensitive_or_untyped_payloads():
         {"user_uuid": str(uuid4())},
         "security:1",
     )
+
+
+def test_mock_step_up_is_private_single_use_and_context_bound(settings):
+    staff = importlib.import_module("apps.governance.staff") if contract() else None
+    provider = staff.MockStepUpProvider()
+    user, case = uuid4(), uuid4()
+    from django.utils import timezone
+
+    now = timezone.now()
+    assertion = provider.prepare(user, "account_recovery", case, now)
+    assert assertion.raw_assertion not in repr(assertion)
+    assert (
+        provider.verify(user, "account_recovery", uuid4(), assertion.raw_assertion, now)
+        is None
+    )
+    proof = provider.verify(
+        user, "account_recovery", case, assertion.raw_assertion, now
+    )
+    assert proof and proof.user_uuid == user
+    assert (
+        provider.verify(user, "account_recovery", case, assertion.raw_assertion, now)
+        is None
+    )
+
+
+def test_no_production_step_up_adapter_is_installed(settings):
+    staff = importlib.import_module("apps.governance.staff") if contract() else None
+    settings.SETTINGS_ENV = "production"
+    with pytest.raises(ValueError, match="Step-up adapter unavailable"):
+        staff.MockStepUpProvider()

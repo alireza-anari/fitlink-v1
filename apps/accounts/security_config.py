@@ -18,6 +18,7 @@ class AccountSecurityConfig:
     staff_recovery_enabled: bool
     sms_provider: str
     trusted_proxy_cidrs: tuple[str, ...]
+    step_up_provider: str
 
 
 def _invalid(name: str):
@@ -106,5 +107,5 @@ def load_security_config(
     except ValueError:
         _invalid("TRUSTED_PROXY_CIDRS")
     return AccountSecurityConfig(
-        AccountSecurityPolicy(**policy), keys, entry, recovery, provider, cidrs
+        AccountSecurityPolicy(**policy), keys, entry, recovery, provider, cidrs, step_up
     )

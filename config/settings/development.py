@@ -30,3 +30,5 @@ if urlsplit(S3_ENDPOINT_URL).hostname not in {"localhost", "127.0.0.1", "minio"}
 
 
 ACCOUNT_SECURITY = load_security_config(os.environ, production=False)
+
+SETTINGS_ENV = "development"

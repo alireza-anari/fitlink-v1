@@ -1,4 +1,5 @@
 import importlib
+from dataclasses import replace
 from datetime import timedelta
 from uuid import uuid4
 
@@ -28,6 +29,49 @@ def test_bare_staff_superuser_and_submitted_id_never_authorize(user):
             uuid4(),
             "identity_verified",
             timezone.now(),
+        )
+
+
+def test_step_up_is_issued_only_after_server_verification(user, settings):
+    staff = contract()
+    settings.ACCOUNT_SECURITY = replace(
+        settings.ACCOUNT_SECURITY, step_up_provider="mock"
+    )
+    issuer = apps.get_model("accounts", "User").objects.create_user("+989123456788")
+    case, now = uuid4(), timezone.now()
+    provider = staff.MockStepUpProvider()
+    assertion = provider.prepare(user.public_id, "account_recovery", case, now)
+    with pytest.raises(PermissionDenied), transaction.atomic():
+        staff.issue_mock_step_up(
+            user, "account_recovery", case, str(uuid4()), issuer, now, provider
+        )
+    assert not apps.get_model("governance", "StaffStepUpGrant").objects.exists()
+    with transaction.atomic():
+        grant_id = staff.issue_mock_step_up(
+            user,
+            "account_recovery",
+            case,
+            assertion.raw_assertion,
+            issuer,
+            now,
+            provider,
+        )
+    assert (
+        apps.get_model("governance", "StaffStepUpGrant")
+        .objects.get(pk=grant_id)
+        .auth_version
+        == user.auth_version
+    )
+    assert apps.get_model("governance", "AuditEvent").objects.count() == 1
+    with pytest.raises(PermissionDenied), transaction.atomic():
+        staff.issue_mock_step_up(
+            user,
+            "account_recovery",
+            case,
+            assertion.raw_assertion,
+            issuer,
+            now,
+            provider,
         )
 
 

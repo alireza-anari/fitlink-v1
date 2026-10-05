@@ -28,6 +28,10 @@ def test_only_foundation_routes_and_identity_model():
         "SecurityRateEvent",
         "OTPChallenge",
         "AccountSessionControl",
+        "AuditEvent",
+        "OutboxEvent",
+        "StaffCapabilityGrant",
+        "StaffStepUpGrant",
     }
     user = apps.get_model("accounts", "User")
     assert {field.name for field in user._meta.get_fields()} == {
@@ -52,4 +56,8 @@ def test_only_foundation_routes_and_identity_model():
         "auth_version",
         "otpchallenge",
         "accountsessioncontrol",
+        "staff_capabilities",
+        "issued_staff_capabilities",
+        "staff_step_ups",
+        "issued_staff_step_ups",
     }

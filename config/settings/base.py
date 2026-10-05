@@ -69,7 +69,10 @@ if LOG_LEVEL not in {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}:
     env.invalid("LOG_LEVEL")
 RELEASE_ID = env.str_value("RELEASE_ID", "foundation")[:80]
 
-INSTALLED_APPS += ["apps.accounts.apps.AccountsConfig"]
+INSTALLED_APPS += [
+    "apps.accounts.apps.AccountsConfig",
+    "apps.governance.apps.GovernanceConfig",
+]
 AUTH_USER_MODEL = "accounts.User"
 
 REDIS_URL = env.str_value("REDIS_URL", "redis://127.0.0.1:6380/0")

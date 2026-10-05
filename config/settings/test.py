@@ -29,3 +29,5 @@ STORAGES["default"] = {"BACKEND": "django.core.files.storage.InMemoryStorage"}
 
 
 ACCOUNT_SECURITY = load_security_config(os.environ, production=False)
+
+SETTINGS_ENV = "test"

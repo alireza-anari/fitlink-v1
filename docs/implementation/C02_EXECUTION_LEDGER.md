@@ -97,3 +97,12 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 ## Task3 RED preparation
 - BASE848115c, whole Task3 brief read. Cloud RED9 expected failures: missing governance audit contract. No governance implementation exists.
 - Added real PostgreSQL transaction/dedup, ORM/SQL immutable audit and restricted NOLOGIN role tests;12 staff cases cover bare superuser, forgery, stale/version/case/user/capability/self-issue/current state. Required actual RED pending CI.
+
+- Remote sync: local2de9ba9f987b7b04ebfdd3d85e36754e5e8d0355 -> GitHub c366aa923f87e72f29e8846321026d04014aa1e0; tree496cfa14323fc808f6bb4b0b441a4cf3cb695aa4 verified, expected-parent non-forced ref update.
+- Actual Task3 RED run37320527330/job111798131005:15 expected governance/staff missing-contract failures,7 migration regression cases passed,2.37s; logs inspected before implementation.
+
+### Task3 implementation checkpoint
+- Added governance0001_initial (explicit accounts0005 + swappable dependency) and0002_audit_append_only. SQL owner UPDATE/DELETE denied; runtime SELECT/INSERT only audit probe, no retention bypass flag. Runtime TRUNCATE also denied by privileges; migrator retains DDL privileges for migrations, not ordinary staff.
+- Audit action/result/reason/changed-field allowlists; no unstructured private payload. Audit and ID-only outbox require existing domain atomic transaction; dedup conflict rejected.
+- Named capabilities/current account+version+case-bound fresh step-up; self-issued grants and bare staff/superuser denied. Private bounded single-use memory Mock step-up has no web route, is blocked outside development/test. No production adapter or grant CRUD installed.
+- Additional Mock contract RED2missing-provider/9passed then GREEN11; full Cloud121 units pass, mypy29 files/Django/production/drift green. Drift history unavailable locally is not PG proof. Real transaction/immutability/staff GREEN pendingCI.
