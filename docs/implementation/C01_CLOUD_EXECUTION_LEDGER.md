@@ -128,3 +128,7 @@ Task 4: Cloud PASS (24 unit tests; DB failure probe RED→GREEN; PostgreSQL17 im
 resolved from official registry to immutable digest). Live SELECT1, zero-state
 migration, auth_user absence and timeout/test-DB contracts PENDING_CI. No migrate
 run in Work Cloud. The local/test role may create test_fitlink; never a prod role.
+Mapping: local ffeed80a5e78034ff91b031e06eec6e00cb408fb -> GitHub 1bc1c85aec53e0dec3932805a9e9f7dd9a9196ac (tree 12aca4315046cbf971d4211afc431eedabd209c5).
+Task 5: Cloud PASS (26 units; Redis config/failure probe RED→GREEN; private-loopback
+Redis7.4 immutable image; distinct DB0/1/2/3; bounded2s cache/probes). Real Redis
+PONG/cache roundtrip PENDING_CI. Dev/test reject remote Redis and PostgreSQL hosts.

@@ -70,3 +70,18 @@ RELEASE_ID = env.str_value("RELEASE_ID", "foundation")[:80]
 
 INSTALLED_APPS += ["apps.accounts.apps.AccountsConfig"]
 AUTH_USER_MODEL = "accounts.User"
+
+REDIS_URL = env.str_value("REDIS_URL", "redis://127.0.0.1:6380/0")
+CELERY_BROKER_URL = env.str_value("CELERY_BROKER_URL", "redis://127.0.0.1:6380/1")
+CELERY_RESULT_BACKEND = env.str_value(
+    "CELERY_RESULT_BACKEND", "redis://127.0.0.1:6380/2"
+)
+CHANNEL_REDIS_URL = env.str_value("CHANNEL_REDIS_URL", "redis://127.0.0.1:6380/3")
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": REDIS_URL,
+        "KEY_PREFIX": "fitlink",
+        "OPTIONS": {"socket_connect_timeout": 2, "socket_timeout": 2},
+    }
+}

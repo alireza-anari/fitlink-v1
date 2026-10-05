@@ -12,5 +12,16 @@ services:
       interval: 3s
       timeout: 3s
       retries: 30
+  redis:
+    image: library/redis@sha256:c6eabf748fc7a61dbb5a705c78bcf3d6377b1127a97d0ce965c11c44ba46896f
+    ports: ["127.0.0.1:${REDIS_HOST_PORT:-6380}:6379"]
+    volumes: ["redis-data:/data"]
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
 volumes:
+  redis-data:
   db-data:

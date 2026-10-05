@@ -48,3 +48,16 @@ def csv_value(
     if required and not result:
         invalid(name)
     return result
+
+
+def require_local_redis(values: tuple[str, ...]) -> None:
+    from urllib.parse import urlsplit
+
+    for value in values:
+        parsed = urlsplit(value)
+        if parsed.scheme != "redis" or parsed.hostname not in {
+            "redis",
+            "127.0.0.1",
+            "localhost",
+        }:
+            invalid("REDIS_URLS")
