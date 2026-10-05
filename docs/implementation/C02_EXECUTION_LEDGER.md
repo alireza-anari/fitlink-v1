@@ -24,7 +24,7 @@
 8. COMPLETE — real recovery/receipt/staff/history/race/rollback/audited-read gates GREEN.
 9. COMPLETE — published dual-possession implementation and required CI verified during recovery.
 10. COMPLETE — Cloud RED→GREEN; current-source Foundation CI includes all23Consent PostgreSQL cases and full regression gates, inspected genuine success.
-11. IN_PROGRESS — Cloud RED→GREEN; real PostgreSQL races/current-source CI pending.
+11. COMPLETE — Cloud RED→GREEN; retry37369811515 attempt2 both required jobs SUCCESS, actual logs inspected.
 12–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
@@ -368,3 +368,10 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - PostgreSQL tests cover four independent switches, bare staff/superuser denial, case-bound/stale authority, same-version race, fresh read outage, data seed defaults, digest/expiry/revocation/entropy, anonymous landing/cookie forgery, current restrictions/adult/self denials, first-attribution race, idempotence and audit rollback. They have not run on a real database yet; no Task11 PASS claim.
 - Cloud Ruff/format171files, required mypy69files, Django check, migration drift (unavailable local PG history warning only), production deploy check and JS syntax pass. An over-broad exploratory mypy apps/config invocation reported existing out-of-scope Foundation stub/type errors; exact mandatory CI mypy target set passes unchanged.
 - Task11 remains IN_PROGRESS until actual required PostgreSQL races/failure/current-source CI logs pass. Tasks12–16 unstarted.
+
+## Task11 CI completion — 2026-10-05
+- Runner health: official GitHub incident update21:54:23Z declares Actions operating normally. On inspection, existing run37369811515 was already executing attempt2 started21:58:50Z; no duplicate rerun or trigger commit created. Original zero-step cancelled attempt remains infrastructure fallout, not implementation RED.
+- Remote f9c9bccffe07e3dc782c7fa7276623c9fd28342d/treec0b0c9172eb5c138319530f05024da8ccaf538d9 matches clean localef96111d482bbc51933c645367c9d194c7304cd0. Both retry logs confirm checkout of the authoritative remote commit.
+- c02-migrations job111997366271 SUCCESS: additive SQL inspected including accounts0013/governance0007..0008;185 real PostgreSQL cases passed28.41s including all21 flag/referral cases, independent-connection flag-version and first-attribution races, disabled seeds, fail-closed reads and authority/rollback/cookie contracts. Redis durable quota prepare/restart/verify passed.
+- foundation job111997366742 SUCCESS:183units11.94s, Ruff/format171files/mypy70files/Django/production and frozen/static checks passed; fresh migrations including new flag/referral schema applied, no drift;386combinedbackend132.36s,2browser before restart,5Redis/Celery/Channels recovery,1MinIO recovery,2browser after restart. No selected skips. Full required regression evidence inspected.
+- Task11 COMPLETE. Tasks1–10 preserved. Task12 next;13–16 unstarted. No merge/deploy/C03.
