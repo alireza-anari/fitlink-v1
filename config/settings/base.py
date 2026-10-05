@@ -94,9 +94,9 @@ CACHES = {
 INSTALLED_APPS += ["rest_framework"]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication"
+        "config.authentication.AccountSessionAuthentication"
     ],
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_PERMISSION_CLASSES": ["config.permissions.AccountActionPermission"],
 }
 
 CELERY_ACCEPT_CONTENT = ["json"]
@@ -172,3 +172,8 @@ LOGGING = {
 }
 
 # Account settings are loaded in the concrete overlay.
+
+MIDDLEWARE.insert(
+    MIDDLEWARE.index("django.contrib.auth.middleware.AuthenticationMiddleware") + 1,
+    "config.account_middleware.AccountMiddleware",
+)

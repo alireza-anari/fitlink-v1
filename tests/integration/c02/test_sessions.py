@@ -7,7 +7,6 @@ from django.apps import apps
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
-from django.db import transaction
 from django.test import RequestFactory
 from django.utils import timezone
 from test_otp_consume import PHONE, sent
@@ -89,15 +88,22 @@ def test_single_and_global_logout_synchronous(limiter, scope):
     request, _ = login(limiter)
     actor = service().resolve_session(request, timezone.now())
     user = apps.get_model("accounts", "User").objects.get(public_id=actor.user_uuid)
+    other = request_with_session()
+    from django.db import transaction
+
     with transaction.atomic():
-        user = (
+        locked = (
             apps.get_model("accounts", "User")
             .objects.select_for_update()
             .get(pk=user.pk)
         )
-        service().revoke_sessions(
-            user, scope, timezone.now(), record, control_id=actor.control_id
-        )
+        service().issue_session(other, locked, "normal", timezone.now(), record)
+    service().revoke_sessions(
+        user, scope, timezone.now(), record, control_id=actor.control_id
+    )
+    assert (service().resolve_session(other, timezone.now()) is not None) is (
+        scope == "current"
+    )
     assert service().resolve_session(request, timezone.now()) is None
     user.refresh_from_db()
     assert user.auth_version == (2 if scope == "all" else 1)
@@ -111,7 +117,9 @@ def test_audit_failure_rolls_back_session_and_clears_request(limiter):
     challenge, code = sent(timezone.now())
 
     def failed(outcome, **kwargs):
-        raise RuntimeError("audit unavailable")
+        if outcome.action == "account.login":
+            raise RuntimeError("audit unavailable")
+        original(outcome, **kwargs)
 
     original = identity.record_security_outcome
     identity.record_security_outcome = failed
