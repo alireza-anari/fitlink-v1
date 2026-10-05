@@ -18,8 +18,9 @@
 2. COMPLETE — additive schema/upgrade; Cloud, PostgreSQL and full Foundation CI green.
 3. COMPLETE — audit/outbox/staff; payload findings fixed with real PostgreSQL GREEN.
 4. COMPLETE — real dual-store quotas, races, outage/reset/process/restart; one deferred retry hint minor.
-5. IN_PROGRESS — digest-only OTP issuance RED preparation.
-6–16. UNSTARTED.
+5. COMPLETE — digest-only issuance, ambient boundary fix; Cloud/service gates green.
+6. IN_PROGRESS — actual RED confirmed; atomic proof/adult implementation.
+7–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -210,3 +211,15 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - BASE94211a1; whole Task6 brief read. Cloud2expected missing atomic verification/application and bounded digit input assertions before implementation.
 - Real PostgreSQL/Redis tests added for299/300s, wrong1..5/fifthcorrect/locked/replay/resend/dummycompare/purpose/context/generation/missingack/staleversion/malformedshape; separate-connection concurrent first registration; audit rollback; under18/missingattestation/legacy/restricted/suspended; non-login consumed proof/replay/rollback/concurrent application with no sessions. Local collect-only confirms discovery, no service PASS claimed.
 - Actual RED pendingCI before implementation.
+
+### Task6 recovery inspection and implementation
+- User resumed interrupted run. git status clean, no staged/untracked source or local implementation to preserve. Local HEAD51c906c94c6333ddea04180d05538ea952aabb77 equals remote8fe0323634488841399719cca7fa6316a0c8546f tree9c51e23c9d426c63d9c4d04c4210fbe7a5ef5eae. No reset/checkout/branch recreation/repeated completed tasks. Corrected stale top task summary using recorded completion evidence.
+- Remote sync: local51c906c94c6333ddea04180d05538ea952aabb77 -> GitHub8fe0323634488841399719cca7fa6316a0c8546f; exact tree equality verified.
+- Actual RED run37330945477/job111833563047:22 expected missing atomic proof assertions,48previous cases passed13.97s. Full failures inspected before implementation; skipped restart is not PASS.
+- Task5 final run37330187531 now full SUCCESS; completed Foundation logs inspection remains to be recorded.
+- Implemented bounded supported digit input, constant-time real/dummy comparison, quota reservation before proof, sorted anchor/phone/User/challenge locks, committed wrong attempts/audit, adult gate before canonical manager User creation, single consume and rollback-safe one-time non-login application. No session/provider/vendor/model/migration expansion.
+- Ruling: explicit internal birth_date/adult_attested keywords and server-owned binding/context callbacks; optional synchronous on_login callback will let Task7 persist session inside this exact proof transaction. No public API until Task14. Internal application effect/context callbacks are server code, not client-selected actions. Adult declaration schema version adult-v1 records a declaration, never verified age or sensitive consent.
+- Recovery uv rebuilt ignored stale .venv with frozen unchanged lockfile; no tracked dependency changed. Cloud2focused verification contracts green; type issue for nullable birth date diagnosed and explicit missing-date denial added. Actual GREEN pendingCI.
+
+- Task5 final Foundation37330187531/job111831032453 completed logs inspected:138units/204combinedbackend/2+2browser/5Redis-Celery-Channels/1MinIO, all SUCCESS.
+- Task6 Cloud GREEN140units13.35s, mypy36files/Ruff/format126files/Django/no migration drift all pass. History warning due absent Cloud PG is not real migration evidence. Actual proof/race/adult GREEN and focused independent review PENDING; do not advance Task7.
