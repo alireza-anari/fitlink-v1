@@ -140,3 +140,7 @@ Mapping: local a6657f7942add825656ff5c89db7d926140ccfd2 -> GitHub 99452d2278a4ac
 Task 7: Cloud PASS (35 units; Celery namespace/JSON/empty Beat/local apply
 RED→GREEN). Non-eager15s actual worker roundtrip and Beat runtime PENDING_CI.
 Redis result expiry86400s; no business job/schedule/outbox models.
+Mapping: local e65b5c3f927381eb879a721603d07dc27dc8c7ab -> GitHub 1bd7db319eaaef5ad05e71f2713cf88ffd88779c (tree 814cb583952b0b10d602255866720e3a5812f3fe).
+Task 8: Cloud PASS (38 units; ASGI HTTP/status, empty product socket routes,
+untrusted-origin rejection RED→GREEN). Redis group send/receive/pool reconnect
+PENDING_CI; actual Redis restart will precede another CI transport roundtrip.

@@ -113,3 +113,11 @@ CELERY_TASK_SOFT_TIME_LIMIT = 20
 CELERY_TASK_TIME_LIMIT = 30
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 CELERY_WORKER_REDIRECT_STDOUTS = False
+
+INSTALLED_APPS += ["channels"]
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {"hosts": [CHANNEL_REDIS_URL], "prefix": "fitlink", "expiry": 30},
+    }
+}
