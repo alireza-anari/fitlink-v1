@@ -67,3 +67,6 @@ LOG_LEVEL = env.str_value("LOG_LEVEL", "INFO")
 if LOG_LEVEL not in {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}:
     env.invalid("LOG_LEVEL")
 RELEASE_ID = env.str_value("RELEASE_ID", "foundation")[:80]
+
+INSTALLED_APPS += ["apps.accounts.apps.AccountsConfig"]
+AUTH_USER_MODEL = "accounts.User"

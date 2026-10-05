@@ -113,3 +113,13 @@ Task 2: Cloud PASS (16 settings/env tests RED→GREEN; Django check no issues).
 Ruling: first red run overrides pytest addopts because config.settings.test does
 not exist yet; missing config caused16 failures, not dependency failure — normal
 --ds test overlay restored for green run. No database-backed test or migration.
+Mapping: local f64557a3d263ee7d8ad444b206a81b60992298f4 -> GitHub 99938d27c078cb3974eab0237746f30b0f0f8d8e (tree e5169e5bbd6401877ace79b875dbca700be8f7e7).
+Task 3: Cloud PASS (23 total unit tests green; custom User contract7 cases;
+accounts/0001_initial generated and inspected; check no issues; no model drift).
+AUTH_USER_MODEL=accounts.User configured before makemigrations. Minimal identity,
+unusable passwords, UUID, phone uniqueness/check constraint and auth relations only.
+No DB migration execution. Clean PostgreSQL/no auth_user gates PENDING_CI in
+ tests/integration/test_initial_migration.py and test_user_model.py.
+Ruling: makemigrations attempts a migration-history read on absent PostgreSQL;
+connection-refused warning is recorded, generation/drift commands exit0 — Cloud
+proves model state only, CI must prove the real migration graph from zero.
