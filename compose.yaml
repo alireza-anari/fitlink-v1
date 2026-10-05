@@ -30,7 +30,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:?generate development root user}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?generate development root password}
-    command: ["minio", "server", "/data", "--console-address", ":9001"]
+    command: ["minio", "server", "/data", "--quiet", "--console-address", ":9001"]
     ports: ["127.0.0.1:${MINIO_HOST_PORT:-9000}:9000", "127.0.0.1:${MINIO_CONSOLE_HOST_PORT:-9001}:9001"]
     volumes: ["minio-data:/data"]
     healthcheck:
@@ -52,7 +52,90 @@ services:
       MINIO_APP_SECRET_KEY: ${MINIO_APP_SECRET_KEY:?generate development app secret}
     entrypoint: ["sh", "/init/minio-init.sh"]
     volumes: ["./docker/minio-init.sh:/init/minio-init.sh:ro"]
+  web: &app
+    build:
+      context: .
+      target: development
+    environment: &app-env
+      DJANGO_SETTINGS_MODULE: config.settings.development
+      UV_PROJECT_ENVIRONMENT: /opt/venv
+      UV_NO_SYNC: '1'
+      UV_NO_DEV: '1'
+      POSTGRES_DB: fitlink
+      POSTGRES_USER: fitlink
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?generate development DB password}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: '5432'
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      CHANNEL_REDIS_URL: redis://redis:6379/3
+      STORAGE_BACKEND: s3
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_BUCKET_NAME: fitlink-private
+      S3_REGION: us-east-1
+      S3_ADDRESSING_STYLE: path
+      S3_ACCESS_KEY_ID: ${MINIO_APP_ACCESS_KEY:?generate app key}
+      S3_SECRET_ACCESS_KEY: ${MINIO_APP_SECRET_KEY:?generate app secret}
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      minio-init: {condition: service_completed_successfully}
+    volumes: [".:/app"]
+    ports: ["127.0.0.1:${WEB_PORT:-8000}:8000"]
+    command: ["uv", "run", "--frozen", "uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
+    healthcheck:
+      test: ["CMD", "uv", "run", "--frozen", "python", "docker/healthcheck.py", "web"]
+      interval: 3s
+      timeout: 6s
+      retries: 30
+  worker:
+    <<: *app
+    ports: []
+    command: ["uv", "run", "--frozen", "celery", "--quiet", "-A", "config.celery:app", "worker", "--loglevel=INFO", "--concurrency=2", "--hostname=foundation@%h"]
+    healthcheck:
+      test: ["CMD", "uv", "run", "--frozen", "python", "docker/healthcheck.py", "worker"]
+      interval: 5s
+      timeout: 6s
+      retries: 30
+  beat:
+    <<: *app
+    ports: []
+    volumes: [".:/app", "beat-data:/var/lib/celery"]
+    command: ["uv", "run", "--frozen", "celery", "--quiet", "-A", "config.celery:app", "beat", "--loglevel=INFO", "--schedule=/var/lib/celery/celerybeat-schedule"]
+    healthcheck:
+      test: ["CMD", "uv", "run", "--frozen", "python", "docker/healthcheck.py", "beat"]
+      interval: 5s
+      timeout: 6s
+      retries: 30
+  checks:
+    <<: *app
+    profiles: [test]
+    build:
+      context: .
+      target: checks
+    ports: []
+    environment:
+      <<: *app-env
+      UV_NO_DEV: '0'
+    command: ["uv", "run", "--frozen", "pytest", "tests/unit", "tests/integration", "-q"]
+    healthcheck: {disable: true}
+  browser:
+    <<: *app
+    profiles: [test]
+    build:
+      context: .
+      target: e2e
+    ports: []
+    environment:
+      <<: *app-env
+      UV_NO_DEV: '0'
+      PLAYWRIGHT_BROWSERS_PATH: /opt/playwright
+      E2E_BASE_URL: http://web:8000
+    command: ["uv", "run", "--frozen", "pytest", "tests/e2e", "-q", "-m", "e2e"]
+    healthcheck: {disable: true}
 volumes:
+  beat-data:
   minio-data:
   redis-data:
   db-data:

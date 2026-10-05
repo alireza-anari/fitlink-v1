@@ -19,6 +19,24 @@ def main() -> int:
         from config.health import database_available
 
         return 0 if database_available() else 1
+    if kind == "worker":
+        import socket
+
+        from config.celery import app
+
+        return (
+            0
+            if app.control.ping(
+                timeout=2, destination=["foundation@" + socket.gethostname()]
+            )
+            else 1
+        )
+    if kind == "beat":
+        from pathlib import Path
+
+        schedule = Path("/var/lib/celery/celerybeat-schedule")
+        running = b"beat" in Path("/proc/1/cmdline").read_bytes()
+        return 0 if schedule.exists() and running else 1
     return 1
 
 

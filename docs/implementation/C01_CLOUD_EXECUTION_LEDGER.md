@@ -154,3 +154,14 @@ and fixes a privilege-escalation CVE. Build verified official release source
 RELEASE.2025-10-15T17-29-55Z at9e49d5e7 and use official mc release asset checksum;
 no unofficial mirror/older vulnerable image — Go is build-only and build time grows.
 Docker definitions use the approved MinIO architecture and remain PENDING_CI.
+Mapping: local 121de3aad2f75335de09087876798273e1964c88 -> GitHub dd5749291f4c11b12147014a1fe683946da4abca (tree b4d9f6b15de8d7e436012832f417b9e9eb649ecb).
+Task 10: Cloud static authoring PASS; Compose YAML parsed and service/env/runtime
+boundaries reviewed. Actual config/build/private MinIO/source compilation/nonroot
+permissions/web/worker/Beat/restarts remain PENDING_CI; not a runtime PASS.
+Ruling: runtime has no pytest/dev deps — use a separate locked checks image/service
+for integration verification instead of installing test tools in running web —
+CI must validate that the test service reaches the same runtime/infrastructure.
+Ruling: suppress Celery/MinIO banners with --quiet and safe structured logs to avoid
+connection/config dumps — runtime startup observability is explicit health/log events.
+MinIO server runtime is the pinned Python base, so its Python health command is
+actually provided; source-built image replaces unavailable official image distribution.

@@ -72,3 +72,19 @@ Provide a Docker-capable execution host with Compose and a usable daemon, rerun
 Task 1 tooling checks and locked syncs there, then start Task 2. Do not run a
 migration or DB-backed test until Task 3 establishes accounts.User. Application,
 PostgreSQL/Redis/Celery/Channels/MinIO/browser/CI gates have not run here.
+
+## Immutable Cloud/CI image references
+
+- postgres: `library/postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652`
+- redis: `library/redis@sha256:c6eabf748fc7a61dbb5a705c78bcf3d6377b1127a97d0ce965c11c44ba46896f`
+- python: `library/python@sha256:2325bb286ec344af3e5898cc224b5844e2707ac6e26b1632516fd3edc84a5e26`
+- node: `library/node@sha256:4196d66a565c6f195728d9952f161f4adfe2ad753052a08b7ec7f1c5a6bda42b`
+- uv: `ghcr.io/astral-sh/uv@sha256:04d046b13e60d6bcec73cbc5e1cad25d680dea90c8573340950a0ac2d1aef424`
+- go: `library/golang@sha256:a688600ca24f8a4d3ca77f95b0dd40704a9fc787c826660eb7ba0b641b8b175d`
+- minio_source_sha256: `45521908307306e925c98d629e1c17d78c8b72b6ee242b1bfb1409f7d8ee5841`
+
+MinIO source release2025-10-15 at9e49d5e7; mc release2025-08-13 asset SHA256
+01f866e9c5f9b87c2b09116fa5d7c06695b106242d829a8bb32990c00312e891.
+Official MinIO source-build guidance: https://github.com/minio/minio/releases/tag/RELEASE.2025-10-15T17-29-55Z
+Build-only Go and mc artifact currently target Linuxamd64 GitHub runner; additional
+platforms require separately verified official mc checksums. No binaries committed.
