@@ -46,6 +46,7 @@ def test_registered_security_contracts():
         "RecoveryRequest",
         "RecoveryEvidenceMetadata",
         "PhoneChangeHistory",
+        "PhoneChangeIntent",
     }
     for name in SECURITY_MODELS:
         model = apps.get_model("accounts", name)

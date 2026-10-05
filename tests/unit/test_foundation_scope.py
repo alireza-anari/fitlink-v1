@@ -35,6 +35,7 @@ def test_only_foundation_routes_and_identity_model():
         "RecoveryRequest",
         "RecoveryEvidenceMetadata",
         "PhoneChangeHistory",
+        "PhoneChangeIntent",
     }
     user = apps.get_model("accounts", "User")
     assert {field.name for field in user._meta.get_fields()} == {
@@ -68,4 +69,5 @@ def test_only_foundation_routes_and_identity_model():
         "recovery_decisions",
         "recovery_evidence_reviews",
         "phone_history",
+        "phone_change_intents",
     }

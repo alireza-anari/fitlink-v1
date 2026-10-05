@@ -1,20 +1,27 @@
 """Explicit provider and synchronous audit wiring for public identity commands."""
 
-from datetime import date
+from datetime import date, datetime
 from uuid import UUID
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.backends.db import SessionStore
+from django.db import IntegrityError
 from django.http import HttpRequest
 from django.utils import timezone
 
-from apps.accounts import otp
-from apps.accounts.contracts import OtpProofResult, OtpRequestResult, SecurityOutcome
+from apps.accounts import otp, phone_change
+from apps.accounts.contracts import (
+    IdentityChangeResult,
+    OtpProofResult,
+    OtpRequestResult,
+    SecurityOutcome,
+)
 from apps.accounts.security_models import LOGIN_CONTEXT
-from apps.accounts.sessions import issue_session, session_scope
-from apps.accounts.sms import configured_provider
+from apps.accounts.sessions import AccountActor, issue_session, session_scope
+from apps.accounts.sms import SmsProvider, configured_provider
 from apps.governance.audit import append_event
+from apps.governance.outbox import append_outbox
 
 
 def record_security_outcome(
@@ -75,3 +82,93 @@ def verify_login_otp(
         request.session = SessionStore()
         request.user = AnonymousUser()
         raise
+
+
+def begin_phone_change(actor: AccountActor, new_phone: str, at: datetime) -> UUID:
+    return phone_change.begin_phone_change(
+        actor,
+        new_phone,
+        at,
+        lambda outcome: record_security_outcome(outcome, actor_uuid=actor.user_uuid),
+    )
+
+
+def _emit_phone_change(result: IdentityChangeResult) -> None:
+    append_outbox(
+        "account.security_changed",
+        result.user_uuid,
+        result.auth_version,
+        {"user_uuid": str(result.user_uuid)},
+        f"phone_change:{result.context_uuid}",
+    )
+
+
+def apply_phone_change(
+    actor: AccountActor, change_uuid: UUID, at: datetime
+) -> IdentityChangeResult:
+    try:
+        return phone_change.apply_phone_change(
+            actor,
+            change_uuid,
+            at,
+            lambda outcome: record_security_outcome(
+                outcome, actor_uuid=actor.user_uuid
+            ),
+            emit=_emit_phone_change,
+        )
+    except IntegrityError:
+        raise phone_change.PhoneChangeConflict("Phone change conflict") from None
+
+
+def request_phone_change_otp(
+    actor: AccountActor,
+    change_uuid: UUID,
+    kind: str,
+    ip: str,
+    at: datetime,
+    *,
+    provider: SmsProvider | None = None,
+) -> OtpRequestResult:
+    binding = phone_change.change_binding(actor, change_uuid, kind, at)
+    return otp.request_otp(
+        binding.phone,
+        ip,
+        binding.purpose,
+        binding.context_uuid,
+        at,
+        record_security_outcome,
+        provider=provider or configured_provider(),
+        binding=binding,
+        validate_context=lambda value: phone_change.validate_change_binding(
+            actor, value, at
+        ),
+    )
+
+
+def verify_phone_change_otp(
+    actor: AccountActor,
+    change_uuid: UUID,
+    kind: str,
+    challenge_id: UUID,
+    code: str,
+    ip: str,
+    at: datetime,
+) -> OtpProofResult:
+    binding = phone_change.change_binding(actor, change_uuid, kind, at)
+    return otp.verify_otp(
+        binding.phone,
+        challenge_id,
+        code,
+        binding.purpose,
+        binding.context_uuid,
+        ip,
+        at,
+        record_security_outcome,
+        binding=binding,
+        validate_context=lambda value: phone_change.validate_change_binding(
+            actor, value, at
+        ),
+        on_proof=lambda proof: phone_change.record_change_proof(
+            actor, binding, proof.challenge_id, at
+        ),
+    )

@@ -6,7 +6,7 @@ from uuid import uuid4
 
 import pytest
 from django.apps import apps
-from django.db import close_old_connections, transaction
+from django.db import IntegrityError, close_old_connections, transaction
 from django.utils import timezone
 from test_otp_issue import record
 from test_recovery_apply import approved, prove
@@ -103,13 +103,14 @@ def test_dual_proof_changes_existing_user_and_requires_new_login(limiter):
     [
         "only_old",
         "only_new",
-        "same_proof",
         "wrong_purpose",
         "wrong_context",
         "foreign",
         "stale",
         "expired",
         "destination_owned",
+        "restricted",
+        "suspended",
     ],
 )
 def test_every_dual_proof_and_owner_binding_is_rechecked(limiter, defect):
@@ -121,11 +122,7 @@ def test_every_dual_proof_and_owner_binding_is_rechecked(limiter, defect):
     intent.refresh_from_db()
     at = timezone.now()
     proof_model = apps.get_model("accounts", "OTPChallenge")
-    if defect == "same_proof":
-        type(intent).objects.filter(pk=intent.pk).update(
-            new_phone_challenge_id=intent.old_phone_challenge_id
-        )
-    elif defect == "wrong_purpose":
+    if defect == "wrong_purpose":
         proof_model.objects.filter(pk=intent.new_phone_challenge_id).update(
             purpose="recovery_new_phone"
         )
@@ -143,6 +140,10 @@ def test_every_dual_proof_and_owner_binding_is_rechecked(limiter, defect):
         at = proof_model.objects.get(pk=intent.old_phone_challenge_id).expires_at
     elif defect == "destination_owned":
         owner(NEW)
+    elif defect in {"restricted", "suspended"}:
+        type(user).objects.filter(pk=user.pk).update(
+            state=defect, is_active=defect != "suspended"
+        )
     with pytest.raises(PermissionError):
         commands.apply_phone_change(actor, intent.id, at)
     user.refresh_from_db()
@@ -287,3 +288,13 @@ def test_recovery_and_owned_change_serialize_without_two_effects(limiter, settin
     user.refresh_from_db()
     assert user.phone in {NEW, "+989123456781"} and user.auth_version == 2
     assert apps.get_model("accounts", "PhoneChangeHistory").objects.count() == 1
+
+
+def test_database_rejects_one_challenge_as_both_owned_proofs(limiter):
+    module, commands, user, actor, request, intent = fully_proved(started())
+    with pytest.raises(IntegrityError), transaction.atomic():
+        type(intent).objects.filter(pk=intent.pk).update(
+            new_phone_challenge_id=intent.old_phone_challenge_id
+        )
+    user.refresh_from_db()
+    assert user.phone == OLD and user.auth_version == 1

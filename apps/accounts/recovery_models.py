@@ -246,3 +246,99 @@ class PhoneChangeHistory(models.Model):
                 name="history_auth_versions",
             ),
         ]
+
+
+class PhoneChangeIntent(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="phone_change_intents",
+    )
+    old_phone = models.CharField(max_length=13)
+    new_phone = models.CharField(max_length=13)
+    issued_auth_version = models.PositiveBigIntegerField()
+    created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField()
+    version = models.PositiveBigIntegerField(default=1)
+    old_phone_challenge = models.ForeignKey(
+        "accounts.OTPChallenge",
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="old_phone_intents",
+    )
+    new_phone_challenge = models.ForeignKey(
+        "accounts.OTPChallenge",
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="new_phone_intents",
+    )
+    old_phone_verified_at = models.DateTimeField(null=True)
+    new_phone_verified_at = models.DateTimeField(null=True)
+    applied_at = models.DateTimeField(null=True)
+    retired_at = models.DateTimeField(null=True)
+    effect_auth_version = models.PositiveBigIntegerField(null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user"],
+                condition=models.Q(applied_at__isnull=True, retired_at__isnull=True),
+                name="phone_change_live_user",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    old_phone__regex=CANONICAL_PHONE, new_phone__regex=CANONICAL_PHONE
+                )
+                & ~models.Q(old_phone=models.F("new_phone")),
+                name="phone_change_distinct_phones",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    issued_auth_version__gte=1,
+                    version__gte=1,
+                    expires_at__gt=models.F("created_at"),
+                ),
+                name="phone_change_version_expiry",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    old_phone_challenge__isnull=True, old_phone_verified_at__isnull=True
+                )
+                | models.Q(
+                    old_phone_challenge__isnull=False,
+                    old_phone_verified_at__isnull=False,
+                ),
+                name="phone_change_old_proof_pair",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    new_phone_challenge__isnull=True, new_phone_verified_at__isnull=True
+                )
+                | models.Q(
+                    new_phone_challenge__isnull=False,
+                    new_phone_verified_at__isnull=False,
+                ),
+                name="phone_change_new_proof_pair",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(old_phone_challenge__isnull=True)
+                | models.Q(new_phone_challenge__isnull=True)
+                | ~models.Q(old_phone_challenge=models.F("new_phone_challenge")),
+                name="phone_change_distinct_proofs",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    applied_at__isnull=True, effect_auth_version__isnull=True
+                )
+                | models.Q(
+                    applied_at__isnull=False,
+                    retired_at__isnull=True,
+                    effect_auth_version__isnull=False,
+                    effect_auth_version=models.F("issued_auth_version") + 1,
+                    old_phone_challenge__isnull=False,
+                    new_phone_challenge__isnull=False,
+                ),
+                name="phone_change_effect_binding",
+            ),
+        ]
