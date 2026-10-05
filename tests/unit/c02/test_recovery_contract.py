@@ -68,3 +68,12 @@ def test_sensitive_recovery_reads_require_a_transactional_recorder():
         parameters = inspect.signature(getattr(module, name)).parameters
         assert "record" in parameters, "missing mandatory evidence-access audit"
         assert parameters["record"].default is inspect.Parameter.empty
+
+
+def test_every_allowlisted_evidence_classification_fits_schema():
+    model = apps.get_model("accounts", "RecoveryEvidenceMetadata")
+    from apps.accounts.recovery_models import EVIDENCE_TYPES
+
+    assert model._meta.get_field("classification").max_length >= max(
+        len(value) for value in EVIDENCE_TYPES
+    )

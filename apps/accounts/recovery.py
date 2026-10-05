@@ -3,18 +3,35 @@
 import hmac
 import re
 import secrets
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from datetime import datetime, timedelta
 from uuid import UUID
 
 from django.conf import settings
 from django.db import models, transaction
 
-from .contracts import OutcomeRecorder, RecoveryReceipt, SecurityOutcome
+from .contracts import (
+    IdentityChangeResult,
+    OutcomeRecorder,
+    RecoveryReceipt,
+    SecurityOutcome,
+)
 from .limiter import canonical_ip, reserve_admission
-from .otp import OtpThrottled
+from .models import User
+from .otp import OtpBinding, OtpThrottled
 from .phone import normalize_iranian_mobile
-from .recovery_models import EVIDENCE_OUTCOMES, EVIDENCE_TYPES, RecoveryRequest
+from .recovery_models import (
+    EVIDENCE_OUTCOMES,
+    EVIDENCE_TYPES,
+    PhoneChangeHistory,
+    RecoveryEvidenceMetadata,
+    RecoveryRequest,
+)
 from .security_keys import security_digest
+from .security_models import OTPChallenge, OTPPhoneState
+from .sessions import AccountActor
+from .state import invalidate_auth_locked
 
 
 class RecoveryUnavailable(RuntimeError):
@@ -125,17 +142,6 @@ def recovery_status(request_uuid: UUID, receipt: str, at: datetime) -> str:
 
 
 # Domain owns case transitions. The root supplies current named staff authority.
-from collections.abc import Callable, Iterator  # noqa: E402
-from contextlib import contextmanager  # noqa: E402
-
-from .contracts import IdentityChangeResult  # noqa: E402
-from .models import User  # noqa: E402
-from .otp import OtpBinding  # noqa: E402
-from .recovery_models import PhoneChangeHistory, RecoveryEvidenceMetadata  # noqa: E402
-from .security_models import OTPChallenge, OTPPhoneState  # noqa: E402
-from .sessions import AccountActor  # noqa: E402
-from .state import invalidate_auth_locked  # noqa: E402
-
 StaffAuthorizer = Callable[[AccountActor, UUID, UUID, str, datetime], None]
 EffectRecorder = Callable[[IdentityChangeResult], None]
 
@@ -390,18 +396,35 @@ def decide_recovery(
         _record_case(case, "recovery." + decision, record, reason_code)
 
 
+def _record_access(case: RecoveryRequest, record: OutcomeRecorder, reason: str) -> None:
+    if not callable(record):
+        raise ValueError("Required evidence-access recorder")
+    record(
+        SecurityOutcome(
+            "recovery.evidence",
+            "succeeded",
+            case.target_user.public_id if case.target_user else None,
+            case.id,
+            (),
+            reason,
+        )
+    )
+
+
 def recovery_detail(
     actor: AccountActor,
     request_uuid: UUID,
     step_up_id: UUID,
     reason_code: str,
     at: datetime,
+    record: OutcomeRecorder,
     *,
     authorize: StaffAuthorizer,
 ) -> RecoveryRequest:
     with locked_case(
         actor, request_uuid, step_up_id, reason_code, at, authorize
     ) as case:
+        _record_access(case, record, reason_code)
         return case
 
 
@@ -412,13 +435,16 @@ def evidence_detail(
     step_up_id: UUID,
     reason_code: str,
     at: datetime,
+    record: OutcomeRecorder,
     *,
     authorize: StaffAuthorizer,
 ) -> RecoveryEvidenceMetadata | None:
     with locked_case(
         actor, request_uuid, step_up_id, reason_code, at, authorize
     ) as case:
-        return case.evidence.filter(pk=evidence_uuid).first()
+        evidence = case.evidence.filter(pk=evidence_uuid).first()
+        _record_access(case, record, reason_code)
+        return evidence
 
 
 def recovery_binding(

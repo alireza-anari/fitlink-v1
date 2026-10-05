@@ -164,7 +164,7 @@ class RecoveryEvidenceMetadata(models.Model):
     case = models.ForeignKey(
         RecoveryRequest, on_delete=models.PROTECT, related_name="evidence"
     )
-    classification = models.CharField(max_length=15)
+    classification = models.CharField(max_length=16)
     outcome = models.CharField(max_length=10)
     checksum = models.CharField(max_length=64)
     secured_reference = models.UUIDField()

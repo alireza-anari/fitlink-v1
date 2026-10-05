@@ -134,7 +134,13 @@ def recovery_detail(
     at: datetime,
 ):
     return recovery.recovery_detail(
-        actor, request_uuid, step_up_id, reason_code, at, authorize=authorize
+        actor,
+        request_uuid,
+        step_up_id,
+        reason_code,
+        at,
+        _recorder(actor),
+        authorize=authorize,
     )
 
 
@@ -153,6 +159,7 @@ def evidence_detail(
         step_up_id,
         reason_code,
         at,
+        _recorder(actor),
         authorize=authorize,
     )
 

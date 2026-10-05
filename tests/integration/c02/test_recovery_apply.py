@@ -559,3 +559,44 @@ def test_staff_evidence_reads_are_audited_and_audit_outage_denies(
         commands.evidence_detail(
             actor, case.id, evidence.id, step, "identity_verified", timezone.now()
         )
+
+
+def test_resolved_proof_issued_before_approval_cannot_restore_identity(
+    limiter, settings
+):
+    target = owner()
+    recovery, commands, receipt, actor, staff, grant, step, case = prepared(settings)
+    commands.resolve_recovery(
+        actor, case.id, case.version, step, "identity_verified", timezone.now()
+    )
+    prove(commands, receipt)
+    case.refresh_from_db()
+    commands.add_recovery_evidence(
+        actor,
+        case.id,
+        case.version,
+        "identity_match",
+        "verified",
+        "a" * 64,
+        uuid4(),
+        step,
+        "identity_verified",
+        timezone.now(),
+    )
+    case.refresh_from_db()
+    commands.decide_recovery(
+        actor,
+        case.id,
+        case.version,
+        "approved",
+        "identity_verified",
+        step,
+        timezone.now(),
+    )
+    case.refresh_from_db()
+    with pytest.raises(recovery.RecoveryConflict):
+        commands.apply_recovery(
+            actor, case.id, case.version, step, "identity_verified", timezone.now()
+        )
+    target.refresh_from_db()
+    assert target.phone == OLD and target.auth_version == 1
