@@ -31,7 +31,12 @@ def test_exact_phone_and_ip_rolling_limits(limiter, kind, phone_limit, ip_limit)
     assert not limiter.reserve_admission(
         "+989999999999", "127.0.0.2", kind, now
     ).allowed
-    boundary = now + timedelta(seconds=3600)
+    if kind == "recovery_intake":
+        for seconds in [3600, 86399]:
+            assert not limiter.reserve_admission(
+                "+989123456789", "127.0.0.1", kind, now + timedelta(seconds=seconds)
+            ).allowed
+    boundary = now + timedelta(seconds=86400 if kind == "recovery_intake" else 3600)
     assert limiter.reserve_admission(
         "+989123456789", "127.0.0.1", kind, boundary
     ).allowed

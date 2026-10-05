@@ -151,3 +151,10 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Dedicated logical DB4 config; production TLS certificate/hostname/query/db checks retained; Mock/recovery disabled production. Cloud6limiter and129full unit cases passed, mypy32files/productioncheck green.
 - Security inspection adds explicit removed-key RED case before guard: absence of retained key could otherwise make old anchors undiscoverable; require uniform unavailable while any recent event references a removed key. Actual RED pendingCI.
 - Ruling: add isolated host-CI Redis restart probe in Task4 — plan requires actual restart failure injection; checks image has no Docker daemon, so host runner restarts only its service container and verifies real PostgreSQL main scratch DB, then discards counters too. No production credentials or persistent application data.
+
+### Task4 focused review and pending fix
+- Remote sync: localba5ae276e73fc1833bc41882b1944f5ef2e46020 -> GitHub3d5644e2a81ca6b3523f0b0bb5533dff4605a11f; treea2754d3a11f86085975363d26b2f88b5b4b1161c verified before non-forced expected-parent update.
+- Run37325626913/job111815509657:38 actual PostgreSQL/Redis cases passed,1 expected removed-key guard RED (LimiterUnavailable not raised),9.60s. Restart step skipped due RED, not PASS.
+- Independent review Important accepted: plan §2 line114 explicitly3phone/day and10IP/day, not hour. Previous ruling claimed unspecified numeric defaults and hourly window incorrectly; superseded by this correction to exact approved daily limits. No scope redesign or approved override.
+- New Cloud RED1missing separate window contract; real daily-boundary RED pendingCI before fix.
+- Task4 minor (deferred): retry_after can reflect an earlier event in an unsaturated dimension; repeated denials possible but no over-admission. Keep metadata limitation for handoff; no scope expansion to polish now.

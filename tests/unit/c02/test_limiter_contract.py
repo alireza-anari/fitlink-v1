@@ -31,6 +31,14 @@ def test_quota_defaults_and_distinct_namespaces():
         limiter.limits("caller_kind", policy)
 
 
+def test_recovery_intake_has_approved_separate_daily_window():
+    limiter = contract()
+    policy = AccountSecurityPolicy()
+    assert limiter.window_seconds("send", policy) == 3600
+    assert limiter.window_seconds("verify_failure", policy) == 3600
+    assert limiter.window_seconds("recovery_intake", policy) == 86400
+
+
 def test_canonical_key_space_contains_no_phone_ip_or_secret():
     limiter = contract()
     expected = limiter.rate_keys("+989123456789", "127.0.0.1", "send")
