@@ -52,7 +52,9 @@ def test_canonical_key_space_contains_no_phone_ip_or_secret():
 )
 def test_production_rate_redis_rejects_wrong_tls_db_and_query(url):
     contract()
-    result = boot("config.settings.production", production_env(OTP_RATE_REDIS_URL=url))
+    result = boot(
+        "config.settings.production", (production_env() | {"OTP_RATE_REDIS_URL": url})
+    )
     assert result.returncode != 0
     assert url not in result.stderr
 
@@ -73,7 +75,10 @@ assert options['socket_timeout'] <= 2
         [sys.executable, "-c", script],
         env={
             **{k: v for k, v in os.environ.items() if k == "PATH"},
-            **production_env(OTP_RATE_REDIS_URL="rediss://app:p@cache.example:6379/4"),
+            **(
+                production_env()
+                | {"OTP_RATE_REDIS_URL": "rediss://app:p@cache.example:6379/4"}
+            ),
             "DJANGO_SETTINGS_MODULE": "config.settings.production",
         },
         capture_output=True,

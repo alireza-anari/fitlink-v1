@@ -135,3 +135,10 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - BASE9df9fd2, whole Task4 brief read. Cloud RED6missing atomic limiter contract assertions; before implementation.
 - Actual PostgreSQL/Redis fixture gates cover exact phone/IP send/failure quotas, boundaries, normalized identity, first-anchor/PG-only guard races with24separate DB connections, successful failure-slot release, Redis unavailable/NOSCRIPT/key reset, retained-key aggregation, crashed process after real Redis reservation, aborted DB admission and cleanup failure. Required actual RED pendingCI.
 - Ruling: recovery intake separately configurable engineering defaults3phone/10IP/hour — plan requires separately configured limits but specifies no numeric values — keeps conservative abuse bound and does not change ADR OTP quotas; operational tuning remains release review.
+
+### Task4 CI RED discovery correction
+- Remote sync: local4307a3eafd8e0e20d3629782917a6b7cf1e4bad4 -> GitHub ff273bef40d1d46533cd8d95a2eb97ceabb73aca; treec023682b9fe05976bd0847d2ec683148444669c7 matched, expected-parent non-forced update.
+- Task3 run37323034017 full SUCCESS, logs inspected:123units,166 combined backend,2+2 browser,5 Redis/Celery/Channels recovery,1 MinIO recovery. Task3 all wider gates green.
+- Task4 run37324103261/job111810306064:25 previous gates passed but13fixture-not-found errors. This is NOT behavioral RED. Started local uncommitted limiter draft after reading summary, then inspected full traceback and stopped further implementation; no draft published.
+- Root cause reproduced locally by --fixtures-per-test: mixed individual file selection loses nested limiter fixture; C02 directory selection loads it for all13cases. Ruling: select tests/integration/c02 directory plus C01 initial migration file — complete suite, robust nested discovery, no test weakening.
+- Corrected new production test helper use to production_env() dict union; helper has no keyword arguments. No implementation behavior adjusted. Actual corrected RED pendingCI before resuming draft/GREEN.
