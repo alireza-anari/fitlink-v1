@@ -199,3 +199,14 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Remote sync: local6c42708d0c42e1566e97ddf8c00fb91e18343721 -> GitHuba7bb9d0dcf065ed885ad8dcd48e5c031891a5635; tree9be0dd86b33e63b01b54c8d318850f2a0e6356c8 equality checked before expected-parent non-forced update.
 - Actual PostgreSQL RED run37329900652/job111830061966:1 expected DID NOT RAISE OtpUnavailable,47passed10.14s. Restart skipped on RED, not PASS. Logs inspected before fix.
 - Added top-level boundary rejection before normalization/admission/generation/audit/provider I/O. Ruling: issuance is a two-phase top-level command; later recovery/phone-change composition commits intent first and revalidates locked authority in issuance, never wraps issuance in an ambient atomic. No on_commit-only security effects. Actual GREEN pendingCI; Task6 remains unstarted.
+
+### Task5 completion boundary
+- Remote sync: local94211a1a9c841e0cb057a058aee14f33febcdddc -> GitHub58633c77868da361830d1f3212023b46e97f3525; treed09a61f5e0a21744333b42af24e277c7b8a09e96 equality checked before expected-parent non-forced update.
+- Actual GREEN run37330187531/job111831032090:48 PostgreSQL/Redis cases passed10.36s; actual restart prepare/verify passed. Ambient boundary Important fixed RED→GREEN; focused independent review confirms no remaining finding.
+- Initial feature run37328982947 full Foundation SUCCESS:138units/203combinedbackend/2+2browser/5Redis-Celery-Channels/1MinIO recovery, completed logs inspected. Current fix Foundation111831032453 Cloud/static step green, Compose ongoing, not yet PASS; wider failures remain mandatory.
+- Cloud138units/mypy35files/Django/no migration changes/Ruff/format green; task-done31focused units passed5.23s. Required Task5 service/relevant C01 gates complete. Task6 next.
+
+## Task6 RED preparation
+- BASE94211a1; whole Task6 brief read. Cloud2expected missing atomic verification/application and bounded digit input assertions before implementation.
+- Real PostgreSQL/Redis tests added for299/300s, wrong1..5/fifthcorrect/locked/replay/resend/dummycompare/purpose/context/generation/missingack/staleversion/malformedshape; separate-connection concurrent first registration; audit rollback; under18/missingattestation/legacy/restricted/suspended; non-login consumed proof/replay/rollback/concurrent application with no sessions. Local collect-only confirms discovery, no service PASS claimed.
+- Actual RED pendingCI before implementation.
