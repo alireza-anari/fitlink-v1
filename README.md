@@ -1,1 +1,2 @@
-# fitlink-v1
+#FitLink
+Private repository bootstrap
