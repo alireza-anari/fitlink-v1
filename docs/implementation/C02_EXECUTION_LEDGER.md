@@ -21,8 +21,9 @@
 5. COMPLETE — digest-only issuance, ambient boundary fix; Cloud/service gates green.
 6. COMPLETE — atomic proof/adult/race/application service gates green.
 7. COMPLETE — versioned sessions, rotation/outage findings fixed RED→GREEN.
-8. IN_PROGRESS — RED established, implementation underway.
-9–16. UNSTARTED.
+8. COMPLETE — real recovery/receipt/staff/history/race/rollback/audited-read gates GREEN.
+9. IN_PROGRESS — RED tests authored.
+10–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -293,3 +294,9 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Actual sensitive-read RED37353760288/job111910840559: missing2read-audit rows assertion,2known classification truncations;118passed21.60s. Full tracebacks inspected before fixes. Required read recorder now runs before any sensitive metadata return inside same authority transaction; audit outage denies read. Additive accounts0011 widens classification15→16, no earlier migration edited. Five recovery unit contracts now GREEN0.09s. Actual final GREEN pendingCI.
 
 - Final fix Cloud GREEN157units13.70s, Ruff/format147files/no migration drift; mypy identified omitted root detail-recorder argument during verification, corrected before sync and rechecked. Actual service/migration/focused-read GREEN still pending.
+
+### Task8 completion boundary
+- Remote sync: local164a42a60f5f7c5a6e0b68a9f78e52fbc5067cda -> GitHub11d4888abb6907a7df65fe39dd558bc5a4dd99f7; exact tree3a16a617a1efcc1ae4818d445573e542b39fa59b checked before expected-parent non-forced update. Actual final GREEN37354148073/job111912166344:122passed28.84s, actual Redis restart prepare/verify. Full SQL/migration/race/rollback/role/audited-read output inspected. Both focused findings fixed RED→GREEN; no remaining concrete author-review finding. Task8 complete; Foundation111912166676 static/unit/config step GREEN, Compose ongoing not yet PASS. Any later wider regression remains mandatory. Task9 next.
+
+## Task9 RED preparation
+- BASE164a42a; whole Task9 brief read. Cloud2expected missing owned intent/dual-proof command failures0.07s. Real tests cover owner/foreign/stale/expiry/purpose/context/same proof/unique owner/current-global logout/replaced intent/rollback/audit/outbox/history/new-login replay and independent-connection competing change/recovery serialization. Actual RED pendingCI before implementation. No Task10+ work.
