@@ -176,3 +176,13 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 ## Task5 RED preparation
 - BASEec5ccee, whole Task5 brief read. Cloud RED7 named missing bounded SMS/digest-only OTP contracts before implementation; added actual1-second hanging provider bound test before code.
 - Added true PostgreSQL/Redis issuance/cooldown/resend, retired late-ack race with separate DB connection/thread barrier, failed/unknown/crash-pending, audit rollback-before-IO, private sentinel persistence/log and existing/restricted/suspended uniform-result contracts. Production provider remains unselected/disabled. Actual RED pendingCI.
+
+- Remote sync: local6d8fe04a89b0db79d4b9ac7383b77f28614b62ba -> GitHub cb3beba783ea050b24a717282b7e123455fac061; tree9b4f2b075107a46dfd0f0877d55b07a2bc91a1a5 verified before non-forced expected-parent update.
+- Actual Task5 RED run37327549360/job111822024462:8 expected missing durable digest-only issuance failures,39 previous service cases passed11.04s. Full traceback inspected before implementation.
+
+### Task5 implementation checkpoint
+- Transient cryptographic6digit generator/HMAC context includes challenge UUID/generation/purpose/context/User+auth version/key ID; compare uses hmac.compare_digest, removed key never validates. No plaintext durable column or SMS Celery payload.
+- Bounded8-worker/no-queue transport capacity holds slot until timed-out I/O actually completes; timeout/exception/unknown becomes unverifiable, no raw provider error logging. Private bounded threadsafe Mock collector, production refuses Mock/entry.
+- Digest/pending/generation/cooldown/audit commit before provider I/O; late acknowledgement re-locks phone/User/context/challenge and marks sent only if generation/current expiry/terminal state still valid. Request does not query/create User for login. Audit failures roll back before send; conservative admission remains spent.
+- Ruling: extend request_otp with required keyword provider and optional server-only OtpBinding + context validator for non-login purposes — composition must supply purpose/phone/User/version/case authority rather than accepting client IDs — Task8/9 install their owned validators; unbound non-login issuance denies now. Costs one explicit callable interface, no future-domain model/import.
+- Cloud GREEN8provider/digest contracts; full138unit cases, Ruff/format122files/mypy35files/Django/drift/production checks pass. Real request/resend/late-ack gates PENDING_CI, Task5 not complete.
