@@ -18,3 +18,18 @@ USER root
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright
 RUN uv run --frozen playwright install --with-deps chromium && chmod -R a+rX /opt/playwright
 USER app
+
+FROM library/node@sha256:4196d66a565c6f195728d9952f161f4adfe2ad753052a08b7ec7f1c5a6bda42b AS assets
+WORKDIR /assets
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY static/src ./static/src
+COPY templates ./templates
+RUN npm run build:css && npm run check:js
+FROM base AS static-build
+COPY --from=assets --chown=app:app /assets/static/dist /app/static/dist
+RUN uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build --ignore=src/styles.css
+FROM base AS production
+COPY --from=static-build --chown=app:app /app/staticfiles /app/staticfiles
+ENV DJANGO_SETTINGS_MODULE=config.settings.production
+CMD ["uv", "run", "--frozen", "uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]

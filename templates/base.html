@@ -1,0 +1,13 @@
+{% load static %}<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فیت‌لینک</title>
+  <link rel="stylesheet" href="{% static 'dist/app.css' %}">
+  <script type="module" src="{% static 'src/app.js' %}"></script>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 font-sans">
+  <main class="mx-auto max-w-3xl px-4 py-16 sm:px-8">{% block content %}{% endblock %}</main>
+</body>
+</html>

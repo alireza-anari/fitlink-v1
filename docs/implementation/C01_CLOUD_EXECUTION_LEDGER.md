@@ -165,3 +165,11 @@ Ruling: suppress Celery/MinIO banners with --quiet and safe structured logs to a
 connection/config dumps — runtime startup observability is explicit health/log events.
 MinIO server runtime is the pinned Python base, so its Python health command is
 actually provided; source-built image replaces unavailable official image distribution.
+Mapping: local f45cb23584351a117afe1a00ec87918b286d33c1 -> GitHub 507388dc5acc3843a792404bac0e52348f87ac84 (tree b34c1aade3ea0712a8af3b2416c403cb9c88691b).
+Task 11: Cloud PASS (56 units; six initial RED cases → GREEN; npm CSS/JS build;
+secret-free collectstatic and hashed manifest/render regression verified).
+Docker build/runtime static serving and browser remain PENDING_CI.
+Ruling: collectstatic must exclude compile-only src/styles.css via
+--ignore=src/styles.css: its Tailwind import is not a browser dependency. Actual
+initial collectstatic failed missing src/tailwindcss; compiled CSS/module collect
+and hashed template paths now pass. No product forms or routes added.

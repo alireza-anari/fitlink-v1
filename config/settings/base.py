@@ -144,3 +144,17 @@ if STORAGE_BACKEND == "s3":
             "querystring_expire": 60,
         },
     }
+
+STATICFILES_DIRS = [BASE_DIR / "static"]
+MIDDLEWARE.insert(0, "config.middleware.RequestIdMiddleware")
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {"json": {"()": "config.logging.JsonFormatter"}},
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "json"}},
+    "root": {"handlers": ["console"], "level": LOG_LEVEL},
+    "loggers": {
+        "django": {"handlers": ["console"], "level": LOG_LEVEL, "propagate": False},
+        "celery": {"handlers": ["console"], "level": LOG_LEVEL, "propagate": False},
+    },
+}
