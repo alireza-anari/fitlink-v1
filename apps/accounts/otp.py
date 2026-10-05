@@ -47,8 +47,8 @@ class OtpDigestContext:
 class OtpBinding:
     purpose: str
     context_uuid: UUID
-    user_uuid: UUID
-    auth_version: int
+    user_uuid: UUID | None
+    auth_version: int | None
     phone: str = field(repr=False)
 
 
@@ -115,13 +115,20 @@ def matches_code(
 def _bound_user(binding: OtpBinding | None) -> User | None:
     if binding is None:
         return None
+    if (
+        binding.user_uuid is None
+        and binding.auth_version is None
+        and binding.purpose == "recovery_new_phone"
+    ):
+        return None
+    if binding.user_uuid is None:
+        raise OtpUnavailable("OTP context unavailable")
     user = User.objects.select_for_update().filter(public_id=binding.user_uuid).first()
     if (
         not user
         or user.auth_version != binding.auth_version
-        or not user.is_active
-        or user.state
-        not in {"active", "restricted", "deletion_requested", "pending_deletion"}
+        or (binding.purpose != "recovery_new_phone" and not entry_allowed(user))
+        or user.state in {"deleted", "anonymized", "deletion_completed"}
     ):
         raise OtpUnavailable("OTP context unavailable")
     return user
@@ -300,16 +307,31 @@ def _challenge_context(row: OTPChallenge, user: User | None) -> OtpDigestContext
 def _binding_matches(
     binding: OtpBinding | None, user: User | None, row: OTPChallenge, phone: str
 ) -> bool:
+    if not binding or (binding.phone, binding.purpose, binding.context_uuid) != (
+        phone,
+        row.purpose,
+        row.context_uuid,
+    ):
+        return False
+    if (
+        binding.purpose == "recovery_new_phone"
+        and binding.user_uuid is None
+        and binding.auth_version is None
+    ):
+        return (
+            user is None
+            and row.target_user_id is None
+            and row.target_auth_version is None
+        )
     return bool(
-        binding
-        and user
-        and entry_allowed(user)
-        and binding.phone == phone
+        user
+        and (
+            entry_allowed(user)
+            or (binding.purpose == "recovery_new_phone" and user.state == "suspended")
+        )
         and binding.user_uuid == user.public_id
         and binding.auth_version == user.auth_version == row.target_auth_version
         and row.target_user_id == user.pk
-        and binding.purpose == row.purpose
-        and binding.context_uuid == row.context_uuid
     )
 
 
@@ -328,6 +350,7 @@ def verify_otp(
     binding: OtpBinding | None = None,
     validate_context: Callable[[OtpBinding], None] | None = None,
     on_login: Callable[[User], None] | None = None,
+    on_proof: Callable[[OtpProofResult], None] | None = None,
 ) -> OtpProofResult:
     """Commit failure evidence or proof/identity and synchronous session effects."""
     if transaction.get_connection().in_atomic_block:
@@ -369,6 +392,8 @@ def verify_otp(
         # the phone lock. Every verification uses the same lookup path.
         user = (
             User.objects.select_for_update().filter(public_id=binding.user_uuid).first()
+            if binding and binding.user_uuid is not None
+            else None
             if binding
             else User.objects.select_for_update().filter(phone=phone).first()
         )
@@ -445,12 +470,16 @@ def verify_otp(
                             "adult_attestation_version",
                         ]
                     )
-            assert user is not None
+            assert user is not None or purpose == "recovery_new_phone"
             row.consumed_at = at
             row.save(update_fields=["consumed_at"])
             changed = ("consumed_at",)
             result = OtpProofResult(
-                True, purpose, challenge_id, user.public_id, context_uuid
+                True,
+                purpose,
+                challenge_id,
+                user.public_id if user else None,
+                context_uuid,
             )
         # A cleanup error rolls back identity/proof and cannot issue a session.
         # A later audit failure leaves a durable pending reservation even when
@@ -459,6 +488,8 @@ def verify_otp(
         if valid and purpose == "login" and on_login is not None:
             assert user is not None
             on_login(user)
+        if valid and purpose != "login" and on_proof is not None:
+            on_proof(result)
         record(
             SecurityOutcome(
                 "otp.verification",
@@ -493,8 +524,10 @@ def apply_verified_proof(
         or at.tzinfo is None
         or at.utcoffset() is None
         or binding.purpose == "login"
+        or binding.user_uuid is None
     ):
         raise ValueError("Required proof application contract")
+    assert binding.user_uuid is not None
     phone = normalize_iranian_mobile(binding.phone)
     with transaction.atomic():
         phone_row = (

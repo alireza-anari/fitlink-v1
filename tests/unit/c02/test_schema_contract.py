@@ -41,7 +41,12 @@ def test_registered_security_contracts():
         model.__name__ for model in apps.get_app_config("accounts").get_models()
     }
     assert SECURITY_MODELS <= registered
-    assert registered == SECURITY_MODELS | {"User"}
+    assert registered == SECURITY_MODELS | {
+        "User",
+        "RecoveryRequest",
+        "RecoveryEvidenceMetadata",
+        "PhoneChangeHistory",
+    }
     for name in SECURITY_MODELS:
         model = apps.get_model("accounts", name)
         assert model._meta.constraints, f"{name} has no database constraints"

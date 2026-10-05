@@ -32,6 +32,9 @@ def test_only_foundation_routes_and_identity_model():
         "OutboxEvent",
         "StaffCapabilityGrant",
         "StaffStepUpGrant",
+        "RecoveryRequest",
+        "RecoveryEvidenceMetadata",
+        "PhoneChangeHistory",
     }
     user = apps.get_model("accounts", "User")
     assert {field.name for field in user._meta.get_fields()} == {
@@ -60,4 +63,9 @@ def test_only_foundation_routes_and_identity_model():
         "issued_staff_capabilities",
         "staff_step_ups",
         "issued_staff_step_ups",
+        "recovery_targets",
+        "assigned_recoveries",
+        "recovery_decisions",
+        "recovery_evidence_reviews",
+        "phone_history",
     }

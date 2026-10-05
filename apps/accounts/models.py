@@ -87,6 +87,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 # Register focused models without replacing the permanent User module.
+from .recovery_models import (  # noqa: E402, F401
+    PhoneChangeHistory,
+    RecoveryEvidenceMetadata,
+    RecoveryRequest,
+)
 from .security_models import (  # noqa: E402, F401
     AccountSessionControl,
     OTPChallenge,

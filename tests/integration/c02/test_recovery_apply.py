@@ -4,7 +4,7 @@ from uuid import uuid4
 
 import pytest
 from django.apps import apps
-from django.db import IntegrityError, close_old_connections, transaction
+from django.db import DatabaseError, close_old_connections, connection, transaction
 from django.utils import timezone
 from test_otp_issue import record
 from test_recovery_authorization import NEW, OLD, contract, owner, prepared
@@ -201,7 +201,7 @@ def test_history_model_queryset_and_direct_sql_are_immutable(limiter, settings):
         "DELETE FROM accounts_phonechangehistory",
     ]:
         with (
-            pytest.raises(IntegrityError),
+            pytest.raises(DatabaseError),
             transaction.atomic(),
             connection.cursor() as cursor,
         ):
@@ -393,3 +393,82 @@ def test_unresolved_proof_cannot_apply_after_staff_resolution(limiter, settings)
         )
     target.refresh_from_db()
     assert target.phone == OLD
+
+
+def test_history_failure_rolls_back_every_identity_effect(
+    limiter, settings, monkeypatch
+):
+    target = owner()
+    recovery, commands, receipt, actor, staff, grant, step, case = approved(settings)
+    challenge = prove(commands, receipt)
+    case.refresh_from_db()
+    model = apps.get_model("accounts", "PhoneChangeHistory")
+
+    def failed(*args, **kwargs):
+        raise RuntimeError("history unavailable")
+
+    monkeypatch.setattr(model, "save", failed)
+    with pytest.raises(RuntimeError):
+        commands.apply_recovery(
+            actor, case.id, case.version, step, "identity_verified", timezone.now()
+        )
+    target.refresh_from_db()
+    case.refresh_from_db()
+    assert target.phone == OLD and target.auth_version == 1 and case.state == "approved"
+    assert (
+        apps.get_model("accounts", "OTPChallenge")
+        .objects.get(pk=challenge)
+        .proof_applied_at
+        is None
+    )
+    assert not apps.get_model("governance", "OutboxEvent").objects.exists()
+
+
+def test_history_restricted_runtime_role_has_no_mutation_privilege(limiter, settings):
+    owner()
+    recovery, commands, receipt, actor, staff, grant, step, case = approved(settings)
+    prove(commands, receipt)
+    case.refresh_from_db()
+    commands.apply_recovery(
+        actor, case.id, case.version, step, "identity_verified", timezone.now()
+    )
+    role = "c02_history_" + uuid4().hex
+    q = connection.ops.quote_name
+    with connection.cursor() as cursor:
+        cursor.execute(f"CREATE ROLE {q(role)} NOLOGIN")
+        cursor.execute(f"GRANT USAGE ON SCHEMA public TO {q(role)}")
+        cursor.execute(
+            f"GRANT SELECT, INSERT ON accounts_phonechangehistory TO {q(role)}"
+        )
+    try:
+        with transaction.atomic(), connection.cursor() as cursor:
+            cursor.execute(f"SET LOCAL ROLE {q(role)}")
+            cursor.execute("SELECT count(*) FROM accounts_phonechangehistory")
+            assert cursor.fetchone()[0] == 1
+            cursor.execute(
+                """INSERT INTO accounts_phonechangehistory
+                (id,user_id,old_phone,new_phone,recovery_context,change_context,
+                actor_uuid,at,old_auth_version,new_auth_version)
+                SELECT %s,user_id,old_phone,new_phone,%s,NULL,actor_uuid,at,
+                old_auth_version,new_auth_version FROM accounts_phonechangehistory
+                LIMIT 1""",
+                [uuid4(), uuid4()],
+            )
+            cursor.execute("SELECT count(*) FROM accounts_phonechangehistory")
+            assert cursor.fetchone()[0] == 2
+        for sql in [
+            "UPDATE accounts_phonechangehistory SET old_phone=new_phone",
+            "DELETE FROM accounts_phonechangehistory",
+            "TRUNCATE accounts_phonechangehistory",
+        ]:
+            with (
+                pytest.raises(DatabaseError),
+                transaction.atomic(),
+                connection.cursor() as cursor,
+            ):
+                cursor.execute(f"SET LOCAL ROLE {q(role)}")
+                cursor.execute(sql)
+    finally:
+        with connection.cursor() as cursor:
+            cursor.execute(f"DROP OWNED BY {q(role)}")
+            cursor.execute(f"DROP ROLE {q(role)}")

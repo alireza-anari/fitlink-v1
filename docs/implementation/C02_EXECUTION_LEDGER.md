@@ -21,7 +21,8 @@
 5. COMPLETE — digest-only issuance, ambient boundary fix; Cloud/service gates green.
 6. COMPLETE — atomic proof/adult/race/application service gates green.
 7. COMPLETE — versioned sessions, rotation/outage findings fixed RED→GREEN.
-8–16. UNSTARTED.
+8. IN_PROGRESS — RED established, implementation underway.
+9–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -267,3 +268,16 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 
 ## Task8 RED preparation
 - BASEb392f88; whole Task8 brief read. Cloud3 expected missing recovery/schema/metadata failures; real receipt/staff/self-approval/evidence/apply/rollback/history/uniqueness/suspension race contracts authored. Actual RED pendingCI before implementation. No completed work reset or repeated.
+
+### Task8 required RED
+- Remote sync: locald068b9a9b46bb1ec095f174895470b61a2b6895b -> GitHub275c108734127be899264aa71225f1de3a942ece; tree3c55ac6b90b8424919cb9233991edfd01bf912fc exact equality. Actual RED37351949493/job111904704304:24 expected missing recovery failures,87previous cases passed23.08s; full failure output inspected. Foundation RED is expected missing3unitcontracts, Compose skipped not PASS.
+- Ruling: NULL-target recovery proof permits uniform proposed-phone possession verification for unresolved existing/unknown cases, with server-owned receipt/case validator; it never applies an identity effect or issues a session. Staff resolution requires a new target/version-bound proof for application — prevents enumeration at intake and preserves case ownership — if wrong, recovery transport leaks membership.
+- Ruling: recovery OTP allows suspended/inactive target while preserving its state, unlike login/normal change — Task8 expressly forbids reactivation and permits recovery for suspended users — if wrong, legitimate suspended recovery is blocked. Terminal identity states remain denied.
+
+### Task8 implementation checkpoint
+- Added confidential RecoveryRequest/EvidenceMetadata/immutable PhoneChangeHistory and additive accounts0006..0010 migrations. All new schema/protected FKs/checks; no accounts0001/User replacement/auth_user/profile tables. History owner SQL trigger has no caller-settable bypass, PUBLIC mutation privileges revoked; restricted runtime INSERT/SELECT test added.
+- Receipt-only intake does not query User. Uniform unresolved new-phone proof can consume only in server-owned case; staff resolution clears earlier proof references, application requires approved case and proof issued after decision, target/User/version/phone/context/current generation unchanged. Suspended recovery preserves inactive/state/password/DOB/UUID, no session. Both phone anchors sorted before involved sorted Users/case/proof/staff grants; current authority rechecked before conflict/effect details.
+- Synchronous phone/history/authversion/control/challenge invalidation/proof application/case effect/audit/ID-only outbox share one PostgreSQL transaction. Required recorder/authority/emitter callbacks cannot be no-op defaults; root imports governance, accounts does not.
+- Schema regression allowlists expanded precisely for these3models and5User reverse relations. Direct history SQL test corrected to DatabaseError (PostgreSQL42501 insufficient privilege), matching existing audit trigger contract, not weakening a mutation assertion. Added history write failure and restricted-role append/read/deny tests before GREEN service run.
+- Cloud GREEN155units15.44s, mypy53files, Ruff/format146files, Django/no migration drift/production config/Tailwind/JS pass. Cloud PG unavailable is not migration verification. Actual GREEN pendingCI; Task8 remains IN_PROGRESS.
+- Focused author security review: no new session or reactivation; NULL-target proof cannot apply; protected identity/version and staff self-case checks fail closed; proof/date/generation and old/new uniqueness rechecked under locks; private metadata/code/receipt absent from audit/outbox. Required real rollback/race/SQL-role gates pending; no PASS claimed yet.
