@@ -380,3 +380,14 @@ Plan-only review completed against locked requirements. Corrections: first User 
 Framework reference for transport dependency: [Uvicorn installation](https://uvicorn.dev/installation/). Static artifact semantics: [Django staticfiles](https://docs.djangoproject.com/en/5.2/ref/contrib/staticfiles/). These support technical boundaries, not new product requirements.
 
 The implementer must still write the named tests and code during an authorized coding stage; this document contains decisions/assertions/commands, not implementations. A later request selects execution method and authorizes the plan; Stage 2 stops here.
+
+## C01 execution evidence (2026-10-05)
+
+Tasks 1–14 Cloud authoring/checks executed sequentially; runtime checkboxes remain
+unchecked until actual GitHub Actions evidence. See
+[execution ledger](../../implementation/C01_CLOUD_EXECUTION_LEDGER.md) and
+[handoff](../../development/FOUNDATION_HANDOFF.md). Task 1 locks are preserved.
+Task 11 collectstatic adds `--ignore=src/styles.css` for compile-only Tailwind
+input. Runtime tests use the separate checks image rather than adding dev tools
+to web/worker/Beat. These Cloud/CI rulings do not change product scope. C02 has not
+started; final review and Docker integration remain pending at this checkpoint.

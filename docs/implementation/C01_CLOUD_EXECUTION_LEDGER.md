@@ -198,3 +198,13 @@ Ruling: quality fixes include generated migration string wrapping only (no state
 change), explicit settings imports, typed User manager and typed settings maps.
 Production offline deploy checks use ephemeral synthetic credentials without
 network access or stored/printed values; zero warnings/errors.
+Mapping: local a10c3b2ceb5efd151917bade2fbb247074289033 -> GitHub 0b927f2a47869f11df2d52c1d32e61c155590c53 (tree 631336886a93128a9122328eefcf2395815785ce).
+Task 14: Cloud documentation/authoring PASS; 57 units and Ruff pass after host/
+Compose env mapping correction. Generated ignored .env.verify (mode0600) with
+isolated ports and matching host URLs; no values logged. README/setup/handoff
+provide exact startup/shutdown/verification and downstream interfaces.
+GitHub run37287578971 started on remote0b927f2; frozen dependencies/static/quality/
+unit/production steps actually succeeded. Compose integration step running.
+Clean rehearsal/final review/C01 exit remain PENDING_CI, not overall PASS.
+Ruling: generator includes explicit host-side URL/credential mapping matching
+its alternate port allocation; Compose overrides with internal service hosts.

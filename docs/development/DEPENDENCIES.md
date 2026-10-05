@@ -1,6 +1,7 @@
 # Cloud Foundation dependency checkpoint
 
-C01 status: BLOCKED at Task 1 runtime prerequisite; this is not a verified Foundation handoff.
+C01 Cloud checks green; Docker/integration gates PENDING_CI. Current execution
+evidence is in ../implementation/C01_CLOUD_EXECUTION_LEDGER.md.
 
 ## Verified tooling (2026-10-05)
 
@@ -9,7 +10,7 @@ Node 24.19.0, npm 11.9.0. Default Python is 3.12.14; official uv-managed
 CPython 3.13.15 was installed in the Cloud workspace and used for resolution.
 Docker/Compose are absent: both `docker version` and `docker compose version`
 fail with exit 127 (`docker: command not found`). No Docker socket, dockerd or
-Podman executable was found. Container image digests remain unresolved.
+Podman executable was found. Immutable image references were subsequently resolved below.
 
 ## Official resolution
 
@@ -66,12 +67,11 @@ Django stays on the locked 5.2 LTS line and resolves its available stable 5.2.17
 security patch. A passing resolver confirms package metadata compatibility, not
 application, container or integration behavior. Those remain unverified.
 
-## Next prerequisite
+## Historical Task 1 prerequisite (superseded by Cloud/CI amendment)
 
-Provide a Docker-capable execution host with Compose and a usable daemon, rerun
-Task 1 tooling checks and locked syncs there, then start Task 2. Do not run a
-migration or DB-backed test until Task 3 establishes accounts.User. Application,
-PostgreSQL/Redis/Celery/Channels/MinIO/browser/CI gates have not run here.
+The approved Cloud/CI amendment permits sequential Cloud authoring. Task 3 has
+established accounts.User before any real migration. Docker gates now run only
+in GitHub Actions; no Work Cloud runtime PASS is inferred.
 
 ## Immutable Cloud/CI image references
 
