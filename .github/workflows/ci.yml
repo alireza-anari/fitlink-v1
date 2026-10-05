@@ -5,7 +5,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: c02-accounts-${{ github.ref }}
+  group: c02-accounts-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: false
 jobs:
   foundation:
@@ -45,3 +45,36 @@ jobs:
           uv run --frozen python docker/production_check.py
       - name: Clean isolated Compose integration and Playwright rehearsal
         run: sh docker/verify_foundation.sh
+  c02-migrations:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+        env:
+          POSTGRES_DB: fitlink
+          POSTGRES_USER: fitlink
+          POSTGRES_PASSWORD: ci-migration-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U fitlink -d fitlink"
+          --health-interval 3s --health-timeout 3s --health-retries 30
+    env:
+      POSTGRES_HOST: '127.0.0.1'
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: fitlink
+      POSTGRES_USER: fitlink
+      POSTGRES_PASSWORD: ci-migration-only
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Frozen migration environment
+        run: uv sync --frozen --group dev
+      - name: Real PostgreSQL account upgrade and constraint contracts
+        run: uv run --frozen pytest tests/integration/c02/test_account_migrations.py tests/integration/test_initial_migration.py -q --strict-markers
