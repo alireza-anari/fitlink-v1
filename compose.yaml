@@ -124,6 +124,11 @@ services:
   browser:
     <<: *app
     profiles: [test]
+    # Real loopback in web's network namespace is a trustworthy browser origin.
+    # Keep COOP and strict console assertions; no insecure-origin browser flags.
+    network_mode: service:web
+    depends_on:
+      web: {condition: service_healthy}
     build:
       context: .
       target: e2e
@@ -133,7 +138,7 @@ services:
       UV_NO_DEV: '0'
       PYTEST_ADDOPTS: '-o cache_dir=/tmp/fitlink-pytest-cache'
       PLAYWRIGHT_BROWSERS_PATH: /opt/playwright
-      E2E_BASE_URL: http://web:8000
+      E2E_BASE_URL: http://127.0.0.1:8000
     command: ["uv", "run", "--frozen", "pytest", "tests/e2e", "-q", "-m", "e2e"]
     healthcheck: {disable: true}
 volumes:

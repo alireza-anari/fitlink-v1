@@ -22,6 +22,8 @@ def test_foundation_smoke(page, viewport):
     base = os.environ.get("E2E_BASE_URL", "http://127.0.0.1:8000")
     response = page.goto(base + "/", wait_until="networkidle")
     assert response.status == 200
+    assert response.headers["cross-origin-opener-policy"] == "same-origin"
+    assert page.evaluate("window.isSecureContext") is True
     expect(page.locator("html")).to_have_attribute("lang", "fa")
     expect(page.locator("html")).to_have_attribute("dir", "rtl")
     expect(

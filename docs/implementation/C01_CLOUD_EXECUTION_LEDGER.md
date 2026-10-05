@@ -254,3 +254,23 @@ now use /tmp, addressing nonroot bind-mount cache permission warnings.
 20 actual integration cases executed in the earlier combined run; identity/no
  auth_user/private MinIO/worker/Channels tests passed, but whole CI remains FAIL
 and restart/browser gates had not been reached. Latest snapshot requires full CI.
+Mapping: local fb0a5e638954becf09b225feb5c132f642d11067 -> GitHub f49b7c522179c9ab89a3491fdd54b9794733787a (tree d9ad076167d06d5442eb3e6f1f7b281206f61775).
+
+## Resume: trustworthy browser origin fix
+Run37290353829/job111700010463 inspected: dependency/static/quality steps PASS;
+real combined backend suite90 PASS; both Playwright viewports FAIL solely on
+COOP ignored at untrustworthy http://web:8000. Restart gates not yet reached.
+Ruling: browser shares service:web network namespace and uses actual
+http://127.0.0.1:8000 loopback — trustworthy per Secure Contexts; retain COOP,
+production semantics and every console/pageerror assertion. Add explicit active
+COOP and window.isSecureContext assertions. No unsafe browser flag/error filter.
+The actual prior CI failure is the behavioral RED; Cloud Chromium absent gives
+setup errors only. Actual GREEN must come from the next mandatory CI run.
+Security review fixes already committed269a304 and preserved: Uvicorn explicit
+safe log_config, Redis URL query rejection/required TLS verification, weak
+production configuration rejection, with subprocess/client regressions.
+Cloud verification: frozen locks/install, CSS/JS, collectstatic, Ruff lint/format,
+focused mypy, Django checks,70 units, offline production checks, shell syntax,
+git diff --check PASS. Model-state drift PASS with expected absent-PostgreSQL
+history warning; not a clean-migration PASS. No Docker/Chromium available here.
+Remote head verifiedf49b7c5; main unchanged8ede9a4; only Foundation ref authorized.
