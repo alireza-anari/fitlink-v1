@@ -23,7 +23,7 @@
 7. COMPLETE — versioned sessions, rotation/outage findings fixed RED→GREEN.
 8. COMPLETE — real recovery/receipt/staff/history/race/rollback/audited-read gates GREEN.
 9. COMPLETE — published dual-possession implementation and required CI verified during recovery.
-10. IN_PROGRESS — recovered Cloud runtime verified; Consent Cloud RED→GREEN; required real PostgreSQL CI pending.
+10. BLOCKED_PENDING_CI — Consent Cloud RED→GREEN; required real PostgreSQL/Foundation jobs queued during verified GitHub hosted-runner incident.
 11–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
@@ -340,3 +340,9 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Remote sync: local 38b8fdc772bda2fa9dc6b2c9ab8d1f19747b45ab -> GitHub a65436927d116d14698b572d42aa0f0a31880917. Verified exact treee4f73b77607cbb640c756d83351ab111fb6b79f6; actual remote parent4664e4123529c3c25bad3575b2797b5311a60c8a reread before non-forced C02-only ref update. Synthetic baseline not published. Required real CI pending; Task11 not begun.
 - During required CI queue wait, completed two specifically planned contracts: independent-connection new grant vs revoke (old row stays terminal; new explicit revision is a new grant), and test-only server validator proving AI/archive/publication independence without live sensitive records. 23integration cases collect successfully;10focusedunits pass0.04s. Collection is not actual PostgreSQL evidence. No Task11 work. These test additions require a new head CI, not a blind rerun of an unexplained failure.
 - First Task10 run37365997159 remains queued; neither job has executed a step or produced logs yet. No CI PASS or failure diagnosis claimed.
+- Remote sync: local 1b4af970272bec5f68353deae6858501d2bc11bf -> GitHub a127df0dc6ac519ae5973aad609832a0dd7ce37a; verified tree3e4ec667e9d7083269fc926234be1879340371c5 and actual remote parenta65436927d116d14698b572d42aa0f0a31880917 before non-forced C02-only advance. Task10 pending required current-head service CI;11–16 unstarted.
+
+### Task10 external CI blocker
+- Current source head GitHuba127df0dc6ac519ae5973aad609832a0dd7ce37a, exact tree3e4ec667e9d7083269fc926234be1879340371c5. Required current-source run37366520349 queued; earlier37365997159 likewise queued. No job step or log has executed; neither is a failed run or PASS. Do not rerun blindly or advance Task11.
+- Verified official GitHub Status unresolved incident3q1yb5m7ltvb (https://www.githubstatus.com/api/v2/incidents/unresolved.json): investigating hosted-runner assignment delays since2026-10-05T19:11:58Z, latest update19:50:50Z still investigating across runner configurations. This corroborates an external CI-start blocker; it does not prove an application defect.
+- STOP at required Task10 PostgreSQL/Foundation CI boundary. Tasks1–9 remain COMPLETE; Task10 implementation is Cloud-verified but NOT COMPLETE;11–16 UNSTARTED. Full C02 review/upgrade/clean final migration gates remain unexecuted and mandatory. Resume by inspecting current-source run37366520349 exact job/step/log when runners execute; no repository rematerialization or Task1–9 repetition.
