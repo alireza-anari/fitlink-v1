@@ -128,6 +128,10 @@ def request_otp(
     binding: OtpBinding | None = None,
     validate_context: Callable[[OtpBinding], None] | None = None,
 ) -> OtpRequestResult:
+    # Two committed phases surround external I/O. An outer atomic block would
+    # retain locks and permit delivery before challenge/audit durability.
+    if transaction.get_connection().in_atomic_block:
+        raise OtpUnavailable("OTP issuance unavailable")
     phone, ip = normalize_iranian_mobile(phone), canonical_ip(ip)
     if not callable(record) or at.tzinfo is None:
         raise ValueError("Required OTP security contract")

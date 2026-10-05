@@ -193,3 +193,9 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Initial Task5 service run37328982947/job111826892712 SUCCESS; full logs inspection pending. Foundation111826892801 ongoing, not PASS.
 - Independent review Important accepted: nested atomic exits only a savepoint; SMS can occur before outer challenge/audit commit and with locks retained, then rollback loses all evidence. Required top-level command boundary before admission/I/O. No other concrete Task5 finding.
 - Added actual PostgreSQL ambient transaction rejection regression before fix; expected OtpUnavailable absent. Actual RED pending CI, no Task6 started.
+
+### Task5 ambient boundary fix
+- Initial service47cases passed17.94s plus real Redis restart prepare/verify; full logs inspected.
+- Remote sync: local6c42708d0c42e1566e97ddf8c00fb91e18343721 -> GitHuba7bb9d0dcf065ed885ad8dcd48e5c031891a5635; tree9be0dd86b33e63b01b54c8d318850f2a0e6356c8 equality checked before expected-parent non-forced update.
+- Actual PostgreSQL RED run37329900652/job111830061966:1 expected DID NOT RAISE OtpUnavailable,47passed10.14s. Restart skipped on RED, not PASS. Logs inspected before fix.
+- Added top-level boundary rejection before normalization/admission/generation/audit/provider I/O. Ruling: issuance is a two-phase top-level command; later recovery/phone-change composition commits intent first and revalidates locked authority in issuance, never wraps issuance in an ambient atomic. No on_commit-only security effects. Actual GREEN pendingCI; Task6 remains unstarted.
