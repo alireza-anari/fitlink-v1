@@ -17,8 +17,9 @@
 1. COMPLETE — input/configuration contracts; Cloud and actual CI green.
 2. COMPLETE — additive schema/upgrade; Cloud, PostgreSQL and full Foundation CI green.
 3. COMPLETE — audit/outbox/staff; payload findings fixed with real PostgreSQL GREEN.
-4. IN_PROGRESS — limiter RED preparation.
-5–16. UNSTARTED.
+4. COMPLETE — real dual-store quotas, races, outage/reset/process/restart; one deferred retry hint minor.
+5. IN_PROGRESS — digest-only OTP issuance RED preparation.
+6–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -164,3 +165,14 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Actual RED run37326108079/job111817147270:2 expected failures (daily recovery boundary and removed-key unavailability),37passed9.14s; logs inspected before fix.
 - Separate approved recovery86400s window now applies both Lua and PG guard; OTP3600s unchanged. Added global closed admission when any still-counting event references removed material, including daily recovery/pending failure quotas, rather than silently forgetting undiscoverable anchors. Audited closed maintenance/warm-up remains required before key removal.
 - Focused Cloud GREEN7contracts passed. Task4 stays IN_PROGRESS pending actual races/outage/reset/process/restart gates and current Foundation CI.
+
+### Task4 completion boundary
+- Remote sync: localec5ccee56f23a883cbb168003abd47302da58d5b -> GitHub d90009fe9077f4ef4415c57f91129b8d317db86b; treeabd1c9bf98d0726f8df8ceef742bba589d2726ba matched before non-forced expected-parent update.
+- Run37326556611/job111818684769 SUCCESS:39actual PostgreSQL/Redis cases passed11.40s, including24connection real races, exact daily/rolling boundaries, correct-slot release, outage/NOSCRIPT/key reset/retained rotation/removed key refusal and process exit.
+- Host runner genuinely restarted its Redis service container; both prepare/verify durable quota probes passed, including deleting saved counters. Fresh main scratch DB applied accounts0001..0005/governance0001..0003. No skipped gate claimed.
+- Cloud130units/Ruff/format/mypy32files/Django/drift/production all green. Focused task-done23units pass. Important review finding fixed RED→GREEN, retry metadata minor deferred.
+- Current Foundation job111818684950 static/130unit step passed; Compose ongoing, not yet PASS. As prior task boundaries, required Task4 service/relevant C01 migration gates passed; current wider Foundation failure, if any, remains mandatory to resolve. Task5 next.
+
+## Task5 RED preparation
+- BASEec5ccee, whole Task5 brief read. Cloud RED7 named missing bounded SMS/digest-only OTP contracts before implementation; added actual1-second hanging provider bound test before code.
+- Added true PostgreSQL/Redis issuance/cooldown/resend, retired late-ack race with separate DB connection/thread barrier, failed/unknown/crash-pending, audit rollback-before-IO, private sentinel persistence/log and existing/restricted/suspended uniform-result contracts. Production provider remains unselected/disabled. Actual RED pendingCI.
