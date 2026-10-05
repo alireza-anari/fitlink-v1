@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 import pytest
 from django.apps import apps
 from django.contrib.sessions.models import Session
-from django.db import IntegrityError, connection, transaction
+from django.db import DataError, IntegrityError, connection, transaction
 from django.db.migrations.executor import MigrationExecutor
 from django.utils import timezone
 
@@ -100,7 +100,11 @@ def test_anchor_uniqueness_and_bounds():
     reject(phone, phone="+989123456788", generation=-1)
     anchor.objects.create(kind="phone", key_id="v1", key_digest="a" * 64)
     reject(anchor, kind="phone", key_id="v1", key_digest="a" * 64)
-    reject(anchor, kind="arbitrary", key_id="v1", key_digest="b" * 64)
+    # A bounded unknown enum must hit its CHECK, while overlength input
+    # correctly fails PostgreSQL's column-width guard with DataError.
+    reject(anchor, kind="other", key_id="v1", key_digest="b" * 64)
+    with pytest.raises(DataError), transaction.atomic():
+        anchor.objects.create(kind="arbitrary", key_id="v1", key_digest="b" * 64)
 
 
 def test_challenge_and_session_constraints():

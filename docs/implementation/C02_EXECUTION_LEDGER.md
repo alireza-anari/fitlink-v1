@@ -72,3 +72,12 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Security inspection strengthened bound-user/version SQL NULL consistency before live use;0005 closes three-valued-check ambiguity. Actual constraints and emitted SQL remain PENDING_CI.
 - Ruling: add minimal inactive-state manager default — the new state/is_active constraint would reject legitimate create_user(is_active=False), including Foundation callers — explicit inconsistent state remains rejected, no account is reactivated.
 - Task2 IN_PROGRESS until actual PostgreSQL upgrade/constraints and Foundation regression gates pass. Tasks3–16 UNSTARTED.
+- Task2 implementation commit65ecc97529db6a7cf2fddf93649a6140eb2690f9.
+- Remote sync: local 65ecc97529db6a7cf2fddf93649a6140eb2690f9 -> GitHub ebc1770c5e1fea90eecd70b1203de7f187935fdb; tree333a08a0f8f4ac825bb5e3f0c84cf08a642c7d37 matched before non-forced C02 ref advance.
+
+### Task2 CI diagnosis and correction
+- Run37318536132/job111791364501: migration SQL step succeeded; actual tests6 passed/1 failed. The populated C01 upgrade and no-auth_user cases passed.
+- Root cause from full traceback: enum fixture 'arbitrary' exceeds SecurityRateAnchor.kind varchar(5), so PostgreSQL correctly raises DataError before the expected CHECK/IntegrityError. Model/security behavior is correct.
+- Fix preserves the overlength denial assertion as DataError and adds bounded unknown 'other' to exercise the CHECK/IntegrityError. No production constraint relaxed.
+- Emitted SQL inspected: additive columns/tables, unique indexes, PROTECT FKs, no User replacement, inactive data mapping precedes consistency check, explicit non-NULL bound auth version.
+- Wider Foundation job on the previous implementation head still in progress; current task not complete until corrected real PostgreSQL tests pass.
