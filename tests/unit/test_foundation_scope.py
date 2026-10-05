@@ -36,6 +36,8 @@ def test_only_foundation_routes_and_identity_model():
         "RecoveryEvidenceMetadata",
         "PhoneChangeHistory",
         "PhoneChangeIntent",
+        "Consent",
+        "ConsentScope",
     }
     user = apps.get_model("accounts", "User")
     assert {field.name for field in user._meta.get_fields()} == {

@@ -5,6 +5,7 @@ from django.utils import timezone
 
 EVENT_TYPES = (
     "account.security_changed",
+    "consent.granted",
     "consent.revoked",
     "privacy.intake_recorded",
     "feature_flag.changed",

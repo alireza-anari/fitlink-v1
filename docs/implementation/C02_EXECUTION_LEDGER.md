@@ -23,7 +23,7 @@
 7. COMPLETE — versioned sessions, rotation/outage findings fixed RED→GREEN.
 8. COMPLETE — real recovery/receipt/staff/history/race/rollback/audited-read gates GREEN.
 9. COMPLETE — published dual-possession implementation and required CI verified during recovery.
-10. BLOCKED_BEFORE_RED — recovered execution host lacks Python/uv; bundled runtime loader fails.
+10. IN_PROGRESS — recovered Cloud runtime verified; Consent Cloud RED→GREEN; required real PostgreSQL CI pending.
 11–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
@@ -320,3 +320,20 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Recovered host is Windows rather than the former Linux Cloud workspace. Current workspace contains no repository checkout. Python/py/uv/bash/wsl command discovery returned none; CODEX_PRIMARY_RUNTIME variables absent; codex_app/load_workspace_dependencies returned tool-request failure. Git Schannel credential acquisition failed; OpenSSL transport reached authentication but Git Credential Manager could not persist credentials and could not obtain password. Authenticated connector read/write remains available, so shell Git failure alone is not the blocker. Docker daemon pipe absent; Docker absence alone is also not the blocker because actual-service CI remains available.
 - Task10 BLOCKED_BEFORE_RED: approved per-task local/cloud Python unit/static/TDD gates cannot execute on the recovered host without a usable Python3.13/uv runtime or restored Cloud executor. No Task10 implementation/test source has been written or claimed verified; do not skip RED or substitute unexecuted source review for GREEN. Resume at Task10 once execution runtime is available.
 - C02 remains BLOCKED, not PASS. Tasks11–16 unstarted; exact populated C01-to-C02 rehearsal and full final security/CI review still mandatory in Task16. STOP before C03; no merge/deploy/vendor/C18 work.
+
+## Verified Cloud continuation — Tasks10–16
+- User continuation attachment authorizes only Tasks10–16, coherent local commits and authenticated Git Data sync on accounts/c02-cloud. No main/Foundation change, merge, deployment or C03.
+- Recovery mapping: local a53d37678c9f5cc94669a08e74fdabae969ba8dd -> remote 4664e4123529c3c25bad3575b2797b5311a60c8a. Exact tree13beede47e6be7a822303a9ac6709b18da590d4b reverified clean before edits. Linux Python3.13.15/uv0.12.19 baseline159units passed9.66s; CI37361681677 completedSUCCESS. Synthetic ancestry must not be published.
+- Immutable protected refs observed: main8ede9a451db6103f4e3ebf65784ee9f16b96feb2; foundation/c01-cloud75c551e5b9bbbfb7777ee52b09a1993b681e921a.
+- Ruling: continue in user-selected recovered isolated checkout, retaining this authoritative ledger instead of reconstructing Tasks1–9 or new worktrees — preserves verified state and explicit recovery authorization — cost if wrong: this checkout is the single local recovery copy.
+
+## Task10 — Consent Cloud checkpoint
+- BASEa53d376. Full approved Task10 brief read; linked domain/permissions/storage/AI requirements inspected. Tasks1–9 intact;11–16unstarted.
+- Cloud RED9expected missing validated core assertions0.08s before implementation; additional grant-event behavioral RED1expected ValueError/9passed before event extension. Logs recovery-runtime/task10-red.log.
+- Added Consent/normalized ConsentScope, subject/grantee/purpose/text hash+version/expiry, required synchronous recorder, current User/session authority, exact scope revision, owner-only list/count, optimistic one-way revoke. Grant and revoke audit/outbox share the domain transaction. Sorted User participant locks serialize grant against identity restrictions. Unknown/uninstalled validators deny; dataclass values are revalidated at mutation/query. No object permission API or future domain objects.
+- Ruling: the sole C02 validator is account_metadata for the existing own User/state_version, never sensitive data — permits real nonsensitive core tests without inventing health/photo objects; all future purposes remain closed until reviewed validators exist — cost if wrong: account metadata purpose would need narrower policy before a future public adapter.
+- Ruling: add explicit ID-only consent.granted event alongside consent.revoked — user requires outbox on grant as well as revoke; existing event allowlist only named revoke — cost if wrong: Task13 must handle this additional bounded metadata event.
+- Additive governance0004Consent schema,0005grant event+DB payload guard,0006immutable scope/terminal consent SQL guards. Earlier migrations unchanged; accounts0001/User unchanged. Exact Foundation model allowlist extends by Consent/ConsentScope only; no User reverse fields added.
+- Cloud GREEN169units9.09s; Ruff/format159files, mypy62files, Django/production checks, no migration drift, diff check exit0. Local PostgreSQL history unavailable is not real migration evidence.
+- Authored required real PostgreSQL tests before implementation: exact predicate/expiry/version/foreign actor/stale state/guessed ID/list/count/future scope, SQL terminal denial, grant/revoke audit+outbox rollback and independent-connection competing revoke. Real integration GREEN pendingCI; Task10 remains IN_PROGRESS and Task11 must wait.
+- Focused author review: consent only predicate, no profile/health/relationship/AI provider; scope/text are not arbitrary audit payloads; UUID-only outbox; actor rechecked under locks; terminal SQL revocation and scope immutability; no generic web grant endpoint. Required SQL/race evidence remains pendingCI.

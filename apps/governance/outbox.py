@@ -7,6 +7,7 @@ from .outbox_models import EVENT_TYPES, OutboxEvent
 
 PAYLOAD_FIELDS = {
     "account.security_changed": frozenset({"user_uuid"}),
+    "consent.granted": frozenset({"consent_uuid", "user_uuid"}),
     "consent.revoked": frozenset({"consent_uuid", "user_uuid"}),
     "privacy.intake_recorded": frozenset({"privacy_uuid", "user_uuid"}),
     "feature_flag.changed": frozenset({"flag_uuid"}),
