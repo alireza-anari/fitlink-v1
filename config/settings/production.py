@@ -1,3 +1,4 @@
+import ipaddress
 import re
 import ssl
 from urllib.parse import urlsplit
@@ -7,17 +8,36 @@ from .base import DATABASES, STORAGES, env
 
 DEBUG = False
 SECRET_KEY = env.str_value("DJANGO_SECRET_KEY", required=True)
-if len(SECRET_KEY) < 50 or re.search(
-    r"test|local|example|development|placeholder", SECRET_KEY, re.I
+if (
+    len(SECRET_KEY) < 50
+    or len(set(SECRET_KEY)) < 5
+    or SECRET_KEY.startswith("django-insecure-")
+    or re.search(r"test|local|example|development|placeholder", SECRET_KEY, re.I)
 ):
     env.invalid("DJANGO_SECRET_KEY")
+
+
+def valid_host(key: str, value: str) -> None:
+    host = value.lower().rstrip(".")
+    if host in {"localhost", "web", "testserver", "db", "redis", "minio"}:
+        env.invalid(key)
+    try:
+        address = ipaddress.ip_address(host.strip("[]"))
+    except ValueError:
+        if len(host) > 253 or not re.fullmatch(
+            r"(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*"
+            r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?",
+            host,
+        ):
+            env.invalid(key)
+    else:
+        if address.is_loopback or address.is_unspecified:
+            env.invalid(key)
+
+
 ALLOWED_HOSTS = list(env.csv_value("DJANGO_ALLOWED_HOSTS", required=True))
-if any(
-    not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9.-]*", host)
-    or host in {"localhost", "web", "testserver", "127.0.0.1"}
-    for host in ALLOWED_HOSTS
-):
-    env.invalid("DJANGO_ALLOWED_HOSTS")
+for host in ALLOWED_HOSTS:
+    valid_host("DJANGO_ALLOWED_HOSTS", host)
 
 
 def secure_url(key: str, scheme: str, auth: bool = False) -> str:
@@ -27,12 +47,17 @@ def secure_url(key: str, scheme: str, auth: bool = False) -> str:
         if (
             url.scheme != scheme
             or not url.hostname
-            or url.hostname in {"localhost", "redis", "minio", "127.0.0.1"}
+            or url.query
+            or (not auth and (url.username is not None or url.password is not None))
             or (auth and (not url.username or not url.password))
             or url.fragment
         ):
             env.invalid(key)
-        _ = url.port
+        valid_host(key, url.hostname or "")
+        if url.port is not None and not 1 <= url.port <= 65535:
+            env.invalid(key)
+        if auth and not re.fullmatch(r"/[0-9]+", url.path):
+            env.invalid(key)
     except ValueError:
         env.invalid(key)
     return value
@@ -54,9 +79,18 @@ for key in ("NAME", "USER", "PASSWORD", "HOST"):
     DATABASES["default"][key] = env.str_value(
         "POSTGRES_" + ("DB" if key == "NAME" else key), required=True
     )
-if DATABASES["default"]["HOST"] in {"db", "localhost", "127.0.0.1"}:
-    env.invalid("POSTGRES_HOST")
+valid_host("POSTGRES_HOST", str(DATABASES["default"]["HOST"]))
+if str(DATABASES["default"]["PASSWORD"]).lower() in {
+    "changeme",
+    "password",
+    "secret",
+    "fitlink",
+    "minioadmin",
+}:
+    env.invalid("POSTGRES_PASSWORD")
 DATABASES["default"]["PORT"] = env.int_value("POSTGRES_PORT", minimum=1)
+if DATABASES["default"]["PORT"] > 65535:
+    env.invalid("POSTGRES_PORT")
 sslmode = env.str_value("POSTGRES_SSLMODE", "verify-full")
 if sslmode != "verify-full":
     env.invalid("POSTGRES_SSLMODE")

@@ -62,9 +62,10 @@ checks exactly one Beat, executes both browser viewports, restarts Redis and
 MinIO without volume deletion and reruns transport/private-storage/browser gates.
 It shuts down only its own containers on exit and retains volumes. A genuinely
 clean rehearsal requires that this named project has not previously been used;
-use a fresh disposable Docker host, as each GitHub Actions job does. If a failed
-local rehearsal already created `.env.verify`, deliberately choose a new isolated
-project/env file or review and remove only that ignored file; no silent overwrite.
+use a fresh disposable Docker host, as each GitHub Actions job does. The script
+refuses existing project volumes. For a rerun, choose a new identity:
+`C01_VERIFY_PROJECT=fitlink-foundation-verify-rerun C01_VERIFY_ENV_FILE=.env.verify-rerun sh docker/verify_foundation.sh`.
+Existing volumes/credentials are retained; no silent overwrite or reset.
 
 The script's backend commands run through the separate `checks` image because
 runtime images intentionally exclude pytest and other development dependencies.
@@ -89,4 +90,7 @@ a deployment concern. Upload storage always stays private and separate.
 Request IDs accept only bounded UUIDs and reset after each request. Structured
 logs emit safe method/route-pattern/status/duration and exception class/frame
 locations. Raw messages, exception text, bodies, cookies, authorization headers,
-query values and credentials are excluded. Uvicorn raw access logging is disabled.
+query values and credentials are excluded. Uvicorn starts through config.server with explicit safe error/startup logging,
+raw access logging disabled and no implicit proxy-header trust. Redis URL query
+options are rejected to prevent TLS verification downgrades. Production startup
+also rejects weak keys, malformed/loopback hosts, invalid ports and known passwords.

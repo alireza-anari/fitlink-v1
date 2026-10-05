@@ -83,7 +83,7 @@ services:
       minio-init: {condition: service_completed_successfully}
     volumes: [".:/app"]
     ports: ["127.0.0.1:${WEB_PORT:-8000}:8000"]
-    command: ["uv", "run", "--frozen", "uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
+    command: ["uv", "run", "--frozen", "python", "-m", "config.server"]
     healthcheck:
       test: ["CMD", "uv", "run", "--frozen", "python", "docker/healthcheck.py", "web"]
       interval: 3s

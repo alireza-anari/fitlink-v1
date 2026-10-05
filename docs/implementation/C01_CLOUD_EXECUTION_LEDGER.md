@@ -208,3 +208,20 @@ unit/production steps actually succeeded. Compose integration step running.
 Clean rehearsal/final review/C01 exit remain PENDING_CI, not overall PASS.
 Ruling: generator includes explicit host-side URL/credential mapping matching
 its alternate port allocation; Compose overrides with internal service hosts.
+Mapping: local 2fa11a0f18b784a351e0923313876c06efc0ae91 -> GitHub 7002ea5eaa8a79ff0d5537d5cae2d5b08bd14b3b (tree dce9c8c78d83e9895786ea6ca3aee58a1a65a1b8).
+Review/CI fix checkpoint: run37287578971 failed at Compose worker health after
+all images built and real PostgreSQL contenttypes/auth/accounts/sessions clean
+migrations succeeded. Unit/integration DB identity assertions had not run yet,
+so auth_user absence remains PENDING_CI. Local direct healthcheck reproduction
+raised ModuleNotFoundError: config; regression RED then project-root bootstrap
+fix GREEN. Beat uses the same script bootstrap; runtime must rerun in CI.
+Independent review found3 Important/no Critical: Uvicorn default error-handler
+redaction bypass, Redis TLS query downgrade, insufficient production validation.
+Eight new regressions RED→GREEN; actual runtime entrypoint subprocess verifies
+redaction/startup and no proxy trust; sync/async Redis clients verify required
+certificates and hostname checks. Production rejects unsafe-key/local/malformed
+host/invalid-port/known-password values and arbitrary URL queries.
+68 total units, Ruff lint/format, focused mypy and offline production deploy
+checks pass. Minor rerun usability resolved via explicit new project/env overrides
+and refusal of preexisting volumes; storage restart claim narrowed to functioning
+private storage (not object persistence across restart). CI runtime pending.

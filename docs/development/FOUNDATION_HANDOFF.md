@@ -40,7 +40,7 @@ no overflow, API/readiness success against Compose.
 
 ## Verification and review
 
-Cloud: frozen locks/install, CSS/JS, static manifest/hashed render, 57 units,
+Cloud: frozen locks/install, CSS/JS, static manifest/hashed render, 68 units,
 Ruff lint/format, focused Django-aware mypy, Django checks/model-state drift and
 offline production deploy checks passed. Cloud has no Docker/Compose or matching
 Chromium; attempted browser setup errors are recorded, not counted as PASS.

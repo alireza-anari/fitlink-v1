@@ -157,5 +157,12 @@ LOGGING = {
     "loggers": {
         "django": {"handlers": ["console"], "level": LOG_LEVEL, "propagate": False},
         "celery": {"handlers": ["console"], "level": LOG_LEVEL, "propagate": False},
+        "uvicorn": {"handlers": ["console"], "level": LOG_LEVEL, "propagate": False},
+        "uvicorn.error": {
+            "handlers": ["console"],
+            "level": LOG_LEVEL,
+            "propagate": False,
+        },
+        "uvicorn.access": {"handlers": [], "propagate": False},
     },
 }

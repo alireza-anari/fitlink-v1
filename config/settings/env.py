@@ -4,7 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 
 def invalid(name: str) -> None:
-    raise ImproperlyConfigured(f"Invalid or missing configuration: {name}")
+    raise ImproperlyConfigured(f"Invalid or missing configuration: {name}") from None
 
 
 def str_value(name: str, default: str | None = None, required: bool = False) -> str:

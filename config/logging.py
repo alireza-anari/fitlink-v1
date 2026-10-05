@@ -22,7 +22,14 @@ class JsonFormatter(logging.Formatter):
             "request_id": getattr(record, "request_id", request_id.get()),
             "release_id": settings.RELEASE_ID,
         }
-        for key in ("method", "route", "status", "duration_ms"):
+        for key in (
+            "method",
+            "route",
+            "status",
+            "duration_ms",
+            "process",
+            "process_role",
+        ):
             if hasattr(record, key):
                 value[key] = getattr(record, key)
         if record.exc_info and record.exc_info[0]:

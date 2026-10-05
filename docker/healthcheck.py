@@ -1,9 +1,11 @@
 import os
 import sys
+from pathlib import Path
 from urllib.request import urlopen
 
 
 def main() -> int:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     kind = sys.argv[1]
     if kind == "web":
         try:
@@ -32,8 +34,6 @@ def main() -> int:
             else 1
         )
     if kind == "beat":
-        from pathlib import Path
-
         schedule = Path("/var/lib/celery/celerybeat-schedule")
         running = b"beat" in Path("/proc/1/cmdline").read_bytes()
         return 0 if schedule.exists() and running else 1

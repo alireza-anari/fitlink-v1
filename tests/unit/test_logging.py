@@ -68,3 +68,69 @@ def test_concurrent_correlation_isolated():
     values = [str(uuid.uuid4()) for _ in range(8)]
     with ThreadPoolExecutor(max_workers=4) as pool:
         assert list(pool.map(invoke, values)) == values
+
+
+def test_uvicorn_handlers_redact_after_default_config():
+    import os
+    import subprocess
+    import sys
+
+    script = """
+import logging, logging.config, django, uvicorn
+from django.conf import settings
+uvicorn.Config("config.asgi:application", access_log=False)
+django.setup()
+try:
+    raise ValueError("private-sentinel")
+except ValueError:
+    logging.getLogger("uvicorn.error").exception("private-sentinel")
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        env={
+            **{k: v for k, v in os.environ.items() if k == "PATH"},
+            "DJANGO_SETTINGS_MODULE": "config.settings.test",
+        },
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "private-sentinel" not in result.stdout + result.stderr
+    assert '"error_class": "ValueError"' in result.stderr
+
+
+def test_actual_server_entrypoint_preserves_redaction_and_no_proxy_trust():
+    import os
+    import subprocess
+    import sys
+
+    script = """
+import logging, uvicorn
+from config.server import main
+
+def run(*args, **kwargs):
+    assert kwargs["access_log"] is False
+    assert kwargs["proxy_headers"] is False
+    uvicorn.Config(*args, **kwargs)
+    try:
+        raise ValueError("entrypoint-private-sentinel")
+    except ValueError:
+        logging.getLogger("uvicorn.error").exception("entrypoint-private-sentinel")
+uvicorn.run = run
+main()
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        env={
+            **{k: v for k, v in os.environ.items() if k == "PATH"},
+            "DJANGO_SETTINGS_MODULE": "config.settings.test",
+        },
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "entrypoint-private-sentinel" not in result.stdout + result.stderr
+    assert '"error_class": "ValueError"' in result.stderr
+    assert '"event": "process.started"' in result.stderr

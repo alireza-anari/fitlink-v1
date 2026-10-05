@@ -9,7 +9,7 @@ USER app
 RUN uv sync --frozen --no-dev --no-install-project
 COPY --chown=app:app . .
 FROM base AS development
-CMD ["uv", "run", "--frozen", "uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
+CMD ["uv", "run", "--frozen", "python", "-m", "config.server"]
 FROM base AS checks
 ENV UV_NO_DEV=0
 RUN uv sync --frozen --group dev --no-install-project
@@ -32,4 +32,4 @@ RUN uv run --frozen python manage.py collectstatic --noinput --settings=config.s
 FROM base AS production
 COPY --from=static-build --chown=app:app /app/staticfiles /app/staticfiles
 ENV DJANGO_SETTINGS_MODULE=config.settings.production
-CMD ["uv", "run", "--frozen", "uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
+CMD ["uv", "run", "--frozen", "python", "-m", "config.server"]
