@@ -19,8 +19,9 @@
 3. COMPLETE — audit/outbox/staff; payload findings fixed with real PostgreSQL GREEN.
 4. COMPLETE — real dual-store quotas, races, outage/reset/process/restart; one deferred retry hint minor.
 5. COMPLETE — digest-only issuance, ambient boundary fix; Cloud/service gates green.
-6. IN_PROGRESS — actual RED confirmed; atomic proof/adult implementation.
-7–16. UNSTARTED.
+6. COMPLETE — atomic proof/adult/race/application service gates green.
+7. IN_PROGRESS — versioned session/policy RED preparation.
+8–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -223,3 +224,12 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 
 - Task5 final Foundation37330187531/job111831032453 completed logs inspected:138units/204combinedbackend/2+2browser/5Redis-Celery-Channels/1MinIO, all SUCCESS.
 - Task6 Cloud GREEN140units13.35s, mypy36files/Ruff/format126files/Django/no migration drift all pass. History warning due absent Cloud PG is not real migration evidence. Actual proof/race/adult GREEN and focused independent review PENDING; do not advance Task7.
+
+### Task6 completion boundary
+- Remote sync: local6ba95bcb3b48e3abd3e5bff849d168b2618e62fb -> GitHube41ed5d4d8eb72116d9f9d200cb45e19f91c950d; tree3041b3a0590405175eb9a46507abb7439e1cdb19 equality verified before non-forced expected-parent update.
+- Actual GREEN run37346206791/job111885284381 SUCCESS:70 PostgreSQL/Redis cases passed14.36s, actual restart prepare/verify passed. Separate DB connections/barriers establish exactly one login consume/User and one non-login application; rollback leaves proof unapplied. Logs inspected.
+- Focused independent security review: no concrete Critical/Important/Minor finding. Production check green. Task6 required service/relevant C01 regression gates complete; Foundation111885284711 static/unit step green, Compose pending, not yet PASS. Any wider failure remains mandatory. Task7 next.
+
+## Task7 RED preparation
+- BASE6ba95bc; whole Task7 brief read. Cloud12expected missing current-action policy failures. Real PostgreSQL tests cover rotation/payload/oldkey/missingrevokedstalescope/control/single-global logout/session-audit rollback/owned detail-list-count/current-state mutation recheck/login-suspension serializations plus actual cookie CSRF and dependency failure closed with liveness available.
+- State re-entry fixture resets only cooldown to enable second approved attempt; quota/generation/session invariants remain real, no substituted concurrency. Actual RED pendingCI before implementation.
