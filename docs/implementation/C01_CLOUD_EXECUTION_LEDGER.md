@@ -100,3 +100,16 @@ External blocker: authenticated Git transport for this checkout is required to
 perform the explicitly ordered initial push before Task2. Existing commits/locks
 remain preserved. Tasks2–14 unstarted; C01 BLOCKED; no CI run or integration PASS.
 No merge, release, visibility change, deployment or production action performed.
+
+## Authenticated API checkpoint synchronization
+Remote checkpoint mapping: local 0db6b27 -> GitHub 6f23ae50189005511aae8e35bbc170f77ef44863.
+Exact local/remote tree: ec5c3b4cc435a8282c7f17b926609b77bd895409.
+Remote Foundation branch created from bootstrap main8ede9a4; main unchanged.
+Ruling: user-authorized Git Data tree synchronization uses a different remote
+parent ancestry; preserve local history and verify tree equality, expected branch
+head and non-forced fast-forward updates — hashes differ and must be mapped.
+
+Task 2: Cloud PASS (16 settings/env tests RED→GREEN; Django check no issues).
+Ruling: first red run overrides pytest addopts because config.settings.test does
+not exist yet; missing config caused16 failures, not dependency failure — normal
+--ds test overlay restored for green run. No database-backed test or migration.
