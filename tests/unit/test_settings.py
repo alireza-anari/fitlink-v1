@@ -1,5 +1,3 @@
-import importlib
-
 import pytest
 from test_environment import boot
 
@@ -66,11 +64,30 @@ def test_valid_production_boot():
 
 
 def test_development_and_test_are_separate_overlays():
-    dev = importlib.import_module("config.settings.development")
-    test = importlib.import_module("config.settings.test")
-    assert dev.DEBUG is True and test.DEBUG is False
-    assert test.DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql"
-    assert test.STORAGE_BACKEND == "fake"
+    import os
+    import subprocess
+    import sys
+
+    # pytest changes the active DATABASES dict to test_fitlink; importing a
+    # different overlay in-process would reuse that mutated shared base dict.
+    script = """
+import importlib, sys
+module = importlib.import_module(sys.argv[1])
+assert module.DEBUG is (sys.argv[2] == "True")
+assert module.DATABASES["default"]["NAME"] == "fitlink"
+assert module.DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql"
+if sys.argv[2] == "False":
+    assert module.STORAGE_BACKEND == "fake"
+"""
+    for module, debug in (("development", "True"), ("test", "False")):
+        result = subprocess.run(
+            [sys.executable, "-c", script, "config.settings." + module, debug],
+            env={key: value for key, value in os.environ.items() if key == "PATH"},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode == 0, result.stderr
 
 
 @pytest.mark.parametrize(

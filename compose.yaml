@@ -118,6 +118,7 @@ services:
     environment:
       <<: *app-env
       UV_NO_DEV: '0'
+      PYTEST_ADDOPTS: '-o cache_dir=/tmp/fitlink-pytest-cache'
     command: ["uv", "run", "--frozen", "pytest", "tests/unit", "tests/integration", "-q"]
     healthcheck: {disable: true}
   browser:
@@ -130,6 +131,7 @@ services:
     environment:
       <<: *app-env
       UV_NO_DEV: '0'
+      PYTEST_ADDOPTS: '-o cache_dir=/tmp/fitlink-pytest-cache'
       PLAYWRIGHT_BROWSERS_PATH: /opt/playwright
       E2E_BASE_URL: http://web:8000
     command: ["uv", "run", "--frozen", "pytest", "tests/e2e", "-q", "-m", "e2e"]

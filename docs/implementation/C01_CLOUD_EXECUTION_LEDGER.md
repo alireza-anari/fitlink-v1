@@ -242,3 +242,15 @@ Quality correction: e234edc's final Ruff invocation reported E501 for the new
 regression name; the shell sequence continued to commit because it lacked set-e.
 Shorten that name; explicit fail-fast verification now passes lint/format/mypy and
 70 units. No runtime behavior change; prior quality PASS wording is superseded.
+Mapping: local 32c6a776aef89fc362a71074366c726ac11f6f6f -> GitHub dc78d3dea0baebd683b116f049e02e0f8e6cd208 (tree 26c3456982536dbfb3bd7a053237c1fb5cc79351).
+CI root-cause fix: run37288982520 worker/web/Beat startup all healthy; combined
+backend run87 PASS/1FAIL in test_development_and_test_are_separate_overlays. Actual
+job log inspected. pytest mutates shared active DATABASES NAME to test_fitlink;
+in-process development import reused that dict and correctly rejected it. Cloud
+reproduced the exact failure by setting only in-memory NAME (no DB migration).
+Isolated subprocess overlay assertions now pass even after that mutation; all70
+units/Ruff/mypy pass. Keep development DB guard intact. Container pytest caches
+now use /tmp, addressing nonroot bind-mount cache permission warnings.
+20 actual integration cases executed in the earlier combined run; identity/no
+ auth_user/private MinIO/worker/Channels tests passed, but whole CI remains FAIL
+and restart/browser gates had not been reached. Latest snapshot requires full CI.
