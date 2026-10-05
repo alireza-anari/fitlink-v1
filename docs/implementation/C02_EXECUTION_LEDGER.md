@@ -25,7 +25,7 @@
 9. COMPLETE — published dual-possession implementation and required CI verified during recovery.
 10. COMPLETE — Cloud RED→GREEN; current-source Foundation CI includes all23Consent PostgreSQL cases and full regression gates, inspected genuine success.
 11. COMPLETE — Cloud RED→GREEN; retry37369811515 attempt2 both required jobs SUCCESS, actual logs inspected.
-12. IN_PROGRESS — Cloud RED→GREEN; real PostgreSQL intake/hold/race and Foundation gates pending.
+12. COMPLETE — Cloud RED→GREEN; real PostgreSQL213cases and Foundation423backend/full browser-restart CI SUCCESS, logs inspected.
 13–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
@@ -386,3 +386,10 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Ruling: overdue review never silently releases retained evidence; expiry or authorized release ends this bounded hold — review is a staff obligation, not implicit erasure authorization — cost if wrong: policy owners must define escalation before C18.
 - Retention policies start draft with duration unset; approval requires explicit positive duration and versioned backup reference, named privacy_operations capability plus policy/case-bound fresh step-up. Test durations are synthetic only; no live policy seeded. Existing effective policy is preserved; supersession remains denied until a reviewed command exists.
 - Cloud Ruff/format179files, mypy75files, Django/production, frozen lock, JS and drift checks pass. Local unavailable PostgreSQL history warning is not migration execution evidence. Required actual PostgreSQL and full Foundation CI PENDING; Task12 NOT COMPLETE,13–16unstarted.
+
+## Task12 required CI completion
+- Sync mapping: localf7701de62154192f00e9d0357a71661b7a829bbc -> remote26c7f761bd20a458f930acfb5b46a2c97287eb07, exact tree9f923c657dda6a867e77215d79fd4784403dd15c. Non-forced C02-only advance used actual remote parent2f0007027ba03f656fbfa4f98cf4eafc19b7c89c; synthetic recovery ancestry not published.
+- Run37381433708 completedSUCCESS on the exact implementation head. c02-migrations112004128549 full logs inspected: additive0009SQL/constraints,213PostgreSQL tests31.54s including all28privacy/hold cases, durable Redis quota prepare/restart/verify all passed.
+- Foundation112004128288 full logs inspected:192units7.65s, Ruff/format179files/mypy75files/Django/production/frozen/static success; governance0009appliedOK/no migration drift;423combinedbackend67.64s,2browser before restart,5Redis/Celery/Channels recovery,1MinIO recovery,2browser after restart. No selected skips or implementation failure.
+- Task12 COMPLETE; Tasks1–11 preserved;13–16 remain unstarted. EntireC02 exit/review/upgrade criteria still pending. This completion commit changes only the ledger; no CI rerun requested.
+- Protected refs reverified unchanged: main8ede9a451db6103f4e3ebf65784ee9f16b96feb2; foundation/c01-cloud75c551e5b9bbbfb7777ee52b09a1993b681e921a. No merge/deploy/C03.
