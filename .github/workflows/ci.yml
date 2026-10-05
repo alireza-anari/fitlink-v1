@@ -92,3 +92,17 @@ jobs:
           uv run --frozen python manage.py sqlmigrate governance 0003 --settings=config.settings.test
       - name: Real PostgreSQL account upgrade and constraint contracts
         run: uv run --frozen pytest tests/integration/c02 tests/integration/test_initial_migration.py -q --strict-markers
+
+      - name: Real Redis restart and lost-counter durable quota gate
+        env:
+          C02_REDIS_CONTAINER: ${{ job.services.redis.id }}
+        run: |
+          uv run --frozen python manage.py migrate --noinput --settings=config.settings.test
+          uv run --frozen python docker/c02_limiter_restart_probe.py prepare
+          docker restart "$C02_REDIS_CONTAINER"
+          for probe in $(seq 1 30); do
+            if docker exec "$C02_REDIS_CONTAINER" redis-cli ping >/dev/null; then break; fi
+            sleep 1
+          done
+          docker exec "$C02_REDIS_CONTAINER" redis-cli ping
+          uv run --frozen python docker/c02_limiter_restart_probe.py verify

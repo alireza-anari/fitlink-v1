@@ -44,6 +44,8 @@ _POLICY_KEYS = {
     "send_ip": ("OTP_SEND_IP_LIMIT", 1, 1000),
     "failure_phone": ("OTP_FAILURE_PHONE_LIMIT", 1, 100),
     "failure_ip": ("OTP_FAILURE_IP_LIMIT", 1, 1000),
+    "recovery_phone": ("RECOVERY_INTAKE_PHONE_LIMIT", 1, 100),
+    "recovery_ip": ("RECOVERY_INTAKE_IP_LIMIT", 1, 1000),
     "sms_timeout_seconds": ("SMS_TIMEOUT_SECONDS", 1, 3),
     "recent_auth_seconds": ("ACCOUNT_RECENT_AUTH_SECONDS", 1, 600),
     "recovery_receipt_seconds": ("RECOVERY_RECEIPT_SECONDS", 1, 604800),

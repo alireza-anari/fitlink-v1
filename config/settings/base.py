@@ -80,6 +80,7 @@ CELERY_BROKER_URL = env.str_value("CELERY_BROKER_URL", "redis://127.0.0.1:6380/1
 CELERY_RESULT_BACKEND = env.str_value(
     "CELERY_RESULT_BACKEND", "redis://127.0.0.1:6380/2"
 )
+OTP_RATE_REDIS_URL = env.str_value("OTP_RATE_REDIS_URL", "redis://127.0.0.1:6380/4")
 CHANNEL_REDIS_URL = env.str_value("CHANNEL_REDIS_URL", "redis://127.0.0.1:6380/3")
 CACHES = {
     "default": {

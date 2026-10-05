@@ -24,6 +24,7 @@ def production_env():
         "CELERY_BROKER_URL": "rediss://app:ephemeral@cache.example:6379/1",
         "CELERY_RESULT_BACKEND": "rediss://app:ephemeral@cache.example:6379/2",
         "CHANNEL_REDIS_URL": "rediss://app:ephemeral@cache.example:6379/3",
+        "OTP_RATE_REDIS_URL": "rediss://app:ephemeral@cache.example:6379/4",
         "STORAGE_BACKEND": "s3",
         "S3_ENDPOINT_URL": "https://storage.example",
         "S3_BUCKET_NAME": "private-assets",

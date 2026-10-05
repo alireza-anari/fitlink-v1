@@ -8,6 +8,7 @@ from .base import (
     CELERY_RESULT_BACKEND,
     CHANNEL_REDIS_URL,
     DATABASES,
+    OTP_RATE_REDIS_URL,
     REDIS_URL,
     STORAGES,
     env,
@@ -22,7 +23,13 @@ if DATABASES["default"]["NAME"] != "fitlink":
     env.invalid("POSTGRES_DB")
 
 env.require_local_redis(
-    (REDIS_URL, CELERY_BROKER_URL, CELERY_RESULT_BACKEND, CHANNEL_REDIS_URL)
+    (
+        REDIS_URL,
+        CELERY_BROKER_URL,
+        CELERY_RESULT_BACKEND,
+        CHANNEL_REDIS_URL,
+        OTP_RATE_REDIS_URL,
+    )
 )
 
 STORAGES["default"] = {"BACKEND": "django.core.files.storage.InMemoryStorage"}
@@ -31,3 +38,5 @@ STORAGES["default"] = {"BACKEND": "django.core.files.storage.InMemoryStorage"}
 ACCOUNT_SECURITY = load_security_config(os.environ, production=False)
 
 SETTINGS_ENV = "test"
+
+env.require_rate_redis(OTP_RATE_REDIS_URL)

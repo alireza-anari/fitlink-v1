@@ -33,6 +33,7 @@ for name, database in (
     ("CELERY_BROKER_URL", 1),
     ("CELERY_RESULT_BACKEND", 2),
     ("CHANNEL_REDIS_URL", 3),
+    ("OTP_RATE_REDIS_URL", 4),
 ):
     values[name] = (
         f"rediss://app:{secrets.token_urlsafe(24)}@redis.foundation.invalid:6379/{database}"

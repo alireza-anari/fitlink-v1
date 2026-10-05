@@ -9,6 +9,7 @@ from .base import (
     CELERY_RESULT_BACKEND,
     CHANNEL_REDIS_URL,
     DATABASES,
+    OTP_RATE_REDIS_URL,
     REDIS_URL,
     S3_ENDPOINT_URL,
     env,
@@ -21,7 +22,13 @@ if DATABASES["default"]["NAME"] != "fitlink":
     env.invalid("POSTGRES_DB")
 
 env.require_local_redis(
-    (REDIS_URL, CELERY_BROKER_URL, CELERY_RESULT_BACKEND, CHANNEL_REDIS_URL)
+    (
+        REDIS_URL,
+        CELERY_BROKER_URL,
+        CELERY_RESULT_BACKEND,
+        CHANNEL_REDIS_URL,
+        OTP_RATE_REDIS_URL,
+    )
 )
 
 
@@ -32,3 +39,5 @@ if urlsplit(S3_ENDPOINT_URL).hostname not in {"localhost", "127.0.0.1", "minio"}
 ACCOUNT_SECURITY = load_security_config(os.environ, production=False)
 
 SETTINGS_ENV = "development"
+
+env.require_rate_redis(OTP_RATE_REDIS_URL)

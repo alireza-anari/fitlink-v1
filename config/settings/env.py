@@ -61,3 +61,16 @@ def require_local_redis(values: tuple[str, ...]) -> None:
             "localhost",
         }:
             invalid("REDIS_URLS")
+
+
+def require_rate_redis(value: str) -> None:
+    from urllib.parse import urlsplit
+
+    try:
+        parsed = urlsplit(value)
+        if parsed.path != "/4" or parsed.query or parsed.fragment:
+            invalid("OTP_RATE_REDIS_URL")
+        if parsed.port is not None and not 1 <= parsed.port <= 65535:
+            invalid("OTP_RATE_REDIS_URL")
+    except ValueError:
+        invalid("OTP_RATE_REDIS_URL")

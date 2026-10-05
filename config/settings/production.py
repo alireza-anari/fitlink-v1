@@ -102,6 +102,8 @@ REDIS_URL = secure_url("REDIS_URL", "rediss", True)
 CELERY_BROKER_URL = secure_url("CELERY_BROKER_URL", "rediss", True)
 CELERY_RESULT_BACKEND = secure_url("CELERY_RESULT_BACKEND", "rediss", True)
 CHANNEL_REDIS_URL = secure_url("CHANNEL_REDIS_URL", "rediss", True)
+OTP_RATE_REDIS_URL = secure_url("OTP_RATE_REDIS_URL", "rediss", True)
+env.require_rate_redis(OTP_RATE_REDIS_URL)
 STORAGE_BACKEND = env.str_value("STORAGE_BACKEND", required=True)
 if STORAGE_BACKEND != "s3":
     env.invalid("STORAGE_BACKEND")

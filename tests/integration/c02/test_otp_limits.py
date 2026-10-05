@@ -121,3 +121,22 @@ def test_retained_key_rotation_does_not_reset_quota(limiter, settings):
     assert not limiter.reserve_admission(
         "+989123456789", "127.0.0.2", "send", now
     ).allowed
+
+
+def test_unreviewed_key_removal_cannot_silently_reset_durable_quota(limiter, settings):
+    from apps.accounts.security_keys import parse_key_ring
+
+    now = timezone.now()
+    for _ in range(5):
+        assert limiter.reserve_admission(
+            "+989123456789", "127.0.0.1", "send", now
+        ).allowed
+    settings.ACCOUNT_SECURITY = replace(
+        settings.ACCOUNT_SECURITY,
+        keys=parse_key_ring(
+            '{"next":"ERERERERERERERERERERERERERERERERERERERERERE="}', "next"
+        ),
+    )
+    limiter.redis_client().flushdb()
+    with pytest.raises(limiter.LimiterUnavailable):
+        limiter.reserve_admission("+989123456789", "127.0.0.2", "send", now)

@@ -142,3 +142,12 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Task4 run37324103261/job111810306064:25 previous gates passed but13fixture-not-found errors. This is NOT behavioral RED. Started local uncommitted limiter draft after reading summary, then inspected full traceback and stopped further implementation; no draft published.
 - Root cause reproduced locally by --fixtures-per-test: mixed individual file selection loses nested limiter fixture; C02 directory selection loads it for all13cases. Ruling: select tests/integration/c02 directory plus C01 initial migration file — complete suite, robust nested discovery, no test weakening.
 - Corrected new production test helper use to production_env() dict union; helper has no keyword arguments. No implementation behavior adjusted. Actual corrected RED pendingCI before resuming draft/GREEN.
+
+- Remote sync: local0056efd1404afa30d416700459c8cdb2c509e0e2 -> GitHub45a78ca518bfbed151b610f0dc46af481f22471c; tree3fc1f079ba4a7c9141523fbb0e2f4af24f043ae8 matched, expected-parent non-forced update.
+- Corrected actual RED run37324882314/job111812955568:13 expected missing real dual-store limiter assertions,25 previous gates passed5.12s. Full traceback inspected. Resume unpublished draft after this required behavior RED.
+
+### Task4 implementation checkpoint
+- Lua reserves both dimensions atomically using HMAC ZSET keys and UUID members. PostgreSQL sorted unique anchors serialize durable rolling-window counts across retained key IDs. No refund on aborted send admission; proven-success failure reservations release through actual Redis before durable success, exceptions fail closed.
+- Dedicated logical DB4 config; production TLS certificate/hostname/query/db checks retained; Mock/recovery disabled production. Cloud6limiter and129full unit cases passed, mypy32files/productioncheck green.
+- Security inspection adds explicit removed-key RED case before guard: absence of retained key could otherwise make old anchors undiscoverable; require uniform unavailable while any recent event references a removed key. Actual RED pendingCI.
+- Ruling: add isolated host-CI Redis restart probe in Task4 — plan requires actual restart failure injection; checks image has no Docker daemon, so host runner restarts only its service container and verifies real PostgreSQL main scratch DB, then discards counters too. No production credentials or persistent application data.
