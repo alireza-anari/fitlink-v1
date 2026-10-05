@@ -1,8 +1,12 @@
+import logging
+
 from django.conf import settings
 from django.db import DatabaseError, connection
 from django.http import JsonResponse
 from redis import Redis
 from redis.exceptions import RedisError
+
+logger = logging.getLogger("fitlink.infrastructure")
 
 
 def database_available() -> bool:
@@ -11,6 +15,11 @@ def database_available() -> bool:
             cursor.execute("SELECT 1")
             return cursor.fetchone() == (1,)
     except DatabaseError:
+        logger.warning(
+            "dependency",
+            extra={"event": "dependency.unavailable", "dependency": "postgresql"},
+            exc_info=True,
+        )
         return False
 
 
@@ -21,6 +30,11 @@ def redis_available() -> bool:
         ) as client:
             return bool(client.ping())
     except (RedisError, ValueError):
+        logger.warning(
+            "dependency",
+            extra={"event": "dependency.unavailable", "dependency": "redis"},
+            exc_info=True,
+        )
         return False
 
 

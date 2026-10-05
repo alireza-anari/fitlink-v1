@@ -29,6 +29,7 @@ class JsonFormatter(logging.Formatter):
             "duration_ms",
             "process",
             "process_role",
+            "dependency",
         ):
             if hasattr(record, key):
                 value[key] = getattr(record, key)

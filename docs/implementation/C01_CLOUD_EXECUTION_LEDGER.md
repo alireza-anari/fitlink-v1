@@ -225,3 +225,15 @@ host/invalid-port/known-password values and arbitrary URL queries.
 checks pass. Minor rerun usability resolved via explicit new project/env overrides
 and refusal of preexisting volumes; storage restart claim narrowed to functioning
 private storage (not object persistence across restart). CI runtime pending.
+Mapping: local 269a304e5d81d394c1a3c5654c952cfe5addd4c2 -> GitHub 216a929b876b1396c17af5ca1cbbc4b8bbcc9878 (tree ef57b8c4b359a1b862be3381a36a08814b109056).
+Additional plan review fix: browser assertion incorrectly expected version,
+while the real/approved API exposes service/api_version/status. The exact browser
+assertion failed against the real Django view in Cloud; corrected assertion now
+passes and is still required in actual Playwright CI. No API implementation change.
+Task6 safe dependency log labels were missing; two failure-log regressions
+RED→GREEN now emit dependency.unavailable + postgresql/redis, error class/frame
+locations only, with no URLs/messages/credentials. 70 units and quality checks pass.
+Independent recheck of269a304 resolved all3 Important findings; no Critical.
+Minor CSRF-origin hostname validation consistency remains optional/deferred.
+Run37287922322 (pre-fix documentation checkpoint) failed the same worker health
+at2026-10-05T09:21:15Z; actual logs inspected. Corrected run37288982520 active.

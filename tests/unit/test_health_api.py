@@ -33,3 +33,32 @@ def test_versioned_status():
         "api_version": "v1",
         "status": "ok",
     }
+
+
+@pytest.mark.parametrize("dependency", ["postgresql", "redis"])
+def test_dependency_failure_logs_safe_label(caplog, dependency):
+    from django.db import DatabaseError
+    from redis.exceptions import RedisError
+
+    from config.health import database_available, redis_available
+
+    if dependency == "postgresql":
+        target = "config.health.connection.cursor"
+        error = DatabaseError("private-credential")
+        probe = database_available
+    else:
+        target = "config.health.Redis.from_url"
+        error = RedisError("private-credential")
+        probe = redis_available
+    with patch(target, side_effect=error):
+        assert probe() is False
+    records = [
+        record
+        for record in caplog.records
+        if getattr(record, "event", "") == "dependency.unavailable"
+    ]
+    assert len(records) == 1
+    assert records[0].dependency == dependency
+    from config.logging import JsonFormatter
+
+    assert "private-credential" not in JsonFormatter().format(records[0])

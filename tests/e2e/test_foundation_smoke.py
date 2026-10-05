@@ -38,7 +38,8 @@ def test_foundation_smoke(page, viewport):
     assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
     assert page.request.get(base + "/api/v1/status/").json() == {
         "status": "ok",
-        "version": "v1",
+        "service": "fitlink",
+        "api_version": "v1",
     }
     assert page.request.get(base + "/health/ready/").status == 200
     assert errors == []

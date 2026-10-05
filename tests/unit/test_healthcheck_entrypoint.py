@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import sys
@@ -7,7 +8,7 @@ import pytest
 pytestmark = pytest.mark.unit
 
 
-def test_direct_healthcheck_boots_project_and_fails_quietly_without_db():
+def test_direct_healthcheck_boots_project_and_fails_with_redacted_diagnostic_without_db():
     result = subprocess.run(
         [sys.executable, "docker/healthcheck.py", "db"],
         env={
@@ -21,4 +22,8 @@ def test_direct_healthcheck_boots_project_and_fails_quietly_without_db():
         timeout=10,
     )
     assert result.returncode == 1
-    assert result.stderr == "" and result.stdout == ""
+    assert result.stdout == ""
+    event = json.loads(result.stderr)
+    assert event["event"] == "dependency.unavailable"
+    assert event["dependency"] == "postgresql"
+    assert "password" not in result.stderr.lower()
