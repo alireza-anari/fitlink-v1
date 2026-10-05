@@ -1,2 +1,0 @@
-#FitLink
-Private repository bootstrap
