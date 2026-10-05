@@ -50,6 +50,15 @@ def limits(kind: str, policy: AccountSecurityPolicy) -> tuple[int, int]:
     raise ValueError("Invalid admission kind")
 
 
+def window_seconds(kind: str, policy: AccountSecurityPolicy) -> int:
+    limits(kind, policy)
+    return (
+        policy.recovery_window_seconds
+        if kind == "recovery_intake"
+        else policy.window_seconds
+    )
+
+
 def _key(kind: str, dimension: str, key_id: str, digest: str) -> str:
     return f"fitlink:otp:{kind}:{dimension}:{key_id}:{digest}"
 
@@ -100,6 +109,7 @@ def _redis_admission(
 ) -> AdmissionResult:
     policy = settings.ACCOUNT_SECURITY.policy
     phone_limit, ip_limit = limits(kind, policy)
+    window = window_seconds(kind, policy)
     try:
         with redis_client() as client:
             script = client.register_script(
@@ -113,7 +123,7 @@ def _redis_admission(
                 args=[
                     "reserve",
                     int(at.timestamp() * 1000),
-                    policy.window_seconds * 1000,
+                    window * 1000,
                     phone_limit,
                     ip_limit,
                     len(keys.phone),
@@ -162,7 +172,29 @@ def durable_admission(
     phone, ip = normalize_iranian_mobile(phone), canonical_ip(ip)
     policy = settings.ACCOUNT_SECURITY.policy
     phone_limit, ip_limit = limits(kind, policy)
+    window = window_seconds(kind, policy)
     with transaction.atomic():
+        # Removed HMAC material makes old dimensions undiscoverable. Do not let
+        # a deployment silently reset their durable budget: require a closed
+        # maintenance/warm-up procedure before removing retained material.
+        outstanding = SecurityRateEvent.objects.filter(
+            Q(
+                kind="recovery_intake",
+                at__gt=at - timedelta(seconds=policy.recovery_window_seconds),
+            )
+            | Q(kind="send", at__gt=at - timedelta(seconds=policy.window_seconds))
+            | Q(
+                kind="verify_failure",
+                outcome__in=["pending", "failed"],
+                at__gt=at - timedelta(seconds=policy.window_seconds),
+            )
+        )
+        known_keys = settings.ACCOUNT_SECURITY.keys.key_ids
+        if outstanding.filter(
+            ~Q(phone_anchor__key_id__in=known_keys)
+            | ~Q(ip_anchor__key_id__in=known_keys)
+        ).exists():
+            raise LimiterUnavailable("Admission unavailable")
         phones, ips = locked_rate_anchors(phone, ip)
         existing = SecurityRateEvent.objects.filter(pk=reservation_id).first()
         if existing:
@@ -174,7 +206,7 @@ def durable_admission(
                 raise LimiterUnavailable("Admission unavailable")
             return AdmissionResult(True, 0, reservation_id)
         events = SecurityRateEvent.objects.filter(
-            kind=kind, at__gt=at - timedelta(seconds=policy.window_seconds)
+            kind=kind, at__gt=at - timedelta(seconds=window)
         )
         if kind == "verify_failure":
             events = events.filter(outcome__in=["pending", "failed"])
@@ -190,13 +222,11 @@ def durable_admission(
                 max(
                     1,
                     math.ceil(
-                        (
-                            first.at + timedelta(seconds=policy.window_seconds) - at
-                        ).total_seconds()
+                        (first.at + timedelta(seconds=window) - at).total_seconds()
                     ),
                 )
                 if first
-                else policy.window_seconds
+                else window
             )
             return AdmissionResult(False, retry, None)
         key_id = settings.ACCOUNT_SECURITY.keys.active_id

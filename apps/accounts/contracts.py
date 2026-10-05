@@ -32,6 +32,7 @@ class AccountSecurityPolicy:
     failure_ip: int = 60
     recovery_phone: int = 3
     recovery_ip: int = 10
+    recovery_window_seconds: int = 86400
     sms_timeout_seconds: int = 3
     recent_auth_seconds: int = 600
     recovery_receipt_seconds: int = 604800

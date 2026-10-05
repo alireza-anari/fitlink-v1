@@ -158,3 +158,9 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Independent review Important accepted: plan §2 line114 explicitly3phone/day and10IP/day, not hour. Previous ruling claimed unspecified numeric defaults and hourly window incorrectly; superseded by this correction to exact approved daily limits. No scope redesign or approved override.
 - New Cloud RED1missing separate window contract; real daily-boundary RED pendingCI before fix.
 - Task4 minor (deferred): retry_after can reflect an earlier event in an unsaturated dimension; repeated denials possible but no over-admission. Keep metadata limitation for handoff; no scope expansion to polish now.
+
+### Task4 guard and daily-window fix
+- Remote sync: localf286018b11110dc5b74adfb899f9093fa4867274 -> GitHub1f88a814d6bfb2c11207340e736532bf1976d705; tree8cf59c345f1ef4f2668bfbc500ef075543eefa31 equality verified before expected-parent non-forced update.
+- Actual RED run37326108079/job111817147270:2 expected failures (daily recovery boundary and removed-key unavailability),37passed9.14s; logs inspected before fix.
+- Separate approved recovery86400s window now applies both Lua and PG guard; OTP3600s unchanged. Added global closed admission when any still-counting event references removed material, including daily recovery/pending failure quotas, rather than silently forgetting undiscoverable anchors. Audited closed maintenance/warm-up remains required before key removal.
+- Focused Cloud GREEN7contracts passed. Task4 stays IN_PROGRESS pending actual races/outage/reset/process/restart gates and current Foundation CI.
