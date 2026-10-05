@@ -23,3 +23,21 @@ def redis_available() -> bool:
             return bool(client.ping())
     except (RedisError, ValueError):
         return False
+
+
+from django.http import JsonResponse
+
+
+def liveness(request):
+    response = JsonResponse({"status": "ok"})
+    response["Cache-Control"] = "no-store"
+    return response
+
+
+def readiness(request):
+    ready = database_available() and redis_available()
+    response = JsonResponse(
+        {"status": "ok" if ready else "unavailable"}, status=200 if ready else 503
+    )
+    response["Cache-Control"] = "no-store"
+    return response

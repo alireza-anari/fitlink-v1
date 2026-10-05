@@ -132,3 +132,7 @@ Mapping: local ffeed80a5e78034ff91b031e06eec6e00cb408fb -> GitHub 1bc1c85aec53e0
 Task 5: Cloud PASS (26 units; Redis config/failure probe RED→GREEN; private-loopback
 Redis7.4 immutable image; distinct DB0/1/2/3; bounded2s cache/probes). Real Redis
 PONG/cache roundtrip PENDING_CI. Dev/test reject remote Redis and PostgreSQL hosts.
+Mapping: local e2a72765e5e87a3c1c673d5a0616685cda097573 -> GitHub b6972059eb9dcf83e8dc4c2ad4ea804ac6bfea97 (tree fd390338020fa54a5cb2b014559db166cb6ade5c).
+Task 6: Cloud PASS (31 units; live/readiness/status RED→GREEN; generic no-store
+responses; Django check clean). Real DB/Redis readiness and test-only protected
+session/CSRF behavior PENDING_CI. No product API/auth endpoint.
