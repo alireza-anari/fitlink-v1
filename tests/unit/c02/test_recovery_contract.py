@@ -58,3 +58,13 @@ def test_evidence_is_bounded_metadata_only():
             module.validate_evidence_metadata(
                 classification, outcome, checksum, reference
             )
+
+
+def test_sensitive_recovery_reads_require_a_transactional_recorder():
+    import inspect
+
+    module = recovery()
+    for name in ["recovery_detail", "evidence_detail"]:
+        parameters = inspect.signature(getattr(module, name)).parameters
+        assert "record" in parameters, "missing mandatory evidence-access audit"
+        assert parameters["record"].default is inspect.Parameter.empty

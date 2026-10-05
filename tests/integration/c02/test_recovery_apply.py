@@ -530,3 +530,32 @@ def test_apply_rechecks_durable_proof_binding_and_age(limiter, settings, defect)
     target.refresh_from_db()
     assert target.phone == OLD and target.auth_version == 1
     assert not apps.get_model("accounts", "PhoneChangeHistory").objects.exists()
+
+
+def test_staff_evidence_reads_are_audited_and_audit_outage_denies(
+    limiter, settings, monkeypatch
+):
+    owner()
+    recovery, commands, receipt, actor, staff, grant, step, case = approved(settings)
+    audit = apps.get_model("governance", "AuditEvent")
+    evidence = apps.get_model("accounts", "RecoveryEvidenceMetadata").objects.get()
+    before = audit.objects.filter(
+        action="recovery.evidence", correlation_id=case.id
+    ).count()
+    commands.recovery_detail(actor, case.id, step, "identity_verified", timezone.now())
+    commands.evidence_detail(
+        actor, case.id, evidence.id, step, "identity_verified", timezone.now()
+    )
+    assert (
+        audit.objects.filter(action="recovery.evidence", correlation_id=case.id).count()
+        == before + 2
+    )
+
+    def failed(*args, **kwargs):
+        raise RuntimeError("audit unavailable")
+
+    monkeypatch.setattr(commands, "record_security_outcome", failed)
+    with pytest.raises(RuntimeError):
+        commands.evidence_detail(
+            actor, case.id, evidence.id, step, "identity_verified", timezone.now()
+        )
