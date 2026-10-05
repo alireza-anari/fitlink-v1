@@ -115,3 +115,11 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 
 - Remote sync: local57be071fdfb444b08c4329cd1bae4b20d0324680 -> GitHub0507e5071800ce37d2cc8d76afc2b4b1548094f0; treedd91e4ffd2c8e9b831d3fa6e26553611637e302d matched before expected-parent non-forced update.
 - Additional security inspection identified analogous direct OutboxEvent model/bulk insertion payload validation gap, despite safe append_outbox. New model RED reproducer1fails expected ValueError not raised; DB bulk insertion reproducer added before fix. Treat as Important within same Task3 fix pass, not scope expansion.
+
+### Task3 payload security fix
+- Run37322212998/job111803867632 actual audit insertion RED:1 expected missing IntegrityError,23 passed (4.45s).
+- Remote sync: local7a7158d8d17c40010042b6e3969ae460a41d4537 -> GitHub ba32553f1c41d3c7b1dcfc3cdeebbb6746347dac; treeefb29af95d0f91553f2f7100b49950269207f365 matched before expected-parent non-forced update.
+- Run37322448447/job111804671208 actual PostgreSQL RED:2 expected missing IntegrityError in audit/outbox insertion guards,23 passed(3.26s), logs inspected before fix.
+- Fixed original audit JSON shape validation and OutboxEvent model validation. Governance0003 adds IMMUTABLE metadata check functions + DB constraints: audit is bounded array of allowed names, outbox object has event-specific UUID string keys/values only. Bulk/direct insertion cannot retain arbitrary private JSON. No caller flag/retention bypass.
+
+- Payload fix Cloud GREEN:13 audit/provider/model contracts; full123 units pass. Ruff/format110 files, mypy30 files, Django/production/drift pass. Real SQL insertion fix and full current-head regression remain PENDING_CI.

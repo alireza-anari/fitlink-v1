@@ -11,6 +11,11 @@ EVENT_TYPES = (
 )
 
 
+class OutboxPayloadAllowed(models.Func):
+    function = "fitlink_valid_outbox_payload"
+    output_field = models.BooleanField()
+
+
 class OutboxEvent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     event_type = models.CharField(max_length=32)
@@ -29,6 +34,18 @@ class OutboxEvent(models.Model):
     exhausted_at = models.DateTimeField(null=True)
     last_error_code = models.CharField(max_length=32, blank=True)
 
+    def save(self, *args, **kwargs):
+        from .outbox import validate_event
+
+        validate_event(
+            self.event_type,
+            self.aggregate_uuid,
+            self.aggregate_version,
+            self.payload,
+            self.dedup_key,
+        )
+        return super().save(*args, **kwargs)
+
     class Meta:
         indexes = [
             models.Index(
@@ -36,6 +53,10 @@ class OutboxEvent(models.Model):
             )
         ]
         constraints = [
+            models.CheckConstraint(
+                condition=OutboxPayloadAllowed("event_type", "payload"),
+                name="outbox_payload_id_only",
+            ),
             models.CheckConstraint(
                 condition=models.Q(event_type__in=EVENT_TYPES), name="outbox_type"
             ),

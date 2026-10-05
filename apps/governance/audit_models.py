@@ -93,6 +93,11 @@ class AppendOnlyQuerySet(models.QuerySet):
         raise ValueError("Evidence is append-only")
 
 
+class AuditFieldsAllowed(models.Func):
+    function = "fitlink_valid_audit_fields"
+    output_field = models.BooleanField()
+
+
 class AuditEvent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     actor_uuid = models.UUIDField(null=True, blank=True)
@@ -110,6 +115,10 @@ class AuditEvent(models.Model):
     def save(self, *args, **kwargs):
         if not self._state.adding:
             raise ValueError("Evidence is append-only")
+        if not isinstance(self.changed_fields, list) or any(
+            not isinstance(value, str) for value in self.changed_fields
+        ):
+            raise ValueError("Invalid audit metadata")
         from apps.accounts.contracts import SecurityOutcome
 
         from .audit import validate_outcome
@@ -135,6 +144,10 @@ class AuditEvent(models.Model):
             models.Index(fields=["subject_uuid", "at"], name="audit_subject_time")
         ]
         constraints = [
+            models.CheckConstraint(
+                condition=AuditFieldsAllowed("changed_fields"),
+                name="audit_fields_allowlist",
+            ),
             models.CheckConstraint(
                 condition=models.Q(action__in=ACTIONS), name="audit_action"
             ),

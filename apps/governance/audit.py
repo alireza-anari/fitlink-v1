@@ -12,6 +12,7 @@ def validate_outcome(outcome: SecurityOutcome) -> SecurityOutcome:
         not isinstance(outcome, SecurityOutcome)
         or outcome.action not in ACTIONS
         or outcome.result not in RESULTS
+        or not isinstance(outcome.reason_code, str)
         or outcome.reason_code not in REASONS
         or not isinstance(outcome.correlation_id, UUID)
         or (
@@ -20,7 +21,10 @@ def validate_outcome(outcome: SecurityOutcome) -> SecurityOutcome:
         )
         or not isinstance(outcome.changed_fields, tuple)
         or len(outcome.changed_fields) > len(CHANGED_FIELDS)
-        or any(field not in CHANGED_FIELDS for field in outcome.changed_fields)
+        or any(
+            not isinstance(field, str) or field not in CHANGED_FIELDS
+            for field in outcome.changed_fields
+        )
     ):
         raise ValueError("Invalid audit metadata")
     return outcome
