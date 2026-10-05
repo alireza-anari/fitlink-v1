@@ -472,3 +472,61 @@ def test_history_restricted_runtime_role_has_no_mutation_privilege(limiter, sett
         with connection.cursor() as cursor:
             cursor.execute(f"DROP OWNED BY {q(role)}")
             cursor.execute(f"DROP ROLE {q(role)}")
+
+
+def test_outbox_failure_rolls_back_identity_and_audit(limiter, settings, monkeypatch):
+    target = owner()
+    recovery, commands, receipt, actor, staff, grant, step, case = approved(settings)
+    challenge = prove(commands, receipt)
+    case.refresh_from_db()
+    audit = apps.get_model("governance", "AuditEvent")
+    count = audit.objects.count()
+
+    def failed(*args, **kwargs):
+        raise RuntimeError("outbox unavailable")
+
+    monkeypatch.setattr(commands, "append_outbox", failed)
+    with pytest.raises(RuntimeError):
+        commands.apply_recovery(
+            actor, case.id, case.version, step, "identity_verified", timezone.now()
+        )
+    target.refresh_from_db()
+    case.refresh_from_db()
+    assert target.phone == OLD and target.auth_version == 1 and case.state == "approved"
+    assert audit.objects.count() == count
+    assert not apps.get_model("accounts", "PhoneChangeHistory").objects.exists()
+    assert (
+        apps.get_model("accounts", "OTPChallenge")
+        .objects.get(pk=challenge)
+        .proof_applied_at
+        is None
+    )
+
+
+@pytest.mark.parametrize("defect", ["expired", "generation", "purpose", "version"])
+def test_apply_rechecks_durable_proof_binding_and_age(limiter, settings, defect):
+    target = owner()
+    recovery, commands, receipt, actor, staff, grant, step, case = approved(settings)
+    challenge = prove(commands, receipt)
+    case.refresh_from_db()
+    proof = apps.get_model("accounts", "OTPChallenge").objects.get(pk=challenge)
+    at = timezone.now()
+    if defect == "expired":
+        at = proof.expires_at
+    elif defect == "generation":
+        apps.get_model("accounts", "OTPPhoneState").objects.filter(
+            pk=proof.phone_state_id
+        ).update(generation=proof.generation + 1)
+    elif defect == "purpose":
+        type(proof).objects.filter(pk=proof.pk).update(purpose="phone_change_new")
+    else:
+        type(proof).objects.filter(pk=proof.pk).update(
+            target_auth_version=target.auth_version + 1
+        )
+    with pytest.raises(recovery.RecoveryConflict):
+        commands.apply_recovery(
+            actor, case.id, case.version, step, "identity_verified", at
+        )
+    target.refresh_from_db()
+    assert target.phone == OLD and target.auth_version == 1
+    assert not apps.get_model("accounts", "PhoneChangeHistory").objects.exists()

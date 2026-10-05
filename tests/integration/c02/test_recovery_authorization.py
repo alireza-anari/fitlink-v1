@@ -197,3 +197,40 @@ def test_production_recovery_remains_closed(limiter, settings):
     settings.SETTINGS_ENV = "production"
     with pytest.raises(recovery.RecoveryUnavailable):
         recovery.open_recovery(OLD, NEW, "127.0.0.1", timezone.now(), record)
+
+
+@pytest.mark.parametrize("existing", [True, False])
+def test_rejected_case_exposes_only_closed_status(limiter, settings, existing):
+    if existing:
+        owner()
+    recovery, commands, receipt, actor, staff, grant, step, case = prepared(settings)
+    commands.add_recovery_evidence(
+        actor,
+        case.id,
+        case.version,
+        "ownership_review",
+        "rejected",
+        "a" * 64,
+        uuid4(),
+        step,
+        "permission_denied",
+        timezone.now(),
+    )
+    case.refresh_from_db()
+    commands.decide_recovery(
+        actor,
+        case.id,
+        case.version,
+        "rejected",
+        "permission_denied",
+        step,
+        timezone.now(),
+    )
+    assert (
+        recovery.recovery_status(case.id, receipt.raw_receipt, timezone.now())
+        == "closed"
+    )
+    with pytest.raises(recovery.RecoveryNotFound):
+        commands.request_recovery_otp(
+            case.id, receipt.raw_receipt, "127.0.0.1", timezone.now()
+        )
