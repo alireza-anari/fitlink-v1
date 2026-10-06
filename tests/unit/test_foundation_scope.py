@@ -15,6 +15,12 @@ def test_only_foundation_routes_and_identity_model():
         "api/v1/status/",
         # Exactly the Task14 approved adapters; no generic CRUD/future routes.
         "accounts/entry/",
+        "accounts/verify/",
+        "accounts/me/",
+        "accounts/phone-change/",
+        "accounts/recovery/",
+        "privacy/requests/",
+        "staff/recovery/<uuid:request_uuid>/",
         "api/v1/auth/otp/request/",
         "api/v1/auth/otp/verify/",
         "api/v1/auth/logout/",

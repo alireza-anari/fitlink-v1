@@ -4,6 +4,13 @@ from django.test import Client
 pytestmark = pytest.mark.unit
 
 
+@pytest.fixture(autouse=True)
+def no_feature_database_in_unit_test(monkeypatch):
+    from config.use_cases import entry
+
+    monkeypatch.setattr(entry, "professional_entry_available", lambda: False)
+
+
 @pytest.mark.parametrize(
     "path",
     [

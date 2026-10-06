@@ -242,7 +242,7 @@ class ChangeApplyView(OwnedChangeView):
 
 
 RECEIPT_COOKIE = "fitlink_recovery_receipt"
-RECEIPT_PATH = "/api/v1/recovery/requests/"
+RECEIPT_PATH = "/"
 
 
 class RecoveryIntakeView(CommandView):

@@ -1,0 +1,15 @@
+{% extends 'accounts/base.html' %}
+{% block account_content %}
+<h1>تأیید شمارهٔ همراه</h1>
+<p class="c02-intro">درخواست ثبت شد؛ در صورت دریافت پیامک، کد شش‌رقمی را وارد کنید.</p>
+<form method="post" action="/accounts/verify/">
+  {% csrf_token %}<input type="hidden" name="action" value="verify">
+  {% include 'accounts/form.html' %}<button class="c02-button" type="submit">تأیید و ورود</button>
+</form>
+<form method="post" action="/accounts/verify/" class="mt-5">
+  {% csrf_token %}<input type="hidden" name="action" value="resend">
+  <p class="c02-help" data-countdown aria-live="polite">زمان پیشنهادی تا درخواست دوباره: {{ remaining }} ثانیه</p>
+  <button class="c02-secondary" data-resend data-remaining="{{ remaining }}" type="submit">درخواست دوبارهٔ کد</button>
+</form>
+<a class="mt-5 inline-block" href="/accounts/entry/">بازگشت و اصلاح شماره</a>
+{% endblock %}

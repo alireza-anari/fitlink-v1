@@ -1,0 +1,16 @@
+{% extends 'accounts/base.html' %}
+{% block account_content %}
+<h1>بررسی مجاز بازیابی</h1>
+<p class="c02-intro">فقط درخواست واگذارشده با مجوز مشخص و تأیید تازه قابل بررسی است. این صفحه اجازهٔ جست‌وجوی حساب یا بارگذاری مدارک را نمی‌دهد.</p>
+<p>شناسهٔ درخواست: <bdi dir="ltr">{{ case_id }}</bdi></p>
+<p>وضعیت درخواست: {% if case_state == 'received' %}دریافت شده{% elif case_state == 'approved' %}تأیید شده{% elif case_state == 'rejected' %}رد شده{% elif case_state == 'applied' %}اعمال شده{% else %}بسته شده{% endif %}</p>
+{% if message %}<p class="c02-notice" role="status">{{ message }}</p>{% endif %}
+<section class="my-6"><h2>ثبت فرادادهٔ بررسی</h2>
+<form method="post">{% csrf_token %}{% include 'accounts/staff_authority.html' %}<input type="hidden" name="action" value="evidence">
+{% include 'accounts/form.html' with form=evidence_form %}<button type="submit" class="c02-button">ثبت فراداده</button></form></section>
+<section class="my-6"><h2>تصمیم بررسی</h2>
+<form method="post">{% csrf_token %}{% include 'accounts/staff_authority.html' %}<input type="hidden" name="action" value="decision">
+{% include 'accounts/form.html' with form=decision_form %}<button type="submit" class="c02-button">ثبت تصمیم</button></form></section>
+<section class="my-6"><h2>اعمال بازیابی</h2><p class="c02-help">نیازمند تصمیم مجاز و تأیید تازهٔ شمارهٔ جدید است؛ نشست‌های پیشین باطل می‌شوند.</p>
+<form method="post">{% csrf_token %}{% include 'accounts/staff_authority.html' %}<input type="hidden" name="action" value="apply"><button type="submit" class="c02-button">اعمال بازیابی</button></form></section>
+{% endblock %}

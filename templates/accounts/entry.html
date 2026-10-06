@@ -1,0 +1,12 @@
+{% extends 'accounts/base.html' %}
+{% block account_content %}
+<h1>ورود به فیت‌لینک</h1>
+<p class="c02-intro">این بخش برای افراد حداقل ۱۸ سال است. تاریخ تولد و اعلام صریح سن شما لازم است.</p>
+{% if message %}<p class="c02-notice" role="status">{{ message }}</p>{% endif %}
+{% if not professional %}<p class="c02-help">مسیر حرفه‌ای فعلاً فعال نیست.</p>{% endif %}
+<form method="post" action="/accounts/entry/" data-entry>
+  {% csrf_token %}{% include 'accounts/form.html' %}
+  <button class="c02-button" type="submit">درخواست کد ورود</button>
+</form>
+<p class="c02-help">انتخاب مسیر ورود به‌تنهایی نقش یا مجوزی ایجاد نمی‌کند.</p>
+{% endblock %}

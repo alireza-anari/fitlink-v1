@@ -1,0 +1,15 @@
+{% extends 'accounts/base.html' %}
+{% block account_content %}
+<h1>بازیابی حساب</h1>
+<p class="c02-intro">اگر به شمارهٔ پیشین دسترسی ندارید، درخواست بررسی ثبت کنید. تأیید شمارهٔ جدید به‌تنهایی اجازهٔ ورود به حساب را نمی‌دهد.</p>
+{% if error %}<div class="c02-alert" role="alert" tabindex="-1">{{ error }}</div>{% endif %}
+{% if message %}<p class="c02-notice" role="status">{{ message }}</p>{% endif %}
+{% if state %}
+  {% if state == 'closed' %}<p class="c02-notice">بررسی این درخواست پایان یافته است.</p>{% else %}<p class="c02-notice">درخواست دریافت شده است.</p>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="request_proof"><button class="c02-secondary" type="submit">درخواست کد شمارهٔ جدید</button></form>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="verify_proof">{% include 'accounts/form.html' with form=proof_form %}<button class="c02-button" type="submit">تأیید شمارهٔ جدید</button></form>
+  {% endif %}
+{% else %}
+<form method="post" action="/accounts/recovery/">{% csrf_token %}<input type="hidden" name="action" value="intake">{% include 'accounts/form.html' %}<button class="c02-button" type="submit">ثبت درخواست بازیابی</button></form>
+{% endif %}
+{% endblock %}

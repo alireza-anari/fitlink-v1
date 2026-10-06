@@ -1,2 +1,20 @@
 @import "tailwindcss";
 @source "../../templates";
+
+@layer components {
+  .c02 h1 { @apply text-2xl font-semibold leading-relaxed; }
+  .c02 h2 { @apply text-lg font-semibold leading-relaxed; }
+  .c02 a { @apply underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-teal-700; }
+  .c02-field { @apply my-5; }
+  .c02-field label { @apply mb-2 block text-sm font-medium leading-7; }
+  .c02-field input:not([type="checkbox"]), .c02-field select { @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-3 focus:border-teal-700 focus:outline-2 focus:outline-teal-700; }
+  .c02-checkbox { @apply flex items-start gap-3; }
+  .c02-checkbox input { @apply mt-1 h-5 w-5 shrink-0 accent-teal-700; }
+  .c02-button { @apply rounded-lg bg-teal-800 px-5 py-3 font-semibold text-white hover:bg-teal-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700; }
+  .c02-secondary { @apply rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-medium hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-teal-700; }
+  .c02-intro { @apply my-4 text-sm leading-8 text-slate-600; }
+  .c02-help { @apply mt-2 text-sm leading-7 text-slate-600; }
+  .c02-alert { @apply my-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm leading-8 text-red-900; }
+  .c02-notice { @apply my-4 rounded-lg bg-teal-50 p-3 text-sm leading-8 text-teal-900; }
+  .c02-skip { @apply sr-only focus:not-sr-only; }
+}

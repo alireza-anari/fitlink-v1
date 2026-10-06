@@ -1,9 +1,15 @@
 from django.urls import path
 
-from . import api
+from . import api, views
+from .staff_views import staff_recovery_page
 
 urlpatterns = [
-    path("accounts/entry/", api.entry_bootstrap),
+    path("accounts/entry/", views.entry_page),
+    path("accounts/verify/", views.verify_page),
+    path("accounts/me/", views.account_page),
+    path("accounts/phone-change/", views.phone_change_page),
+    path("accounts/recovery/", views.recovery_page),
+    path("staff/recovery/<uuid:request_uuid>/", staff_recovery_page),
     path("api/v1/auth/otp/request/", api.OtpRequestView.as_view()),
     path("api/v1/auth/otp/verify/", api.OtpVerifyView.as_view()),
     path("api/v1/auth/logout/", api.LogoutView.as_view()),

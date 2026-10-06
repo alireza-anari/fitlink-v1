@@ -1,0 +1,13 @@
+{% extends 'accounts/base.html' %}
+{% block account_content %}
+<h1>درخواست‌های حریم خصوصی</h1>
+<p class="c02-intro">درخواست دریافت داده‌ها یا حذف را ثبت کنید. انجام درخواست پس از بررسی خواهد بود.</p>
+<p class="c02-help">با ثبت درخواست حذف، نشست‌های فعلی پایان می‌یابند و دسترسی حساب محدود می‌شود. برای ثبت درخواست، ورود تازه در ده دقیقهٔ اخیر لازم است.</p>
+{% if message %}<p class="c02-notice" role="status">{{ message }}</p>{% endif %}
+<form method="post" action="/privacy/requests/">{% csrf_token %}{% include 'accounts/form.html' %}<button class="c02-button" type="submit">ثبت درخواست</button></form>
+<section class="mt-7"><h2>وضعیت درخواست‌های من</h2>
+  <ul class="mt-3 space-y-3">{% for row in requests %}<li class="rounded-lg bg-slate-50 p-3">
+  <span>{% if row.kind == 'export' %}دریافت نسخه‌ای از داده‌ها{% else %}حذف حساب و داده‌ها{% endif %}</span> — <span>{% if row.status == 'pending_execution' %}در انتظار اجرا{% elif row.status == 'pending_deletion' %}در انتظار حذف{% else %}در حال بررسی{% endif %}</span>
+  </li>{% empty %}<li class="c02-help">هنوز درخواستی ثبت نشده است.</li>{% endfor %}</ul>
+</section>
+{% endblock %}

@@ -242,3 +242,30 @@ def visible_phone_change(actor: AccountActor, change_uuid: UUID, at: datetime) -
 
     user = actor_user(actor, "phone_change.apply", at)
     return PhoneChangeIntent.objects.filter(pk=change_uuid, user=user).exists()
+
+
+def account_display(actor: AccountActor, at: datetime) -> dict:
+    from apps.accounts.sessions import actor_user
+
+    user = actor_user(actor, "account.self", at)
+    return {
+        **own_account(actor, at),
+        "masked_phone": user.phone[:6] + "*****" + user.phone[-2:],
+    }
+
+
+def phone_change_display(
+    actor: AccountActor, change_uuid: UUID, at: datetime
+) -> dict | None:
+    from apps.accounts.recovery_models import PhoneChangeIntent
+    from apps.accounts.sessions import actor_user
+
+    user = actor_user(actor, "phone_change.apply", at)
+    row = PhoneChangeIntent.objects.filter(pk=change_uuid, user=user).first()
+    if not row:
+        return None
+    return {
+        "change_uuid": row.id,
+        "old_verified": row.old_phone_verified_at is not None,
+        "new_verified": row.new_phone_verified_at is not None,
+    }

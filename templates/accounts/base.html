@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% load static %}
+{% block extra_scripts %}<script type="module" src="{% static 'src/accounts.js' %}"></script>{% endblock %}
+{% block content %}
+<div class="c02 mx-auto max-w-xl">
+  <a class="c02-skip" href="#account-content">رفتن به محتوای اصلی</a>
+  <header class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <a class="text-xl font-semibold text-teal-800" href="/accounts/entry/">فیت‌لینک</a>
+    <nav class="flex flex-wrap gap-4 text-sm" aria-label="کنترل‌های حساب">
+      <a href="/accounts/me/">حساب من</a><a href="/accounts/recovery/">بازیابی حساب</a>
+    </nav>
+  </header>
+  <section id="account-content" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+    {% block account_content %}{% endblock %}
+  </section>
+  <p class="mt-6 text-sm leading-7 text-slate-600">ورود با شمارهٔ همراه و کد یک‌بارمصرف انجام می‌شود. کد را فقط در همین صفحه وارد کنید و در اختیار دیگران نگذارید.</p>
+</div>
+{% endblock %}

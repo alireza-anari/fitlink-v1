@@ -1,6 +1,7 @@
 from django.urls import path
 
 from apps.accounts.urls import urlpatterns as account_routes
+from apps.governance.views import privacy_page
 
 from .api import StatusView
 from .health import liveness, readiness
@@ -15,3 +16,4 @@ urlpatterns = [
     path("api/v1/status/", StatusView.as_view()),
 ]
 urlpatterns += account_routes
+urlpatterns += [path("privacy/requests/", privacy_page)]

@@ -1,0 +1,22 @@
+{% extends 'accounts/base.html' %}
+{% block account_content %}
+<h1>تغییر شمارهٔ همراه</h1>
+<p class="c02-intro">مالکیت شمارهٔ پیشین و جدید باید جداگانه تأیید شود. پس از اعمال تغییر، همهٔ نشست‌های فعلی پایان می‌یابند.</p>
+{% if message %}<p class="c02-notice" role="status">{{ message }}</p>{% endif %}
+{% if error %}<div class="c02-alert" role="alert" tabindex="-1">{{ error }}</div>{% endif %}
+{% if not intent %}
+<form method="post" action="/accounts/phone-change/">{% csrf_token %}<input type="hidden" name="action" value="begin">{% include 'accounts/form.html' %}<button class="c02-button" type="submit">شروع تغییر شماره</button></form>
+{% else %}
+<section class="mt-6" aria-label="تأیید شمارهٔ پیشین">
+  <h2>شمارهٔ پیشین</h2>{% if intent.old_verified %}<p class="c02-notice">شمارهٔ پیشین تأیید شد.</p>{% endif %}
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="request_old"><button class="c02-secondary" type="submit">درخواست کد شمارهٔ پیشین</button></form>
+  <form method="post" data-proof="old">{% csrf_token %}<input type="hidden" name="action" value="verify_old">{% include 'accounts/form.html' with form=old_form %}<button class="c02-button" type="submit">تأیید شمارهٔ پیشین</button></form>
+</section>
+<section class="mt-6" aria-label="تأیید شمارهٔ جدید">
+  <h2>شمارهٔ جدید</h2>{% if intent.new_verified %}<p class="c02-notice">شمارهٔ جدید تأیید شد.</p>{% endif %}
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="request_new"><button class="c02-secondary" type="submit">درخواست کد شمارهٔ جدید</button></form>
+  <form method="post" data-proof="new">{% csrf_token %}<input type="hidden" name="action" value="verify_new">{% include 'accounts/form.html' with form=new_form %}<button class="c02-button" type="submit">تأیید شمارهٔ جدید</button></form>
+</section>
+<form method="post" class="mt-7">{% csrf_token %}<input type="hidden" name="action" value="apply"><button class="c02-button" type="submit">اعمال تغییر و خروج</button></form>
+{% endif %}
+{% endblock %}

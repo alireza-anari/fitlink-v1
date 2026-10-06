@@ -1,0 +1,20 @@
+{% extends 'accounts/base.html' %}
+{% block account_content %}
+<h1>حساب من</h1>
+<p class="c02-help">وضعیت حساب: {% if account.state == 'active' %}فعال{% elif account.state == 'restricted' %}محدود{% elif account.state == 'deletion_requested' or account.state == 'pending_deletion' %}در انتظار بررسی حذف{% else %}دسترسی محدود{% endif %}</p>
+<p class="c02-intro">شمارهٔ حساب: <bdi dir="ltr">{{ account.masked_phone }}</bdi></p>
+{% if control_only %}<p class="c02-notice">دسترسی این حساب به کنترل‌های حساب و حریم خصوصی محدود شده است.</p>{% endif %}
+{% if message %}<p class="c02-notice" role="status">{{ message }}</p>{% endif %}
+<form method="post" action="/accounts/me/">
+  {% csrf_token %}<input type="hidden" name="action" value="preferences">
+  {% include 'accounts/form.html' %}<button class="c02-button" type="submit">ذخیرهٔ ترجیحات</button>
+</form>
+<nav class="my-6 flex flex-wrap gap-4" aria-label="اقدام‌های حساب">
+  <a href="/privacy/requests/">درخواست‌های حریم خصوصی</a>
+  {% if not control_only %}<a href="/accounts/phone-change/">تغییر شمارهٔ همراه</a>{% endif %}
+</nav>
+<div class="flex flex-wrap gap-3">
+  <form method="post" action="/accounts/me/">{% csrf_token %}<input type="hidden" name="action" value="logout"><button class="c02-secondary" type="submit">خروج از این نشست</button></form>
+  <form method="post" action="/accounts/me/">{% csrf_token %}<input type="hidden" name="action" value="logout_all"><button class="c02-secondary" type="submit">خروج از همهٔ نشست‌ها</button></form>
+</div>
+{% endblock %}
