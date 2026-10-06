@@ -56,8 +56,8 @@ def auth_runtime(settings, monkeypatch, transactional_db, request):
     redis.flushdb()
 
 
-@pytest.fixture
-def browser_errors(page):
+@pytest_asyncio.fixture
+async def browser_errors(page):
     errors = []
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.on(

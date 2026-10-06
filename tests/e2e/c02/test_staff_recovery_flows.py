@@ -49,7 +49,7 @@ async def test_assigned_staff_metadata_decision_and_apply(
     await page.get_by_role("button", name="ثبت فراداده", exact=True).click()
     await expect(page.get_by_text("فرادادهٔ بررسی ثبت شد.", exact=True)).to_be_visible()
     assert reference not in await page.content()
-    await page.get_by_label("تصمیم", exact=True).select_option("approved")
+    await page.get_by_role("combobox", name="تصمیم").select_option("approved")
     await page.get_by_role("button", name="ثبت تصمیم", exact=True).click()
     await expect(page.get_by_text("تصمیم ثبت شد.", exact=True)).to_be_visible()
     requested = await database(

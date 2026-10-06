@@ -27,7 +27,7 @@ async def entry(page, base, provider, *, calendar="jalali", phone="۰۹۱۲۳۴�
     await expect(page.locator("html")).to_have_attribute("dir", "rtl")
     await page.get_by_label("شمارهٔ همراه").fill(phone)
     await page.get_by_label("تقویم تاریخ تولد").select_option(calendar)
-    await page.get_by_label("تاریخ تولد", exact=True).fill(
+    await page.get_by_role("textbox", name="تاریخ تولد").fill(
         "۱۳۶۸-۱۰-۱۱" if calendar == "jalali" else "1990-01-01"
     )
     await page.get_by_label("اعلام می\u200cکنم حداقل ۱۸ سال دارم").check()

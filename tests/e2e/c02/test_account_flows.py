@@ -48,7 +48,7 @@ async def test_under18_stops_before_sms_or_identity(
     await page.goto(live_server.url + "/accounts/entry/")
     await page.get_by_label("شمارهٔ همراه").fill("09123456789")
     await page.get_by_label("تقویم تاریخ تولد").select_option("gregorian")
-    await page.get_by_label("تاریخ تولد", exact=True).fill("2020-01-01")
+    await page.get_by_role("textbox", name="تاریخ تولد").fill("2020-01-01")
     await page.get_by_label("اعلام می\u200cکنم حداقل ۱۸ سال دارم").check()
     await page.get_by_role("button", name="درخواست کد ورود", exact=True).click()
     await expect(page.get_by_role("alert")).to_be_visible()
