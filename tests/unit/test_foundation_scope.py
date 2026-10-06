@@ -13,6 +13,27 @@ def test_only_foundation_routes_and_identity_model():
         "health/live/",
         "health/ready/",
         "api/v1/status/",
+        # Exactly the Task14 approved adapters; no generic CRUD/future routes.
+        "accounts/entry/",
+        "api/v1/auth/otp/request/",
+        "api/v1/auth/otp/verify/",
+        "api/v1/auth/logout/",
+        "api/v1/auth/logout-all/",
+        "api/v1/account/me/",
+        "api/v1/account/phone-change/",
+        "api/v1/account/phone-change/proof/request/",
+        "api/v1/account/phone-change/proof/verify/",
+        "api/v1/account/phone-change/apply/",
+        "api/v1/recovery/requests/",
+        "api/v1/recovery/requests/<uuid:request_uuid>/status/",
+        "api/v1/recovery/requests/<uuid:request_uuid>/new-phone/request/",
+        "api/v1/recovery/requests/<uuid:request_uuid>/new-phone/verify/",
+        "api/v1/staff/recovery/<uuid:request_uuid>/",
+        "api/v1/staff/recovery/<uuid:request_uuid>/evidence/",
+        "api/v1/staff/recovery/<uuid:request_uuid>/decision/",
+        "api/v1/staff/recovery/<uuid:request_uuid>/apply/",
+        "api/v1/privacy/requests/",
+        "api/v1/privacy/requests/<uuid:request_uuid>/",
     }
     assert settings.AUTH_USER_MODEL == "accounts.User"
     assert "django.contrib.admin" not in settings.INSTALLED_APPS

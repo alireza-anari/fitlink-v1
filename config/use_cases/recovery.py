@@ -30,6 +30,23 @@ def authorize(
         raise PermissionError("Staff authority denied") from None
 
 
+def open_recovery(
+    old_phone: str,
+    new_phone: str,
+    ip: str,
+    at: datetime,
+    *,
+    contact_preference: str = "new_phone",
+):
+    if contact_preference != "new_phone":
+        raise ValueError("Invalid contact preference")
+    return recovery.open_recovery(old_phone, new_phone, ip, at, record_security_outcome)
+
+
+def receipt_status(request_uuid: UUID, receipt: str, at: datetime) -> str:
+    return recovery.recovery_status(request_uuid, receipt, at)
+
+
 def _recorder(actor: AccountActor):
     return lambda outcome: record_security_outcome(outcome, actor_uuid=actor.user_uuid)
 

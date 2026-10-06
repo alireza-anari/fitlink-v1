@@ -6,7 +6,7 @@ from uuid import UUID
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.backends.db import SessionStore
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.http import HttpRequest
 from django.utils import timezone
 
@@ -172,3 +172,73 @@ def verify_phone_change_otp(
             actor, binding, proof.challenge_id, at
         ),
     )
+
+
+def own_account(actor: AccountActor, at: datetime) -> dict:
+    from apps.accounts.sessions import actor_user
+
+    user = actor_user(actor, "account.self", at)
+    return {
+        "account_uuid": user.public_id,
+        "state": user.state,
+        "scope": str(actor.scope),
+        "locale": user.locale,
+        "timezone": user.timezone,
+    }
+
+
+def update_preferences(actor: AccountActor, values: dict, at: datetime) -> dict:
+    from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+    from apps.accounts.sessions import locked_actor
+
+    if set(values) - {"locale", "timezone"}:
+        raise ValueError("Invalid preferences")
+    if "locale" in values and values["locale"] not in {"fa", "en"}:
+        raise ValueError("Invalid preferences")
+    if "timezone" in values:
+        value = values["timezone"]
+        if not isinstance(value, str) or len(value) > 64:
+            raise ValueError("Invalid preferences")
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError):
+            raise ValueError("Invalid preferences") from None
+    with transaction.atomic():
+        user = locked_actor(actor, "account.self", at)
+        for name, value in values.items():
+            setattr(user, name, value)
+        if values:
+            user.save(update_fields=list(values))
+        return own_account(actor, at)
+
+
+def logout_account(
+    request: HttpRequest, actor: AccountActor, all_sessions: bool, at: datetime
+) -> None:
+    from apps.accounts.sessions import locked_actor, revoke_sessions
+    from apps.accounts.state import locked_identity
+
+    with locked_identity(actor.user_uuid, actor.auth_version):
+        user = locked_actor(
+            actor, "account.logout_all" if all_sessions else "account.logout", at
+        )
+        revoke_sessions(
+            user,
+            "all" if all_sessions else "current",
+            at,
+            lambda outcome: record_security_outcome(
+                outcome, actor_uuid=actor.user_uuid
+            ),
+            control_id=actor.control_id,
+        )
+    request.session.flush()
+    request.user = AnonymousUser()
+
+
+def visible_phone_change(actor: AccountActor, change_uuid: UUID, at: datetime) -> bool:
+    from apps.accounts.recovery_models import PhoneChangeIntent
+    from apps.accounts.sessions import actor_user
+
+    user = actor_user(actor, "phone_change.apply", at)
+    return PhoneChangeIntent.objects.filter(pk=change_uuid, user=user).exists()

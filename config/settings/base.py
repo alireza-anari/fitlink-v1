@@ -59,6 +59,7 @@ STATICFILES_DIRS = []
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_FAILURE_VIEW = "config.api_security.csrf_failure"
 STORAGE_BACKEND = env.str_value("STORAGE_BACKEND", "fake")
 STORAGES: dict[str, dict[str, Any]] = {
     "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
