@@ -27,7 +27,10 @@ dc run --rm checks uv run --frozen pytest tests/unit tests/integration -q --stri
 [ "$(dc ps -q beat | wc -l)" -eq 1 ]
 dc exec -T beat uv run --frozen python docker/healthcheck.py beat
 dc exec -T worker uv run --frozen python docker/healthcheck.py worker
-dc run --rm browser
+dc run --rm browser uv run --frozen pytest tests/e2e/test_foundation_smoke.py -q -m e2e --strict-markers
+# Separate evidence: native C02 HTTP against a static-aware live_server using
+# real PostgreSQL/Redis and a private in-memory SMS collector.
+dc run --rm browser uv run --frozen pytest tests/e2e/c02 -q -m e2e --strict-markers
 # Preserve volumes and exercise actual worker/broker/channel reconnection.
 dc run --rm checks uv run --frozen python docker/c02_outbox_restart_probe.py prepare
 dc restart redis
@@ -44,4 +47,4 @@ dc restart minio
 dc up -d --wait minio
 dc run --rm minio-init
 dc run --rm checks uv run --frozen pytest tests/integration/test_minio_storage.py -q --strict-markers
-dc run --rm browser
+dc run --rm browser uv run --frozen pytest tests/e2e/test_foundation_smoke.py -q -m e2e --strict-markers

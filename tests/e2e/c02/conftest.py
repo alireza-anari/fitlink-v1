@@ -1,9 +1,30 @@
+import os
 from dataclasses import replace
 from datetime import date, timedelta
 from types import SimpleNamespace
 
 import pytest
+import pytest_asyncio
 from django.db import connection
+from playwright.async_api import async_playwright
+
+
+@pytest_asyncio.fixture
+async def browser(auth_runtime, live_server):
+    # Function-scoped async Playwright never installs a synchronous driver loop
+    # around Django database setup/fixture teardown.
+    async with async_playwright() as driver:
+        browser = await driver.chromium.launch()
+        yield browser
+        await browser.close()
+
+
+@pytest_asyncio.fixture
+async def page(browser):
+    context = await browser.new_context()
+    page = await context.new_page()
+    yield page
+    await context.close()
 
 
 @pytest.fixture
@@ -13,6 +34,7 @@ def auth_runtime(settings, monkeypatch, transactional_db, request):
     from config.use_cases import identity, recovery
 
     assert connection.vendor == "postgresql"
+    assert not os.environ.get("DJANGO_ALLOW_ASYNC_UNSAFE")
     settings.ACCOUNT_SECURITY = replace(
         settings.ACCOUNT_SECURITY,
         entry_enabled=True,
