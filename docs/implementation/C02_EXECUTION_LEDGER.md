@@ -28,7 +28,7 @@
 12. COMPLETE — Cloud RED→GREEN; real PostgreSQL213cases and Foundation423backend/full browser-restart CI SUCCESS, logs inspected.
 13. COMPLETE — actual PostgreSQL/Redis/Celery and full Foundation CI verified below.
 14. COMPLETE — corrected API head actual service/Foundation CI verified below.
-15. IN_PROGRESS — preserved local Persian UI continuation; actual browser CI pending.
+15. COMPLETE — actual native browser and full Foundation/restart CI verified below.
 16. UNSTARTED.
 
 ## Pre-flight shared interfaces
@@ -470,3 +470,8 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Run37430943821 actual logs inspected: migrations112161393500 SUCCESS,265cases61.29s and real durable Redis quota restart. Foundation112161393627:271units,554backend91.63s,C01ASGI2browser3.14s passed; C02browser36passed/2failed/2teardown errors. Both positive staff cases executed GET200/evidencePOST200/decisionPOST200, then browser reload resubmitted the previous decision POST after new-phone proof advanced the version. Domain correctly rejected stale authority/version with404; strict diagnostics correctly recorded it. Later restart gates did not execute and are not PASS. This is an HTML adapter defect, not infrastructure.
 - Added three focused regressions for successful evidence/decision/apply: command executed once, expected200-vs302 RED confirmed (.runtime/task15-staff-reload-red.log); redirect/fresh-version reload then GREEN. Minimal POST→redirect→GET correction stores only one case UUID/action notice in the server session, redirects to a fixed relative case path with validated step-up/reason, and independently rechecks full staff authority on GET. Tests also deny a later revoked-authority read; no version/authorization relaxation or private evidence persistence.
 - Focused38unit cases GREEN;274fullunits9.58s; Ruff/format211files,mypy83files,Django/production/diff checks pass. Existing38browser cases and all business/console assertions unchanged. Focused correction security review preserves CSRF-before-effects, capability/assignment/fresh case step-up/non-self rules, generic denials and privacy/hold rulings. Required real browser and complete Foundation/restart CI still PENDING; Task15 IN_PROGRESS,16UNSTARTED.
+
+## Task15 required CI completion
+- Correction sync localf773a285e73d1baead761515d5c47828ad6c4574 -> remote697960d7009fb8b719b76e97f8b9b498f23729f3; exact treeebfb506298552de7a3334a1760f353c931b046da, actual parent7fc7ce76eb791a83d39074c9fee20faca9dc4ffc/non-forced C02-only advance.
+- Run37442134520 SUCCESS; both actual job logs inspected. Migrations112198185702:265realPostgreSQL/Redis/Celery cases58.23s and actual durable quota Redis restart prepare/verify. Foundation112198185327:274units9.48s,557combinedbackend117.37s,no migration drift,38C02nativebrowser cases232.17s with strict diagnostics/desktop/mobile,including both previously failing staff effect cases. C01ASGI2browser4.19s before and2browser2.70s after actual broker/storage restarts; durable outbox prepare/restart/verify,5Redis/Celery/Channels recovery and1MinIO recovery passed. No selected skips.
+- Focused Task15 security review complete; RED→minimal correction→GREEN→actual CI retained. Task15 COMPLETE;1–14unchanged;16next sequentially. Protected main8ede9a451db6103f4e3ebf65784ee9f16b96feb2 and foundation/c01-cloud75c551e5b9bbbfb7777ee52b09a1993b681e921a unchanged. Existing privacy/hold rulings preserved. No merge/deploy/C03.
