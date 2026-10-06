@@ -18,10 +18,15 @@ def test_celery_json_only():
     assert app.conf.accept_content == ["json"]
 
 
-def test_beat_has_no_product_schedules():
+def test_beat_has_only_authorized_outbox_scan():
     from config.celery import app
 
-    assert app.conf.beat_schedule == {}
+    assert app.conf.beat_schedule == {
+        "c02-outbox-scan": {
+            "task": "apps.governance.tasks.scan_pending",
+            "schedule": 30.0,
+        }
+    }
 
 
 def test_probe_eager_returns_ok():

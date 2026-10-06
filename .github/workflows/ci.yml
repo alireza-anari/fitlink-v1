@@ -104,6 +104,7 @@ jobs:
           uv run --frozen python manage.py sqlmigrate governance 0007 --settings=config.settings.test
           uv run --frozen python manage.py sqlmigrate governance 0008 --settings=config.settings.test
           uv run --frozen python manage.py sqlmigrate governance 0009 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate governance 0010 --settings=config.settings.test
       - name: Real PostgreSQL account upgrade and constraint contracts
         run: uv run --frozen pytest tests/integration/c02 tests/integration/test_initial_migration.py -q --strict-markers
 

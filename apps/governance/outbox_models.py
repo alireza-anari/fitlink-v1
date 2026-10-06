@@ -85,3 +85,28 @@ class OutboxEvent(models.Model):
                 name="outbox_lease_pair",
             ),
         ]
+
+
+class OutboxDeliveryReceipt(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    event = models.ForeignKey(
+        OutboxEvent, on_delete=models.PROTECT, related_name="receipts"
+    )
+    handler = models.CharField(max_length=32)
+    effect_key = models.CharField(max_length=120)
+    result = models.CharField(max_length=7)
+    completed_at = models.DateTimeField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["handler", "effect_key"], name="outbox_durable_effect"
+            ),
+            models.UniqueConstraint(
+                fields=["event", "handler"], name="outbox_event_handler"
+            ),
+            models.CheckConstraint(
+                condition=models.Q(result__in=["applied", "skipped"]),
+                name="outbox_receipt_result",
+            ),
+        ]

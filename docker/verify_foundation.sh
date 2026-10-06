@@ -23,12 +23,13 @@ dc run --rm checks uv run --frozen python manage.py check
 dc run --rm checks uv run --frozen python manage.py makemigrations --check --dry-run
 # pytest creates a fresh PostgreSQL test DB from zero; no reuse-db option.
 dc run --rm checks uv run --frozen pytest tests/unit tests/integration -q --strict-markers
-# Exactly one Beat container; no application schedules.
+# Exactly one Beat container; only the authorized C02 outbox scan.
 [ "$(dc ps -q beat | wc -l)" -eq 1 ]
 dc exec -T beat uv run --frozen python docker/healthcheck.py beat
 dc exec -T worker uv run --frozen python docker/healthcheck.py worker
 dc run --rm browser
 # Preserve volumes and exercise actual worker/broker/channel reconnection.
+dc run --rm checks uv run --frozen python docker/c02_outbox_restart_probe.py prepare
 dc restart redis
 dc up -d --wait redis
 attempt=0
@@ -36,6 +37,7 @@ until dc exec -T worker uv run --frozen python docker/healthcheck.py worker; do
   attempt=$((attempt + 1)); [ "$attempt" -lt 15 ] || exit 1
   sleep 2
 done
+dc run --rm checks uv run --frozen python docker/c02_outbox_restart_probe.py verify
 dc run --rm checks uv run --frozen pytest tests/integration/test_redis.py tests/integration/test_channel_layer.py tests/integration/test_celery_roundtrip.py -q --strict-markers
 # Private storage remains functional after a real server restart.
 dc restart minio

@@ -26,7 +26,8 @@
 10. COMPLETE — Cloud RED→GREEN; current-source Foundation CI includes all23Consent PostgreSQL cases and full regression gates, inspected genuine success.
 11. COMPLETE — Cloud RED→GREEN; retry37369811515 attempt2 both required jobs SUCCESS, actual logs inspected.
 12. COMPLETE — Cloud RED→GREEN; real PostgreSQL213cases and Foundation423backend/full browser-restart CI SUCCESS, logs inspected.
-13–16. UNSTARTED.
+13. IN_PROGRESS — Cloud RED→GREEN; real outbox worker/race/restart CI pending.
+14–16. UNSTARTED.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -393,3 +394,14 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Foundation112004128288 full logs inspected:192units7.65s, Ruff/format179files/mypy75files/Django/production/frozen/static success; governance0009appliedOK/no migration drift;423combinedbackend67.64s,2browser before restart,5Redis/Celery/Channels recovery,1MinIO recovery,2browser after restart. No selected skips or implementation failure.
 - Task12 COMPLETE; Tasks1–11 preserved;13–16 remain unstarted. EntireC02 exit/review/upgrade criteria still pending. This completion commit changes only the ledger; no CI rerun requested.
 - Protected refs reverified unchanged: main8ede9a451db6103f4e3ebf65784ee9f16b96feb2; foundation/c01-cloud75c551e5b9bbbfb7777ee52b09a1993b681e921a. No merge/deploy/C03.
+
+## Task13 Cloud checkpoint — 2026-10-06
+- BASE51b3fb2c518d18a46613c6e463553a900b45667b -> authoritative remote0b65774095ff3f3bf0135e2f018c1622e9357798/treeb55741456a7e0c9a4c0d783b51af79859ee5c0ca; clean tree and uvPython3.13.15 verified before edits. Tasks1–12 unchanged; all rulings preserved.
+- RED14expected missing dispatch/retry contracts (.runtime/task13-red.log); GREEN14focused/206fullunits9.34s. Ruff/format187files/mypy77files/Django/production/drift checks pass; unavailable local PG history is not actual migration proof.
+- PostgreSQL skip-locked bounded100-row claims commit before enqueue;60s UUID leases;8attempts with positive capped300s persisted backoff; unknown registry/schema exhaust safely. Lease-token authority prevents stale worker effects; failed enqueue remains durable and safely retries.
+- Added OutboxDeliveryReceipt additivegovernance0010, unique handler/effect and event/handler; effect+receipt+sent commit together. Account cleanup preserves current controls, stale aggregate versions skip. Consent grant/revoke, privacy intake and flag changes are metadata receipts only, never object authorization or C18/provider execution.
+- Ruling: Celery arguments carry eventUUID and leaseUUID only, adding keyword lease_uuid to approved dispatch signature — event UUID alone cannot establish lease ownership — cost if wrong: future trusted producers must retain the lease token. No plaintext OTP/recovery secret/provider payload is enqueued.
+- Ruling: preserve consent.granted as an explicit metadata handler — prior Task10 outbox ruling requires it — cost if wrong: future event consumers must retain this reviewed bounded handler.
+-17real integration cases authored: competing scanners, stale lease, duplicate receipts/effects, real TCP broker failure/success,8attempt exhaustion, handler rollback/retry, subprocess crash-before-commit, dedicated real non-eager Celery worker with isolated pytest DB/queue, privileged case-bound retry, current-version cleanup and every registered metadata event. Test collection is not service GREEN.
+- Dedicated subprocess test settings keep production/test host guards intact and restrict worker DB to test_fitlink only; migration CI now supplies real Redis broker/result URLs. Compose rehearsal adds appDB outbox probe around its existing actual Redis restart, retaining all original worker/Channels/privateMinIO/browser checks.
+- Focused security review: only explicit registry; no dynamic import from payload, no provider execution, bounded error codes, User-before-event locking, stale-version skip and atomic unique receipt. Production secrets/entry configuration remain closed. Task13 NOT COMPLETE until required actual worker/race/restart logs GREEN.14–16unstarted.

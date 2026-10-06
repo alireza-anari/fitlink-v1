@@ -106,8 +106,10 @@ CELERY_TIMEZONE = "UTC"
 CELERY_ENABLE_UTC = True
 CELERY_RESULT_EXPIRES = 86400
 CELERY_TASK_ALWAYS_EAGER = False
-CELERY_BEAT_SCHEDULE: dict[str, Any] = {}
-CELERY_IMPORTS = ("config.tasks",)
+CELERY_BEAT_SCHEDULE: dict[str, Any] = {
+    "c02-outbox-scan": {"task": "apps.governance.tasks.scan_pending", "schedule": 30.0},
+}
+CELERY_IMPORTS = ("config.tasks", "apps.governance.tasks")
 CELERY_BROKER_CONNECTION_TIMEOUT = 2
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BROKER_CONNECTION_MAX_RETRIES = 10

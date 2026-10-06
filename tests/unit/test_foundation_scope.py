@@ -31,6 +31,7 @@ def test_only_foundation_routes_and_identity_model():
         "AccountSessionControl",
         "AuditEvent",
         "OutboxEvent",
+        "OutboxDeliveryReceipt",
         "StaffCapabilityGrant",
         "StaffStepUpGrant",
         "RecoveryRequest",

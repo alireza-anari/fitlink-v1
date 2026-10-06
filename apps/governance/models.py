@@ -2,6 +2,7 @@ from .audit_models import AuditEvent as AuditEvent
 from .consent_models import Consent as Consent
 from .consent_models import ConsentScope as ConsentScope
 from .flag_models import FeatureFlag as FeatureFlag
+from .outbox_models import OutboxDeliveryReceipt as OutboxDeliveryReceipt
 from .outbox_models import OutboxEvent as OutboxEvent
 from .privacy_models import PrivacyRequest as PrivacyRequest
 from .privacy_models import RecordHold as RecordHold
