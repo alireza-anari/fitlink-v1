@@ -20,6 +20,7 @@ from config.use_cases import identity, privacy, recovery
 
 from . import serializers as schema
 from .client_ip import client_ip
+from .limiter import LimiterUnavailable
 from .otp import OtpThrottled, OtpUnavailable
 from .phone_change import PhoneChangeConflict
 from .recovery import RecoveryConflict, RecoveryNotFound, RecoveryUnavailable
@@ -75,7 +76,10 @@ class CommandView(APIView):
                 status=429,
                 headers={"Retry-After": str(max(1, min(exc.retry_after, 86400)))},
             )
-        if isinstance(exc, (DatabaseError, OtpUnavailable, RecoveryUnavailable)):
+        if isinstance(
+            exc,
+            (DatabaseError, LimiterUnavailable, OtpUnavailable, RecoveryUnavailable),
+        ):
             return Response({"status": "unavailable"}, status=503)
         if isinstance(exc, (PhoneChangeConflict, RecoveryConflict)):
             return Response({"status": "conflict"}, status=409)

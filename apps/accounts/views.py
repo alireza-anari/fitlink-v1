@@ -17,6 +17,7 @@ from config.use_cases import entry, identity, recovery
 
 from . import forms
 from .api import RECEIPT_COOKIE, RECEIPT_PATH
+from .limiter import LimiterUnavailable
 from .otp import OtpThrottled, OtpUnavailable
 from .phone_change import PhoneChangeConflict
 from .recovery import RecoveryConflict, RecoveryNotFound, RecoveryUnavailable
@@ -27,6 +28,7 @@ UI_ERRORS = (
     PermissionError,
     PermissionDenied,
     DatabaseError,
+    LimiterUnavailable,
     OtpUnavailable,
     RecoveryUnavailable,
     OtpThrottled,
@@ -69,7 +71,9 @@ def error_text(exc):
     if isinstance(exc, OtpThrottled):
         seconds = max(1, min(exc.retry_after, 86400))
         return f"لطفاً {seconds} ثانیه صبر کنید و سپس دوباره تلاش کنید."
-    if isinstance(exc, (DatabaseError, OtpUnavailable, RecoveryUnavailable)):
+    if isinstance(
+        exc, (DatabaseError, LimiterUnavailable, OtpUnavailable, RecoveryUnavailable)
+    ):
         return "این درخواست فعلاً قابل انجام نیست؛ کمی بعد دوباره تلاش کنید."
     if isinstance(exc, (PhoneChangeConflict, RecoveryConflict)):
         return "وضعیت درخواست تغییر کرده است؛ صفحه را تازه کنید."

@@ -1,3 +1,4 @@
+from datetime import timedelta
 from types import SimpleNamespace
 from urllib.parse import urlencode, urlsplit
 from uuid import uuid4
@@ -104,8 +105,13 @@ def test_phone_change_display_reads_actual_proof_fields(monkeypatch, old, new):
     from config.use_cases.identity import phone_change_display
 
     owner = User(phone="+989123456789")
+    at = timezone.now()
     change = PhoneChangeIntent(
         user=owner,
+        old_phone=owner.phone,
+        issued_auth_version=owner.auth_version,
+        created_at=at,
+        expires_at=at + timedelta(minutes=5),
         old_phone_verified_at=timezone.now() if old else None,
         new_phone_verified_at=timezone.now() if new else None,
     )

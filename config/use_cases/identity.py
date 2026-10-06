@@ -262,7 +262,14 @@ def phone_change_display(
 
     user = actor_user(actor, "phone_change.apply", at)
     row = PhoneChangeIntent.objects.filter(pk=change_uuid, user=user).first()
-    if not row:
+    if (
+        not row
+        or row.applied_at
+        or row.retired_at
+        or not row.created_at <= at < row.expires_at
+        or row.issued_auth_version != user.auth_version
+        or row.old_phone != user.phone
+    ):
         return None
     return {
         "change_uuid": row.id,
