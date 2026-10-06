@@ -29,7 +29,7 @@
 13. COMPLETE — actual PostgreSQL/Redis/Celery and full Foundation CI verified below.
 14. COMPLETE — corrected API head actual service/Foundation CI verified below.
 15. COMPLETE — actual native browser and full Foundation/restart CI verified below.
-16. IN_PROGRESS — exact C01 rehearsal and final review; required CI pending.
+16. COMPLETE — immutable C01, exact same-database upgrade, full C02 CI and fresh review verified below.
 
 ## Pre-flight shared interfaces
 - 1→2/4/5/6: typed policy, canonical identity, HMAC domains/key IDs; all quota versions must aggregate retained keys.
@@ -495,3 +495,13 @@ No C02 implementation test or migration has run yet. No C02 PASS claim.
 - Focused28cases green; full288units10.59s, Ruff220files/format, mypy85files,Django/production/frozen dependency/static/JS/diff/shell checks pass. No selected skips. Corrected-source required CI pending; Task16 remains IN_PROGRESS.
 - Final: minor (deferred): OTP issuance HTTP200 rather than plan202 and failed-proof status string invalid rather than verification_failed; uniform response/authorization remain intact; client contract reconciliation deferred.
 - Final: minor (deferred): accepted outbox batch/lease/attempt/backoff settings do not change bounded hardcoded execution defaults100/60/8/300; scanner interval is configurable. Operators must use effective fixed values until configuration wiring receives dedicated tests. No unbounded retry or ownership relaxation.
+- Correction synchronization: local2e8249ed632612d8a019910881129b5abeea0c6a -> remote935494eda888cdcfd7dffaac4c519f083cda9595; exact treea3b8aa9b01ad09e38049c445b8e9697818b92ed5, actual parent1eb015fe7c5350eed2ada87d70e079f00693f36c, guarded non-forced C02-only update. Run37486370317 executing; required gates pending.
+
+
+## Task16 final verified exit and C02 handoff
+- Run37486370317 SUCCESS on remote935494eda888cdcfd7dffaac4c519f083cda9595/treea3b8aa9b01ad09e38049c445b8e9697818b92ed5; both actual job logs inspected, no selected skips. Migration112347308679:269realPostgreSQL/Redis/Celery cases63.89s and actual quota Redis restart prepare/verify.
+- Foundation112347309461:288current units12.41s; immutable C01 source verified exact4dff1ebd5a32ed0359552bf29012d9d1ecf09b24, original70units5.19s/90backend30.29s/C01browser2before4.00s/2after3.26s,5transport0.63s/1MinIO2.41s recovery with empty Beat. Exact isolated C01 same-database probe prepare/verify both passed; additive schema and retained UUID/phone/password/table OID/count/legacy signed sessions verified, no auth_user, old-cookie product denial. No migration drift.
+- Independent zero-state C02:575combinedbackend151.65s,38native C02browser248.50s with both viewports/strict console/CSRF/authority/effects; C01ASGI2before2.53s/2after4.22s; durable outbox actual broker restart prepare/verify,5Redis/Celery/Channels0.45s and1privateMinIO2.59s recovery. Corrected fixture source-tamper and all final-review regressions ran in the full backend gate.
+- Final review complete: two Important findings fixed RED→GREEN and full corrected-source CI passed; no unresolved Critical/Important. Three deferred minor categories retained in handoff: quota retry hint, OTP HTTP/status naming, outbox fixed policy execution defaults. All prior privacy/hold/receipt/staff/identity rulings preserved.
+- Historical recovery-intake ruling used the word hour; authoritative policy/tests/setup enforce86400seconds (daily3phone/10IP), not an hourly quota. This is documentary reconciliation, no policy change.
+- Task16 COMPLETE; Tasks1–16 COMPLETE; C02 implementation PASS in the isolated engineering environment. This does not authorize production providers, operational retention/MFA decisions, merge, deployment or C03. main8ede9a451db6103f4e3ebf65784ee9f16b96feb2/foundation75c551e5b9bbbfb7777ee52b09a1993b681e921a unchanged; recovery backups and original RED logs retained.

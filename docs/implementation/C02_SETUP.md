@@ -64,6 +64,9 @@ contain only event/lease UUIDs, with explicit registered metadata handlers,
 bounded durable retries and idempotent effects. Exactly-once external delivery
 is not promised. The sole approved Beat schedule scans every 30 seconds, at most
 100 rows, with 60-second leases, eight attempts and backoff bounded at 300 seconds.
+The scanner interval uses the validated policy setting. Batch size, lease, attempt
+and backoff execution currently retain these fixed values even when their accepted
+configuration fields differ; this review finding remains deferred.
 
 Browser access uses Django sessions and CSRF, current account state and auth
 version, owner/object-scoped selectors and explicit command serializers. No JWT,

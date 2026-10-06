@@ -1,7 +1,7 @@
 # C02 handoff evidence
 
-Tasks 1–15 are complete; Task 16 exact upgrade and final review are in progress.
-This document does not yet claim overall C02 implementation PASS.
+Tasks 1–16 are complete. C02 implementation PASS is verified in the isolated
+engineering environment; production release remains separately gated.
 
 Immutable C01: remote `75c551e5b9bbbfb7777ee52b09a1993b681e921a`, matching
 source tree `4dff1ebd5a32ed0359552bf29012d9d1ecf09b24`. The recovered local
@@ -22,8 +22,27 @@ or diagnostic was weakened.
 
 Task 16 adds immutable-original C01 execution, same-database populated upgrade,
 source provenance, legacy signed-session denial, table identity/password/count
-preservation and independent fresh C02 migration/full regression. Actual run and
-fresh whole-branch review evidence will be recorded only after completion.
+preservation and independent fresh C02 migration/full regression. Successful run
+[37486370317](https://github.com/alireza-anari/fitlink-v1/actions/runs/37486370317)
+verified the immutable C01 suite (70 unit / 90 backend tests), exact same-database
+upgrade, independent zero-state C02 (575 backend tests), all 38 C02 browser cases,
+C01 browser checks before and after restarts, durable outbox/broker recovery,
+Redis/Celery/Channels and private MinIO recovery. Dedicated migration job: 269
+real-service tests and actual Redis quota restart. Both complete logs were inspected;
+no selected skips. Current unit suite: 288 passed.
+
+The fresh source reviewer identified limiter outage adapter handling and unusable
+phone-change intent restart as Important findings. Both were reproduced and fixed
+with focused RED→GREEN regressions; 288 current unit tests pass. Required CI on
+remote `935494eda888cdcfd7dffaac4c519f083cda9595` passed; source tree
+`a3b8aa9b01ad09e38049c445b8e9697818b92ed5` equals local commit
+`2e8249ed632612d8a019910881129b5abeea0c6a`. No unresolved Critical or Important
+review finding remains.
+
+Deferred minors: quota retry hints can require another wait; OTP request status
+is 200 rather than planned 202 and failed proof uses `invalid`; outbox batch,
+lease, attempt and backoff accepted settings retain fixed execution defaults.
+These do not grant authority or relax the enforced abuse/ownership boundaries.
 
 The C03 authorization contract is current server-side AccountActor plus current
 User state/auth version, checked again inside mutation transactions. UUID opacity,
