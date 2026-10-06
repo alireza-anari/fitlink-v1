@@ -1,7 +1,7 @@
 name: C02 Accounts and Foundation regression
 on:
   push:
-    branches: [accounts/c02-cloud]
+    branches: [accounts/c02-cloud, profiles/c03-cloud]
 permissions:
   contents: read
 concurrency:
@@ -131,3 +131,6 @@ jobs:
           done
           docker exec "$C02_REDIS_CONTAINER" redis-cli ping
           uv run --frozen python docker/c02_limiter_restart_probe.py verify
+      - name: C03 cumulative installed PostgreSQL contracts
+        if: github.ref == 'refs/heads/profiles/c03-cloud'
+        run: sh docker/verify_c03_incremental.sh

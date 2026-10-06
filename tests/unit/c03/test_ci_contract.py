@@ -1,0 +1,116 @@
+"""Reject loss of inherited gates and fail closed before running service tests."""
+
+import hashlib
+import os
+import re
+import socket
+import subprocess
+from pathlib import Path
+
+import pytest
+
+pytestmark = pytest.mark.unit
+ROOT = Path(__file__).resolve().parents[3]
+WORKFLOW = ROOT / ".github/workflows/ci.yml"
+ENTRY = ROOT / "docker/verify_c03_incremental.sh"
+TRIGGER = "    branches: [accounts/c02-cloud, profiles/c03-cloud]"
+C03_STEP = """      - name: C03 cumulative installed PostgreSQL contracts
+        if: github.ref == 'refs/heads/profiles/c03-cloud'
+        run: sh docker/verify_c03_incremental.sh
+"""
+# Exact approved C02 workflow blob, before the narrowly authorized extension.
+C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
+
+
+def inherited_workflow_is_intact(source):
+    inherited = source.replace(TRIGGER, "    branches: [accounts/c02-cloud]")
+    inherited = inherited.replace(C03_STEP, "")
+    data = inherited.encode()
+    digest = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data)
+    return digest.hexdigest() == C02_WORKFLOW_BLOB
+
+
+def test_only_two_literal_push_branches_no_pr_or_wildcard():
+    source = WORKFLOW.read_text()
+    assert TRIGGER in source
+    assert "pull_request:" not in source
+    branches = re.search(r"branches: \[([^\]]+)\]", source).group(1).split(", ")
+    for branch, expected in (
+        ("accounts/c02-cloud", True),
+        ("profiles/c03-cloud", True),
+        ("main", False),
+        ("foundation/c01-cloud", False),
+        ("profiles/c03-plan", False),
+        ("profiles/other", False),
+    ):
+        assert (branch in branches) is expected
+
+
+def test_accounts_branch_retains_all_existing_gates():
+    assert inherited_workflow_is_intact(WORKFLOW.read_text())
+
+
+def test_c03_branch_runs_inherited_plus_installed_gates():
+    source = WORKFLOW.read_text()
+    assert source.count(C03_STEP) == 1
+    assert inherited_workflow_is_intact(source)
+
+
+def test_c03_conditions_cannot_exclude_c02_regression():
+    source = WORKFLOW.read_text()
+    assert source.count("        if:") == 1
+    assert C03_STEP in source
+    assert inherited_workflow_is_intact(source)
+
+
+@pytest.mark.parametrize(
+    ("old", "new"),
+    [
+        ("sh docker/verify_c02.sh", "true"),
+        ("uv run --frozen pytest tests/unit", "uv run --frozen pytest tests/unit/c03"),
+        ("75c551e5b9bbbfb7777ee52b09a1993b681e921a", "main"),
+        ("  foundation:\n", "  foundation:\n    if: false\n"),
+        ("    timeout-minutes: 60", "    continue-on-error: true"),
+        ("    branches: [", "    branches: [main, "),
+        ("tests/integration/c02", "tests/integration/c03"),
+    ],
+)
+def test_inherited_gate_mutations_rejected(old, new):
+    source = WORKFLOW.read_text()
+    assert old in source
+    assert not inherited_workflow_is_intact(source.replace(old, new, 1))
+
+
+def test_required_service_unavailable_is_failure():
+    assert ENTRY.is_file(), "C03 cumulative service entry point is missing"
+    with socket.socket() as unavailable:
+        unavailable.bind(("127.0.0.1", 0))
+        env = {
+            **os.environ,
+            "POSTGRES_HOST": "127.0.0.1",
+            "POSTGRES_PORT": str(unavailable.getsockname()[1]),
+        }
+        result = subprocess.run(
+            ["sh", str(ENTRY)],
+            cwd=ROOT,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=20,
+        )
+    assert result.returncode != 0
+    assert "C03 PostgreSQL/Redis readiness failed" in result.stdout
+    assert "passed" not in result.stdout
+
+
+def test_every_installed_mandatory_c03_test_selected():
+    assert ENTRY.is_file(), "C03 cumulative test selection is missing"
+    source = ENTRY.read_text()
+    installed = {
+        str(path.relative_to(ROOT))
+        for folder in ("tests/unit/c03", "tests/integration/c03")
+        for path in (ROOT / folder).glob("test_*.py")
+    }
+    selected = set(re.findall(r"tests/(?:unit|integration)/c03/test_[\w]+\.py", source))
+    assert selected == installed
+    assert "--strict-markers" in source
