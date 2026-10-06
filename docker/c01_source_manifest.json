@@ -1,0 +1,714 @@
+{
+  "commit": "75c551e5b9bbbfb7777ee52b09a1993b681e921a",
+  "tree": "4dff1ebd5a32ed0359552bf29012d9d1ecf09b24",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a124ef608f99470c66c7ba253cce5357c5593c71"
+    },
+    {
+      "path": ".env.example",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b354f75f58c6d9a1f6754f7c9f839c25a04416a"
+    },
+    {
+      "path": ".github",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "43bcfce1038833ddad36ec15a3ae017560eda102"
+    },
+    {
+      "path": ".github/workflows",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5c03d6a8ff79dd2cbda0eda74c11ee389beef9cd"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7248f5476965cd53a1cc2b0021239bb2cbb54aec"
+    },
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d384e4c77abf8c6a3d2b16d20dd3d1002cc337eb"
+    },
+    {
+      "path": ".node-version",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "60ade1ae01e833a5c291c47883bf26fb031f7727"
+    },
+    {
+      "path": ".python-version",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4de75f8d77a3e872d8883636a5d65deefb47fbe6"
+    },
+    {
+      "path": "Dockerfile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "07fd5cd34d9873636fd80418b3b57e9182944ab6"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "131dbf2f5d4fc00689675cb260fefce6bd2a69ec"
+    },
+    {
+      "path": "apps",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6ee0494435e0708ef263b126934f999533231445"
+    },
+    {
+      "path": "apps/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/accounts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8e8724e676f8a480e93cd34adbcc7e2556d23377"
+    },
+    {
+      "path": "apps/accounts/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/accounts/apps.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3ceb5a53c75c9f7000cb844faa98bde0a8adb21"
+    },
+    {
+      "path": "apps/accounts/managers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "585e573a6fb6317bf4e53e08da9711481faad9e3"
+    },
+    {
+      "path": "apps/accounts/migrations",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b2d4b21001d94a399a59333021c9e7b13e9d4095"
+    },
+    {
+      "path": "apps/accounts/migrations/0001_initial.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "919cc7f8fb31fede3a6fdc4096db34a8e1e6b8ae"
+    },
+    {
+      "path": "apps/accounts/migrations/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/accounts/models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "11be1c80200339d98cd32d1eb69c3fb31753f6cd"
+    },
+    {
+      "path": "apps/assets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1261b0fc84fe4551ca8f0c806ef3a681695feec5"
+    },
+    {
+      "path": "apps/assets/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/assets/apps.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "434f69ea900ca2318a5ef234c42caf88494a83d3"
+    },
+    {
+      "path": "apps/assets/storage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5c9818b80c21704e9ce250136f2940aa9a1b9362"
+    },
+    {
+      "path": "compose.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "964e91044c2116d3677558949bf6fdd2f4ac1aa8"
+    },
+    {
+      "path": "config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3a2947ab4367e9ae538cb34bbef290fe902e606c"
+    },
+    {
+      "path": "config/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "370372af0d6acb6929b3ba5151d02b8c695b9d65"
+    },
+    {
+      "path": "config/api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "92754fb24847303a2302391287e75c03c9c521ac"
+    },
+    {
+      "path": "config/asgi.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81203c8836cfe6a636f1fc888d78d6d12ca385a8"
+    },
+    {
+      "path": "config/celery.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "103b9d5377703a2f77d201445b43e670ec22cc3d"
+    },
+    {
+      "path": "config/health.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fb9b1a28259a624be715d0a806c4ca57cad6dc14"
+    },
+    {
+      "path": "config/logging.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c910affeb1c181094282e33bc5a0a5ae50b0b100"
+    },
+    {
+      "path": "config/middleware.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c73b9b7fd16981933ac309f5c8c451c4c57bca8d"
+    },
+    {
+      "path": "config/routing.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b3600a3553b68a8df42c79cd1e8c039781235fb7"
+    },
+    {
+      "path": "config/server.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b1d8649819cbc62d8bde37532eb4c8ed29783d7f"
+    },
+    {
+      "path": "config/settings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e217cefb72ad95578122b411e548287135294274"
+    },
+    {
+      "path": "config/settings/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "config/settings/base.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53341b6d68d82be149d3833c54e61368413267ad"
+    },
+    {
+      "path": "config/settings/build.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7111ff9c69567ff95486d4798bc52f99c37065d3"
+    },
+    {
+      "path": "config/settings/development.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecbdd952a3bbef187c3e1d33690a137bd232218c"
+    },
+    {
+      "path": "config/settings/env.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "00609f15dcf0aaa10a78cb1fe264b5884d43929b"
+    },
+    {
+      "path": "config/settings/production.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8d7fffc7e953690912059e8a0c9be2b42a555a16"
+    },
+    {
+      "path": "config/settings/test.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1c46e31d9fd63517617d8d2f913fc58b5b515d4f"
+    },
+    {
+      "path": "config/tasks.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5b100742e717bacdbeb3fe6138a077f8fbb37afa"
+    },
+    {
+      "path": "config/urls.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d531a380e0762c363f2025b5c96b85ec45bd624"
+    },
+    {
+      "path": "config/views.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8734c7d8176f07e99e12732ec4c923c169c0dfda"
+    },
+    {
+      "path": "config/wsgi.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f52bca47cef2d3ad18e5076a6e59062379d1616"
+    },
+    {
+      "path": "docker",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c80ba0410d6b76f33b8638fc0bdc79d5fdca99fc"
+    },
+    {
+      "path": "docker/Minio.Dockerfile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "868cfe1d6099263adb8031f4e7bb492b71ee37ae"
+    },
+    {
+      "path": "docker/generate_env.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "86f5e5b1f9e3d3367d867de8a884079fe47d540a"
+    },
+    {
+      "path": "docker/healthcheck.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e5a96b95722248d0cbabe06d8798a7adf389e49"
+    },
+    {
+      "path": "docker/minio-init.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "253757571fd24a1f9e9c853da2da2b33a70a9831"
+    },
+    {
+      "path": "docker/production_check.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff8454f11a77fa2d4dee2ae65ea21b7b94e8a182"
+    },
+    {
+      "path": "docker/verify_foundation.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "194fc5caeaabf304cba665146ff975556272ae86"
+    },
+    {
+      "path": "docs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c7600d97637a31333e2d089379e4b920132384bf"
+    },
+    {
+      "path": "docs/architecture",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "12e217f125184fa1914252e267b5e0b4e59691be"
+    },
+    {
+      "path": "docs/architecture/ADR-001-modular-monolith.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b9816a5dd44889bd3497647185ab32906e13460"
+    },
+    {
+      "path": "docs/architecture/ADR-002-authentication.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "14c708b8238cc68b8965a76a20a66d61a23a391a"
+    },
+    {
+      "path": "docs/architecture/ADR-003-realtime-background-jobs.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3bc2e98b45706101af4d2197927e2fba65315b69"
+    },
+    {
+      "path": "docs/architecture/ADR-004-storage-privacy.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "450ee8e09dd8ee79eea6f661242269e65a2bec73"
+    },
+    {
+      "path": "docs/architecture/ADR-005-ai-boundaries.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ce86cb8c0847e4f41e4b773ab496248a9ee4545"
+    },
+    {
+      "path": "docs/architecture/DOMAIN_MODEL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ba325df225b3d7e8f740a871afef7940be72574"
+    },
+    {
+      "path": "docs/architecture/PERMISSIONS_MATRIX.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec3be34a352f8df8c8f59902428c6863004abc92"
+    },
+    {
+      "path": "docs/architecture/V1_ARCHITECTURE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b529a010d40e15fdeb22f87ea2e04b2c3af5a009"
+    },
+    {
+      "path": "docs/development",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f5bb8d332ab4373b4f5b1da7262918e4cc1eec87"
+    },
+    {
+      "path": "docs/development/DEPENDENCIES.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b51c058fc26079e31fbd37e3a9452c6b534db67a"
+    },
+    {
+      "path": "docs/development/FOUNDATION_HANDOFF.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9f401b8b144ff5c0e459c312eb16d83b00fde083"
+    },
+    {
+      "path": "docs/development/FOUNDATION_SETUP.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6fbf2de78a4cd92c310f34ed6b1975e10cbee2d4"
+    },
+    {
+      "path": "docs/implementation",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "01869bc5952d4ab42728cb9c32490c19c37dcf93"
+    },
+    {
+      "path": "docs/implementation/C01_CLOUD_EXECUTION_LEDGER.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81eff632307dd2a8e8f970347b3bf9f4e39ffe79"
+    },
+    {
+      "path": "docs/implementation/V1_IMPLEMENTATION_ROADMAP.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "68a475ea6b5fd841ab1cd71224d0c29ad1e9dfe5"
+    },
+    {
+      "path": "docs/product",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e7a8ce4bb82af6023e460cec9bd352340aabbd0a"
+    },
+    {
+      "path": "docs/product/OPEN_QUESTIONS_AND_RISKS.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1df738b3de4b0570b4b51659ac1bb6e06a58df2b"
+    },
+    {
+      "path": "docs/product/V1_PRODUCT_SPEC.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c42ffba1020644b076c9f04cee754d683b45e42a"
+    },
+    {
+      "path": "docs/superpowers",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4aa65a8ad45318733660057aaab5f34a2adf8a02"
+    },
+    {
+      "path": "docs/superpowers/plans",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "04ec00a4f5b60e1dd05a34ebb65766fe6d76fb1c"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-03-project-foundation.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "784aa240d8a6c5f2e9baaa9b851ec7b931441141"
+    },
+    {
+      "path": "manage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a688de5d27a6861cb56ddb5e9c8c8299da87795"
+    },
+    {
+      "path": "package-lock.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3aa868756024299f38987759f8c987033ab1dda1"
+    },
+    {
+      "path": "package.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "59fb6683cd9dfe45a2efe8aac6129c9d1628aee3"
+    },
+    {
+      "path": "pyproject.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2b2fda4bdbf390abc20211103bdd6542773216ff"
+    },
+    {
+      "path": "static",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1da235efc0847a727b453a60e4b292e332a00a33"
+    },
+    {
+      "path": "static/src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3d8df908779707ec2584a81b46fd973b6c090780"
+    },
+    {
+      "path": "static/src/app.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b4d3e1cf66d68ea5f3b4f2767d29153e8bf0c62c"
+    },
+    {
+      "path": "static/src/styles.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c27cae41deb45c0ea0b89b5f609093130ec111de"
+    },
+    {
+      "path": "templates",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "eada087715afc9aa42f115a11fb49c2f4a0d4844"
+    },
+    {
+      "path": "templates/base.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f629ba282210b600b458f5c0d7bb20183960cdd"
+    },
+    {
+      "path": "templates/foundation.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "660e83a32f2e79a00f8f29c64af4a4868d71143e"
+    },
+    {
+      "path": "tests",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5e93f34e5a95609e830ec02d68c151bdfda16476"
+    },
+    {
+      "path": "tests/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "tests/conftest.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26c7a9d64528af7f1ca5b998593ea0f1efa2157e"
+    },
+    {
+      "path": "tests/e2e",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "34c167525c656542259fc252481a9eaf1d1ca0da"
+    },
+    {
+      "path": "tests/e2e/test_foundation_smoke.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf32d22de8ad9cfbba99bbd012c72e82c9183d95"
+    },
+    {
+      "path": "tests/integration",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5ee3e78437a29e7e56a9a0d85012060d7116f6d2"
+    },
+    {
+      "path": "tests/integration/test_celery_roundtrip.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e403391246818aff12a379822f8b4be2e4504725"
+    },
+    {
+      "path": "tests/integration/test_channel_layer.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b442b58b4710f77b01d7d67bc70a4c37006f905"
+    },
+    {
+      "path": "tests/integration/test_database.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c32b238769ff7d17d12f320c3255ee3418f23c19"
+    },
+    {
+      "path": "tests/integration/test_initial_migration.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3dee28659b64e9f136374fd109d9369e8a845e14"
+    },
+    {
+      "path": "tests/integration/test_minio_storage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "401f2d1b10083526d389a6ed2e6d6beb991506ff"
+    },
+    {
+      "path": "tests/integration/test_readiness.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6fd5d878e62931ae700819f24175ee7be575d078"
+    },
+    {
+      "path": "tests/integration/test_redis.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7dd6b083a18375abbb1185a25754419b9ceb6a88"
+    },
+    {
+      "path": "tests/integration/test_runtime_failures.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5454b8a43077208cfba64b25530ebfda6c8d4a49"
+    },
+    {
+      "path": "tests/integration/test_user_model.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c4cb5dd6293c8c4b6e1d96c61d41c0ac62fd8e6"
+    },
+    {
+      "path": "tests/unit",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "63ec26887e269e993fec8f57e3a8e8bff26fd63a"
+    },
+    {
+      "path": "tests/unit/test_asgi.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b96204056c6e627b7f095aeb6efbc79fd2a3f2ac"
+    },
+    {
+      "path": "tests/unit/test_celery_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ac963658a189b9cfb64642bff0768da2c2b9efe0"
+    },
+    {
+      "path": "tests/unit/test_database_probe.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "54cdb65e1a2c480ff09f8eb19f876dfb80435e7b"
+    },
+    {
+      "path": "tests/unit/test_environment.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e637904dd1101c61e9fec06c95be572e07f5e3c2"
+    },
+    {
+      "path": "tests/unit/test_foundation_scope.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "38dcf312debfd77224f429583f5dc8dd40b37f30"
+    },
+    {
+      "path": "tests/unit/test_health_api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ded0395fc74813b12c469cfd78722110a77303ce"
+    },
+    {
+      "path": "tests/unit/test_healthcheck_entrypoint.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f90c3a7d284e0d22ffdb1ec2baf087cea8d6027f"
+    },
+    {
+      "path": "tests/unit/test_logging.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c354479f2f1622b077a401e2b91da990979e1ae1"
+    },
+    {
+      "path": "tests/unit/test_redis_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "45e3dd97fe0ee45ab410f413f1d27e717dbe1664"
+    },
+    {
+      "path": "tests/unit/test_rtl_page.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "20317b8488bc7590bd8228f04b46b81352bfe246"
+    },
+    {
+      "path": "tests/unit/test_settings.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b911c7bc2e72966a68c0080513e5bc6c00b474e"
+    },
+    {
+      "path": "tests/unit/test_storage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c97fcc7643680a826e1ccd932b56a8c0826312e0"
+    },
+    {
+      "path": "tests/unit/test_user_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "52a67ad2e6d71674b94cf599b6684d41b364d9fb"
+    },
+    {
+      "path": "uv.lock",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7610a0248a79a529e2bae028f45b723fdc3b8f5b"
+    }
+  ]
+}

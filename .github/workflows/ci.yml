@@ -20,6 +20,14 @@ jobs:
           version: '0.12.19'
           python-version: '3.13.15'
           enable-cache: false
+      - name: Immutable completed C01 fixture
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/c01
+          persist-credentials: false
+      - name: Verify exact C01 source tree before use
+        run: python docker/c02_baseline.py .runtime/c01
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version-file: .node-version
@@ -43,8 +51,8 @@ jobs:
           uv run --frozen python manage.py check --settings=config.settings.test
           uv run --frozen pytest tests/unit -q --strict-markers
           uv run --frozen python docker/production_check.py
-      - name: Clean isolated Compose integration and Playwright rehearsal
-        run: sh docker/verify_foundation.sh
+      - name: Exact C01 upgrade and complete isolated C02 regression
+        run: sh docker/verify_c02.sh
   c02-migrations:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
