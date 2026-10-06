@@ -63,6 +63,12 @@ class CommandView(APIView):
         )
 
     def handle_exception(self, exc):
+        if isinstance(
+            exc, (exceptions.NotAuthenticated, exceptions.AuthenticationFailed)
+        ):
+            # These adapters authenticate with sessions, which have no bearer
+            # challenge. Preserve DRF's SessionAuthentication 403 convention.
+            return Response({"status": "denied"}, status=403)
         if isinstance(exc, OtpThrottled):
             return Response(
                 {"status": "throttled"},

@@ -47,6 +47,18 @@ def test_anonymous_rejection_needs_no_database_or_provider(path, defect, monkeyp
 
 
 @pytest.mark.parametrize(
+    "headers", [{}, {"HTTP_AUTHORIZATION": "Bearer arbitrary-no-authority"}]
+)
+def test_missing_session_denies_403_without_bearer_challenge(headers):
+    response = Client().get("/api/v1/account/me/", **headers)
+    assert response.status_code == 403
+    assert response.json() == {"status": "denied"}
+    assert response["Cache-Control"] == "no-store"
+    assert "WWW-Authenticate" not in response
+    assert "Access-Control-Allow-Origin" not in response
+
+
+@pytest.mark.parametrize(
     "data",
     [
         {"phone": "x" * 5000},
