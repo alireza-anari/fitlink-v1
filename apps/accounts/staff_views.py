@@ -1,5 +1,6 @@
 """Case-bound native recovery commands; authority stays in composition."""
 
+from urllib.parse import urlencode
 from uuid import UUID
 
 from django.http import HttpResponse
@@ -31,6 +32,11 @@ def staff_recovery_page(request, request_uuid: UUID):
         authority.cleaned_data["reason_code"],
     )
     evidence, decision = StaffEvidenceForm(), StaffDecisionForm()
+    notices = {
+        "evidence": "فرادادهٔ بررسی ثبت شد.",
+        "decision": "تصمیم ثبت شد.",
+        "apply": "تغییر مجاز اعمال شد.",
+    }
     message = ""
     try:
         # Every read and command independently requires named capability,
@@ -42,6 +48,10 @@ def staff_recovery_page(request, request_uuid: UUID):
         return HttpResponse("درخواست در دسترس نیست.", status=404)
     except UI_ERRORS:
         return HttpResponse("درخواست موقتاً در دسترس نیست.", status=503)
+    if request.method == "GET":
+        notice = request.session.pop("c02_staff_notice", None)
+        if isinstance(notice, dict) and notice.get("case_id") == str(request_uuid):
+            message = notices.get(notice.get("action", ""), "")
     try:
         if request.method == "POST":
             version = StaffVersionForm(data)
@@ -73,9 +83,15 @@ def staff_recovery_page(request, request_uuid: UUID):
                 message = "تغییر مجاز اعمال شد."
             else:
                 raise ValueError("Invalid action")
-            row = recovery.recovery_detail(
-                actor, request_uuid, step, reason, timezone.now()
-            )
+            if message:
+                # Reload must read fresh state, never replay a versioned command.
+                # Only bounded metadata is retained; GET rechecks all authority.
+                request.session["c02_staff_notice"] = {
+                    "case_id": str(request_uuid),
+                    "action": action,
+                }
+                query = urlencode({"step_up_id": str(step), "reason_code": reason})
+                return redirect(f"/staff/recovery/{request_uuid}/?{query}")
     except PermissionError:
         return HttpResponse("درخواست در دسترس نیست.", status=404)
     except UI_ERRORS as exc:
