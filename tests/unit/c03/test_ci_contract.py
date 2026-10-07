@@ -118,5 +118,9 @@ def test_every_installed_mandatory_c03_test_selected():
 
 def test_task1_sql_evidence_covers_all_installed_migrations():
     source = ENTRY.read_text()
-    assert "sqlmigrate assets 0002" in source
-    assert "sqlmigrate professionals 0005" in source
+    for label in ("athletes", "professionals", "assets", "governance"):
+        for migration in (ROOT / "apps" / label / "migrations").glob("[0-9]*.py"):
+            number = migration.name.split("_", 1)[0]
+            if label == "governance" and int(number) <= 10:
+                continue
+            assert f"sqlmigrate {label} {number}" in source

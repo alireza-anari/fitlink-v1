@@ -1,6 +1,5 @@
 from django.db import migrations
 
-
 FORWARD = """
 CREATE OR REPLACE FUNCTION fitlink_guard_verification_decision() RETURNS trigger
 LANGUAGE plpgsql AS $$
@@ -45,7 +44,8 @@ BEGIN
           INTO supersedes_profile, supersedes_kind
           FROM professionals_verificationdecision AS d
          WHERE d.id = NEW.supersedes_decision_id;
-        IF supersedes_profile <> NEW.profile_id OR supersedes_kind <> NEW.target_kind THEN
+        IF supersedes_profile <> NEW.profile_id OR supersedes_kind <> NEW.target_kind
+    THEN
             RAISE EXCEPTION 'Superseded decision target mismatch'
                 USING ERRCODE = '23514';
         END IF;
@@ -99,7 +99,8 @@ BEGIN
           INTO supersedes_profile, supersedes_kind
           FROM professionals_verificationdecision
          WHERE id = NEW.supersedes_decision_id;
-        IF supersedes_profile <> NEW.profile_id OR supersedes_kind <> NEW.target_kind THEN
+        IF supersedes_profile <> NEW.profile_id OR supersedes_kind <> NEW.target_kind
+    THEN
             RAISE EXCEPTION 'Superseded decision target mismatch'
                 USING ERRCODE = '23514';
         END IF;

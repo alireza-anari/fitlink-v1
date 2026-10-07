@@ -57,6 +57,57 @@ class BaselineAssessment(models.Model):
             models.Index(fields=["athlete", "sequence"], name="baseline_athlete_seq")
         ]
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(height_cm__isnull=True)
+                | models.Q(height_cm__gte=50, height_cm__lte=250),
+                name="baseline_height_bound",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(weight_kg__isnull=True)
+                | models.Q(weight_kg__gte=20, weight_kg__lte=400),
+                name="baseline_weight_bound",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(waist_cm__isnull=True)
+                | models.Q(waist_cm__gte=20, waist_cm__lte=250),
+                name="baseline_waist_bound",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(sleep_hours__isnull=True)
+                | models.Q(sleep_hours__gte=0, sleep_hours__lte=24),
+                name="baseline_sleep_bound",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(energy__isnull=True)
+                | models.Q(energy__gte=1, energy__lte=10),
+                name="baseline_energy_bound",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(meals_per_day__isnull=True)
+                | models.Q(meals_per_day__lte=12),
+                name="baseline_meals_bound",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(training_experience_months__isnull=True)
+                | models.Q(training_experience_months__lte=1200),
+                name="baseline_experience_month_bound",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    experience__in=["", "beginner", "intermediate", "advanced"]
+                ),
+                name="baseline_experience_kind",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(lifestyle__in=["", "sedentary", "mixed", "active"]),
+                name="baseline_lifestyle_kind",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    hydration_habit__in=["", "low", "regular", "unknown"]
+                ),
+                name="baseline_hydration_kind",
+            ),
             models.UniqueConstraint(
                 fields=["athlete", "sequence"], name="baseline_sequence_unique"
             ),

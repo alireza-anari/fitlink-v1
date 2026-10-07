@@ -1,6 +1,5 @@
 from django.db import migrations
 
-
 FORWARD = r"""
 CREATE OR REPLACE FUNCTION fitlink_guard_baseline_answers() RETURNS trigger
 LANGUAGE plpgsql AS $$
@@ -43,7 +42,8 @@ CREATE TRIGGER fitlink_current_baseline_owned
 REVERSE = r"""
 DROP TRIGGER IF EXISTS fitlink_current_baseline_owned ON athletes_athleteprofile;
 DROP FUNCTION IF EXISTS fitlink_guard_current_baseline();
-DROP TRIGGER IF EXISTS fitlink_baseline_answers_immutable ON athletes_baselineassessment;
+DROP TRIGGER IF EXISTS fitlink_baseline_answers_immutable ON
+    athletes_baselineassessment;
 DROP FUNCTION IF EXISTS fitlink_guard_baseline_answers();
 """
 

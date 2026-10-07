@@ -1,6 +1,5 @@
 from django.db import migrations
 
-
 FORWARD = """
 CREATE OR REPLACE FUNCTION fitlink_guard_professional_role_reference() RETURNS trigger
 LANGUAGE plpgsql AS $$
@@ -76,7 +75,8 @@ BEGIN
 END;
 $$;
 CREATE TRIGGER fitlink_verification_target_owned
-    BEFORE INSERT OR UPDATE OF verification_id, target, role_id, bound_declaration_version
+    BEFORE INSERT OR UPDATE OF verification_id, target, role_id,
+    bound_declaration_version
     ON professionals_verificationtarget
     FOR EACH ROW EXECUTE FUNCTION fitlink_guard_verification_target();
 
@@ -196,7 +196,8 @@ BEGIN
           INTO supersedes_profile, supersedes_kind
           FROM professionals_verificationdecision
          WHERE id = NEW.supersedes_decision_id;
-        IF supersedes_profile <> NEW.profile_id OR supersedes_kind <> NEW.target_kind THEN
+        IF supersedes_profile <> NEW.profile_id OR supersedes_kind <> NEW.target_kind
+    THEN
             RAISE EXCEPTION 'Superseded decision target mismatch'
                 USING ERRCODE = '23514';
         END IF;
@@ -233,15 +234,20 @@ CREATE TRIGGER fitlink_role_restriction_owned
 """
 
 REVERSE = """
-DROP TRIGGER IF EXISTS fitlink_role_restriction_owned ON professionals_professionalrolerestriction;
+DROP TRIGGER IF EXISTS fitlink_role_restriction_owned ON
+    professionals_professionalrolerestriction;
 DROP FUNCTION IF EXISTS fitlink_guard_role_restriction();
-DROP TRIGGER IF EXISTS fitlink_verification_decision_owned ON professionals_verificationdecision;
+DROP TRIGGER IF EXISTS fitlink_verification_decision_owned ON
+    professionals_verificationdecision;
 DROP FUNCTION IF EXISTS fitlink_guard_verification_decision();
-DROP TRIGGER IF EXISTS fitlink_verification_assignment_nonself ON professionals_verificationassignment;
+DROP TRIGGER IF EXISTS fitlink_verification_assignment_nonself ON
+    professionals_verificationassignment;
 DROP FUNCTION IF EXISTS fitlink_guard_verification_assignment();
-DROP TRIGGER IF EXISTS fitlink_verification_evidence_owned ON professionals_verificationevidence;
+DROP TRIGGER IF EXISTS fitlink_verification_evidence_owned ON
+    professionals_verificationevidence;
 DROP FUNCTION IF EXISTS fitlink_guard_verification_evidence();
-DROP TRIGGER IF EXISTS fitlink_verification_target_owned ON professionals_verificationtarget;
+DROP TRIGGER IF EXISTS fitlink_verification_target_owned ON
+    professionals_verificationtarget;
 DROP FUNCTION IF EXISTS fitlink_guard_verification_target();
 DROP TRIGGER IF EXISTS fitlink_credential_revision_owned ON professionals_credential;
 DROP FUNCTION IF EXISTS fitlink_guard_credential_current_revision();

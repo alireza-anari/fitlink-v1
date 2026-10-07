@@ -70,6 +70,29 @@ class ProfessionalProfile(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
+                condition=models.Q(experience_years__isnull=True)
+                | models.Q(experience_years__lte=80),
+                name="professional_experience_bound",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(accent_color="")
+                | models.Q(accent_color__regex=r"^#[0-9A-Fa-f]{6}$"),
+                name="professional_accent_color",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    setup_step__in=[
+                        "identity",
+                        "description",
+                        "locations",
+                        "branding",
+                        "credentials",
+                        "preview",
+                    ]
+                ),
+                name="professional_setup_step",
+            ),
+            models.CheckConstraint(
                 condition=models.Q(state__in=["setup", "private_ready", "archived"]),
                 name="professional_profile_state",
             ),

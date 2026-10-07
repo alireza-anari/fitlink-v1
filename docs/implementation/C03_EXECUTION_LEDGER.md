@@ -177,3 +177,47 @@ No C03 task COMPLETE or C03 PASS claim.
   and missing built CSS, not product RED; neither assertion was weakened.
 - Task 1 remains STARTED pending corrected-head hosted browser/service evidence
   and full schema review. Tasks 2–14 remain PENDING; no C03 PASS claim.
+
+## Task 1 recovered scope gate and schema hardening
+
+- Remote sync: local a7e6b5db5ab25042595cb76f87ffc05f1736f9e4 -> GitHub
+  cdf20310c32ae17c38df982d5a5cbde704f3a69a; exact tree
+  21f2dc61bd5ea41f248a3e8a3a12adef402d755f, actual parent b16d1da, force=false.
+- Run 37643375645 SUCCESS. Foundation 112867716820 actual log inspected:
+  310 current units; original immutable C01 70 units/90 backend and full original
+  service/browser/restart gates; exact populated C01 same-database prepare/verify;
+  615 current backend; all 38 C02 browser cases; C01 smoke before/after restart;
+  durable outbox broker restart; 5 transport and 1 private storage recovery.
+  c02-migrations 112867716437 successful, 269 inherited and 40 C03 cases.
+  This verifies the scope correction, not complete Task 1 schema coverage.
+- Immutability test checkpoint local 1044d2eb60dd1bd1a77e0105955bb1eddfc8ad42
+  -> GitHub 39727f8c8e95c4119f9f0c78e8d6900ffc93328c; exact tree
+  b8db761d6d093cf9388b25ba601aa85090e39ef5.
+  Run 37643628719 / PostgreSQL job 112868606205 actual RED: 4 failed,
+  42 passed. Submitted target draft reopening, target/evidence additions after
+  submission and direct SQL submitted-baseline deletion were improperly allowed.
+  All 269 inherited service cases and real Redis quota restart passed.
+- Bounds test checkpoint local 7c8e6fbd21a36511c4cf7e1e3551d9e99fabd416
+  -> GitHub 44e9914f08c35c259a9f0962103bb412cd21c830; exact tree
+  5b8a7aff8a31fb3be7c9ad99b14475fb0c83abe5.
+  Run 37654056491 / PostgreSQL job 112904544361 actual RED: 28 failed,
+  42 passed, all expected DID NOT RAISE failures. The additional 24 cases cover
+  approved baseline scalar/enumeration bounds, professional experience/accent/step,
+  raster size/MIME/hash/subject bounds and non-self assistant metadata.
+- Additive correction: athletes0003/0004, assets0003, professionals0006/0007/0008.
+  Submitted evidence-set guards check both existing and destination parent state
+  under locks; submitted targets cannot reopen as drafts; baseline deletion is
+  denied to ordinary SQL. No retention bypass added. New bounds preserve valid
+  partial-draft/unknown values; assistant metadata remains inert and non-self.
+- Reconciled the corresponding preserved local candidate constraints against the
+  approved ranges without overwriting the original unpublished files. Remaining
+  candidate differences still require schema review; no blanket equivalence claim.
+- Removed all eight C03 migration Ruff exclusions introduced by earlier remote
+  work. Actual lint exposed 201 findings; formatter/import ordering and SQL
+  whitespace wrapping fixed them. Normalized AST/SQL-token comparison verified
+  unchanged semantics for all eight previously existing migration files. No old
+  accounts/C02 migration changed. Current Ruff/format: 267 files pass.
+- SQL-selection regression first failed on omitted athletes0003; cumulative
+  entry point now emits every installed C03 migration and checks all new domain
+  and asset modules with mypy. Inherited workflow and scripts remain intact.
+- Task 1 remains STARTED/PENDING_CI. No Task 2 implementation or completion claim.

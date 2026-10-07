@@ -46,6 +46,37 @@ class Asset(models.Model):
         ]
         constraints = [
             models.CheckConstraint(
+                condition=models.Q(declared_size__lte=10_000_000),
+                name="asset_declared_size_cap",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(actual_size__isnull=True)
+                | models.Q(actual_size__lte=10_000_000),
+                name="asset_actual_size_cap",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(declared_type__in=["", "image/jpeg", "image/png"]),
+                name="asset_declared_type",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(detected_type__in=["", "image/jpeg", "image/png"]),
+                name="asset_detected_type",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(sha256="")
+                | models.Q(sha256__regex=r"^[0-9a-f]{64}$"),
+                name="asset_source_hash",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    subject_kind__in=[
+                        "professional_profile",
+                        "professional_credential",
+                    ]
+                ),
+                name="asset_subject_kind",
+            ),
+            models.CheckConstraint(
                 condition=models.Q(version__gte=1), name="asset_version"
             ),
             models.CheckConstraint(

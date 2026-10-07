@@ -1,6 +1,5 @@
 from django.db import migrations, models
 
-
 C03_EVENT_TYPES = (
     "account.security_changed",
     "consent.granted",

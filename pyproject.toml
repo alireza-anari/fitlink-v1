@@ -45,16 +45,7 @@ markers = [
 [tool.ruff]
 target-version = "py313"
 line-length = 88
-extend-exclude = [
-  "apps/athletes/migrations/0001_initial.py",
-  "apps/athletes/migrations/0002_baseline_guards.py",
-  "apps/assets/migrations/0001_private_asset_metadata.py",
-  "apps/professionals/migrations/0001_profile_verification_metadata.py",
-  "apps/professionals/migrations/0002_relational_guards.py",
-  "apps/professionals/migrations/0003_immutable_evidence_guards.py",
-  "apps/professionals/migrations/0004_fix_verification_decision_guard.py",
-  "apps/governance/migrations/0011_c03_profile_contracts.py",
-]
+
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

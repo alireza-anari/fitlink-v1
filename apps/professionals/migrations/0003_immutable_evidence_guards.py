@@ -1,8 +1,8 @@
 from django.db import migrations
 
-
 FORWARD = """
-CREATE OR REPLACE FUNCTION fitlink_reject_professional_evidence_mutation() RETURNS trigger
+CREATE OR REPLACE FUNCTION fitlink_reject_professional_evidence_mutation() RETURNS
+    trigger
 LANGUAGE plpgsql AS $$
 BEGIN
     RAISE EXCEPTION 'Professional evidence is append-only'
@@ -90,16 +90,23 @@ REVOKE UPDATE, DELETE, TRUNCATE ON professionals_rolerestrictionhistory FROM PUB
 """
 
 REVERSE = """
-DROP TRIGGER IF EXISTS fitlink_submitted_evidence_immutable ON professionals_verificationevidence;
+DROP TRIGGER IF EXISTS fitlink_submitted_evidence_immutable ON
+    professionals_verificationevidence;
 DROP FUNCTION IF EXISTS fitlink_guard_submitted_evidence();
-DROP TRIGGER IF EXISTS fitlink_submitted_target_immutable ON professionals_verificationtarget;
+DROP TRIGGER IF EXISTS fitlink_submitted_target_immutable ON
+    professionals_verificationtarget;
 DROP FUNCTION IF EXISTS fitlink_guard_submitted_target();
-DROP TRIGGER IF EXISTS fitlink_submitted_verification_immutable ON professionals_verification;
+DROP TRIGGER IF EXISTS fitlink_submitted_verification_immutable ON
+    professionals_verification;
 DROP FUNCTION IF EXISTS fitlink_guard_submitted_verification();
-DROP TRIGGER IF EXISTS fitlink_role_restriction_history_immutable ON professionals_rolerestrictionhistory;
-DROP TRIGGER IF EXISTS fitlink_verification_history_immutable ON professionals_verificationhistory;
-DROP TRIGGER IF EXISTS fitlink_verification_decision_immutable ON professionals_verificationdecision;
-DROP TRIGGER IF EXISTS fitlink_credential_revision_immutable ON professionals_credentialrevision;
+DROP TRIGGER IF EXISTS fitlink_role_restriction_history_immutable ON
+    professionals_rolerestrictionhistory;
+DROP TRIGGER IF EXISTS fitlink_verification_history_immutable ON
+    professionals_verificationhistory;
+DROP TRIGGER IF EXISTS fitlink_verification_decision_immutable ON
+    professionals_verificationdecision;
+DROP TRIGGER IF EXISTS fitlink_credential_revision_immutable ON
+    professionals_credentialrevision;
 DROP FUNCTION IF EXISTS fitlink_reject_professional_evidence_mutation();
 """
 
