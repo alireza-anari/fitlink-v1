@@ -1,7 +1,5 @@
 from django.db import migrations, models
 
-import apps.governance.audit_models
-
 C03_ACTIONS = (
     "otp.requested",
     "otp.delivery",
