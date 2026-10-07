@@ -162,3 +162,67 @@ def test_c03_metadata_payload_denies_private_values():
         OutboxEvent,
         **{**valid, "dedup_key": str(uuid4()), "payload": {"document": str(uuid4())}},
     )
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("height_cm", 49),
+        ("height_cm", 251),
+        ("weight_kg", 19),
+        ("weight_kg", 401),
+        ("waist_cm", 19),
+        ("waist_cm", 251),
+        ("sleep_hours", 25),
+        ("energy", 0),
+        ("energy", 11),
+        ("meals_per_day", 13),
+        ("training_experience_months", 1201),
+        ("experience", "medical"),
+        ("lifestyle", "private-sentinel"),
+        ("hydration_habit", "private-data"),
+    ],
+)
+def test_baseline_sql_rejects_out_of_contract_values(schema_factory, field, value):
+    s = schema_factory()
+    athlete = require_model("AthleteProfile", "athletes").objects.create(user=s.owner)
+    reject(
+        require_model("BaselineAssessment", "athletes"),
+        athlete=athlete,
+        sequence=1,
+        observed_at=s.at,
+        **{field: value},
+    )
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [("experience_years", 81), ("accent_color", "red"), ("setup_step", "payments")],
+)
+def test_professional_sql_rejects_out_of_contract_values(schema_factory, field, value):
+    s = schema_factory()
+    with pytest.raises(IntegrityError), transaction.atomic():
+        type(s.profile).objects.filter(pk=s.profile.pk).update(**{field: value})
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("declared_size", 10_000_001),
+        ("actual_size", 10_000_001),
+        ("declared_type", "text/html"),
+        ("detected_type", "image/svg+xml"),
+        ("sha256", "private-value"),
+        ("subject_kind", "public_athlete"),
+    ],
+)
+def test_asset_sql_rejects_out_of_contract_values(schema_factory, field, value):
+    s = schema_factory()
+    asset = s.revisions["coach"].source_asset
+    with pytest.raises(IntegrityError), transaction.atomic():
+        type(asset).objects.filter(pk=asset.pk).update(**{field: value})
+
+
+def test_assistant_metadata_cannot_reference_profile_owner(schema_factory):
+    s = schema_factory()
+    reject(require_model("AssistantMembership"), profile=s.profile, assistant=s.owner)
