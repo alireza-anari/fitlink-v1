@@ -114,3 +114,9 @@ def test_every_installed_mandatory_c03_test_selected():
     selected = set(re.findall(r"tests/(?:unit|integration)/c03/test_[\w]+\.py", source))
     assert selected == installed
     assert "--strict-markers" in source
+
+
+def test_task1_sql_evidence_covers_all_installed_migrations():
+    source = ENTRY.read_text()
+    assert "sqlmigrate assets 0002" in source
+    assert "sqlmigrate professionals 0005" in source
