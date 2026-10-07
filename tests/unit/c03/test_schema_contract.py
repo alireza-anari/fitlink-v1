@@ -6,9 +6,10 @@ import pytest
 from django.apps import apps
 from django.db import models
 
-from apps.governance.audit_models import ACTIONS, REASONS, RecordHold
+from apps.governance.audit_models import ACTIONS, REASONS
 from apps.governance.consent_models import PURPOSES
 from apps.governance.outbox import validate_dispatch
+from apps.governance.privacy_models import RecordHold
 
 pytestmark = pytest.mark.unit
 EXPECTED = {
