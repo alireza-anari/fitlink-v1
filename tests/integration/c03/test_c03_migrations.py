@@ -40,6 +40,24 @@ def test_optional_profiles_not_created():
     assert "auth_user" not in connection.introspection.table_names()
 
 
+def test_c03_timestamp_columns_are_nonnull_utc_storage():
+    assert connection.vendor == "postgresql"
+    for model in apps.get_models():
+        if model._meta.app_label not in {"athletes", "professionals", "assets"}:
+            continue
+        with connection.cursor() as cursor:
+            columns = {
+                column.name: column
+                for column in connection.introspection.get_table_description(
+                    cursor, model._meta.db_table
+                )
+            }
+        assert {"created_at", "updated_at"} <= columns.keys()
+        for name in ("created_at", "updated_at"):
+            assert columns[name].type_code == 1184  # PostgreSQL timestamptz
+            assert columns[name].null_ok is False
+
+
 def test_c03_unique_profiles_roles_live_drafts_verification_assignment(schema_factory):
     s = schema_factory()
     reject(type(s.profile), user=s.owner)
@@ -360,3 +378,80 @@ def test_partial_drafts_and_valid_bounded_json_remain_usable(schema_factory):
     s.profile.refresh_from_db()
     assert draft.approximate_records[0]["value"] == "12.50"
     assert s.profile.languages == ["fa", "en-US"]
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"width": 0},
+        {"height": 0},
+        {"width": 1601},
+        {"height": 1601},
+        {"sha256": "private-data"},
+    ],
+)
+def test_derivative_has_bounded_dimensions_and_checksum(schema_factory, changes):
+    s = schema_factory()
+    reject(
+        require_model("AssetDerivative", "assets"),
+        **{
+            "asset": s.revisions["coach"].source_asset,
+            "processing_version": 1,
+            "purpose": "evidence_preview",
+            "key": str(uuid4()),
+            "sha256": "a" * 64,
+            "width": 100,
+            "height": 100,
+            "mime_type": "image/png",
+            **changes,
+        },
+    )
+
+
+def test_running_processing_attempt_requires_a_lease(schema_factory):
+    s = schema_factory()
+    reject(
+        require_model("AssetProcessingAttempt", "assets"),
+        asset=s.revisions["coach"].source_asset,
+        processing_version=1,
+        state="running",
+    )
+
+
+def test_revoked_assistant_metadata_requires_revocation_time(schema_factory):
+    s = schema_factory()
+    reject(
+        require_model("AssistantMembership"),
+        profile=s.profile,
+        assistant=s.other,
+        state="revoked",
+    )
+
+
+def test_decided_bundle_requires_decision_time(schema_factory):
+    s = schema_factory()
+    with pytest.raises(IntegrityError), transaction.atomic():
+        type(s.case).objects.filter(pk=s.case.pk).update(
+            state="decided", submitted_at=s.at, decided_at=None
+        )
+
+
+@pytest.mark.parametrize("missing", ["actual_size", "accepted_at", "finalized_at"])
+def test_ready_asset_requires_committed_source_metadata(schema_factory, missing):
+    s = schema_factory()
+    values = dict(
+        owner=s.owner,
+        subject_kind="professional_profile",
+        subject_uuid=s.profile.pk,
+        purpose="avatar",
+        state="ready",
+        declared_size=100,
+        declared_type="image/png",
+        actual_size=100,
+        detected_type="image/png",
+        sha256="a" * 64,
+        accepted_at=s.at,
+        finalized_at=s.at,
+        upload_expires_at=s.at + timedelta(hours=1),
+    )
+    reject(require_model("Asset", "assets"), **{**values, missing: None})

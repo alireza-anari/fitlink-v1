@@ -61,6 +61,17 @@ def test_private_relational_schema_registered_without_future_models():
                     assert field.remote_field.on_delete is models.PROTECT
 
 
+def test_c03_metadata_records_have_utc_creation_and_update_fields():
+    for label, names in EXPECTED.items():
+        for name in names:
+            model = apps.get_model(label, name)
+            fields = {field.name: field for field in model._meta.local_fields}
+            assert {"created_at", "updated_at"} <= fields.keys(), (label, name)
+            for key in ("created_at", "updated_at"):
+                assert isinstance(fields[key], models.DateTimeField)
+                assert not fields[key].null
+
+
 def test_c03_governance_allowlists_are_bounded_and_installed():
     assert {
         "athlete.profile_created",
