@@ -125,3 +125,16 @@ No C03 task COMPLETE or C03 PASS claim.
   and rejected new event envelopes. Log: .superpowers/task1-schema-unit-red.log.
 - Cumulative hosted entry point explicitly selects all new test files.
 - No schema implementation yet; hosted PostgreSQL behavioral RED pending.
+
+- Test-spec sync: local b3c17f3199ec08ba1edd1b1332b99667add9d0ed ->
+  GitHub 7a18a32c7706dcd11329f8aa778c4d8076311ffd, exact tree
+  c1612b6a910dd100c9559a24e653de7e013f77b3, run 37571066990.
+- Additional baseline/history guards: local
+  6ff01e65dbe4db1fb2c7d0fb99a092a48c51eb27 -> GitHub
+  a056d3b6f6609c39a2d01fc253348911a92ea508, exact tree
+  20294e2445f276f0987f30be1156a530743df8d0.
+- Foundation job 112629578318 exposed a collection error: C02 and C03
+  test_schema_contract shared a top-level module name. Not behavioral RED.
+  Reproduced locally; adding package markers only for tests/unit and its C03
+  directory separates unit.c03 from existing modules. Complete unit+C03
+  integration collection now succeeds: 326 tests. No assertions changed.
