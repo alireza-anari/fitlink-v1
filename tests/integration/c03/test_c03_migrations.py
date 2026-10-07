@@ -226,3 +226,105 @@ def test_asset_sql_rejects_out_of_contract_values(schema_factory, field, value):
 def test_assistant_metadata_cannot_reference_profile_owner(schema_factory):
     s = schema_factory()
     reject(require_model("AssistantMembership"), profile=s.profile, assistant=s.owner)
+
+
+@pytest.mark.parametrize("label", ["athletes", "professionals"])
+@pytest.mark.parametrize(
+    "changes", [{"command": "private-data"}, {"request_hash": "private-data"}]
+)
+def test_receipt_cannot_store_unbounded_command_or_hash(schema_factory, label, changes):
+    s = schema_factory()
+    reject(
+        require_model("ProfileCommandReceipt", label),
+        **{
+            "owner": s.owner,
+            "operation_id": uuid4(),
+            "command": "profile.create",
+            "request_hash": "a" * 64,
+            "object_uuid": s.profile.pk,
+            "resulting_version": 1,
+            **changes,
+        },
+    )
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("goals", {"injuries": "private-data"}),
+        ("goals", ["medical"]),
+        ("goals", ["strength"] * 6),
+        ("available_days", [0]),
+        ("available_days", [8]),
+        ("available_days", [1, 1]),
+        ("available_days", ["1"]),
+        ("equipment", ["medication"]),
+        ("facilities", ["clinic"]),
+        ("approximate_records", [{"injuries": "private-data"}]),
+    ],
+)
+def test_baseline_json_cannot_bypass_typed_schema(schema_factory, field, value):
+    s = schema_factory()
+    athlete = require_model("AthleteProfile", "athletes").objects.create(user=s.owner)
+    reject(
+        require_model("BaselineAssessment", "athletes"),
+        athlete=athlete,
+        sequence=1,
+        observed_at=s.at,
+        **{field: value},
+    )
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("specialties", {"private": "data"}),
+        ("specialties", ["x" * 65]),
+        ("specialties", [str(i) for i in range(11)]),
+        ("languages", ["bad tag"]),
+        ("languages", ["fa"] * 6),
+        ("service_modes", ["clinic"]),
+    ],
+)
+def test_professional_json_cannot_bypass_typed_schema(schema_factory, field, value):
+    s = schema_factory()
+    with pytest.raises(IntegrityError), transaction.atomic():
+        type(s.profile).objects.filter(pk=s.profile.pk).update(**{field: value})
+
+
+@pytest.mark.parametrize(
+    "defect", ["reason", "time", "history_reason", "history_version"]
+)
+def test_restriction_has_reasoned_forward_history(schema_factory, defect):
+    s = schema_factory()
+    Restriction = require_model("ProfessionalRoleRestriction")
+    values = dict(
+        role=s.coach,
+        verification=s.case,
+        applied_by=s.staff,
+        reason_code="role_restricted",
+        applied_at=s.at,
+    )
+    if defect == "reason":
+        reject(Restriction, **{**values, "reason_code": "private-data"})
+    elif defect == "time":
+        reject(
+            Restriction,
+            **values,
+            released_by=s.staff,
+            released_at=s.at - timedelta(seconds=1),
+        )
+    else:
+        row = Restriction.objects.create(**values)
+        reject(
+            require_model("RoleRestrictionHistory"),
+            restriction=row,
+            actor=s.staff,
+            event="applied",
+            at=s.at,
+            prior_version=1,
+            new_version=1 if defect == "history_version" else 2,
+            reason_code="private-data"
+            if defect == "history_reason"
+            else "role_restricted",
+        )
