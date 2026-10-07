@@ -11,6 +11,12 @@ PAYLOAD_FIELDS = {
     "consent.revoked": frozenset({"consent_uuid", "user_uuid"}),
     "privacy.intake_recorded": frozenset({"privacy_uuid", "user_uuid"}),
     "feature_flag.changed": frozenset({"flag_uuid"}),
+    "athlete.baseline_changed": frozenset({"baseline_uuid", "user_uuid"}),
+    "professional.profile_changed": frozenset({"profile_uuid", "user_uuid"}),
+    "verification.changed": frozenset({"verification_uuid", "user_uuid"}),
+    "asset.processing_requested": frozenset({"asset_uuid", "user_uuid"}),
+    "asset.cleanup_requested": frozenset({"asset_uuid", "user_uuid"}),
+    "assistant.membership_changed": frozenset({"membership_uuid", "user_uuid"}),
 }
 
 
@@ -85,6 +91,12 @@ def validate_dispatch(
         "consent.revoked": "consent_uuid",
         "privacy.intake_recorded": "privacy_uuid",
         "feature_flag.changed": "flag_uuid",
+        "athlete.baseline_changed": "baseline_uuid",
+        "professional.profile_changed": "profile_uuid",
+        "verification.changed": "verification_uuid",
+        "asset.processing_requested": "asset_uuid",
+        "asset.cleanup_requested": "asset_uuid",
+        "assistant.membership_changed": "membership_uuid",
     }[event_type]
     if payload[aggregate_field] != str(aggregate_uuid):
         raise ValueError("Invalid dispatch aggregate")

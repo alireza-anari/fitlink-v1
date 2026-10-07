@@ -73,6 +73,9 @@ RELEASE_ID = env.str_value("RELEASE_ID", "foundation")[:80]
 INSTALLED_APPS += [
     "apps.accounts.apps.AccountsConfig",
     "apps.governance.apps.GovernanceConfig",
+    "apps.assets.apps.AssetsConfig",
+    "apps.athletes.apps.AthletesConfig",
+    "apps.professionals.apps.ProfessionalsConfig",
 ]
 AUTH_USER_MODEL = "accounts.User"
 

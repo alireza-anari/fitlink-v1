@@ -10,6 +10,7 @@ CAPABILITIES = (
     "security_audit",
     "privacy_operations",
     "feature_flags",
+    "professional_verification",
 )
 
 

@@ -9,6 +9,12 @@ EVENT_TYPES = (
     "consent.revoked",
     "privacy.intake_recorded",
     "feature_flag.changed",
+    "athlete.baseline_changed",
+    "professional.profile_changed",
+    "verification.changed",
+    "asset.processing_requested",
+    "asset.cleanup_requested",
+    "assistant.membership_changed",
 )
 
 
