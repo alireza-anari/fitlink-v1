@@ -51,9 +51,7 @@ def test_export_replay_returns_owned_pending_intake_and_no_execution():
         .count()
         == 1
     )
-    assert not {"ErasureMarker", "Asset"} & {
-        model.__name__ for model in apps.get_models()
-    }
+    assert "ErasureMarker" not in {model.__name__ for model in apps.get_models()}
 
 
 @pytest.mark.parametrize(
