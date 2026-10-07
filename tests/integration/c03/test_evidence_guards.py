@@ -90,6 +90,33 @@ def test_baseline_ownership_anchor(schema_factory, operation):
             )
 
 
+def test_ownership_anchors_allow_owned_correction_and_role_deactivation(schema_factory):
+    s = schema_factory()
+    Profile = require_model("AthleteProfile", "athletes")
+    Baseline = require_model("BaselineAssessment", "athletes")
+    own = Profile.objects.create(user=s.owner)
+    parent = Baseline.objects.create(
+        athlete=own,
+        sequence=1,
+        state="submitted",
+        observed_at=s.at,
+        submitted_at=s.at,
+    )
+    correction = Baseline.objects.create(
+        athlete=own,
+        parent=parent,
+        sequence=2,
+        observed_at=s.at,
+    )
+    own.status = "active"
+    own.current_baseline = parent
+    own.save()
+    s.coach.declared_active = False
+    s.coach.save(update_fields=["declared_active"])
+    assert correction.parent_id == parent.pk
+    assert type(s.coach).objects.get(pk=s.coach.pk).declared_active is False
+
+
 def decision(s, kind="coach", **changes):
     return require_model("VerificationDecision")(
         **{

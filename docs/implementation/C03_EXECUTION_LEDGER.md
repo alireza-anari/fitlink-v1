@@ -372,3 +372,24 @@ No C03 task COMPLETE or C03 PASS claim.
   permanent profile owner, role profile/kind, baseline athlete and same-athlete
   correction parent. Required behavioral PostgreSQL RED is pending; production
   guards unchanged in this test checkpoint. No task advance yet.
+
+## Task 1 ownership-anchor behavioral RED and correction
+
+- Test sync: local add33f5 -> remote 166cb88135d372bdad6d1bdb116dc85c47fdfcc5,
+  parent d3561a7, exact tree f790a50fb35c3df7e96518bffa4bc6381872c4ce,
+  force=false. Run 37698230699 PostgreSQL job 113055125704 actual logs inspected:
+  six expected DID NOT RAISE DatabaseError failures, 128 installed C03 passes;
+  all 269 inherited PostgreSQL cases and real Redis restart/readiness passed.
+  Each fixture reached its intended violation, no collection/fixture failure.
+- Additive athletes0009/professionals0017 prevent changing permanent profile
+  owners, role profile/kind and baseline athlete. Corrections lock and require
+  a parent of the same athlete. Existing lifecycle/state/version changes remain
+  available. Added positive owned-correction and role-deactivation regression.
+  Cumulative entry point explicitly inspects both new SQL migrations.
+- Focused review: child evidence pointers now retain their original parent
+  authority identity across bulk/direct SQL. No User/accounts migration, route,
+  public field, authorization bypass, or new domain behavior introduced.
+- Local verification: 311 units passed (10.61s), Ruff/format 285 files,
+  mypy 55 files, Django/production checks, no model-state drift, shell syntax and
+  diff checks pass. Local PostgreSQL unavailable; exact-head hosted GREEN remains
+  mandatory. Task 1 STARTED/PENDING_CI; Tasks 2–14 PENDING.
