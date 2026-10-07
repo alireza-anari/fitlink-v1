@@ -6,6 +6,8 @@ import pytest
 from django.apps import apps
 from django.db import models
 
+from apps.governance.audit_models import ACTIONS, REASONS, RecordHold
+from apps.governance.consent_models import PURPOSES
 from apps.governance.outbox import validate_dispatch
 
 pytestmark = pytest.mark.unit
@@ -56,6 +58,71 @@ def test_private_relational_schema_registered_without_future_models():
                 }
                 if isinstance(field, models.ForeignKey):
                     assert field.remote_field.on_delete is models.PROTECT
+
+
+def test_c03_governance_allowlists_are_bounded_and_installed():
+    assert {
+        "athlete.profile_created",
+        "baseline.saved",
+        "baseline.submitted",
+        "baseline.corrected",
+        "baseline.cleared",
+        "professional.profile_created",
+        "professional.profile_saved",
+        "professional.roles_changed",
+        "credential.created",
+        "credential.revised",
+        "credential.withdrawn",
+        "asset.begun",
+        "asset.uploaded",
+        "asset.finalized",
+        "asset.read",
+        "asset.rejected",
+        "asset.revoked",
+        "asset.deleted",
+        "verification.submitted",
+        "verification.assigned",
+        "verification.review_started",
+        "verification.read",
+        "verification.approved",
+        "verification.rejected",
+        "verification.stale",
+        "verification.withdrawn",
+        "verification.revoked",
+        "professional.role_restricted",
+        "professional.role_released",
+        "assistant.defined",
+        "assistant.revoked",
+    } <= set(ACTIONS)
+    assert {
+        "verification_submitted",
+        "verification_review",
+        "credentials_approved",
+        "evidence_incomplete",
+        "credentials_invalid",
+        "evidence_expired",
+        "evidence_revoked",
+        "role_restricted",
+        "restriction_removed",
+        "material_changed",
+        "owner_withdrawn",
+        "upload_invalid",
+        "scan_failed",
+        "retention_due",
+    } <= set(REASONS)
+    assert "baseline_storage" in PURPOSES
+    constraint = next(
+        item for item in RecordHold._meta.constraints if item.name == "hold_subject_kind"
+    )
+    assert constraint.condition == models.Q(
+        subject_kind__in=[
+            "privacy_request",
+            "athlete_baseline",
+            "professional_credential",
+            "professional_verification",
+            "profile_asset",
+        ]
+    )
 
 
 @pytest.mark.parametrize(
