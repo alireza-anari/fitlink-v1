@@ -393,3 +393,74 @@ def test_target_history_requires_target_reason_and_advancing_version(
     values.update(changes)
     with pytest.raises(IntegrityError), transaction.atomic():
         require_model("VerificationHistory").objects.create(**values)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("sha256", "f" * 64),
+        ("source_key", "replacement"),
+        ("actual_size", 101),
+        ("subject_uuid", None),
+    ],
+)
+def test_accepted_evidence_source_binding_is_immutable(schema_factory, field, value):
+    s = schema_factory()
+    submit(s)
+    asset = s.revisions["coach"].source_asset
+    if field == "subject_uuid":
+        value = s.foreign.pk
+    with pytest.raises(DatabaseError), transaction.atomic():
+        type(asset).objects.filter(pk=asset.pk).update(**{field: value})
+
+
+@pytest.mark.parametrize("field", ["profile", "role", "category"])
+def test_credential_identity_cannot_be_reclassified(schema_factory, field):
+    s = schema_factory()
+    submit(s)
+    credential = s.revisions["coach"].credential
+    changes = {
+        "profile": {"profile": s.foreign, "role": None, "category": "identity"},
+        "role": {"role": s.nutritionist},
+        "category": {"category": "identity", "role": None},
+    }[field]
+    with pytest.raises(DatabaseError), transaction.atomic():
+        type(credential).objects.filter(pk=credential.pk).update(**changes)
+
+
+@pytest.mark.parametrize("defect", ["owner", "checksum", "purpose"])
+def test_revision_source_matches_credential_owner_purpose_checksum(
+    schema_factory, defect
+):
+    s = schema_factory()
+    Asset = require_model("Asset", "assets")
+    source = Asset.objects.create(
+        owner=s.other if defect == "owner" else s.owner,
+        subject_kind="professional_profile",
+        subject_uuid=s.foreign.pk if defect == "owner" else s.profile.pk,
+        purpose="avatar" if defect == "purpose" else "credential_evidence",
+        upload_expires_at=s.at,
+        sha256="f" * 64 if defect == "checksum" else "a" * 64,
+    )
+    revision = s.revisions["coach"]
+    revision.pk = None
+    revision.sequence = 2
+    revision.source_asset = source
+    with pytest.raises(IntegrityError), transaction.atomic():
+        type(revision).objects.bulk_create([revision])
+
+
+def test_target_history_cannot_bind_another_case(schema_factory):
+    s = schema_factory()
+    case = require_model("Verification").objects.create(profile=s.foreign, sequence=1)
+    with pytest.raises(IntegrityError), transaction.atomic():
+        require_model("VerificationHistory").objects.create(
+            verification=case,
+            target=s.targets["coach"],
+            actor=s.staff,
+            event="decision",
+            reason_code="credentials_approved",
+            prior_version=1,
+            new_version=2,
+            at=s.at,
+        )
