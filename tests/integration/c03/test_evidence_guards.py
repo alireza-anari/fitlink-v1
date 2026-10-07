@@ -17,6 +17,79 @@ def submit(s):
     s.case.save()
 
 
+@pytest.mark.parametrize("domain", ["athletes", "professionals"])
+def test_profile_owner_is_permanent_in_direct_sql(schema_factory, domain):
+    s = schema_factory()
+    profile = s.profile
+    if domain == "athletes":
+        profile = require_model("AthleteProfile", domain).objects.create(user=s.owner)
+    with (
+        pytest.raises(DatabaseError),
+        transaction.atomic(),
+        connection.cursor() as cursor,
+    ):
+        cursor.execute(
+            f'UPDATE "{profile._meta.db_table}" SET user_id = %s WHERE id = %s',
+            [s.staff.pk, profile.pk],
+        )
+
+
+def test_submitted_role_profile_cannot_be_reparented(schema_factory):
+    s = schema_factory()
+    submit(s)
+    with pytest.raises(DatabaseError), transaction.atomic():
+        type(s.coach).objects.filter(pk=s.coach.pk).update(profile=s.foreign)
+
+
+def test_role_kind_is_permanent_without_unique_collision(schema_factory):
+    s = schema_factory()
+    role = type(s.coach).objects.create(profile=s.foreign, role="coach")
+    with (
+        pytest.raises(DatabaseError),
+        transaction.atomic(),
+        connection.cursor() as cursor,
+    ):
+        cursor.execute(
+            "UPDATE professionals_professionalrole SET role = %s WHERE id = %s",
+            ["nutritionist", role.pk],
+        )
+
+
+@pytest.mark.parametrize("operation", ["foreign_parent", "reparent_draft"])
+def test_baseline_ownership_anchor(schema_factory, operation):
+    s = schema_factory()
+    Profile = require_model("AthleteProfile", "athletes")
+    Baseline = require_model("BaselineAssessment", "athletes")
+    own = Profile.objects.create(user=s.owner)
+    other = Profile.objects.create(user=s.other)
+    parent = Baseline.objects.create(
+        athlete=other,
+        sequence=1,
+        state="submitted",
+        observed_at=s.at,
+        submitted_at=s.at,
+    )
+    if operation == "foreign_parent":
+        with pytest.raises(DatabaseError), transaction.atomic():
+            Baseline.objects.create(
+                athlete=own,
+                parent=parent,
+                sequence=1,
+                observed_at=s.at,
+            )
+    else:
+        draft = Baseline.objects.create(athlete=own, sequence=2, observed_at=s.at)
+        with (
+            pytest.raises(DatabaseError),
+            transaction.atomic(),
+            connection.cursor() as cursor,
+        ):
+            cursor.execute(
+                "UPDATE athletes_baselineassessment SET athlete_id = %s WHERE id = %s",
+                [other.pk, draft.pk],
+            )
+
+
 def decision(s, kind="coach", **changes):
     return require_model("VerificationDecision")(
         **{

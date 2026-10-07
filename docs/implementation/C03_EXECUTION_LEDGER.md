@@ -349,3 +349,26 @@ No C03 task COMPLETE or C03 PASS claim.
   remains separately mandatory in Task 14 and is not claimed by this historical
   model test. Required hosted validation of the strengthened test is PENDING_CI.
 - Task 1 remains STARTED; no advance to Task 2 before complete hosted gates.
+
+## Task 1 complete regression evidence and ownership-anchor review
+
+- Source run 37695330008 on d7becd521c48dd2a9c8829717bdc3cf44a9bd128:
+  both jobs SUCCESS. Foundation 113045540212 logs inspected: exact immutable
+  C01 source and populated same-database upgrade, 703 current backend cases,
+  38 C02 browser cases, ASGI/viewport smoke and actual transport/storage/broker
+  restart probes all pass. This resolves the earlier transient MinIO failure.
+- Test checkpoint local 3a190106dfd6c3c0a104a12500373094ae594e4b -> remote
+  d3561a7c153d64190ccdfc2fba8cd80a5a120f71, exact tree
+  a2ae67165c26cde1922da16de3c89ce928428aec, parent d7becd5, force=false.
+  Run 37695980919 both jobs SUCCESS. PostgreSQL 113047689710 logs: all 128
+  installed C03 cases including populated historical C02 upgrade, 269 inherited
+  cases, actual Redis restart/readiness, migration SQL/no drift/mypy pass.
+  Foundation 113047689562 logs: exact C01 upgrade, 703 current backend,
+  38 C02 browser, ASGI/viewport and actual restart probes pass. No selected skip.
+- Final FK review: child-side evidence binding guards are bypassable by changing
+  their parent role/profile identity directly. Baseline correction parent also
+  lacked same-athlete enforcement. These are intrinsic ownership anchors under
+  approved section 4, not new service scope. Added six adversarial tests for
+  permanent profile owner, role profile/kind, baseline athlete and same-athlete
+  correction parent. Required behavioral PostgreSQL RED is pending; production
+  guards unchanged in this test checkpoint. No task advance yet.
