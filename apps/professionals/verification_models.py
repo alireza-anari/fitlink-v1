@@ -25,7 +25,9 @@ class Verification(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["profile", "sequence"], name="verification_profile_seq"),
+            models.Index(
+                fields=["profile", "sequence"], name="verification_profile_seq"
+            ),
             models.Index(
                 fields=["state", "submitted_at", "id"], name="verification_staff_queue"
             ),
@@ -40,13 +42,15 @@ class Verification(models.Model):
                 name="verification_one_live_bundle",
             ),
             models.CheckConstraint(
-                condition=models.Q(sequence__gte=1), name="verification_sequence_positive"
+                condition=models.Q(sequence__gte=1),
+                name="verification_sequence_positive",
             ),
             models.CheckConstraint(
                 condition=models.Q(version__gte=1), name="verification_version_positive"
             ),
             models.CheckConstraint(
-                condition=models.Q(snapshot_schema=1), name="verification_snapshot_schema"
+                condition=models.Q(snapshot_schema=1),
+                name="verification_snapshot_schema",
             ),
             models.CheckConstraint(
                 condition=models.Q(
@@ -98,7 +102,9 @@ class VerificationTarget(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["verification", "target"], name="verification_target_idx")
+            models.Index(
+                fields=["verification", "target"], name="verification_target_idx"
+            )
         ]
         constraints = [
             models.UniqueConstraint(
@@ -215,7 +221,8 @@ class VerificationAssignment(models.Model):
                 name="verification_one_live_assignment",
             ),
             models.CheckConstraint(
-                condition=models.Q(version__gte=1), name="verification_assignment_version"
+                condition=models.Q(version__gte=1),
+                name="verification_assignment_version",
             ),
         ]
 
@@ -271,7 +278,9 @@ class VerificationDecision(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["target", "decision_sequence"], name="decision_target_seq")
+            models.Index(
+                fields=["target", "decision_sequence"], name="decision_target_seq"
+            )
         ]
         constraints = [
             models.UniqueConstraint(
@@ -280,7 +289,9 @@ class VerificationDecision(models.Model):
             ),
             models.UniqueConstraint(
                 fields=["target"],
-                condition=models.Q(decision__in=["approve", "reject", "stale", "withdraw"]),
+                condition=models.Q(
+                    decision__in=["approve", "reject", "stale", "withdraw"]
+                ),
                 name="decision_one_terminal_target",
             ),
             models.UniqueConstraint(

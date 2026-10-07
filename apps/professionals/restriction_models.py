@@ -37,7 +37,9 @@ class ProfessionalRoleRestriction(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["role", "released_at"], name="role_restriction_current")
+            models.Index(
+                fields=["role", "released_at"], name="role_restriction_current"
+            )
         ]
         constraints = [
             models.UniqueConstraint(

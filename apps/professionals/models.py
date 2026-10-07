@@ -10,7 +10,9 @@ from .credential_models import CredentialRevision as CredentialRevision
 from .profile_models import ProfessionalLocation as ProfessionalLocation
 from .profile_models import ProfessionalRole as ProfessionalRole
 from .receipt_models import ProfileCommandReceipt as ProfileCommandReceipt
-from .restriction_models import ProfessionalRoleRestriction as ProfessionalRoleRestriction
+from .restriction_models import (
+    ProfessionalRoleRestriction as ProfessionalRoleRestriction,
+)
 from .restriction_models import RoleRestrictionHistory as RoleRestrictionHistory
 from .verification_models import Verification as Verification
 from .verification_models import VerificationAssignment as VerificationAssignment

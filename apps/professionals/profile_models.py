@@ -21,7 +21,9 @@ class ProfessionalRole(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["profile", "role"], name="profile_role_unique"),
+            models.UniqueConstraint(
+                fields=["profile", "role"], name="profile_role_unique"
+            ),
             models.CheckConstraint(
                 condition=models.Q(role__in=["coach", "nutritionist"]),
                 name="professional_role_kind",

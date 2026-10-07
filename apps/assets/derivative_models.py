@@ -40,7 +40,9 @@ class AssetDerivative(models.Model):
                 name="derivative_mime",
             ),
             models.CheckConstraint(
-                condition=models.Q(state__in=["pending", "ready", "revoked", "deleted"]),
+                condition=models.Q(
+                    state__in=["pending", "ready", "revoked", "deleted"]
+                ),
                 name="derivative_state",
             ),
         ]
