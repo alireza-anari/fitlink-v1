@@ -32,5 +32,17 @@ except Exception:
 print("C03 real PostgreSQL and Redis readiness passed", flush=True)
 PY
 
+# Task 1 additive SQL must remain inspectable on the authoritative hosted service.
+uv run --frozen python manage.py sqlmigrate assets 0001 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate athletes 0001 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate athletes 0002 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate governance 0011 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate governance 0012 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate professionals 0001 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate professionals 0002 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate professionals 0003 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate professionals 0004 --settings=config.settings.test
+uv run --frozen python manage.py makemigrations --check --dry-run --settings=config.settings.test
+
 # Task 1 schema RED/GREEN; all installed cases are mandatory.
 uv run --frozen pytest tests/unit/c03/test_ci_contract.py tests/unit/c03/test_schema_contract.py tests/integration/c03/test_c03_migrations.py tests/integration/c03/test_evidence_guards.py -q --strict-markers
