@@ -20,24 +20,44 @@ def reject(model, **values):
 
 
 def test_optional_profiles_not_created():
-    Athlete = require_model("AthleteProfile", "athletes")
-    Professional = require_model("ProfessionalProfile")
     assert connection.vendor == "postgresql"
-    user = apps.get_model("accounts", "User").objects.create_user("+989123456780")
-    before = (user.pk, user.public_id, user.phone, user.password, user.auth_version)
     executor = MigrationExecutor(connection)
-    # Latest migrations are idempotent and must never backfill optional profiles.
-    executor.migrate(executor.loader.graph.leaf_nodes())
-    user.refresh_from_db()
-    assert before == (
-        user.pk,
-        user.public_id,
-        user.phone,
-        user.password,
-        user.auth_version,
-    )
-    assert Athlete.objects.count() == Professional.objects.count() == 0
-    assert "auth_user" not in connection.introspection.table_names()
+    latest = executor.loader.graph.leaf_nodes()
+    domains = {"athletes", "professionals", "assets"}
+    c02 = [
+        (label, "0010_outboxdeliveryreceipt" if label == "governance" else name)
+        for label, name in latest
+        if label not in domains
+    ]
+    try:
+        # Populate the actual C02 historical schema before installing any C03 table.
+        executor.migrate(c02 + [(label, None) for label in sorted(domains)])
+        historical = executor.loader.project_state(c02).apps
+        User = historical.get_model("accounts", "User")
+        user = User.objects.create(
+            phone="+989123456780",
+            password="!legacy",
+            auth_version=3,
+        )
+        before = (user.pk, user.public_id, user.phone, user.password, user.auth_version)
+        tables = connection.introspection.table_names()
+        assert "athletes_athleteprofile" not in tables
+        assert "professionals_professionalprofile" not in tables
+        MigrationExecutor(connection).migrate(latest)
+        current = apps.get_model("accounts", "User").objects.get(pk=user.pk)
+        assert before == (
+            current.pk,
+            current.public_id,
+            current.phone,
+            current.password,
+            current.auth_version,
+        )
+        Athlete = require_model("AthleteProfile", "athletes")
+        Professional = require_model("ProfessionalProfile")
+        assert Athlete.objects.count() == Professional.objects.count() == 0
+        assert "auth_user" not in connection.introspection.table_names()
+    finally:
+        MigrationExecutor(connection).migrate(latest)
 
 
 def test_c03_timestamp_columns_are_nonnull_utc_storage():

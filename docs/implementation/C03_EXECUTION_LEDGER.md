@@ -325,3 +325,27 @@ No C03 task COMPLETE or C03 PASS claim.
   mypy 51 source files, Django and production checks, no migration state drift,
   shell syntax and diff checks passed. Final lifecycle checks below are pending
   exact-head hosted GREEN; Task 1 remains STARTED and Tasks 2–14 PENDING.
+
+
+## Task 1 final implementation and populated upgrade assertion
+
+- Remote sync: local fc66c4542649e6f03105778e70e89066100e2c84 -> GitHub
+  d7becd521c48dd2a9c8829717bdc3cf44a9bd128, parent 81cfcef, force=false; exact
+  tree a4aca137dd6452632fec0f3d913c4f6b37e5836b. Protected refs rechecked unchanged.
+- Run 37695330008/job 113045539772 SUCCESS: actual logs inspected; all 128
+  installed C03 cases, 269 inherited PostgreSQL cases, real Redis restart/readiness,
+  all installed migration SQL, no drift and mypy 53 source files pass.
+  Foundation job 113045540212 still running; no full PASS claim.
+- Local final implementation: 311 full units (10.32s), Ruff/format 283 files,
+  mypy 53 files, Django/production checks, no model-state drift, shell/diff checks
+  pass. Final source checkout is clean before the following test-only review fix.
+- Review finding: original optional-profile test merely reapplied latest migrations
+  around a user; that is not the required populated-C02-to-C03 proof. Strengthened
+  it to remove C03 tables in the isolated test DB, use the actual C02 historical
+  User schema to populate identity/password/auth-version metadata, then apply all
+  C03 migrations and assert preserved user fields and zero optional profiles.
+  Finally always restores the latest graph. This changes only the migration test,
+  with no production/schema change. The exact original C02 runtime/full rehearsal
+  remains separately mandatory in Task 14 and is not claimed by this historical
+  model test. Required hosted validation of the strengthened test is PENDING_CI.
+- Task 1 remains STARTED; no advance to Task 2 before complete hosted gates.
