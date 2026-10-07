@@ -48,8 +48,7 @@ def test_only_foundation_routes_and_identity_model():
         for model in apps.get_models()
         if model.__module__.startswith("apps.")
     }
-    # Precisely the authorized additive C02 security tables, no future profiles.
-    assert own_models == {
+    c02_models = {
         "User",
         "OTPPhoneState",
         "SecurityRateAnchor",
@@ -74,6 +73,30 @@ def test_only_foundation_routes_and_identity_model():
         "RetentionPolicy",
         "RecordHold",
     }
+    c03_models = {
+        "AthleteProfile",
+        "BaselineAssessment",
+        "ProfileCommandReceipt",
+        "Asset",
+        "AssetDerivative",
+        "AssetProcessingAttempt",
+        "ProfessionalProfile",
+        "ProfessionalRole",
+        "ProfessionalLocation",
+        "Credential",
+        "CredentialRevision",
+        "Verification",
+        "VerificationTarget",
+        "VerificationEvidence",
+        "VerificationAssignment",
+        "VerificationDecision",
+        "VerificationHistory",
+        "ProfessionalRoleRestriction",
+        "RoleRestrictionHistory",
+        "AssistantMembership",
+    }
+    # C03 may add only its approved profile/asset/verification models.
+    assert own_models == c02_models | c03_models
     user = apps.get_model("accounts", "User")
     assert {field.name for field in user._meta.get_fields()} == {
         "id",
@@ -107,4 +130,18 @@ def test_only_foundation_routes_and_identity_model():
         "recovery_evidence_reviews",
         "phone_history",
         "phone_change_intents",
+        # Exact reverse relations introduced by the approved C03 schema.
+        "athlete_profile",
+        "athlete_profile_receipts",
+        "private_assets",
+        "professional_profile",
+        "professional_verification_assignments",
+        "issued_professional_verification_assignments",
+        "professional_verification_decisions",
+        "professional_verification_history",
+        "applied_role_restrictions",
+        "released_role_restrictions",
+        "role_restriction_history",
+        "assistant_definitions",
+        "professional_profile_receipts",
     }
