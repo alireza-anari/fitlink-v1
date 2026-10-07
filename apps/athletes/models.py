@@ -4,6 +4,9 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone as django_timezone
 
+from .baseline_models import BaselineAssessment as BaselineAssessment
+from .receipt_models import ProfileCommandReceipt as ProfileCommandReceipt
+
 
 class AthleteProfile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -36,7 +39,3 @@ class AthleteProfile(models.Model):
                 condition=models.Q(version__gte=1), name="athlete_profile_version"
             ),
         ]
-
-
-from .baseline_models import BaselineAssessment as BaselineAssessment
-from .receipt_models import ProfileCommandReceipt as ProfileCommandReceipt

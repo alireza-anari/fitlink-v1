@@ -4,6 +4,9 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from .derivative_models import AssetDerivative as AssetDerivative
+from .derivative_models import AssetProcessingAttempt as AssetProcessingAttempt
+
 
 class Asset(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -34,11 +37,17 @@ class Asset(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["owner", "state", "created_at"], name="asset_owner_state"),
-            models.Index(fields=["state", "upload_expires_at"], name="asset_state_expiry"),
+            models.Index(
+                fields=["owner", "state", "created_at"], name="asset_owner_state"
+            ),
+            models.Index(
+                fields=["state", "upload_expires_at"], name="asset_state_expiry"
+            ),
         ]
         constraints = [
-            models.CheckConstraint(condition=models.Q(version__gte=1), name="asset_version"),
+            models.CheckConstraint(
+                condition=models.Q(version__gte=1), name="asset_version"
+            ),
             models.CheckConstraint(
                 condition=models.Q(processing_version__gte=1),
                 name="asset_processing_version",
@@ -79,7 +88,3 @@ class Asset(models.Model):
                 name="asset_state",
             ),
         ]
-
-
-from .derivative_models import AssetDerivative as AssetDerivative
-from .derivative_models import AssetProcessingAttempt as AssetProcessingAttempt

@@ -25,8 +25,12 @@ class BaselineAssessment(models.Model):
     observed_at = models.DateTimeField()
     submitted_at = models.DateTimeField(null=True, blank=True)
     age_at_assessment = models.PositiveSmallIntegerField(null=True, blank=True)
-    height_cm = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
-    weight_kg = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
+    height_cm = models.DecimalField(
+        max_digits=5, decimal_places=1, null=True, blank=True
+    )
+    weight_kg = models.DecimalField(
+        max_digits=5, decimal_places=1, null=True, blank=True
+    )
     goals = models.JSONField(default=list, blank=True)
     experience = models.CharField(max_length=16, blank=True)
     training_experience_months = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -35,12 +39,16 @@ class BaselineAssessment(models.Model):
     equipment_other = models.CharField(max_length=200, blank=True)
     facilities = models.JSONField(default=list, blank=True)
     lifestyle = models.CharField(max_length=16, blank=True)
-    sleep_hours = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
+    sleep_hours = models.DecimalField(
+        max_digits=3, decimal_places=1, null=True, blank=True
+    )
     energy = models.PositiveSmallIntegerField(null=True, blank=True)
     meals_per_day = models.PositiveSmallIntegerField(null=True, blank=True)
     hydration_habit = models.CharField(max_length=12, blank=True)
     nutrition_habits = models.CharField(max_length=500, blank=True)
-    waist_cm = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
+    waist_cm = models.DecimalField(
+        max_digits=5, decimal_places=1, null=True, blank=True
+    )
     approximate_records = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 

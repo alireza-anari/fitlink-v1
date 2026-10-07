@@ -36,7 +36,9 @@ class Credential(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        indexes = [models.Index(fields=["profile", "role"], name="credential_profile_role")]
+        indexes = [
+            models.Index(fields=["profile", "role"], name="credential_profile_role")
+        ]
         constraints = [
             models.CheckConstraint(
                 condition=models.Q(version__gte=1), name="credential_version"

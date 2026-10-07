@@ -4,6 +4,21 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from .assistant_models import AssistantMembership as AssistantMembership
+from .credential_models import Credential as Credential
+from .credential_models import CredentialRevision as CredentialRevision
+from .profile_models import ProfessionalLocation as ProfessionalLocation
+from .profile_models import ProfessionalRole as ProfessionalRole
+from .receipt_models import ProfileCommandReceipt as ProfileCommandReceipt
+from .restriction_models import ProfessionalRoleRestriction as ProfessionalRoleRestriction
+from .restriction_models import RoleRestrictionHistory as RoleRestrictionHistory
+from .verification_models import Verification as Verification
+from .verification_models import VerificationAssignment as VerificationAssignment
+from .verification_models import VerificationDecision as VerificationDecision
+from .verification_models import VerificationEvidence as VerificationEvidence
+from .verification_models import VerificationHistory as VerificationHistory
+from .verification_models import VerificationTarget as VerificationTarget
+
 
 class ProfessionalProfile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -68,19 +83,3 @@ class ProfessionalProfile(models.Model):
                 name="profile_identity_decision_version",
             ),
         ]
-
-
-from .assistant_models import AssistantMembership as AssistantMembership
-from .credential_models import Credential as Credential
-from .credential_models import CredentialRevision as CredentialRevision
-from .profile_models import ProfessionalLocation as ProfessionalLocation
-from .profile_models import ProfessionalRole as ProfessionalRole
-from .receipt_models import ProfileCommandReceipt as ProfileCommandReceipt
-from .restriction_models import ProfessionalRoleRestriction as ProfessionalRoleRestriction
-from .restriction_models import RoleRestrictionHistory as RoleRestrictionHistory
-from .verification_models import Verification as Verification
-from .verification_models import VerificationAssignment as VerificationAssignment
-from .verification_models import VerificationDecision as VerificationDecision
-from .verification_models import VerificationEvidence as VerificationEvidence
-from .verification_models import VerificationHistory as VerificationHistory
-from .verification_models import VerificationTarget as VerificationTarget
