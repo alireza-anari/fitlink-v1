@@ -2,7 +2,7 @@ import uuid
 
 from django.conf import settings
 from django.db import models
-from django.utils import timezone
+from django.utils import timezone as django_timezone
 
 
 class AthleteProfile(models.Model):
@@ -23,7 +23,7 @@ class AthleteProfile(models.Model):
         null=True,
         blank=True,
     )
-    created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=django_timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
