@@ -328,3 +328,35 @@ def test_restriction_has_reasoned_forward_history(schema_factory, defect):
             if defect == "history_reason"
             else "role_restricted",
         )
+
+
+def test_partial_drafts_and_valid_bounded_json_remain_usable(schema_factory):
+    s = schema_factory()
+    athlete = require_model("AthleteProfile", "athletes").objects.create(user=s.owner)
+    Baseline = require_model("BaselineAssessment", "athletes")
+    draft = Baseline.objects.create(athlete=athlete, sequence=1, observed_at=s.at)
+    assert draft.height_cm is None and draft.goals == []
+    Baseline.objects.filter(pk=draft.pk).update(
+        goals=["strength", "general_fitness"],
+        available_days=[1, 3, 7],
+        equipment=["bodyweight", "bands"],
+        facilities=["home", "outdoors"],
+        approximate_records=[
+            {
+                "label": "Synthetic",
+                "value": "12.50",
+                "unit": "kg",
+                "observed_at": s.at.isoformat(),
+                "provenance": "self_reported",
+            }
+        ],
+    )
+    type(s.profile).objects.filter(pk=s.profile.pk).update(
+        specialties=["تمرین قدرتی"],
+        languages=["fa", "en-US"],
+        service_modes=["online", "in_person"],
+    )
+    draft.refresh_from_db()
+    s.profile.refresh_from_db()
+    assert draft.approximate_records[0]["value"] == "12.50"
+    assert s.profile.languages == ["fa", "en-US"]

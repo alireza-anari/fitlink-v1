@@ -6,6 +6,24 @@ from django.utils import timezone
 
 from apps.governance.audit_models import AppendOnlyQuerySet
 
+VERIFICATION_REASONS = (
+    "identity_verified",
+    "staff_assigned",
+    "user_requested",
+    "case_conflict",
+    "verification_submitted",
+    "verification_review",
+    "credentials_approved",
+    "evidence_incomplete",
+    "credentials_invalid",
+    "evidence_expired",
+    "evidence_revoked",
+    "role_restricted",
+    "restriction_removed",
+    "material_changed",
+    "owner_withdrawn",
+)
+
 
 class Verification(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -283,6 +301,14 @@ class VerificationDecision(models.Model):
             )
         ]
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(reason_code__in=VERIFICATION_REASONS),
+                name="decision_reason_code",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(target_snapshot_hash__regex=r"^[0-9a-f]{64}$"),
+                name="decision_snapshot_hash",
+            ),
             models.UniqueConstraint(
                 fields=["profile", "target_kind", "decision_sequence"],
                 name="decision_profile_target_sequence",
@@ -368,6 +394,21 @@ class VerificationHistory(models.Model):
 
     class Meta:
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(reason_code__in=VERIFICATION_REASONS),
+                name="verification_history_reason",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(new_version__gt=models.F("prior_version")),
+                name="verification_history_forward",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    event__in=["submit", "assign", "start_review", "reassign"]
+                )
+                | models.Q(target__isnull=False),
+                name="verification_history_target",
+            ),
             models.CheckConstraint(
                 condition=models.Q(
                     event__in=[

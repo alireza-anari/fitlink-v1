@@ -42,6 +42,15 @@ class ProfessionalRoleRestriction(models.Model):
             )
         ]
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(reason_code="role_restricted"),
+                name="role_restriction_reason",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(released_at__isnull=True)
+                | models.Q(released_at__gte=models.F("applied_at")),
+                name="role_restriction_time",
+            ),
             models.UniqueConstraint(
                 fields=["role"],
                 condition=models.Q(released_at__isnull=True),
@@ -89,6 +98,16 @@ class RoleRestrictionHistory(models.Model):
 
     class Meta:
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(
+                    reason_code__in=["role_restricted", "restriction_removed"]
+                ),
+                name="restriction_history_reason",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(new_version__gt=models.F("prior_version")),
+                name="restriction_history_forward",
+            ),
             models.CheckConstraint(
                 condition=models.Q(event__in=["applied", "released"]),
                 name="role_restriction_history_event",

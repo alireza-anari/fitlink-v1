@@ -65,7 +65,7 @@ No interface redesign is authorized. The approved corrected plan remains unchang
 
 ## Task states
 
-Task 1: STARTED — schema present; inherited browser gate correction PENDING_CI.
+Task 1: STARTED — inherited gates green at 01d400d; metadata/source guards in progress.
 Tasks 2–14: PENDING — not started.
 No C03 task COMPLETE or C03 PASS claim.
 
@@ -221,3 +221,63 @@ No C03 task COMPLETE or C03 PASS claim.
   entry point now emits every installed C03 migration and checks all new domain
   and asset modules with mypy. Inherited workflow and scripts remain intact.
 - Task 1 remains STARTED/PENDING_CI. No Task 2 implementation or completion claim.
+
+
+## Task 1 metadata and source-binding review (2026-10-08)
+
+- Protected main, foundation/c01-cloud, accounts/c02-cloud and profiles/c03-plan
+  rechecked; all match authoritative SHAs. Original checkout/unpublished files
+  remain preserved. Recovery checkout remains on profiles/c03-cloud.
+- Prior hardening checkpoint local 5264c52 -> remote
+  01d400d8edb0ed87d5f5880927e52d5723d27941; exact tree
+  0b0f97023ddef1ae8e6291c2d99a15f81a2fb6f7. Run 37654985277 SUCCESS, actual
+  logs 112907704235 and 112907704483 inspected: 269 inherited PostgreSQL
+  cases, real Redis quota restart/readiness, 70 C03 cases, 310 current units,
+  exact immutable C01 70 units/90 backend/full restart and viewport gates,
+  populated same-database C01 upgrade, 645 current backend cases, all 38 C02
+  browser cases, durable broker restart, 5 transport/1 storage recovery and
+  final two viewport cases. No selected skip. This is not Task 1 COMPLETE.
+- Local 59be325 -> remote faeddf1f00f05b1730c7c71952811a69e9bbbf39; exact
+  tree 3e6dfe9d5cb58771e5ca99e1ff9c41398a58b6b4. Run 37655283516, job
+  112908714722 actual RED: 9 failed/70 passed, all expected DID NOT RAISE.
+  Missing decision hash/revision equality, bounded hashes/reasons and exact
+  target/forward-history guards. All 269 inherited service cases passed.
+- The last interrupted remote operation did not advance the ref. After verifying
+  that fact, synchronized local 328702715e3335d3a84d25b353c81970446179f9 ->
+  GitHub 641de2e429d2fba9f2979caf18c0fedf9830d219, parent faeddf1, force=false,
+  exact tree 10417cb3d65e1bd52d661cc8d97d05f7227d70f5. Run 37693067389, job
+  113037821328 actual RED: 33 failed/70 passed, comprising the prior nine and
+  24 new receipt/typed-JSON/restriction defects. All 269 inherited cases and
+  actual Redis restart/readiness passed.
+- Local c7a1250e4bb80f32b5883656a3e06634f8c78133 -> GitHub
+  c03ea673563678ca91b229e4daa7748c19ba0da5, actual parent 641de2e, force=false;
+  exact tree cf2ddfe6f50589d28d657a74fdf9652b9e7a3ad4. Adds 11 source-binding
+  and history-case regressions. Run 37693438514/job 113039051154 actual RED: 44 failed/70 passed;
+  all 11 new failures are expected DID NOT RAISE. All 269 inherited cases
+  and real Redis readiness/restart passed.
+- Ruling: finite receipt commands use domain-local names matching the approved
+  command inventory; future commands must extend these explicit enums in an
+  additive migration. No arbitrary/private command string is permitted.
+- Ruling: JSON schema v1 is enforced by closed domain-specific PostgreSQL
+  CHECK functions (native SQL, not portable ORM field validation). Draft empty
+  selections remain valid; submission completeness is Task 3/6. Approximate
+  records accept only five exact keys, bounded decimal/unit/UTC/self-report
+  values; no arbitrary C09 JSON. Costs: schema evolution requires a migration.
+- Added professionals0009/0010 for scalar/history guards and locked exact target
+  binding, athletes0005/professionals0011 for receipt/restriction constraints,
+  athletes0006/professionals0012 for bounded JSON. Cumulative SQL selection
+  includes each addition. Models and old migrations/accounts are preserved.
+- Local nine-guard correction: all 310 units passed (9.63s), mypy 39 source
+  files and Django check passed. Local server absence is not PostgreSQL evidence.
+- Task 1 remains STARTED; required hosted GREEN pending. Tasks 2–14 PENDING.
+
+- Added assets0004/professionals0013: accepted-source metadata remains immutable,
+  credential profile/role/category identify a permanent evidence object, source
+  owner/purpose/subject/checksum are checked under row locks on revision insert,
+  and every target-specific history row binds its actual case. Lifecycle state,
+  revocation and version changes remain available; no source replacement bypass.
+- Added positive bounded-JSON regression for Persian specialties, language tags,
+  UTC self-reported approximate measures and partial drafts with unknown values.
+- Local checks: 310 units passed (9.82s), full Ruff/format 273 files, mypy 43
+  files, production/Django checks, migration state no drift and diff/shell checks
+  passed. PostgreSQL history unavailable locally, explicitly pending hosted gate.

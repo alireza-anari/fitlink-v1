@@ -82,6 +82,14 @@ class CredentialRevision(models.Model):
 
     class Meta:
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(source_sha256__regex=r"^[0-9a-f]{64}$"),
+                name="credential_revision_source_hash",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(revision_hash__regex=r"^[0-9a-f]{64}$"),
+                name="credential_revision_hash",
+            ),
             models.UniqueConstraint(
                 fields=["credential", "sequence"], name="credential_revision_sequence"
             ),

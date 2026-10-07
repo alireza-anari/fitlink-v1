@@ -22,6 +22,31 @@ class ProfileCommandReceipt(models.Model):
 
     class Meta:
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(
+                    command__in=[
+                        "profile.create",
+                        "profile.save_step",
+                        "credential.create",
+                        "credential.revise",
+                        "credential.withdraw",
+                        "verification.prepare",
+                        "verification.submit",
+                        "verification.withdraw_target",
+                        "verification.decide_target",
+                        "verification.revoke_target",
+                        "role.restrict",
+                        "role.release_restriction",
+                        "assistant.define",
+                        "assistant.revoke",
+                    ]
+                ),
+                name="professionals_receipt_command",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(request_hash__regex=r"^[0-9a-f]{64}$"),
+                name="professionals_receipt_hash",
+            ),
             models.UniqueConstraint(
                 fields=["owner", "operation_id"], name="professional_receipt_operation"
             ),

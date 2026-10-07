@@ -22,6 +22,23 @@ class ProfileCommandReceipt(models.Model):
 
     class Meta:
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(
+                    command__in=[
+                        "profile.create",
+                        "baseline.begin",
+                        "baseline.save_step",
+                        "baseline.submit",
+                        "baseline.correct",
+                        "baseline.clear",
+                    ]
+                ),
+                name="athletes_receipt_command",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(request_hash__regex=r"^[0-9a-f]{64}$"),
+                name="athletes_receipt_hash",
+            ),
             models.UniqueConstraint(
                 fields=["owner", "operation_id"], name="athlete_receipt_operation"
             ),
