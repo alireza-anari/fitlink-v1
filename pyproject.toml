@@ -52,6 +52,7 @@ extend-exclude = [
   "apps/professionals/migrations/0001_profile_verification_metadata.py",
   "apps/professionals/migrations/0002_relational_guards.py",
   "apps/professionals/migrations/0003_immutable_evidence_guards.py",
+  "apps/professionals/migrations/0004_fix_verification_decision_guard.py",
   "apps/governance/migrations/0011_c03_profile_contracts.py",
 ]
 
