@@ -186,3 +186,82 @@ def test_runtime_principal_cannot_update_delete_or_truncate_evidence(schema_fact
         with connection.cursor() as cursor:
             cursor.execute("DROP OWNED BY c03_evidence_probe")
             cursor.execute("DROP ROLE c03_evidence_probe")
+
+
+@pytest.mark.parametrize("name", ["VerificationHistory", "RoleRestrictionHistory"])
+def test_reasoned_history_immutable_through_bulk_and_direct_sql(schema_factory, name):
+    s = schema_factory()
+    submit(s)
+    Model = require_model(name)
+    if name == "VerificationHistory":
+        row = Model.objects.create(
+            verification=s.case,
+            target=s.targets["coach"],
+            actor=s.staff,
+            event="submit",
+            reason_code="verification_submitted",
+            prior_version=1,
+            new_version=2,
+            at=s.at,
+        )
+    else:
+        restriction = require_model("ProfessionalRoleRestriction").objects.create(
+            role=s.coach,
+            verification=s.case,
+            applied_by=s.staff,
+            reason_code="role_restricted",
+            applied_at=s.at,
+        )
+        row = Model.objects.create(
+            restriction=restriction,
+            actor=s.staff,
+            event="applied",
+            reason_code="role_restricted",
+            prior_version=1,
+            new_version=2,
+            at=s.at,
+        )
+    with pytest.raises((ValueError, DatabaseError)), transaction.atomic():
+        Model.objects.filter(pk=row.pk).update(reason_code="user_requested")
+    with (
+        pytest.raises(DatabaseError),
+        transaction.atomic(),
+        connection.cursor() as cursor,
+    ):
+        cursor.execute(f'DELETE FROM "{Model._meta.db_table}" WHERE id = %s', [row.pk])
+
+
+def test_submitted_baseline_answers_are_immutable_and_current_pointer_is_owned(
+    schema_factory,
+):
+    s = schema_factory()
+    Athlete = require_model("AthleteProfile", "athletes")
+    Baseline = require_model("BaselineAssessment", "athletes")
+    athlete = Athlete.objects.create(user=s.owner)
+    other = Athlete.objects.create(user=s.other)
+    baseline = Baseline.objects.create(
+        athlete=athlete,
+        sequence=1,
+        observed_at=s.at,
+        goals=["strength"],
+        experience="beginner",
+        available_days=[1, 3],
+        facilities=["home"],
+        state="submitted",
+        submitted_at=s.at,
+    )
+    with (
+        pytest.raises(DatabaseError),
+        transaction.atomic(),
+        connection.cursor() as cursor,
+    ):
+        cursor.execute(
+            "UPDATE athletes_baselineassessment SET weight_kg=80 WHERE id=%s",
+            [baseline.pk],
+        )
+    with pytest.raises(IntegrityError), transaction.atomic():
+        Athlete.objects.filter(pk=other.pk).update(current_baseline=baseline)
+    # Superseding may change lifecycle only; historical answers remain identical.
+    Baseline.objects.filter(pk=baseline.pk).update(state="superseded", version=2)
+    baseline.refresh_from_db()
+    assert baseline.goals == ["strength"] and baseline.weight_kg is None
