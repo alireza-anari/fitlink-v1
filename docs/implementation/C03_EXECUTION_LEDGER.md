@@ -91,3 +91,37 @@ No C03 task COMPLETE or C03 PASS claim.
 - Focused security review: no widened inherited condition/permission/trigger,
   no service failure conversion to PASS, no private error text.
 - Migration impact: none. Hosted bootstrap CI PENDING; Task 1 not COMPLETE.
+
+## Recovery and bootstrap hosted evidence (2026-10-07)
+
+- All four protected refs rechecked against the immutable SHAs above; unchanged.
+- Existing isolated execution checkout is clean; preserve synthetic ancestry.
+- Remote sync already completed before interruption: local
+  bcd2bb9361a8f8ceff82600b903064ed32b94f90 -> GitHub
+  7526b95bc0d780912c42329a10f08da4125a41c3; exact shared tree
+  d3ecd4d0871c9b90a3d85ffaffc72125ee502dc8; remote parent is approved plan.
+- Bootstrap Actions run 37521380280 SUCCESS at that exact source head:
+  https://github.com/alireza-anari/fitlink-v1/actions/runs/37521380280.
+- Actual job logs inspected: foundation 112467362448, c02-migrations
+  112467362688, every required step successful, no selected skips.
+- Foundation: 301 current units, immutable C01 70 unit/90 backend, exact
+  C01 populated same-database upgrade prepare/verify, independent current
+  588 backend tests, 38 C02 browser cases, two C01 viewport checks before
+  and after service restarts, durable outbox restart prepare/verify, five
+  Redis/Celery/Channels and one MinIO recovery case. All exit 0.
+- Migration job: 269 inherited PostgreSQL cases, real Redis durable quota
+  restart, real PostgreSQL SELECT/Redis PING readiness, 13 C03 bootstrap
+  contract cases. All exit 0. Hosted service containers use inherited pins.
+- Task 1 remains STARTED. Schema RED must be observed on PostgreSQL before
+  implementing models. Tasks 2–14 remain PENDING.
+
+## Task 1 schema test specification
+
+- Added explicit private relational schema/event contracts and real PostgreSQL
+  profile/role/draft/target/decision/revocation/restriction/metadata/immutable
+  snapshot/runtime-role cases. Test factory calls schema assertion inside each
+  test, avoiding collection/import/fixture failures as false RED.
+- Local unit RED: 7 expected failures / 13 passed (0.43s): absent C03 schema
+  and rejected new event envelopes. Log: .superpowers/task1-schema-unit-red.log.
+- Cumulative hosted entry point explicitly selects all new test files.
+- No schema implementation yet; hosted PostgreSQL behavioral RED pending.

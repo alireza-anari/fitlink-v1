@@ -32,5 +32,5 @@ except Exception:
 print("C03 real PostgreSQL and Redis readiness passed", flush=True)
 PY
 
-# Infrastructure checkpoint only: schema tests join this list before Task 1 GREEN.
-uv run --frozen pytest tests/unit/c03/test_ci_contract.py -q --strict-markers
+# Task 1 schema RED/GREEN; all installed cases are mandatory.
+uv run --frozen pytest tests/unit/c03/test_ci_contract.py tests/unit/c03/test_schema_contract.py tests/integration/c03/test_c03_migrations.py tests/integration/c03/test_evidence_guards.py -q --strict-markers
