@@ -342,3 +342,54 @@ def test_submitted_baseline_cannot_be_deleted_with_direct_sql(schema_factory):
         cur.execute(
             "DELETE FROM athletes_baselineassessment WHERE id=%s", [baseline.pk]
         )
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"reason_code": "private-value"},
+        {"target_snapshot_hash": "private-value"},
+        {"target_snapshot_hash": "f" * 64},
+        {"bound_evidence_revision": 2},
+    ],
+)
+def test_decision_metadata_matches_exact_target_snapshot(schema_factory, changes):
+    s = schema_factory()
+    submit(s)
+    row = decision(s, **changes)
+    with pytest.raises(IntegrityError), transaction.atomic():
+        type(row).objects.bulk_create([row])
+
+
+@pytest.mark.parametrize("field", ["source_sha256", "revision_hash"])
+def test_credential_revision_hash_cannot_store_private_text(schema_factory, field):
+    s = schema_factory()
+    revision = s.revisions["coach"]
+    revision.pk = None
+    revision.sequence = 2
+    setattr(revision, field, "private-value")
+    with pytest.raises(IntegrityError), transaction.atomic():
+        type(revision).objects.bulk_create([revision])
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [{"target": None}, {"reason_code": "private-value"}, {"new_version": 1}],
+)
+def test_target_history_requires_target_reason_and_advancing_version(
+    schema_factory, changes
+):
+    s = schema_factory()
+    values = dict(
+        verification=s.case,
+        target=s.targets["coach"],
+        actor=s.staff,
+        event="decision",
+        reason_code="credentials_approved",
+        prior_version=1,
+        new_version=2,
+        at=s.at,
+    )
+    values.update(changes)
+    with pytest.raises(IntegrityError), transaction.atomic():
+        require_model("VerificationHistory").objects.create(**values)
