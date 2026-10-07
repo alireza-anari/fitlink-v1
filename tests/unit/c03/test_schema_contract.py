@@ -113,7 +113,9 @@ def test_c03_governance_allowlists_are_bounded_and_installed():
     } <= set(REASONS)
     assert "baseline_storage" in PURPOSES
     constraint = next(
-        item for item in RecordHold._meta.constraints if item.name == "hold_subject_kind"
+        item
+        for item in RecordHold._meta.constraints
+        if item.name == "hold_subject_kind"
     )
     assert constraint.condition == models.Q(
         subject_kind__in=[
