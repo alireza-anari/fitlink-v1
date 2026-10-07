@@ -174,9 +174,7 @@ class Migration(migrations.Migration):
                 condition=models.Q(action__in=C03_ACTIONS), name="audit_action"
             ),
         ),
-        migrations.RemoveConstraint(
-            model_name="auditevent", name="audit_subject_type"
-        ),
+        migrations.RemoveConstraint(model_name="auditevent", name="audit_subject_type"),
         migrations.AddConstraint(
             model_name="auditevent",
             constraint=models.CheckConstraint(
@@ -184,9 +182,7 @@ class Migration(migrations.Migration):
                 name="audit_subject_type",
             ),
         ),
-        migrations.RemoveConstraint(
-            model_name="auditevent", name="audit_reason_code"
-        ),
+        migrations.RemoveConstraint(model_name="auditevent", name="audit_reason_code"),
         migrations.AddConstraint(
             model_name="auditevent",
             constraint=models.CheckConstraint(
@@ -202,9 +198,7 @@ class Migration(migrations.Migration):
                 name="consent_purpose",
             ),
         ),
-        migrations.RemoveConstraint(
-            model_name="recordhold", name="hold_subject_kind"
-        ),
+        migrations.RemoveConstraint(model_name="recordhold", name="hold_subject_kind"),
         migrations.AddConstraint(
             model_name="recordhold",
             constraint=models.CheckConstraint(
