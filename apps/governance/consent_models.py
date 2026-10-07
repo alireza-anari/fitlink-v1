@@ -11,6 +11,7 @@ PURPOSES = (
     "ai_feature",
     "mirror_summary",
     "case_study",
+    "baseline_storage",
 )
 
 

@@ -118,7 +118,15 @@ class RecordHold(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                condition=models.Q(subject_kind="privacy_request"),
+                condition=models.Q(
+                    subject_kind__in=[
+                        "privacy_request",
+                        "athlete_baseline",
+                        "professional_credential",
+                        "professional_verification",
+                        "profile_asset",
+                    ]
+                ),
                 name="hold_subject_kind",
             ),
             models.CheckConstraint(

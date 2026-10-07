@@ -6,7 +6,7 @@ import pytest
 from django.apps import apps
 from django.db import models
 
-from apps.governance.audit_models import ACTIONS, REASONS
+from apps.governance.audit_models import ACTIONS, CHANGED_FIELDS, REASONS, SUBJECT_TYPES
 from apps.governance.consent_models import PURPOSES
 from apps.governance.outbox import validate_dispatch
 from apps.governance.privacy_models import RecordHold
@@ -111,6 +111,28 @@ def test_c03_governance_allowlists_are_bounded_and_installed():
         "scan_failed",
         "retention_due",
     } <= set(REASONS)
+    assert {
+        "athlete",
+        "baseline",
+        "professional",
+        "credential",
+        "asset",
+        "verification",
+        "assistant",
+    } <= set(SUBJECT_TYPES)
+    assert {
+        "onboarding_step",
+        "current_baseline",
+        "setup_step",
+        "declared_active",
+        "declaration_version",
+        "evidence_revision",
+        "decision_version",
+        "current_revision",
+        "processing_version",
+        "withdrawn_at",
+        "released_at",
+    } <= CHANGED_FIELDS
     assert "baseline_storage" in PURPOSES
     constraint = next(
         item
