@@ -30,9 +30,14 @@ async def test_entry_preferences_logout_and_no_browser_credentials(
     await expect(page.get_by_text("ترجیحات ذخیره شد.", exact=True)).to_be_visible()
     row = await database(lambda: apps.get_model("accounts", "User").objects.get())
     assert row.locale == "en" and row.timezone == "UTC" and (not row.is_staff)
-    assert not {"AthleteProfile", "ProfessionalProfile"} & {
-        m.__name__ for m in apps.get_models()
-    }
+    # C03 installs optional metadata; account entry/preferences must not create it.
+    for label, name in (
+        ("athletes", "AthleteProfile"),
+        ("professionals", "ProfessionalProfile"),
+    ):
+        assert not await database(
+            lambda label=label, name=name: apps.get_model(label, name).objects.exists()
+        )
     await page.get_by_role("button", name="خروج از این نشست", exact=True).click()
     await expect(
         page.get_by_role("heading", name="ورود به فیت\u200cلینک", exact=True)

@@ -52,6 +52,8 @@ def test_export_replay_returns_owned_pending_intake_and_no_execution():
         == 1
     )
     assert "ErasureMarker" not in {model.__name__ for model in apps.get_models()}
+    # C03's private asset metadata exists, but privacy intake never creates assets.
+    assert not apps.get_model("assets", "Asset").objects.exists()
 
 
 @pytest.mark.parametrize(

@@ -65,7 +65,7 @@ No interface redesign is authorized. The approved corrected plan remains unchang
 
 ## Task states
 
-Task 1: STARTED — CI bootstrap only; schema implementation not started.
+Task 1: STARTED — schema present; inherited browser gate correction PENDING_CI.
 Tasks 2–14: PENDING — not started.
 No C03 task COMPLETE or C03 PASS claim.
 
@@ -138,3 +138,42 @@ No C03 task COMPLETE or C03 PASS claim.
   Reproduced locally; adding package markers only for tests/unit and its C03
   directory separates unit.c03 from existing modules. Complete unit+C03
   integration collection now succeeds: 326 tests. No assertions changed.
+
+## Recovery of newer remote schema work (2026-10-07)
+
+- Preserved original checkout at local 5f399ec6994a526e1e2b668bb6e94968c6f7df57
+  and all 17 unpublished model/package files unchanged. Its exact committed tree
+  is 6af62b216f2d0851fe73349c8b33f86fc5974d17, mapping to remote
+  01e72afe62fa800745657e3b4d547bbe8978c616. The remote had advanced through
+  18 additional C03 implementation/fix commits; no remote write preceded inspection.
+- Recovered remote b16d1da51c1a08e43e2ab8c43d520cf395b2fd35 in a separate
+  execution checkout. All fetched blobs and exact tree
+  cc93e56c9fd2d3f705596ec14dd32f0b83a53f0b verified. Synthetic local recovery
+  e8529a4090a0c68313349390d883ec81c45908c8 maps to that remote head;
+  synthetic ancestry must never be published. Original unpublished files contain
+  additional candidate constraints and remain available for Task 1 reconciliation.
+- All four protected refs match the authoritative SHAs above. No merge/deploy.
+- Run 37597270721 FAILED on b16d1da; both actual logs inspected.
+  c02-migrations 112712855584 SUCCESS: 269 inherited PostgreSQL/service tests,
+  actual Redis quota restart, migration SQL/drift, 40 cumulative C03 cases.
+  foundation 112712855355: 310 units, immutable C01 70 units/90 backend,
+  original service/browser restart checks, exact C01 populated upgrade,
+  615 current backend and two ASGI browser cases passed. C02 browser gate:
+  36 passed, two viewport failures at test_account_flows.py:33 asserting that
+  AthleteProfile/ProfessionalProfile models do not exist. Later gates did not run.
+- Ruling: apply approved plan section 16 and Task 1's narrow current-source
+  scope extension to this browser assertion. Preserve account behavior checks
+  and require zero AthleteProfile and ProfessionalProfile rows after actual
+  account entry/preferences; exact installed-model/no-public-field assertions
+  remain in current C03 schema tests. Immutable source expectations are unchanged.
+  Cost if wrong: future profile-creation flow needs its own explicit test boundary.
+- Strengthened the existing current-source privacy-intake scope adaptation with
+  zero Asset rows after intake, retaining ErasureMarker absence and every original
+  intake/auth/outbox assertion. No production behavior, route or migration changed.
+- Local recovery prerequisites: copied verified immutable C01 source as real files
+  (symlink rejected by existing verifier), rebuilt Tailwind; resulting complete
+  unit run 310 passed in 11.28s, no skips. Both changed test files pass Ruff/format;
+  git diff --check passes. Initial local prerequisite failures were fixture-path
+  and missing built CSS, not product RED; neither assertion was weakened.
+- Task 1 remains STARTED pending corrected-head hosted browser/service evidence
+  and full schema review. Tasks 2–14 remain PENDING; no C03 PASS claim.
