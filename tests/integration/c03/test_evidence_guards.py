@@ -265,3 +265,80 @@ def test_submitted_baseline_answers_are_immutable_and_current_pointer_is_owned(
     Baseline.objects.filter(pk=baseline.pk).update(state="superseded", version=2)
     baseline.refresh_from_db()
     assert baseline.goals == ["strength"] and baseline.weight_kg is None
+
+
+@pytest.mark.parametrize("kind", ["bundle", "target", "baseline"])
+def test_submitted_snapshot_cannot_reopen_as_editable_draft(schema_factory, kind):
+    s = schema_factory()
+    submit(s)
+    if kind == "bundle":
+        row = s.case
+        changes = {"state": "draft", "submitted_at": None}
+    elif kind == "target":
+        row = s.targets["coach"]
+        changes = {"state": "draft"}
+    else:
+        athlete = require_model("AthleteProfile", "athletes").objects.create(
+            user=s.owner
+        )
+        row = require_model("BaselineAssessment", "athletes").objects.create(
+            athlete=athlete,
+            sequence=1,
+            observed_at=s.at,
+            state="submitted",
+            submitted_at=s.at,
+        )
+        changes = {"state": "draft", "submitted_at": None}
+    # Reopening must fail itself, before a second SQL statement rewrites answers.
+    with pytest.raises(DatabaseError), transaction.atomic():
+        type(row).objects.filter(pk=row.pk).update(**changes)
+
+
+def test_submitted_bundle_cannot_gain_a_new_target(schema_factory):
+    s = schema_factory()
+    target = s.targets.pop("nutritionist")
+    Evidence = require_model("VerificationEvidence")
+    Evidence.objects.filter(target=target).delete()
+    target.delete()
+    submit(s)
+    with pytest.raises(DatabaseError), transaction.atomic():
+        type(target).objects.create(
+            verification=s.case,
+            target="nutritionist",
+            role=s.nutritionist,
+            bound_evidence_revision=1,
+            bound_decision_version=1,
+            bound_declaration_version=1,
+            target_snapshot_hash="c" * 64,
+        )
+
+
+def test_submitted_target_cannot_gain_new_evidence(schema_factory):
+    s = schema_factory()
+    Evidence = require_model("VerificationEvidence")
+    row = Evidence.objects.get(target=s.targets["coach"])
+    values = {
+        "target": row.target,
+        "credential_revision": row.credential_revision,
+        "category": row.category,
+    }
+    row.delete()
+    submit(s)
+    with pytest.raises(DatabaseError), transaction.atomic():
+        Evidence.objects.create(**values)
+
+
+def test_submitted_baseline_cannot_be_deleted_with_direct_sql(schema_factory):
+    s = schema_factory()
+    athlete = require_model("AthleteProfile", "athletes").objects.create(user=s.owner)
+    baseline = require_model("BaselineAssessment", "athletes").objects.create(
+        athlete=athlete,
+        sequence=1,
+        observed_at=s.at,
+        state="submitted",
+        submitted_at=s.at,
+    )
+    with pytest.raises(DatabaseError), transaction.atomic(), connection.cursor() as cur:
+        cur.execute(
+            "DELETE FROM athletes_baselineassessment WHERE id=%s", [baseline.pk]
+        )
