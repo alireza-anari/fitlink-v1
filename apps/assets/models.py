@@ -35,6 +35,8 @@ class Asset(models.Model):
     revoked_at = models.DateTimeField(null=True, blank=True)
     rejection_code = models.CharField(max_length=32, blank=True)
 
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         indexes = [
             models.Index(
@@ -45,6 +47,18 @@ class Asset(models.Model):
             ),
         ]
         constraints = [
+            models.CheckConstraint(
+                condition=~models.Q(state="ready")
+                | models.Q(
+                    actual_size__isnull=False,
+                    actual_size__gte=1,
+                    accepted_at__isnull=False,
+                    finalized_at__isnull=False,
+                    detected_type__in=["image/jpeg", "image/png"],
+                    sha256__regex=r"^[0-9a-f]{64}$",
+                ),
+                name="asset_ready_metadata",
+            ),
             models.CheckConstraint(
                 condition=models.Q(declared_size__lte=10_000_000),
                 name="asset_declared_size_cap",

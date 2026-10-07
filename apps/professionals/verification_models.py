@@ -41,6 +41,8 @@ class Verification(models.Model):
     snapshot_hash = models.CharField(max_length=64, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         indexes = [
             models.Index(
@@ -51,6 +53,11 @@ class Verification(models.Model):
             ),
         ]
         constraints = [
+            models.CheckConstraint(
+                condition=~models.Q(state="decided")
+                | models.Q(decided_at__isnull=False),
+                name="verification_decided_timestamp",
+            ),
             models.UniqueConstraint(
                 fields=["profile", "sequence"], name="verification_sequence_unique"
             ),
@@ -117,6 +124,9 @@ class VerificationTarget(models.Model):
     bound_declaration_version = models.PositiveBigIntegerField(null=True, blank=True)
     target_snapshot_hash = models.CharField(max_length=64)
     identity_name = models.CharField(max_length=120, blank=True)
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         indexes = [
@@ -192,6 +202,9 @@ class VerificationEvidence(models.Model):
     )
     category = models.CharField(max_length=16)
 
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -225,6 +238,9 @@ class VerificationAssignment(models.Model):
     assigned_at = models.DateTimeField(default=timezone.now)
     ended_at = models.DateTimeField(null=True, blank=True)
     version = models.PositiveBigIntegerField(default=1)
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         indexes = [
@@ -293,6 +309,9 @@ class VerificationDecision(models.Model):
 
     def delete(self, *args, **kwargs):
         raise ValueError("Verification decisions are append-only")
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         indexes = [
@@ -391,6 +410,9 @@ class VerificationHistory(models.Model):
 
     def delete(self, *args, **kwargs):
         raise ValueError("Verification history is append-only")
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         constraints = [

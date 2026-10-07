@@ -19,6 +19,8 @@ class ProfessionalRole(models.Model):
     decision_version = models.PositiveBigIntegerField(default=1)
     created_at = models.DateTimeField(default=timezone.now)
 
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -60,6 +62,8 @@ class ProfessionalLocation(models.Model):
     archived_at = models.DateTimeField(null=True, blank=True)
     version = models.PositiveBigIntegerField(default=1)
     created_at = models.DateTimeField(default=timezone.now)
+
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [

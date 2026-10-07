@@ -52,6 +52,8 @@ class BaselineAssessment(models.Model):
     approximate_records = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         indexes = [
             models.Index(fields=["athlete", "sequence"], name="baseline_athlete_seq")

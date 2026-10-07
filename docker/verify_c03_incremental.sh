@@ -59,6 +59,14 @@ uv run --frozen python manage.py sqlmigrate professionals 0011 --settings=config
 uv run --frozen python manage.py sqlmigrate professionals 0012 --settings=config.settings.test
 uv run --frozen python manage.py sqlmigrate assets 0004 --settings=config.settings.test
 uv run --frozen python manage.py sqlmigrate professionals 0013 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate assets 0005 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate assets 0006 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate athletes 0007 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate athletes 0008 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate professionals 0014 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate professionals 0015 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate assets 0007 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate professionals 0016 --settings=config.settings.test
 uv run --frozen python manage.py makemigrations --check --dry-run --settings=config.settings.test
 uv run --frozen mypy apps/athletes apps/professionals apps/assets
 

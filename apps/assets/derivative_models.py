@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.utils import timezone
 
 
 class AssetDerivative(models.Model):
@@ -18,8 +19,21 @@ class AssetDerivative(models.Model):
     state = models.CharField(max_length=12, default="pending")
     version = models.PositiveBigIntegerField(default=1)
 
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(
+                    width__gte=1, width__lte=1600, height__gte=1, height__lte=1600
+                ),
+                name="derivative_dimensions_bound",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(sha256__regex=r"^[0-9a-f]{64}$"),
+                name="derivative_checksum",
+            ),
             models.UniqueConstraint(
                 fields=["asset", "processing_version", "purpose"],
                 name="asset_derivative_effect",
@@ -62,11 +76,19 @@ class AssetProcessingAttempt(models.Model):
     scanner_signature = models.CharField(max_length=128, blank=True)
     failure_code = models.CharField(max_length=32, blank=True)
 
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         indexes = [
             models.Index(fields=["state", "lease_until"], name="asset_attempt_lease")
         ]
         constraints = [
+            models.CheckConstraint(
+                condition=~models.Q(state="running")
+                | models.Q(lease_uuid__isnull=False, lease_until__isnull=False),
+                name="attempt_running_lease",
+            ),
             models.UniqueConstraint(
                 fields=["asset", "processing_version", "attempt"],
                 name="asset_processing_attempt_unique",

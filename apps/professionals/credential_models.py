@@ -35,6 +35,8 @@ class Credential(models.Model):
     withdrawn_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         indexes = [
             models.Index(fields=["profile", "role"], name="credential_profile_role")
@@ -79,6 +81,8 @@ class CredentialRevision(models.Model):
     source_sha256 = models.CharField(max_length=64)
     revision_hash = models.CharField(max_length=64)
     created_at = models.DateTimeField(default=timezone.now)
+
+    updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         constraints = [

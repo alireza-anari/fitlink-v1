@@ -281,3 +281,47 @@ No C03 task COMPLETE or C03 PASS claim.
 - Local checks: 310 units passed (9.82s), full Ruff/format 273 files, mypy 43
   files, production/Django checks, migration state no drift and diff/shell checks
   passed. PostgreSQL history unavailable locally, explicitly pending hosted gate.
+
+
+## Task 1 final schema metadata closure
+
+- Remote sync: local fcb58c4f623e0e7c8fb9d8aa00e265c85e640810 -> GitHub
+  aecd669f569ea7d71330c122cccd1e59bda50499, parent c03ea673, force=false,
+  exact tree bc48c116fec52b151f59a53881635b3549365e1d. API tree equality caught
+  an executable-mode mismatch before any ref update; corrected mode to 100755
+  and verified exact equality. No mismatched tree was published.
+- Run 37694064318/job 113041164878 SUCCESS: actual logs inspected; 269 inherited
+  PostgreSQL cases, real Redis quota restart/readiness, all 115 C03 cases,
+  complete installed migration SQL, no drift and mypy passed.
+- Foundation job 113041164466 FAILED during immutable C01 MinIO initialization,
+  before immutable C01 backend tests. All 310 current and 70 original C01
+  units/quality/build gates passed. Sanitized initializer provided no diagnostic
+  text. This is not behavioral RED or full regression PASS; keep inherited gate
+  intact and obtain required full success at the next corrected implementation
+  head. Previous full successful immutable rehearsal remains 37654985277.
+- Final field-contract review found missing creation/update stamps from §4 and
+  missing derivative bounds/lease/lifecycle NULL checks. Unit timestamp test
+  first failed locally: 1 failed/8 passed, missing required date fields.
+- Remote sync: local f515ad77d144a17210ebc6076b4871bf91de5297 -> GitHub
+  81cfcef91a0e589dd0419bd79e693129e0f0ba81, parent aecd669, force=false; exact
+  tree a263cf44090584201848b2d915b68ad4d0685aee. Run 37694710083: unit job
+  113043470508 observed 1 failed/310 passed on timestamp contract. PostgreSQL
+  job 113043470779 observed 13 failed/115 passed; all newly added failures
+  are missing timestamps or expected DID NOT RAISE constraints. All 269
+  inherited service cases and actual Redis restart/readiness passed.
+- Additive assets0005/athletes0007/professionals0014 add non-NULL timestamps;
+  immutable rows preserve their first timestamps and existing mutation guards.
+  Mutable records use automatic update stamps. Assets0006/athletes0008/
+  professionals0015 exclude only this lifecycle stamp from snapshot comparisons;
+  existing snapshot/source fields and target-set/reopening guards are retained.
+- Assets0007 enforces derivative dimensions 1..1600 and SHA256, a real running
+  attempt lease, and accepted/finalized/hash/size metadata for ready assets.
+  Professionals0016 enforces revoked-assistant and decided-bundle timestamps.
+  These schema fields confer no upload/read/staff authority. Tasks 4/5 still
+  own actual safe processing and READY release with fresh fencing.
+- Every new migration is explicitly included in cumulative SQL evidence. No
+  dependency, old accounts/C02 migration, protected source/ref or route changed.
+- Local timestamp correction: 311 full units passed (10.30s); Ruff/format,
+  mypy 51 source files, Django and production checks, no migration state drift,
+  shell syntax and diff checks passed. Final lifecycle checks below are pending
+  exact-head hosted GREEN; Task 1 remains STARTED and Tasks 2–14 PENDING.

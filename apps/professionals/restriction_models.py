@@ -2,6 +2,7 @@ import uuid
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from apps.governance.audit_models import AppendOnlyQuerySet
 
@@ -34,6 +35,9 @@ class ProfessionalRoleRestriction(models.Model):
     applied_at = models.DateTimeField()
     released_at = models.DateTimeField(null=True, blank=True)
     version = models.PositiveBigIntegerField(default=1)
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         indexes = [
@@ -95,6 +99,9 @@ class RoleRestrictionHistory(models.Model):
 
     def delete(self, *args, **kwargs):
         raise ValueError("Restriction history is append-only")
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         constraints = [

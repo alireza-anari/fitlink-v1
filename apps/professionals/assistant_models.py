@@ -23,8 +23,16 @@ class AssistantMembership(models.Model):
     defined_at = models.DateTimeField(default=timezone.now)
     revoked_at = models.DateTimeField(null=True, blank=True)
 
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(state="defined", revoked_at__isnull=True)
+                | models.Q(state="revoked", revoked_at__isnull=False),
+                name="assistant_revocation_time",
+            ),
             models.UniqueConstraint(
                 fields=["profile", "assistant"],
                 condition=models.Q(state="defined"),

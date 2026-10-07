@@ -20,6 +20,8 @@ class ProfileCommandReceipt(models.Model):
     resulting_version = models.PositiveBigIntegerField(default=1)
     created_at = models.DateTimeField(default=timezone.now)
 
+    updated_at = models.DateTimeField(default=timezone.now)
+
     class Meta:
         constraints = [
             models.CheckConstraint(
