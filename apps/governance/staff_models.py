@@ -21,7 +21,7 @@ class StaffCapabilityGrant(models.Model):
         on_delete=models.PROTECT,
         related_name="staff_capabilities",
     )
-    capability = models.CharField(max_length=24)
+    capability = models.CharField(max_length=32)
     valid_from = models.DateTimeField(default=timezone.now)
     valid_until = models.DateTimeField()
     revoked_at = models.DateTimeField(null=True)
@@ -58,7 +58,7 @@ class StaffStepUpGrant(models.Model):
         related_name="staff_step_ups",
     )
     auth_version = models.PositiveBigIntegerField()
-    capability = models.CharField(max_length=24)
+    capability = models.CharField(max_length=32)
     case_uuid = models.UUIDField(null=True)
     method = models.CharField(max_length=16)
     provider_reference = models.UUIDField(unique=True)
