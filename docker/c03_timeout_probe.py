@@ -172,6 +172,11 @@ def main():
                     for r in (e.get("containers") or [])
                 )
                 finished = [e for e in events if e["event"] == "diagnostic_finished"]
+                for event in events:
+                    print(
+                        "C03_SUPERVISOR_EVIDENCE " + json.dumps(event, sort_keys=True),
+                        flush=True,
+                    )
                 verified = bool(
                     child.returncode != 0
                     and removed

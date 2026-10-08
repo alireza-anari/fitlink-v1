@@ -12,6 +12,7 @@ import sys
 import tempfile
 import threading
 import time
+from collections import deque
 from pathlib import Path
 from uuid import uuid4
 
@@ -42,6 +43,7 @@ PROJECTS = {
     "fitlink-foundation-verify",
 }
 PHASES = {"postgresql", "storage", "foundation"}
+QUERY_FAILURES = deque(maxlen=8)
 WINDOWS = {"postgresql": 240, "storage": 600, "foundation": 900}
 OWNED_PROJECTS = {
     "postgresql": set(),
@@ -188,13 +190,13 @@ def process_rows(marker, proc=Path("/proc"), owner_pid=None):
 
 def query(argv, seconds=2):
     """A bounded metadata command cannot hold a communicate() output pipe open."""
-    with tempfile.TemporaryFile() as output:
+    with tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as errors:
         try:
             child = subprocess.Popen(
                 argv,
                 stdin=subprocess.DEVNULL,
                 stdout=output,
-                stderr=subprocess.DEVNULL,
+                stderr=errors,
                 start_new_session=True,
             )
         except OSError:
@@ -209,6 +211,21 @@ def query(argv, seconds=2):
                 pass
             return None
         if child.returncode:
+            errors.seek(0)
+            error_text = errors.read(8192).decode(errors="replace")
+            category = "metadata_command_failure"
+            if argv[:2] == ["docker", "inspect"] and (
+                'map has no entry for key "Health"' in error_text
+                or "map has no entry for key Health" in error_text
+            ):
+                category = "inspect_missing_health_field"
+            QUERY_FAILURES.append(
+                {
+                    "command": safe_command(argv),
+                    "returncode": child.returncode,
+                    "category": category,
+                }
+            )
             return None
         output.seek(0)
         data = output.read(65537)
@@ -541,6 +558,7 @@ def watch(phase, command):
                 container_processes=container_processes(rows),
                 services=services(rows),
                 last_safe_progress=progress_state["last"],
+                metadata_failures=list(QUERY_FAILURES),
                 disk_available_bytes=os.statvfs(".").f_bavail
                 * os.statvfs(".").f_frsize,
             )

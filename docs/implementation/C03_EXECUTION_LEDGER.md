@@ -1045,3 +1045,23 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
 - Final local diagnostic source unit verification: 420 passed/14.29s, no skips.
   Existing unpublished recovery/browser notes are included verbatim in this
   checkpoint; only diagnostics, their tests/workflow and this ledger changed.
+- First bounded checkpoint local bf306c5dd141ab96ce41422b2c9a533efe5c1a05 ->
+  published 8efac02d0ec6aee6f003bbb102f314429842abc6, exact tree
+  a7c71c4d0767d2c9212dc35fe901929f433f7967; normal parent 343fb92,
+  force=false. Source run 37782066499, protected refs unchanged.
+  Actual probe log 113327374996 repeats original Compose ownership RED but the
+  new cleanup contract is NOT verified: detached host child terminated, running
+  container observation false and container removal false. Artifact 11552087967
+  uploaded successfully; its returned download fails HTTP 403/error 1010 on this
+  host. No ZIP content claim. Add sanitized metadata-query failure categories
+  and relay the already-redacted probe JSONL into its normal completed job log
+  to expose the failure without raw stderr, secrets or a browser fallback.
+- First actual bounded PostgreSQL log 113327374865: unchanged cumulative command
+  progresses through Task 4 cases and exits 1 naturally at 116.5s (before 240s).
+  Final snapshot 116.7s: no owned host processes, no PostgreSQL active/blocking
+  rows; host/container cleanup complete. Artifact 11552258441 uploaded. Storage
+  log 113327374956: unchanged command exits 1 naturally; final 276.8s, no owned
+  host processes or containers; cleanup complete. Artifact 11553340034 uploaded.
+  Neither reproduces its historical hang in this run. These are diagnostic
+  observations, not service PASS, original root-cause proof or functional fixes.
+  Foundation 113327374407 remains under its bounded observation window.
