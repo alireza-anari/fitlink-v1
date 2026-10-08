@@ -17,6 +17,7 @@ TRIGGER = "    branches: [accounts/c02-cloud, profiles/c03-cloud]"
 C03_STEP = r"""      - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'
         run: |
+          echo "C03 diagnostic checkpoint: expected FAILURE; no service PASS"
           python docker/c03_gate_diagnostics.py postgresql \
             sh docker/verify_c03_incremental.sh
 """
@@ -37,11 +38,13 @@ C03_STORAGE_JOB = r"""  c03-storage:
         run: uv sync --frozen --group dev
       - name: C03 real private MinIO and owned upload contracts
         run: |
+          echo "C03 diagnostic checkpoint: expected FAILURE; no service PASS"
           python docker/c03_gate_diagnostics.py storage \
             sh docker/verify_c03_storage.sh
 """
 DIAGNOSTIC_FOUNDATION = """        run: |
           if [ "$GITHUB_REF" = refs/heads/profiles/c03-cloud ]; then
+            echo "C03 diagnostic checkpoint: expected FAILURE; no service PASS"
             python docker/c03_gate_diagnostics.py foundation sh docker/verify_c02.sh
           else
             sh docker/verify_c02.sh
@@ -76,7 +79,7 @@ def inherited_workflow_is_intact(source):
     inherited = inherited.replace(
         DIAGNOSTIC_FOUNDATION, "        run: sh docker/verify_c02.sh\n"
     )
-    for phase in ("foundation", "postgresql", "storage"):
+    for phase in ("foundation", "postgresql", "storage", "timeout-probe"):
         inherited = inherited.replace(DIAGNOSTIC_ARTIFACT.format(phase=phase), "")
     inherited = inherited.replace(TIMEOUT_PROBE, "")
     inherited = inherited.replace(C03_STEP, "")
@@ -114,7 +117,7 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 4
+    assert source.count("        if:") == 5
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)
 

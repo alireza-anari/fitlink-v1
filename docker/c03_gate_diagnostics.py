@@ -1,15 +1,39 @@
 """Secret-free observations of C03 gate progress; no replacement service PASS."""
 
+import ast
+import ctypes
 import json
+import math
 import os
 import re
 import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from pathlib import Path
 from uuid import uuid4
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPT_FILES = {
+    str(path.relative_to(ROOT))
+    for path in (ROOT / "docker").iterdir()
+    if path.suffix in {".py", ".sh"}
+} | {"/probe.py"}
+TEST_FILES = {
+    str(path.relative_to(ROOT)): {
+        node.name
+        for node in ast.walk(ast.parse(path.read_text()))
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+    for path in (ROOT / "tests").rglob("test_*.py")
+}
+TEST_PATHS = set(TEST_FILES)
+for test_file in TEST_FILES:
+    TEST_PATHS.update(
+        str(parent) for parent in Path(test_file).parents if str(parent) != "."
+    )
 
 PROJECTS = {
     "fitlink-c03-private-storage",
@@ -18,6 +42,12 @@ PROJECTS = {
     "fitlink-foundation-verify",
 }
 PHASES = {"postgresql", "storage", "foundation"}
+WINDOWS = {"postgresql": 240, "storage": 600, "foundation": 900}
+OWNED_PROJECTS = {
+    "postgresql": set(),
+    "storage": {"fitlink-c03-private-storage"},
+    "foundation": PROJECTS - {"fitlink-c03-private-storage"},
+}
 WORDS = {
     "uv",
     "run",
@@ -71,13 +101,9 @@ def safe_command(argv):
         base = arg.rsplit("/", 1)[-1]
         if arg in WORDS or (not result and base in WORDS):
             result.append(base)
-        elif re.fullmatch(
-            r"tests/(?:unit|integration|e2e)(?:/[a-z0-9_]+)*(?:\.py)?", arg
-        ):
+        elif arg in TEST_PATHS:
             result.append(arg)
-        elif re.fullmatch(
-            r"docker/(?:verify_[a-z0-9_]+\.sh|c0[123]_[a-z0-9_]+\.py)", arg
-        ):
+        elif arg in SCRIPT_FILES:
             result.append(arg)
         elif re.fullmatch(r"(?:[0-9]+s|--?[A-Za-z-]+)", arg):
             result.append(arg)
@@ -88,27 +114,53 @@ def safe_command(argv):
     return result
 
 
-def process_rows(marker, proc=Path("/proc")):
+def process_rows(marker, proc=Path("/proc"), owner_pid=None):
     rows = []
     if not proc.is_dir():
         return None
-    for path in proc.iterdir():
+    candidates = {}
+    owned = set()
+    for index, path in enumerate(proc.iterdir()):
+        if index >= 4096:
+            break
         if not path.name.isdecimal():
             continue
         try:
-            if marker not in path.joinpath("environ").read_bytes().split(b"\0"):
-                continue
             stat = path.joinpath("stat").read_text().rsplit(")", 1)[1].split()
+            pid = int(path.name)
+            candidates[pid] = (path, stat)
+            with path.joinpath("environ").open("rb") as environment:
+                if marker in environment.read(65536).split(b"\0"):
+                    owned.add(pid)
+        except (OSError, IndexError, ValueError):
+            continue
+    # Subreaper ancestry owns detached/adopted children even if they drop env.
+    if owner_pid is not None:
+        parents = {owner_pid}
+        for _ in range(64):
+            descendants = {
+                pid for pid, (_, stat) in candidates.items() if int(stat[1]) in parents
+            }
+            if descendants <= parents:
+                break
+            parents |= descendants
+        owned |= parents - {owner_pid}
+    for pid in sorted(owned):
+        path, stat = candidates[pid]
+        try:
             argv = (
                 path.joinpath("cmdline")
                 .read_bytes()
                 .decode(errors="replace")
                 .split("\0")
             )
-            stdin = os.readlink(path / "fd/0")
+            try:
+                stdin = os.readlink(path / "fd/0")
+            except OSError:
+                stdin = "unavailable"
             rows.append(
                 {
-                    "pid": int(path.name),
+                    "pid": pid,
                     "ppid": int(stat[1]),
                     "pgid": int(stat[2]),
                     "sid": int(stat[3]),
@@ -123,6 +175,8 @@ def process_rows(marker, proc=Path("/proc")):
                     if stdin == "/dev/null"
                     else "tty"
                     if stdin.startswith("/dev/pts/")
+                    else "unavailable"
+                    if stdin == "unavailable"
                     else "file",
                     "wait": path.joinpath("wchan").read_text().strip()[:40],
                 }
@@ -148,8 +202,11 @@ def query(argv, seconds=2):
         try:
             child.wait(timeout=seconds)
         except subprocess.TimeoutExpired:
-            os.killpg(child.pid, signal.SIGKILL)
-            child.wait(timeout=1)
+            try:
+                os.killpg(child.pid, signal.SIGKILL)
+                child.wait(timeout=1)
+            except (OSError, subprocess.TimeoutExpired):
+                pass
             return None
         if child.returncode:
             return None
@@ -165,6 +222,8 @@ def containers():
     ids = [s for s in value.splitlines() if re.fullmatch("[0-9a-f]{12,64}", s)]
     if not ids:
         return []
+    if len(ids) > 64:
+        return None
     # Never inspect Config.Env, health output, commands, object keys or mounts.
     fmt = (
         '{"id":{{json .Id}},"status":{{json .State.Status}},'
@@ -174,7 +233,7 @@ def containers():
         '"service":{{json (index .Config.Labels "com.docker.compose.service")}},'
         '"image":{{json .Config.Image}}}'
     )
-    value = query(["docker", "inspect", "--format", fmt, *ids[:16]])
+    value = query(["docker", "inspect", "--format", fmt, *ids])
     if value is None:
         return None
     rows = []
@@ -279,10 +338,122 @@ def container_processes(rows):
     return observations
 
 
+def stop_owned_containers(phase, baseline):
+    """Fresh-runner, exact-label cleanup; never remove volumes or other projects."""
+    projects = OWNED_PROJECTS[phase]
+    if not projects:
+        return {"owned_ids": [], "complete": True}
+    rows = containers()
+    if rows is None or baseline is None:
+        return {"owned_ids": [], "complete": False}
+    ids = [
+        r["id"] for r in rows if r["project"] in projects and r["id"] not in baseline
+    ]
+    if ids:
+        query(["docker", "stop", "--time", "1", *ids], seconds=5)
+        query(["docker", "rm", "-f", *ids], seconds=5)
+    remaining = containers()
+    return {
+        "owned_ids": ids,
+        "complete": remaining is not None
+        and not any(
+            r["project"] in projects and r["id"] not in baseline for r in remaining
+        ),
+    }
+
+
+def terminate_owned(child, marker):
+    def send(sig):
+        rows = process_rows(marker, owner_pid=os.getpid()) or []
+        if child.poll() is None or any(
+            r["pgid"] == child.pid and r["sid"] == child.pid for r in rows
+        ):
+            try:
+                os.killpg(child.pid, sig)
+            except ProcessLookupError:
+                pass
+        for row in rows:
+            try:
+                # Do not signal a recycled PID.
+                stat = (
+                    Path(f"/proc/{row['pid']}/stat")
+                    .read_text()
+                    .rsplit(")", 1)[1]
+                    .split()
+                )
+                if int(stat[19]) == row["start_ticks"]:
+                    os.kill(row["pid"], sig)
+            except (OSError, IndexError, ValueError):
+                continue
+
+    send(signal.SIGTERM)
+    try:
+        child.wait(timeout=1)
+    except subprocess.TimeoutExpired:
+        pass
+    send(signal.SIGKILL)
+    try:
+        child.wait(timeout=2)
+    except subprocess.TimeoutExpired:
+        return False
+    # Repeat for children adopted during termination; bounded, no blocking reap.
+    for _ in range(3):
+        send(signal.SIGKILL)
+        for _ in range(64):
+            try:
+                if os.waitpid(-1, os.WNOHANG)[0] == 0:
+                    break
+            except ChildProcessError:
+                break
+        if process_rows(marker, owner_pid=os.getpid()) == []:
+            break
+        time.sleep(0.05)
+    remaining = process_rows(marker, owner_pid=os.getpid())
+    return remaining == [] if remaining is not None else None
+
+
+def progress_lines(text):
+    """Only finite code/progress names; never relay raw child stdout/stderr."""
+    for match in re.finditer(
+        r"(?m)^(tests/(?:unit|integration|e2e)(?:/[a-z0-9_]+)*\.py)::"
+        r"((?:Test[A-Za-z0-9_]+::)?test_[a-zA-Z0-9_]+)",
+        text,
+    ):
+        if match[2].rsplit("::", 1)[-1] in TEST_FILES.get(match[1], set()):
+            yield {"kind": "pytest_case", "file": match[1], "case": match[2]}
+    for match in re.finditer(
+        r'File "[^"\n]*(tests/(?:unit|integration|e2e)(?:/[a-z0-9_]+)*\.py)", '
+        r"line ([0-9]+) in ([A-Za-z0-9_]+)",
+        text,
+    ):
+        if match[3] in TEST_FILES.get(match[1], set()):
+            yield {
+                "kind": "test_stack_frame",
+                "file": match[1],
+                "line": int(match[2]),
+                "function": match[3],
+            }
+    for match in re.finditer(r"Applying ([a-z_]+\.[0-9]{4}_[a-z0-9_]+)", text):
+        yield {"kind": "migration", "name": match[1]}
+    for name in (
+        "readiness",
+        "additive SQL and migration drift",
+        "installed schema contracts",
+    ):
+        if "C03 cumulative gate: " + name in text:
+            yield {"kind": "cumulative_phase", "name": name}
+
+
 def watch(phase, command):
     if phase not in PHASES or not command:
         raise ValueError("Invalid diagnostic boundary")
     marker = ("C03_DIAGNOSTIC_OWNER=" + uuid4().hex).encode()
+    try:
+        seconds = float(os.environ.get("C03_DIAGNOSTIC_SECONDS", WINDOWS[phase]))
+    except ValueError:
+        raise ValueError("Invalid bounded diagnostic observation window") from None
+    if not math.isfinite(seconds) or not 0.1 <= seconds <= WINDOWS[phase]:
+        raise ValueError("Invalid bounded diagnostic observation window")
     folder = Path(".runtime/c03-diagnostics")
     folder.mkdir(parents=True, exist_ok=True)
     path = folder / (phase + "-" + uuid4().hex + ".jsonl")
@@ -301,8 +472,31 @@ def watch(phase, command):
             print("C03_DIAGNOSTIC " + line, flush=True)
 
         started = time.monotonic()
+        baseline_rows = containers()
+        baseline = (
+            {r["id"] for r in baseline_rows} if baseline_rows is not None else None
+        )
+        if OWNED_PROJECTS[phase] and (
+            baseline_rows is None
+            or any(r["project"] in OWNED_PROJECTS[phase] for r in baseline_rows)
+        ):
+            emit(
+                "diagnostic_finished",
+                reason="fresh_runner_ownership_unavailable",
+                expected_diagnostic_failure=True,
+            )
+            return 1
+        try:
+            subreaper = ctypes.CDLL(None).prctl(36, 1, 0, 0, 0) == 0
+        except (AttributeError, OSError):
+            subreaper = False
         child = subprocess.Popen(
             command,
+            start_new_session=True,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=0,
             env={
                 **os.environ,
                 "C03_DIAGNOSTIC_OWNER": marker.decode().split("=", 1)[1],
@@ -313,27 +507,100 @@ def watch(phase, command):
             root_pid=child.pid,
             command=safe_command(command),
             stdin_tty=sys.stdin.isatty(),
+            observation_seconds=seconds,
+            expected_diagnostic_failure=True,
+            subreaper=subreaper,
         )
-        while True:
+
+        progress_state = {"last": None}
+
+        def read_progress():
+            tail = ""
+            while True:
+                try:
+                    chunk = os.read(child.stdout.fileno(), 4096)
+                except (OSError, ValueError):
+                    break
+                if not chunk:
+                    break
+                tail = (tail + chunk.decode(errors="replace"))[-8192:]
+                for progress in progress_lines(tail):
+                    progress_state["last"] = progress
+                if "\n" in tail:
+                    tail = tail.rsplit("\n", 1)[-1]
+
+        reader = threading.Thread(target=read_progress, daemon=True)
+        reader.start()
+
+        def snapshot(event):
             rows = containers()
             emit(
-                "snapshot",
-                processes=process_rows(marker),
+                event,
+                processes=process_rows(marker, owner_pid=os.getpid()),
                 containers=rows,
                 container_processes=container_processes(rows),
                 services=services(rows),
+                last_safe_progress=progress_state["last"],
                 disk_available_bytes=os.statvfs(".").f_bavail
                 * os.statvfs(".").f_frsize,
             )
-            try:
-                code = child.wait(timeout=20)
-                break
-            except subprocess.TimeoutExpired:
-                continue
-        emit(
-            "command_exited", returncode=code, remaining_processes=process_rows(marker)
-        )
-        return code if code >= 0 else 128 - code
+
+        # These windows leave >60s for bounded final snapshot/cleanup/artifact
+        # even in the shortest (15 minute) hosted job after its inherited setup.
+        final_at = started + seconds
+        next_snapshot = started
+        last_progress = None
+        reason = "observation_deadline"
+        code = None
+
+        def cancelled(signum, frame):
+            raise InterruptedError
+
+        previous = {
+            sig: signal.signal(sig, cancelled)
+            for sig in (signal.SIGTERM, signal.SIGINT)
+        }
+        try:
+            while time.monotonic() < final_at:
+                progress = progress_state["last"]
+                if progress is not None and progress != last_progress:
+                    emit("safe_progress", progress=progress)
+                    last_progress = progress
+                code = child.poll()
+                if code is not None:
+                    reason = "command_exited"
+                    emit("command_exited", returncode=code)
+                    break
+                if time.monotonic() >= next_snapshot:
+                    snapshot("snapshot")
+                    next_snapshot = time.monotonic() + 20
+                time.sleep(0.05)
+            snapshot("final_snapshot")
+        except InterruptedError:
+            reason = "diagnostic_cancelled"
+        except Exception as error:
+            # Type only: exception text may contain private command arguments.
+            reason = "diagnostic_error"
+            emit("diagnostic_error", error_type=type(error).__name__)
+        finally:
+            for sig in previous:
+                signal.signal(sig, signal.SIG_IGN)
+            host_complete = terminate_owned(child, marker)
+            cleanup = stop_owned_containers(phase, baseline)
+            child.stdout.close()
+            emit(
+                "diagnostic_finished",
+                reason=reason,
+                observed_returncode=code,
+                host_cleanup_complete=host_complete,
+                container_cleanup=cleanup,
+                expected_diagnostic_failure=True,
+                last_safe_progress=progress_state["last"],
+            )
+            for sig, handler in previous.items():
+                signal.signal(sig, handler)
+        # Even command success is only an observation, never diagnostic PASS.
+        return code if code is not None and code > 0 else 1
 
 
 if __name__ == "__main__":

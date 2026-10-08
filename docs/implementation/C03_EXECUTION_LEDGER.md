@@ -974,3 +974,74 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   before rehearsal: two newly added test lines were not re-formatted after their
   addition. Corrected formatting only; no inherited check bypassed. Other two
   service jobs remain under observation; no service PASS or behavioral RED claimed.
+- Formatting-only follow-up local 7a1cb77e4dcdbddb833e562b3922ecbd41b08ffe ->
+  published 343fb9225ffed4c74cb9040d7a2f2ad8dccb40a2, exact tree
+  764ca89b6da3462fa08fc7eed9bcdd25e69cbff7, normal parent 8a07f47,
+  force=false. All 327 files pass formatting. Source run 37758279748; second
+  actual complete probe log 113248159872 reproduces returncode 124 with an alive
+  started Compose container, exit 1. Foundation metadata shows quality succeeds
+  and the exact C01/C02 rehearsal is again active (113248160414); cumulative
+  PostgreSQL 113248160157 and private storage 113248160080 are active.
+- Additional actual local boundary experiments: the exact uv run timeout path
+  terminates its Python child in the timeout process group and closes its output
+  pipe; nested uv run with environment synchronization enabled completes in
+  0.12s without timeout. Neither local experiment establishes hosted behavior.
+  At 09:46:54 original diagnostic PostgreSQL 113247454019 remains in_progress
+  beyond its 300s/kill grace; no diagnostic artifact is exposed. Actual live-job
+  log requests still return BlobNotFound. Exact child/SQL/test progress for A/B/C
+  remains unknown; do not claim a shared cause or fix from the independent probe.
+  Live GitHub UI inspection is the next evidence path; browser fallback requires
+  user approval under the browser capability instructions after connector errors.
+  This ledger update is intentionally preserved unpublished while requesting
+  that access; source checkpoint and both existing hosted runs remain intact.
+- Approved read-only browser fallback 2026-10-08 12:01 UTC: inspected only the
+  exact run 37758279748 page. GitHub renders "Page not found" / 404 and a
+  "Sign in" link; one reload returns the same page. No job/step output,
+  timestamps, annotations, last command/test or diagnostic snapshots are exposed.
+  This does not establish why access fails, whether authentication would grant
+  access, or the current terminal state of any job. No browser mutation, login,
+  cancellation, rerun, repository edit or protected-ref action performed.
+  Per explicit user instruction, STOP on insufficient UI evidence. Last child
+  progress in PostgreSQL 113248160157, storage 113248160080 and foundation
+  113248160414 remains UNKNOWN; only the enclosing steps in earlier API metadata
+  are confirmed. Shared-versus-separate cause remains unresolved. The two real
+  Compose ownership RED probes remain independent evidence, not proof of any
+  individual stall's cause. No speculative correction or gate change made.
+  Existing work and unpublished notes retained; Task 4 incomplete; no Task 5/C04.
+- Diagnostic-infrastructure-only recovery 2026-10-08: status, HEAD/log, all diffs,
+  existing wrapper/workflow/tests and ledger inspected before modification.
+  Local 7a1cb77/tree 764ca89 equals published 343fb92/tree 764ca89. All previous
+  unpublished ledger notes retained. Run 37758279748 now completed: three suspect
+  jobs cancelled, all later diagnostic artifact steps pending. This proves the
+  evidence-upload failure; it does not identify the original stalled children.
+- Bounded-supervisor RED: real TERM-ignoring child does not return within eight
+  seconds, and a successful observed command returns zero: 2 failed/6 passed,
+  8.36s. New supervisor starts its own child session with isolated stdout, uses
+  finite 240s PostgreSQL / 600s storage / 900s foundation observation windows,
+  flushes a final redacted snapshot, terminates the owned process group and
+  detached/adopted children using Linux subreaper ancestry plus start-time checks,
+  and returns failure. Raw child output is never relayed or saved as an artifact;
+  only repository-known test paths/functions, migration names and finite phase
+  progress are admitted. Independent draining avoids diagnostic backpressure.
+- Fresh-runner ownership preflight refuses existing known Compose projects.
+  Cleanup targets only new container IDs under that phase's exact known project
+  labels; no global prune, down -v, volume removal, unrelated container deletion
+  or persistent/external data deletion. Metadata commands and cleanup have short
+  bounds; unknown observation/cleanup facts remain explicit, never a PASS.
+  The original three shell commands, installed suites and production timeouts
+  remain unchanged on separate hosted runners. Exact-ref workflow messages and
+  every JSONL terminal event mark EXPECTED DIAGNOSTIC FAILURE, including an
+  observed command that exits zero. The pinned always() artifact steps remain;
+  the independent ownership probe now uploads its redacted supervisor evidence.
+- Local focused diagnostic/CI contracts 31 passed/3.52s; full units 420 passed/
+  16.40s, no skips. Full Ruff/format (327 files), inherited mypy (92 files), Django
+  and production checks pass. Hosted real Docker probe additionally exercises a
+  detached, TERM-ignoring host child that drops the ownership environment marker
+  and a stateless real Compose container; termination and container removal must
+  be checked from actual logs/artifacts, not inferred from local mocks.
+  Local Docker and /proc remain unavailable. Task 4 incomplete; original three
+  stall causes UNKNOWN pending preserved hosted evidence; no functional Task 4
+  correction, Task 5, C04, merge or deployment.
+- Final local diagnostic source unit verification: 420 passed/14.29s, no skips.
+  Existing unpublished recovery/browser notes are included verbatim in this
+  checkpoint; only diagnostics, their tests/workflow and this ledger changed.

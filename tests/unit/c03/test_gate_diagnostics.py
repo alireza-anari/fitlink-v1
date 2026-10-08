@@ -1,6 +1,9 @@
 """Diagnostic output is bounded, private and preserves real failure status."""
 
 import importlib.util
+import json
+import os
+import signal
 import subprocess
 import sys
 from pathlib import Path
@@ -93,3 +96,111 @@ def test_watcher_preserves_failure_and_writes_only_sanitized_diagnostics(tmp_pat
     files = list((tmp_path / ".runtime/c03-diagnostics").glob("*.jsonl"))
     assert len(files) == 1
     assert "command_exited" in files[0].read_text()
+
+
+def test_deadline_returns_evidence_and_kills_term_ignoring_owned_child(tmp_path):
+    pid_file = tmp_path / "owned.pid"
+    code = (
+        "import os,signal,time;from pathlib import Path;"
+        "signal.signal(signal.SIGTERM,signal.SIG_IGN);"
+        f"Path({str(pid_file)!r}).write_text(str(os.getpid()));time.sleep(30)"
+    )
+    child = subprocess.Popen(
+        [
+            sys.executable,
+            str(ROOT / "docker/c03_gate_diagnostics.py"),
+            "postgresql",
+            sys.executable,
+            "-c",
+            code,
+        ],
+        cwd=tmp_path,
+        env={**os.environ, "C03_DIAGNOSTIC_SECONDS": "0.3"},
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        start_new_session=True,
+    )
+    try:
+        stdout, _ = child.communicate(timeout=8)
+        assert child.returncode != 0
+        events = [
+            json.loads(line)
+            for line in next((tmp_path / ".runtime/c03-diagnostics").glob("*.jsonl"))
+            .read_text()
+            .splitlines()
+        ]
+        assert any(e["event"] == "final_snapshot" for e in events)
+        assert events[-1]["event"] == "diagnostic_finished"
+        assert events[-1]["reason"] == "observation_deadline"
+        assert "time.sleep(30)" not in stdout
+        with pytest.raises(ProcessLookupError):
+            os.kill(int(pid_file.read_text()), 0)
+    finally:
+        if child.poll() is None:
+            os.killpg(child.pid, signal.SIGKILL)
+            child.wait(timeout=2)
+        if pid_file.exists():
+            try:
+                os.kill(int(pid_file.read_text()), signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+
+
+def test_diagnostic_checkpoint_never_returns_pass_for_successful_command(tmp_path):
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "docker/c03_gate_diagnostics.py"),
+            "postgresql",
+            sys.executable,
+            "-c",
+            "raise SystemExit(0)",
+        ],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        timeout=8,
+    )
+    assert result.returncode != 0
+
+
+def test_cleanup_excludes_unrelated_and_preexisting_containers(monkeypatch):
+    foreign = {"id": "f" * 64, "project": "unrelated-project"}
+    existing = {"id": "e" * 64, "project": "fitlink-c03-private-storage"}
+    owned = {"id": "a" * 64, "project": "fitlink-c03-private-storage"}
+    snapshots = iter([[foreign, existing, owned], [foreign, existing]])
+    monkeypatch.setattr(diag, "containers", lambda: next(snapshots))
+    commands = []
+    monkeypatch.setattr(diag, "query", lambda command, **kw: commands.append(command))
+    result = diag.stop_owned_containers("storage", {existing["id"]})
+    assert result == {"owned_ids": [owned["id"]], "complete": True}
+    assert commands == [
+        ["docker", "stop", "--time", "1", owned["id"]],
+        ["docker", "rm", "-f", owned["id"]],
+    ]
+
+
+def test_child_private_output_and_pytest_parameters_never_enter_artifact(tmp_path):
+    line = (
+        "tests/unit/c03/test_gate_diagnostics.py::"
+        "test_snapshot_without_proc_is_explicitly_unavailable[synthetic-private-phone]"
+    )
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "docker/c03_gate_diagnostics.py"),
+            "postgresql",
+            sys.executable,
+            "-c",
+            f"print('synthetic-secret');print({line!r})",
+        ],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        timeout=8,
+    )
+    artifact = next((tmp_path / ".runtime/c03-diagnostics").glob("*.jsonl")).read_text()
+    assert "test_snapshot_without_proc_is_explicitly_unavailable" in artifact
+    assert "synthetic-secret" not in artifact + result.stdout
+    assert "synthetic-private-phone" not in artifact + result.stdout
