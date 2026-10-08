@@ -18,6 +18,24 @@ C03_STEP = """      - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'
         run: sh docker/verify_c03_incremental.sh
 """
+C03_STORAGE_JOB = """  c03-storage:
+    if: github.ref == 'refs/heads/profiles/c03-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Frozen private storage gate environment
+        run: uv sync --frozen --group dev
+      - name: C03 real private MinIO and owned upload contracts
+        run: sh docker/verify_c03_storage.sh
+"""
 # Exact approved C02 workflow blob, before the narrowly authorized extension.
 C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
 
@@ -25,6 +43,7 @@ C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
 def inherited_workflow_is_intact(source):
     inherited = source.replace(TRIGGER, "    branches: [accounts/c02-cloud]")
     inherited = inherited.replace(C03_STEP, "")
+    inherited = inherited.replace(C03_STORAGE_JOB, "")
     data = inherited.encode()
     digest = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data)
     return digest.hexdigest() == C02_WORKFLOW_BLOB
@@ -105,7 +124,7 @@ def test_required_service_unavailable_is_failure():
 
 def test_every_installed_mandatory_c03_test_selected():
     assert ENTRY.is_file(), "C03 cumulative test selection is missing"
-    source = ENTRY.read_text()
+    source = ENTRY.read_text() + (ROOT / "docker/verify_c03_storage.sh").read_text()
     installed = {
         str(path.relative_to(ROOT))
         for folder in ("tests/unit/c03", "tests/integration/c03")
@@ -147,3 +166,38 @@ def test_task3_baseline_consent_and_races_are_mandatory():
         "test_baseline_races",
     ):
         assert suite + ".py" in source
+
+
+def test_private_storage_gate_installed_by_task4():
+    assert WORKFLOW.read_text().count(C03_STORAGE_JOB) == 1
+    gate = ROOT / "docker/verify_c03_storage.sh"
+    assert gate.is_file(), "Task 4 real storage gate absent"
+    source = gate.read_text()
+    assert "build minio minio-init checks" in source
+    assert "up -d --wait db redis minio" in source
+    for suite in (
+        "test_private_assets.py",
+        "test_upload_lifecycle.py",
+        "test_upload_races.py",
+        "test_minio_storage.py",
+        "test_storage.py",
+    ):
+        assert suite in source
+    assert "continue-on-error" not in WORKFLOW.read_text()
+    assert "-v" not in source.split("cleanup()", 1)[1].split("}", 1)[0]
+
+
+@pytest.mark.parametrize(
+    "old,new",
+    [
+        ("refs/heads/profiles/c03-cloud", "refs/heads/accounts/c02-cloud"),
+        ("sh docker/verify_c03_storage.sh", "true"),
+        ("    timeout-minutes: 30", "    continue-on-error: true"),
+    ],
+)
+def test_storage_job_mutations_rejected(old, new):
+    source = WORKFLOW.read_text()
+    assert C03_STORAGE_JOB in source
+    assert not inherited_workflow_is_intact(
+        source.replace(C03_STORAGE_JOB, C03_STORAGE_JOB.replace(old, new))
+    )

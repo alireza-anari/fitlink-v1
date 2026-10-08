@@ -134,3 +134,20 @@ jobs:
       - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'
         run: sh docker/verify_c03_incremental.sh
+  c03-storage:
+    if: github.ref == 'refs/heads/profiles/c03-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Frozen private storage gate environment
+        run: uv sync --frozen --group dev
+      - name: C03 real private MinIO and owned upload contracts
+        run: sh docker/verify_c03_storage.sh

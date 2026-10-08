@@ -3,8 +3,8 @@
 ## Authority and immutable baselines
 
 - Original user authorization: execute C03 Tasks 1–14 sequentially. Latest
-  recovery authorization narrows this run to Task 3 only, then STOP; Tasks 1–2
-  remain COMPLETE. No Task 4, C04, merge, deployment or protected-ref mutation.
+  authorization is Task 4 ONLY, then STOP; Tasks 1–3 remain COMPLETE. No Task 5,
+  C04, merge, deployment or protected-ref mutation.
 - C02 head: 0905be6c6ca608d469fe33e87f514b22591132d1.
 - C02 tree: ed788191bb6f5011e6b35a63823ae8183af7b53d.
 - Approved plan head: 79fd62e583cbe81f335bb08fce0eb43ff36b0167.
@@ -69,7 +69,8 @@ No interface redesign is authorized. The approved corrected plan remains unchang
 Task 1: COMPLETE — exact implementation head 63edc7c; Actions 37698722147 GREEN.
 Task 2: COMPLETE — exact source d619d7e; Actions 37723166576 both jobs GREEN.
 Task 3: COMPLETE — exact source f58ba8af713c8105611e383d844281c6df77171f; Actions 37735571394 both required jobs GREEN; actual complete logs inspected.
-Tasks 4–14: PENDING — not started.
+Task 4: IN_PROGRESS — preserved-checkpoint preflight complete; behavioral RED and real MinIO gates pending.
+Tasks 5–14: PENDING — not started.
 C03 overall remains IN_PROGRESS; no C03 PASS claim.
 
 ## Task 1 CI bootstrap
@@ -800,3 +801,47 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   for required source GREEN. Task 3 COMPLETE. Tasks 1–2 remain COMPLETE; Tasks
   4–14 remain PENDING. STOP after safe ledger sync. No overall C03 PASS, Task 4,
   C04, merge or deployment.
+
+## Task 4 preflight and execution scope (2026-10-08)
+
+- Read-only recovery first: clean local 2d98e3b20244be0270a5d3218eebe85618049823,
+  exact tree eae91e0178960d38f1d316359abda6add671d7b5, equal to published
+  4843e7a48a91e57ab007a71faf914deb61eaf48d. Preserve intentional local ancestry;
+  no reset/rematerialization. All staged/unstaged diffs empty; no Task 4 files,
+  brief or partial implementation. Tasks 1–3 COMPLETE in both ledgers.
+- Remote is exactly 4843e7a, with parent f58ba8a. Actions 37735571394 on f58ba8a
+  and ledger-only 37737724668 on 4843e7a both completed SUCCESS. Original
+  checkout remains 5f399ec/tree 6af62b2 with all 17 unpublished files preserved.
+  All four protected refs unchanged. Approved plan and Task 4 brief read.
+- Task 4 BASE is local 2d98e3b. Only owned professional evidence/branding
+  quarantine ingress, private storage and its same-task real MinIO gates.
+  No scan/decoder/sanitization/READY or source delivery; Task 5 unstarted.
+- Ruling: install only the minimal same-origin authenticated multipart ingress
+  adapter in Task 4 because latest explicit user contract requires actual Django
+  multipart uploads now; full owner UI/adapters remain Task 11. Whole multipart
+  request is capped at 10,000,000 bytes (stricter than plan's overhead allowance).
+  Cost if wrong: future adapters must reuse this bounded parser/command boundary.
+- Ruling: reuse professional-domain command receipts via trusted composition
+  callbacks for upload begin/finalize/abandon, extending only their finite CHECK
+  in a named additive migration if needed. Assets never import professionals.
+  Existing schema has no asset receipt and no accepted upload receipt commands;
+  unsafe retry inference is insufficient. Cost if wrong: narrowing downgrade must
+  retain accepted receipts, disable the feature/roll forward rather than erase.
+- Ruling: a separate exact-C03-only storage job uses existing private MinIO
+  source build, Compose isolation and restricted app credentials. Inherited
+  workflow/jobs/timeouts/services remain byte-identical after removing only C03
+  extensions. PostgreSQL cumulative Task 4 suites and real storage suites are
+  explicit mandatory selections; no unavailable-service skips or fake-only PASS.
+- Test specification: actual session-authenticated HTTP begin/body/finalize/
+  abandon and UUID/CSRF/authority/privacy assertions, PostgreSQL independent
+  connection reservation/finalize/logout/archive/quota races and real MinIO
+  conditional-write/HEAD/bounded-read/anonymous read+write-denial cases added.
+  Synthetic malformed raster headers prove admission coherence only, not a
+  safety decision. No upload implementation, scanner or dependency added yet.
+- Local initial RED: 21 failed/15 passed (0.97s): five expected CI-extension
+  failures and 16 missing bounded ingress/validation contract assertions. This
+  missing-API evidence is not represented as behavioral domain RED. After
+  installing the exact-C03-only storage gate, all 20 CI contract cases pass
+  (0.81s); inherited workflow blob still exact. New test/script Ruff/format,
+  shell syntax and diff checks pass. Hosted actual HTTP/storage behavioral
+  failures are the next required gate, not collection or fixture failures.

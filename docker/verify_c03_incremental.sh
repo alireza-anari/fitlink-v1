@@ -82,3 +82,7 @@ uv run --frozen pytest tests/unit/c03/test_profile_policy.py tests/integration/c
 
 # Task 3 private snapshots, bounded consent callback and PostgreSQL races.
 uv run --frozen pytest tests/unit/c03/test_baseline_fields.py tests/unit/c03/test_consent_callback_contract.py tests/integration/c03/test_baseline_workflow.py tests/integration/c03/test_baseline_consent.py tests/integration/c03/test_baseline_races.py -q --strict-markers
+
+# Task 4 PostgreSQL ingress/state/authority races. Real private-store suites are
+# separately mandatory in the exact-C03-only docker/verify_c03_storage.sh job.
+uv run --frozen pytest tests/unit/c03/test_upload_contract.py tests/unit/c03/test_asset_validation.py tests/integration/c03/test_upload_lifecycle.py tests/integration/c03/test_upload_races.py -q --strict-markers
