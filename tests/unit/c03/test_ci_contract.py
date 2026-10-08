@@ -124,3 +124,14 @@ def test_task1_sql_evidence_covers_all_installed_migrations():
             if label == "governance" and int(number) <= 10:
                 continue
             assert f"sqlmigrate {label} {number}" in source
+
+
+def test_task2_profile_authority_and_races_are_mandatory():
+    selected = set(
+        re.findall(r"tests/(?:unit|integration)/c03/test_[\w]+\.py", ENTRY.read_text())
+    )
+    assert {
+        "tests/unit/c03/test_profile_policy.py",
+        "tests/integration/c03/test_owned_profiles.py",
+        "tests/integration/c03/test_profile_races.py",
+    } <= selected

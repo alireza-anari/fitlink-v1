@@ -74,3 +74,6 @@ uv run --frozen mypy apps/athletes apps/professionals apps/assets
 
 # Task 1 schema RED/GREEN; all installed cases are mandatory.
 uv run --frozen pytest tests/unit/c03/test_ci_contract.py tests/unit/c03/test_schema_contract.py tests/integration/c03/test_c03_migrations.py tests/integration/c03/test_evidence_guards.py -q --strict-markers
+
+# Task 2 explicit owner, current session, receipt and PostgreSQL race gates.
+uv run --frozen pytest tests/unit/c03/test_profile_policy.py tests/integration/c03/test_owned_profiles.py tests/integration/c03/test_profile_races.py -q --strict-markers

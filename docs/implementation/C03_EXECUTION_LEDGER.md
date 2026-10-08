@@ -66,7 +66,8 @@ No interface redesign is authorized. The approved corrected plan remains unchang
 ## Task states
 
 Task 1: COMPLETE — exact implementation head 63edc7c; Actions 37698722147 GREEN.
-Tasks 2–14: PENDING — not started.
+Task 2: STARTED — policy behavioral RED; hosted owner/race test checkpoint pending.
+Tasks 3–14: PENDING — not started.
 C03 overall remains IN_PROGRESS; no C03 PASS claim.
 
 ## Task 1 CI bootstrap
@@ -434,3 +435,28 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   docker/verify_c03_incremental.sh and inherited full rehearsal → SUCCESS).
   This completion document does not replace implementation-head evidence.
   Task 2 is next; no merge, deployment, C04 or future-domain work.
+
+## Task 2 start and test specification
+
+- Task brief read from the approved plan; local BASE 6fbbe3f, remote BASE
+  90e406fea89636822be46f0a6a99194abf07add2; shared tree 91567cb.
+- Four actual behavioral policy failures: valid active declared adults are
+  denied athlete/professional profile read/write by the current finite account
+  action gate. Local policy RED: 4 failed/13 passed (0.08s). No import or fixture
+  failure is counted as behavioral RED.
+- Added named optional dual profile, own-selector/foreign UUID, current actor,
+  receipt authorization/conflict/current DTO, registration false/outage,
+  synchronous audit/outbox rollback and bounded metadata dispatch specifications.
+  Added independent PostgreSQL create/create, same-key, and both orders of
+  create versus logout/restriction/suspension/pending-deletion specifications.
+  New service contracts are asserted inside tests, never imported at collection.
+- Cumulative hosted script includes all three Task 2 test modules and retains
+  Task 1 and every inherited command. New CI selection contract requires these
+  owner/race gates. Workflow, old migrations, immutable fixture and old suites
+  unchanged. Hosted test execution is pending; no Task 2 implementation yet.
+- Task 2: Ruling: same-transaction outbox applies to professional creation via
+  approved professional.profile_changed. The approved inventory has no athlete
+  profile-created event; athlete creation records audit plus receipt, and Task 3
+  emits athlete.baseline_changed only after a baseline exists. Do not fabricate
+  a baseline/event or extend the approved inventory. Cost if wrong: a separately
+  approved metadata event would require additive governance schema changes.
