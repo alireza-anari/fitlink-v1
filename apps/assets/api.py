@@ -75,7 +75,7 @@ class UploadBodyView(UploadView):
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, asset_uuid):
-        if request.content_type != "multipart/form-data":
+        if request._request.content_type != "multipart/form-data":
             raise exceptions.ParseError("Invalid request")
         parsed = BoundedMultipartParser().parse(
             BytesIO(request._request.body),

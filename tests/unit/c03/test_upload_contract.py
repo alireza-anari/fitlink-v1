@@ -11,6 +11,34 @@ from apps.assets.storage import FakePrivateStore
 pytestmark = pytest.mark.unit
 
 
+def test_multipart_boundary_reaches_real_authority_validation():
+    from uuid import uuid4
+
+    from django.core.files.uploadedfile import SimpleUploadedFile
+    from rest_framework.test import APIRequestFactory
+
+    from apps.assets.api import UploadBodyView
+
+    request = APIRequestFactory().post(
+        "/api/v1/profile-assets/00000000-0000-0000-0000-000000000001/body/",
+        {
+            "expected_version": "1",
+            "file": SimpleUploadedFile(
+                "source.png", b"\x89PNG\r\n\x1a\nsynthetic", content_type="image/png"
+            ),
+        },
+        format="multipart",
+    )
+    request.account_actor = None
+    view = UploadBodyView()
+    view.setup(request)
+    parsed_request = view.initialize_request(request)
+    # Exercise real parsing/use-case validation without a database or auth mock.
+    # A valid boundary must reach the domain's absent-actor denial.
+    with pytest.raises(PermissionError):
+        view.post(parsed_request, uuid4())
+
+
 def test_real_asgi_application_rejects_oversized_ingress_before_parsing():
     import asyncio
 
