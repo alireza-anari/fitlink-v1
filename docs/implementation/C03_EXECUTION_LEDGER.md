@@ -2,8 +2,9 @@
 
 ## Authority and immutable baselines
 
-- Explicit user authorization: execute C03 Tasks 1–14 sequentially; no C04,
-  merge, deployment or protected-ref mutation.
+- Original user authorization: execute C03 Tasks 1–14 sequentially. Latest
+  recovery authorization narrows this run to Task 3 only, then STOP; Tasks 1–2
+  remain COMPLETE. No Task 4, C04, merge, deployment or protected-ref mutation.
 - C02 head: 0905be6c6ca608d469fe33e87f514b22591132d1.
 - C02 tree: ed788191bb6f5011e6b35a63823ae8183af7b53d.
 - Approved plan head: 79fd62e583cbe81f335bb08fce0eb43ff36b0167.
@@ -67,7 +68,7 @@ No interface redesign is authorized. The approved corrected plan remains unchang
 
 Task 1: COMPLETE — exact implementation head 63edc7c; Actions 37698722147 GREEN.
 Task 2: COMPLETE — exact source d619d7e; Actions 37723166576 both jobs GREEN.
-Task 3: IN_PROGRESS / CORRECTED_HEAD_GATES_PENDING — continuing the existing behavioral RED cycle; not COMPLETE.
+Task 3: COMPLETE — exact source f58ba8af713c8105611e383d844281c6df77171f; Actions 37735571394 both required jobs GREEN; actual complete logs inspected.
 Tasks 4–14: PENDING — not started.
 C03 overall remains IN_PROGRESS; no C03 PASS claim.
 
@@ -745,3 +746,57 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   recovery backup (zero missing or changed files). No original checkout changes.
 - Additional read correction and exact-head full hosted gates pending; Task 3
   remains IN_PROGRESS. Tasks 4–14 unstarted; stop is still Task 3 completion.
+
+## Task 3 COMPLETE — exact-source GREEN and stop checkpoint (2026-10-08)
+
+- Final implementation local head ecf9044bf6d75ccae54615ef8be6684825621f92
+  maps to published f58ba8af713c8105611e383d844281c6df77171f, with identical
+  exact tree dc3c0b03fa95e297e67f962df24f3eef8ff88b68. Published parent is
+  71ee9492ed1b2c93a1cbc2b6240f3713f2d326a0; expected-head lease, force=false.
+- [Actions 37735571394](https://github.com/alireza-anari/fitlink-v1/actions/runs/37735571394)
+  is completed SUCCESS on exactly that implementation head. Both required jobs
+  are SUCCESS and their actual complete logs were inspected:
+  [PostgreSQL 113174191330](https://github.com/alireza-anari/fitlink-v1/actions/runs/37735571394/job/113174191330)
+  and [foundation 113174191575](https://github.com/alireza-anari/fitlink-v1/actions/runs/37735571394/job/113174191575).
+- PostgreSQL: 269 inherited cases (83.24s), actual Redis restart and durable
+  quota prepare/verify with PONG, real PostgreSQL/Redis readiness, reviewed
+  athletes0010/governance0014 SQL, no drift, mypy 68 files, 137 Task 1/CI
+  cases (32.53s), 78 Task 2 (16.39s), all 82 Task 3 (13.39s). Exit 0;
+  zero failed or selected skipped cases. Original nine behavioral failures and
+  both sensitive-read audit regressions are GREEN.
+- Full rehearsal: frozen/static checks, Ruff/format 313 files, mypy 92 files,
+  Django test/production checks and 382 units (12.66s); exact immutable C01
+  tree 4dff1ebd5a32ed0359552bf29012d9d1ecf09b24, original 70 units/90 backend
+  and all original service/browser/restart gates; populated exact C01 same-DB
+  upgrade prepare/verify; independent clean migration/no drift; 872 current
+  backend (278.11s), 2 ASGI (3.01s), 38 C02 browser (264.41s); actual durable
+  outbox broker restart prepare/verify; final 5 transport (1.44s), 1 private
+  MinIO (1.80s), 2 viewport (3.34s). Healthy PostgreSQL/Redis/MinIO/web/worker/
+  beat observed. All required steps exit 0; no failed or selected skipped cases.
+- Earlier full logs also inspected: original-nine corrected run 37734616101
+  foundation 113171225687 SUCCESS (870 backend plus complete inherited gates);
+  read-audit spec run 37735002926 foundation 113172428915 RED, exactly two
+  intended audit behavior failures with 870 other backend cases passing. These
+  historical results do not substitute for final source run 37735571394.
+- Fresh local task-done whole-unit verification: 382 passed in 12.11s, exit 0,
+  no skips. Prior final-source local Ruff/format, inherited and domain mypy,
+  Django test/production, lock/JS/shell/diff checks remain passing. Local lack
+  of PostgreSQL is handled by the named authoritative hosted gates above,
+  never by simulated service evidence or skipped tests.
+- Final review: current account/owner authority precedes receipt interpretation;
+  consent is revalidated under locks; decline/expiry/revoke filters optional
+  values; correction preserves submitted history and excludes optional copies;
+  unknown health/photo fields remain rejected; metadata-only read audit commits
+  before private result release, with no read outbox. Two bounded additive SQL
+  corrections retain all prior accepted values. No private fields in audit or
+  outbox. Approved production consent duration/wording remains a release-policy
+  dependency; absent duration fails closed, with no policy invented here.
+- Protected refs verified unchanged at their fixed heads above. Original checkout
+  remains preserved, including all 17 unpublished files verified byte-for-byte
+  against recovery copies (zero missing or changed). No reset/clean/stash or
+  history rewrite; synchronization uses real published ancestry and a lease.
+- This completion checkpoint changes only this ledger; it preserves the linked
+  validated implementation source. A documentation-only CI run is not substituted
+  for required source GREEN. Task 3 COMPLETE. Tasks 1–2 remain COMPLETE; Tasks
+  4–14 remain PENDING. STOP after safe ledger sync. No overall C03 PASS, Task 4,
+  C04, merge or deployment.
