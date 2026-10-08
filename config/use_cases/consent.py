@@ -28,6 +28,8 @@ def grant_consent(
     text_version: str,
     content_hash: str,
     at: datetime,
+    *,
+    scope_validator: consents.ScopeValidator | None = None,
 ) -> UUID:
     return consents.grant_consent(
         actor,
@@ -36,6 +38,7 @@ def grant_consent(
         content_hash,
         at,
         lambda outcome: _record(actor, outcome),
+        scope_validator=scope_validator,
     )
 
 

@@ -54,6 +54,8 @@ NORMAL_ACTIONS = CONTROL_ACTIONS | frozenset(
         "staff.command",
         "athlete.profile_read",
         "athlete.profile_write",
+        "athlete.baseline_read",
+        "athlete.baseline_write",
         "professional.profile_read",
         "professional.profile_write",
     }

@@ -1,6 +1,7 @@
 """Consent is only an additional predicate; it never authorizes object access."""
 
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 from types import MappingProxyType
@@ -41,10 +42,23 @@ def _account_metadata(scope: ValidatedConsentScope, subject: User) -> bool:
 SCOPE_VALIDATORS = MappingProxyType({"account_metadata": _account_metadata})
 
 
-def _valid_scope(scope: ValidatedConsentScope, subject: User, at: datetime) -> bool:
-    if not isinstance(scope, ValidatedConsentScope):
+ScopeValidator = Callable[[ValidatedConsentScope, User], bool]
+
+
+def _valid_scope(
+    scope: ValidatedConsentScope,
+    subject: User,
+    at: datetime,
+    *,
+    scope_validator: ScopeValidator | None = None,
+) -> bool:
+    if (
+        not isinstance(scope, ValidatedConsentScope)
+        or not isinstance(scope.kind, str)
+        or re.fullmatch(r"[a-z_]{1,32}", scope.kind) is None
+    ):
         return False
-    validator = SCOPE_VALIDATORS.get(scope.kind)
+    validator = SCOPE_VALIDATORS.get(scope.kind, scope_validator)
     return bool(
         validator
         and scope.subject_uuid == subject.public_id
@@ -52,6 +66,7 @@ def _valid_scope(scope: ValidatedConsentScope, subject: User, at: datetime) -> b
         and isinstance(scope.object_uuid, UUID)
         and type(scope.object_version) is int
         and scope.object_version >= 1
+        and isinstance(scope.purpose, str)
         and scope.purpose in PURPOSES
         and isinstance(scope.expires_at, datetime)
         and timezone.is_aware(scope.expires_at)
@@ -69,6 +84,8 @@ def validate_scope(
     object_version: int,
     expires_at: datetime,
     at: datetime,
+    *,
+    scope_validator: ScopeValidator | None = None,
 ) -> ValidatedConsentScope:
     subject = actor_user(actor, "consent.grant", at)
     scope = ValidatedConsentScope(
@@ -80,7 +97,7 @@ def validate_scope(
         object_version,
         expires_at,
     )
-    if not _valid_scope(scope, subject, at):
+    if not _valid_scope(scope, subject, at, scope_validator=scope_validator):
         raise PermissionError("Consent scope denied")
     return scope
 
@@ -92,6 +109,8 @@ def grant_consent(
     content_hash: str,
     at: datetime,
     record: OutcomeRecorder,
+    *,
+    scope_validator: ScopeValidator | None = None,
 ) -> UUID:
     if (
         not callable(record)
@@ -110,7 +129,7 @@ def grant_consent(
             .order_by("id")
         )
         subject = locked_actor(actor, "consent.grant", at)
-        if not _valid_scope(scope, subject, at):
+        if not _valid_scope(scope, subject, at, scope_validator=scope_validator):
             raise PermissionError("Consent scope denied")
         grantee = next(
             (
@@ -204,11 +223,15 @@ def has_current_grant(
     purpose: str,
     scope: ValidatedConsentScope,
     at: datetime,
+    *,
+    scope_validator: ScopeValidator | None = None,
 ) -> bool:
     subject = User.objects.filter(
         public_id=subject_uuid, state="active", is_active=True
     ).first()
-    if not subject or not _valid_scope(scope, subject, at):
+    if not subject or not _valid_scope(
+        scope, subject, at, scope_validator=scope_validator
+    ):
         return False
     if scope.grantee_uuid != grantee_uuid or scope.purpose != purpose:
         return False

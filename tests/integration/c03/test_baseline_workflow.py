@@ -141,13 +141,7 @@ def test_foreign_and_missing_baseline_uniformly_unavailable(name):
     for identifier in (row.id, uuid4()):
         with pytest.raises(LookupError, match="Baseline unavailable"):
             if name == "read":
-                command_module = __import__(
-                    "apps.athletes.selectors", fromlist=["own_baseline"]
-                )
-                assert hasattr(command_module, "own_baseline"), (
-                    "Missing baseline selector"
-                )
-                command_module.own_baseline(other.actor, identifier, other.at)
+                command("own_baseline", other.actor, identifier, other.at)
             elif name == "save":
                 command(
                     "save_baseline_step",

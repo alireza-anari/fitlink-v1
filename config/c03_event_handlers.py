@@ -13,3 +13,17 @@ def professional_profile_metadata(event, at):
         ).exists()
         else "skipped"
     )
+
+
+def athlete_baseline_metadata(event, at):
+    from apps.athletes.baseline_models import BaselineAssessment
+
+    return (
+        "applied"
+        if BaselineAssessment.objects.filter(
+            pk=event.aggregate_uuid,
+            version=event.aggregate_version,
+            athlete__user__public_id=event.payload["user_uuid"],
+        ).exists()
+        else "skipped"
+    )

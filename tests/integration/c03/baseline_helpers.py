@@ -51,7 +51,7 @@ def required(ctx, row):
 
 
 def grant(ctx, row, operation_id=None):
-    with override_settings(BASELINE_STORAGE_CONSENT_SECONDS=86400):
+    with override_settings(BASELINE_STORAGE_CONSENT_SECONDS=60):
         return command(
             "grant_baseline_storage",
             ctx.actor,
@@ -64,6 +64,4 @@ def grant(ctx, row, operation_id=None):
 
 
 def read(ctx, row, at=None):
-    selectors = module("apps.athletes.selectors")
-    assert hasattr(selectors, "own_baseline"), "Missing current baseline selector"
-    return selectors.own_baseline(ctx.actor, row.id, at or ctx.at)
+    return command("own_baseline", ctx.actor, row.id, at or ctx.at)

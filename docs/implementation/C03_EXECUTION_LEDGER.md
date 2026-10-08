@@ -570,3 +570,23 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   race behavioral RED. Existing profile SQL permits arbitrary onboarding_step;
   a direct-SQL regression now captures that concrete installed-interface gap.
 - Task 3 STARTED/PENDING_RED; Tasks 4–14 PENDING. No later work begun.
+
+## Task 3 test-spec RED and initial command boundary
+
+- Test-spec local f78f51a -> remote 9424a32173c6d8be7dc60730f9c2d0ee2430510e;
+  exact tree d1124179622fa5404327f12332e53537830502c5, parent d619d7e, force=false.
+- Run 37725704752 actual complete job logs inspected: foundation 113143249624
+  has 50 missing field/callback failures and 330 inherited units pass. PostgreSQL
+  113143249492 has 269 inherited, real Redis restart/readiness, 137 Task 1/CI and
+  78 Task 2 cases pass. Task 3: 76 failures, comprising 75 explicit missing APIs
+  and one real behavioral SQL RED: health_upload persisted as onboarding_step
+  instead of raising IntegrityError. Missing interfaces are not race RED.
+- Field/callback boundary now passes all 50 local cases. Established commands
+  lock User, owned profile, draft/snapshot and receipt; current self-storage is
+  supplied through composition and rechecked at every projection/mutation.
+  Submitted clear is refused in favor of immutable correction; draft clear
+  requires no consent. Server duration has no invented production default;
+  fixtures explicitly select 60 seconds. Fixed engineering disclosure descriptor
+  remains subject to the existing approved-wording release dependency.
+- Before expanding SQL receipt commands or repairing the step CHECK, exercise
+  this command boundary against actual PostgreSQL. No Task 3 GREEN claimed.
