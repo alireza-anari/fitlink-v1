@@ -52,3 +52,15 @@ def test_spoofed_type_extension_signature(media, prefix):
 def test_declared_contract_rejects_unbounded_or_active_inputs(size, media):
     with pytest.raises(ValueError):
         validator().validate_declaration(size, media)
+
+
+@pytest.mark.parametrize("value", ["0", "-1", "10000001", "invalid"])
+def test_upload_configuration_cannot_widen_object_or_request_cap(value, monkeypatch):
+    from django.core.exceptions import ImproperlyConfigured
+
+    from config.settings import env
+
+    monkeypatch.setenv("PROFILE_UPLOAD_MAX_BYTES", value)
+    assert callable(getattr(env, "bounded_int", None)), "Bounded configuration absent"
+    with pytest.raises(ImproperlyConfigured):
+        env.bounded_int("PROFILE_UPLOAD_MAX_BYTES", 10_000_000, 10_000_000)

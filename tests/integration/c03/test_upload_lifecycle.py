@@ -74,7 +74,8 @@ def test_receive_source_once(monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "defect", ["missing", "size", "hash", "foreign", "type", "oversized"]
+    "defect",
+    ["missing", "size", "hash", "foreign", "foreign_identical", "type", "oversized"],
 )
 def test_finalization_rejects_wrong_storage_facts(defect, monkeypatch):
     s = owner()
@@ -86,9 +87,13 @@ def test_finalization_rejects_wrong_storage_facts(defect, monkeypatch):
     row = Asset.objects.get(pk=dto["id"])
     if defect == "missing":
         store.delete(row.source_key)
-    elif defect == "foreign":
+    elif defect in {"foreign", "foreign_identical"}:
         foreign = "quarantine/foreign"
-        store.put(foreign, b"z" * len(PNG), "image/png")
+        store.put(
+            foreign,
+            PNG if defect == "foreign_identical" else b"z" * len(PNG),
+            "image/png",
+        )
         Asset.objects.filter(pk=row.pk).update(source_key=foreign)
     else:
         value = (
@@ -109,6 +114,50 @@ def test_finalization_rejects_wrong_storage_facts(defect, monkeypatch):
     assert not OutboxEvent.objects.filter(
         event_type="asset.processing_requested"
     ).exists()
+
+
+def test_finalization_rejects_new_operation_and_changed_replay(monkeypatch):
+    s = owner()
+    dto, _ = begin(s)
+    shared_store(monkeypatch)
+    response = body(s, dto)
+    assert response.status_code == 200
+    uploaded, operation = response.json(), uuid4()
+    accepted = finalize(s, uploaded, operation)
+    assert accepted.status_code == 202
+    assert finalize(s, uploaded).status_code == 409
+    assert finalize(s, accepted.json(), operation).status_code == 409
+    assert (
+        OutboxEvent.objects.filter(event_type="asset.processing_requested").count() == 1
+    )
+
+
+@pytest.mark.parametrize(
+    "state", ["pending_upload", "receiving", "rejected", "revoked"]
+)
+def test_finalization_rejects_invalid_lifecycle_transition(state, monkeypatch):
+    s = owner()
+    dto, _ = begin(s)
+    store = shared_store(monkeypatch)
+    Asset.objects.filter(pk=dto["id"]).update(state=state)
+    assert finalize(s, dto).status_code == 409
+    assert store.objects == {}
+    assert not OutboxEvent.objects.filter(
+        event_type="asset.processing_requested"
+    ).exists()
+
+
+def test_finalization_receipt_does_not_bypass_current_authority(monkeypatch):
+    s = owner()
+    dto, _ = begin(s)
+    shared_store(monkeypatch)
+    response = body(s, dto)
+    assert response.status_code == 200
+    uploaded, operation = response.json(), uuid4()
+    assert finalize(s, uploaded, operation).status_code == 202
+    s.profile.state = "archived"
+    s.profile.save(update_fields=["state"])
+    assert finalize(s, uploaded, operation).status_code == 404
 
 
 def test_body_requires_csrf_before_storage(monkeypatch):

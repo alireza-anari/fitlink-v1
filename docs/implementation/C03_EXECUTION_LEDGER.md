@@ -879,3 +879,26 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   30-second faulthandler trace with verbose case names to diagnose stalled gates.
   Timeout is a failure, never a pass/skip. Inherited commands/timeouts untouched;
   actual hosted PostgreSQL and private MinIO behavioral evidence still required.
+- New diagnostic checkpoint local 587f1d3c79fc6eeefb48966ee93ee5d877ebe99d
+  -> published 4f9a4bf3f55a35150acae7af0eca72908f18dbcc, exact tree
+  82702e6ec2c420f54b1ad98c17c4167a777a0696; run 37749178799. Foundation
+  quality step succeeds, but service jobs still expose no usable logs. Neither
+  real-service behavioral RED nor private MinIO PASS has been established.
+- Direct actual unauthenticated Django POST admission behavior RED: 404 where
+  required 403 (no DB/auth mocks). Core ownership/finalization remains unimplemented
+  pending required hosted behavioral evidence. Additional specs reject identical
+  foreign object binding, new-operation finalization, changed replay, invalid
+  lifecycle states and archived-owner replay.
+- Configuration cap assertions RED 4/12 passing (0.11s), then bounded positive
+  upper limits implemented for bytes, pending count, daily bytes and admission
+  expiry. Test/production inherit the same validated base limits; production
+  continues to require real private S3. All 410 local units pass (18.48s), no
+  skips; full Ruff/format 324 files, inherited mypy, Django/production checks
+  pass. No live service evidence is inferred from these local checks.
+- Diagnostic ruling: bound the whole C03 cumulative command (300s) and owning
+  storage command (900s), including setup/probes/SQL, and force termination ten
+  seconds after timeout. Earlier per-pytest bounds cannot locate a stall before
+  pytest or guarantee signal termination. Named phase messages and traceback
+  output remain secret-free; timeout is failure, inherited gates untouched. These
+  are diagnostics, not a claimed root-cause fix. Required service RED/GREEN and
+  actual logs remain blocking completion gates. Task 4 IN_PROGRESS; no Task 5.

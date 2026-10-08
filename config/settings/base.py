@@ -61,6 +61,16 @@ SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 CSRF_FAILURE_VIEW = "config.api_security.csrf_failure"
 STORAGE_BACKEND = env.str_value("STORAGE_BACKEND", "fake")
+PROFILE_UPLOAD_MAX_BYTES = env.bounded_int(
+    "PROFILE_UPLOAD_MAX_BYTES", 10_000_000, 10_000_000
+)
+PROFILE_UPLOAD_MAX_PENDING = env.bounded_int("PROFILE_UPLOAD_MAX_PENDING", 10, 10)
+PROFILE_UPLOAD_DAILY_BYTES = env.bounded_int(
+    "PROFILE_UPLOAD_DAILY_BYTES", 100_000_000, 100_000_000
+)
+PROFILE_UPLOAD_EXPIRY_SECONDS = env.bounded_int(
+    "PROFILE_UPLOAD_EXPIRY_SECONDS", 3600, 3600
+)
 STORAGES: dict[str, dict[str, Any]] = {
     "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},

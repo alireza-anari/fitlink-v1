@@ -2,6 +2,13 @@
 # Explicit cumulative C03 selections. Extend in each owning task, never skip.
 set -eu
 
+# Bound the entire C03 gate, including readiness/SQL/type checking and cleanup.
+# A timed-out process is a failed gate; the inherited job timeout is unchanged.
+if [ "${C03_GATE_CHILD:-}" != 1 ]; then
+  exec env C03_GATE_CHILD=1 timeout -k 10s 300s sh "$0"
+fi
+echo "C03 cumulative gate: readiness"
+
 uv run --frozen python - <<'PY'
 import os
 import sys
@@ -33,6 +40,7 @@ print("C03 real PostgreSQL and Redis readiness passed", flush=True)
 PY
 
 # Task 1 additive SQL must remain inspectable on the authoritative hosted service.
+echo "C03 cumulative gate: additive SQL and migration drift"
 uv run --frozen python manage.py sqlmigrate assets 0001 --settings=config.settings.test
 uv run --frozen python manage.py sqlmigrate assets 0002 --settings=config.settings.test
 uv run --frozen python manage.py sqlmigrate assets 0003 --settings=config.settings.test
@@ -75,14 +83,15 @@ uv run --frozen python manage.py makemigrations --check --dry-run --settings=con
 uv run --frozen mypy apps/athletes apps/professionals apps/assets
 
 # Task 1 schema RED/GREEN; all installed cases are mandatory.
-timeout 180s uv run --frozen pytest tests/unit/c03/test_ci_contract.py tests/unit/c03/test_schema_contract.py tests/integration/c03/test_c03_migrations.py tests/integration/c03/test_evidence_guards.py -vv --strict-markers -o faulthandler_timeout=30
+echo "C03 cumulative gate: installed schema contracts"
+timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_ci_contract.py tests/unit/c03/test_schema_contract.py tests/integration/c03/test_c03_migrations.py tests/integration/c03/test_evidence_guards.py -vv --strict-markers -o faulthandler_timeout=30
 
 # Task 2 explicit owner, current session, receipt and PostgreSQL race gates.
-timeout 180s uv run --frozen pytest tests/unit/c03/test_profile_policy.py tests/integration/c03/test_owned_profiles.py tests/integration/c03/test_profile_races.py -vv --strict-markers -o faulthandler_timeout=30
+timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_profile_policy.py tests/integration/c03/test_owned_profiles.py tests/integration/c03/test_profile_races.py -vv --strict-markers -o faulthandler_timeout=30
 
 # Task 3 private snapshots, bounded consent callback and PostgreSQL races.
-timeout 180s uv run --frozen pytest tests/unit/c03/test_baseline_fields.py tests/unit/c03/test_consent_callback_contract.py tests/integration/c03/test_baseline_workflow.py tests/integration/c03/test_baseline_consent.py tests/integration/c03/test_baseline_races.py -vv --strict-markers -o faulthandler_timeout=30
+timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_baseline_fields.py tests/unit/c03/test_consent_callback_contract.py tests/integration/c03/test_baseline_workflow.py tests/integration/c03/test_baseline_consent.py tests/integration/c03/test_baseline_races.py -vv --strict-markers -o faulthandler_timeout=30
 
 # Task 4 PostgreSQL ingress/state/authority races. Real private-store suites are
 # separately mandatory in the exact-C03-only docker/verify_c03_storage.sh job.
-timeout 180s uv run --frozen pytest tests/unit/c03/test_upload_contract.py tests/unit/c03/test_asset_validation.py tests/integration/c03/test_upload_lifecycle.py tests/integration/c03/test_upload_races.py -vv --strict-markers -o faulthandler_timeout=30
+timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_upload_contract.py tests/unit/c03/test_asset_validation.py tests/integration/c03/test_upload_lifecycle.py tests/integration/c03/test_upload_races.py -vv --strict-markers -o faulthandler_timeout=30

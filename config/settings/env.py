@@ -40,6 +40,13 @@ def int_value(name: str, default: int | None = None, minimum: int | None = None)
     return value
 
 
+def bounded_int(name: str, default: int, maximum: int) -> int:
+    value = int_value(name, default, minimum=1)
+    if value > maximum:
+        invalid(name)
+    return value
+
+
 def csv_value(
     name: str, default: str | None = None, required: bool = False
 ) -> tuple[str, ...]:
