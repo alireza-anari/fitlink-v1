@@ -7,6 +7,7 @@ from apps.accounts.security_models import AccountSessionControl
 from apps.governance.consent_models import Consent
 from apps.governance.flag_models import FeatureFlag
 from apps.governance.privacy_models import PrivacyRequest
+from config.c03_event_handlers import professional_profile_metadata
 
 
 def account_security(event, at):
@@ -58,5 +59,6 @@ HANDLERS = MappingProxyType(
         "consent.revoked": consent_metadata,
         "privacy.intake_recorded": privacy_metadata,
         "feature_flag.changed": flag_metadata,
+        "professional.profile_changed": professional_profile_metadata,
     }
 )

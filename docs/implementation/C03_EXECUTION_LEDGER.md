@@ -460,3 +460,38 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   emits athlete.baseline_changed only after a baseline exists. Do not fabricate
   a baseline/event or extend the approved inventory. Cost if wrong: a separately
   approved metadata event would require additive governance schema changes.
+
+- Test-spec sync local 169a76d -> remote fa636833df15fbbec1ed9f6d19dd121fcabc3df7,
+  exact tree 67bd30c20f3a49b285dacfdefb97a701d7ed5489, parent 90e406f,
+  force=false. Run 37721913275 actual job logs inspected.
+- Foundation 113131260699: quality/collection checks pass; the four expected
+  profile-action behavioral failures and 325 unit passes. No product regression
+  success is claimed for later steps skipped after this intentional RED.
+- PostgreSQL 113131260865: all 269 inherited cases, actual Redis restart and
+  PostgreSQL/Redis readiness, and all 136 Task 1/CI cases pass. Task 2 yields
+  65 failures/13 passes: four genuine existing-policy denials plus 61 explicit
+  missing-command/selector/policy contracts. The latter are specification
+  failures, not executed create/race/denial behavior; do not mislabel them as
+  PostgreSQL race RED. All fixtures collect and execute without fixture errors.
+  Implementation will first establish the missing command boundary, then verify
+  its PostgreSQL behavior before claiming Task 2 completion.
+
+## Task 2 minimal owned command boundary
+
+- Extended only four finite athlete/professional profile read/write action names;
+  all existing action behavior remains unchanged. Owner selectors revalidate the
+  current actor under User lock, then exact profile ownership, and return typed
+  private DTOs. Foreign/missing/archived UUIDs use the same unavailable result.
+- Explicit creation uses current locked_actor, derived owner and synchronous
+  metadata audit; professional creation also checks the fresh locked registration
+  switch and emits only approved professional.profile_changed metadata. Registered
+  its bounded current owner/version metadata handler; no routes, roles, baseline,
+  public copies or external effects. No migration changes.
+- This minimal boundary deliberately does not yet implement retry receipts or
+  duplicate-create recovery. Hosted tests must exercise those actual behaviors
+  before their correction; this checkpoint is not Task 2 GREEN/COMPLETE.
+- Local policy/whole unit GREEN: 329 passed (10.63s). Ruff/format 300 files,
+  mypy 52 files, Django and diff checks pass. Mypy initially caught record lambdas
+  returning the audit UUID where OutcomeRecorder requires None; explicit typed
+  record callbacks fixed that boundary without suppressing the check.
+- Task 2 STARTED/PENDING_BEHAVIORAL_CI; Tasks 3–14 remain PENDING.

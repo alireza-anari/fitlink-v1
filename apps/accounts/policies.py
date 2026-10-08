@@ -52,6 +52,10 @@ NORMAL_ACTIONS = CONTROL_ACTIONS | frozenset(
         "referral.attribute",
         "referral.status",
         "staff.command",
+        "athlete.profile_read",
+        "athlete.profile_write",
+        "professional.profile_read",
+        "professional.profile_write",
     }
 )
 
