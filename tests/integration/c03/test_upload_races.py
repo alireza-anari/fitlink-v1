@@ -20,7 +20,7 @@ from .upload_helpers import PNG, begin, body, owner, shared_store
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
 
 
-@pytest.mark.parametrize("invalidate", ["logout", "abandon", "archive"])
+@pytest.mark.parametrize("invalidate", ["logout", "abandon", "archive", "foreign_key"])
 def test_receive_io_reservation_has_no_database_lock_and_rechecks_authority(
     invalidate, monkeypatch
 ):
@@ -62,6 +62,10 @@ def test_receive_io_reservation_has_no_database_lock_and_rechecks_authority(
                 s.profile.__class__.objects.filter(pk=s.profile.pk).update(
                     state="archived"
                 )
+            elif invalidate == "foreign_key":
+                Asset.objects.filter(pk=identifier).update(
+                    source_key="quarantine/" + uuid4().hex
+                )
             else:
                 current = Asset.objects.get(pk=identifier)
                 commands.abandon_profile_upload(
@@ -82,7 +86,7 @@ def test_receive_io_reservation_has_no_database_lock_and_rechecks_authority(
     ).exists()
 
 
-@pytest.mark.parametrize("invalidate", ["abandon", "logout"])
+@pytest.mark.parametrize("invalidate", ["abandon", "logout", "archive"])
 def test_finalize_abandon_and_logout_races(invalidate, monkeypatch):
     s = owner()
     dto, _ = begin(s)
@@ -121,6 +125,10 @@ def test_finalize_abandon_and_logout_races(invalidate, monkeypatch):
                     append_event,
                     control_id=s.actor.control_id,
                 )
+            elif invalidate == "archive":
+                s.profile.__class__.objects.filter(pk=s.profile.pk).update(
+                    state="archived"
+                )
             else:
                 commands.abandon_profile_upload(
                     s.actor, identifier, dto["version"], uuid4(), timezone.now()
@@ -131,7 +139,7 @@ def test_finalize_abandon_and_logout_races(invalidate, monkeypatch):
             invalidating.result(timeout=5)
         finally:
             release.set()
-        with pytest.raises((PermissionError, ValueError)):
+        with pytest.raises((PermissionError, LookupError, ValueError)):
             finalizing.result(timeout=15)
     assert Asset.objects.get(pk=identifier).accepted_at is None
     assert not OutboxEvent.objects.filter(

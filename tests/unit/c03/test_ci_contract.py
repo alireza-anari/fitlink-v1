@@ -14,11 +14,13 @@ ROOT = Path(__file__).resolve().parents[3]
 WORKFLOW = ROOT / ".github/workflows/ci.yml"
 ENTRY = ROOT / "docker/verify_c03_incremental.sh"
 TRIGGER = "    branches: [accounts/c02-cloud, profiles/c03-cloud]"
-C03_STEP = """      - name: C03 cumulative installed PostgreSQL contracts
+C03_STEP = r"""      - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'
-        run: sh docker/verify_c03_incremental.sh
+        run: |
+          python docker/c03_gate_diagnostics.py postgresql \
+            sh docker/verify_c03_incremental.sh
 """
-C03_STORAGE_JOB = """  c03-storage:
+C03_STORAGE_JOB = r"""  c03-storage:
     if: github.ref == 'refs/heads/profiles/c03-cloud'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -34,7 +36,36 @@ C03_STORAGE_JOB = """  c03-storage:
       - name: Frozen private storage gate environment
         run: uv sync --frozen --group dev
       - name: C03 real private MinIO and owned upload contracts
-        run: sh docker/verify_c03_storage.sh
+        run: |
+          python docker/c03_gate_diagnostics.py storage \
+            sh docker/verify_c03_storage.sh
+"""
+DIAGNOSTIC_FOUNDATION = """        run: |
+          if [ "$GITHUB_REF" = refs/heads/profiles/c03-cloud ]; then
+            python docker/c03_gate_diagnostics.py foundation sh docker/verify_c02.sh
+          else
+            sh docker/verify_c02.sh
+          fi
+"""
+DIAGNOSTIC_ARTIFACT = """      - name: C03 bounded diagnostic evidence
+        if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-{phase}-diagnostics
+          path: .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+"""
+TIMEOUT_PROBE = """  c03-timeout-probe:
+    if: github.ref == 'refs/heads/profiles/c03-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Isolated actual Compose timeout ownership probe
+        run: python docker/c03_timeout_probe.py
 """
 # Exact approved C02 workflow blob, before the narrowly authorized extension.
 C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
@@ -42,6 +73,12 @@ C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
 
 def inherited_workflow_is_intact(source):
     inherited = source.replace(TRIGGER, "    branches: [accounts/c02-cloud]")
+    inherited = inherited.replace(
+        DIAGNOSTIC_FOUNDATION, "        run: sh docker/verify_c02.sh\n"
+    )
+    for phase in ("foundation", "postgresql", "storage"):
+        inherited = inherited.replace(DIAGNOSTIC_ARTIFACT.format(phase=phase), "")
+    inherited = inherited.replace(TIMEOUT_PROBE, "")
     inherited = inherited.replace(C03_STEP, "")
     inherited = inherited.replace(C03_STORAGE_JOB, "")
     data = inherited.encode()
@@ -77,7 +114,7 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 1
+    assert source.count("        if:") == 4
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)
 

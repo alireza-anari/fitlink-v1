@@ -266,6 +266,7 @@ def test_foreign_upload_binding_and_download_denied(monkeypatch):
     ]
     assert [r.status_code for r in responses] == [404, 404]
     assert responses[0].content == responses[1].content
+    assert body(other, dto).status_code == 404
     from config.use_cases import profile_assets
 
     def forbidden(*args, **kwargs):
@@ -303,7 +304,8 @@ def test_current_account_and_profile_loss_deny_finalization(state, monkeypatch):
     response = body(s, dto)
     assert response.status_code == 200
     s.user.state = state
-    s.user.save(update_fields=["state"])
+    s.user.is_active = state != "suspended"
+    s.user.save(update_fields=["state", "is_active"])
     assert finalize(s, response.json()).status_code == 403
     assert Asset.objects.get(pk=dto["id"]).accepted_at is None
 

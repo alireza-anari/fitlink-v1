@@ -52,7 +52,20 @@ jobs:
           uv run --frozen pytest tests/unit -q --strict-markers
           uv run --frozen python docker/production_check.py
       - name: Exact C01 upgrade and complete isolated C02 regression
-        run: sh docker/verify_c02.sh
+        run: |
+          if [ "$GITHUB_REF" = refs/heads/profiles/c03-cloud ]; then
+            python docker/c03_gate_diagnostics.py foundation sh docker/verify_c02.sh
+          else
+            sh docker/verify_c02.sh
+          fi
+      - name: C03 bounded diagnostic evidence
+        if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-foundation-diagnostics
+          path: .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
   c02-migrations:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -133,7 +146,17 @@ jobs:
           uv run --frozen python docker/c02_limiter_restart_probe.py verify
       - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'
-        run: sh docker/verify_c03_incremental.sh
+        run: |
+          python docker/c03_gate_diagnostics.py postgresql \
+            sh docker/verify_c03_incremental.sh
+      - name: C03 bounded diagnostic evidence
+        if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-postgresql-diagnostics
+          path: .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
   c03-storage:
     if: github.ref == 'refs/heads/profiles/c03-cloud'
     runs-on: ubuntu-24.04
@@ -150,4 +173,24 @@ jobs:
       - name: Frozen private storage gate environment
         run: uv sync --frozen --group dev
       - name: C03 real private MinIO and owned upload contracts
-        run: sh docker/verify_c03_storage.sh
+        run: |
+          python docker/c03_gate_diagnostics.py storage \
+            sh docker/verify_c03_storage.sh
+      - name: C03 bounded diagnostic evidence
+        if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-storage-diagnostics
+          path: .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c03-timeout-probe:
+    if: github.ref == 'refs/heads/profiles/c03-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Isolated actual Compose timeout ownership probe
+        run: python docker/c03_timeout_probe.py

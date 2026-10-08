@@ -902,3 +902,64 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   output remain secret-free; timeout is failure, inherited gates untouched. These
   are diagnostics, not a claimed root-cause fix. Required service RED/GREEN and
   actual logs remain blocking completion gates. Task 4 IN_PROGRESS; no Task 5.
+- Recovery checkpoint 2026-10-08 08:42 UTC: latest published Task 4 diagnostic
+  head 411fc4f6206e07de4b60b6e20cf5d1568c96e63c, tree
+  9bb06ddebbc0538797aa7eae58a35db705ff16ba; local committed counterpart
+  8675b63cdc358d7b5365da1b7679a0bbac7420d1. Source run 37750691259:
+  PostgreSQL 113222883457, private MinIO 113222883688, foundation 113222883770
+  remain in_progress per actual API metadata. PostgreSQL cumulative step starts
+  08:36:09; no terminal result exposed after the configured 300s/kill grace.
+  Earlier diagnostic run 37749178799 PostgreSQL 113217906722 is cancelled.
+  Earlier cancelled service logs still return BlobNotFound; no root cause or
+  behavioral results inferred. Do not replace this gate with a passing local unit
+  assertion or advance to implementation acceptance/Task 5.
+- Unpublished valid Task 4 test refinements preserved: suspended-account fixture
+  satisfies existing state/is_active CHECK; cross-user body rejected before I/O;
+  changed source key during receive and profile archival during finalize races.
+  Focused changed-spec Ruff/format and diff checks pass; service execution pending.
+- All protected refs rechecked unchanged; original checkout remains 5f399ec/tree
+  6af62b2 and all 17 unpublished files match preserved copies byte-for-byte.
+  Task 4 remains IN_PROGRESS/PENDING_CI, ownership/finalization core not yet
+  implemented; Tasks 1–3 COMPLETE. No Task 5, C04, merge or deployment.
+- Recovery/diagnosis-only preflight 2026-10-08 09:11 UTC: status, complete
+  staged/unstaged diffs, local history, Task 4 plan and ledger inspected before
+  edits. Local 8675b63 tree equals authoritative published 411fc4f/tree 9bb06dd;
+  all three unpublished ledger/lifecycle/race refinements above are retained.
+  Task 4 partially implemented; Task 5 not started. Tasks 1–3 remain COMPLETE.
+- Runs 37749178799 and 37750691259: every job/step inspected and all six actual
+  log downloads attempted. PostgreSQL jobs 113217906722/113222883457 and storage
+  113217907034/113222883688 are cancelled while their owning step is still
+  recorded in_progress; post/cleanup steps pending. Foundation 113217907065
+  subsequently cancelled at 09:25:28 with the exact rehearsal still in_progress;
+  113222883770 still in_progress at 09:36. Actual logs return BlobNotFound,
+  including cancelled jobs retried at 09:36. Last confirmed progress is only the
+  enclosing step; last SQL/test/container/cleanup child remains UNKNOWN for each
+  boundary. No shared cause, DB deadlock or MinIO failure is inferred.
+- Independent actual local ownership experiment: GNU timeout exits 124 while
+  a deliberately detached child survives and retains the inherited output pipe;
+  communicate() then times out. The newly created child alone was terminated.
+  This disproves a general complete-process-tree guarantee of the existing
+  wrapper, but does NOT establish that this mechanism caused the hosted hangs.
+  Local Docker and /proc are unavailable; hosted ownership evidence is required.
+- Diagnostic ruling: passively observe the unchanged three real-service commands
+  on the exact execution ref. Sanitized tagged PID/PPID/PGID/session/wait/stdin
+  observations, finite Compose state/container children, query-free PostgreSQL
+  activity/blocker facts, MinIO readiness and disk availability emit flushed
+  JSONL, with a pinned exact-ref always() diagnostic artifact step. No environment,
+  credentials, SQL text, private object keys/content or raw container health logs
+  are collected. An independent stateless real Docker/Compose timeout probe
+  tests the existing ownership mechanism; only its own new fixture is removed,
+  with no volumes. Probe success cannot substitute for any application gate.
+  Existing service commands, timeouts and immutable C01/C02 scripts are retained.
+- Local diagnostic infrastructure RED: 7 failed/18 passed because the strict
+  inherited workflow normalization did not recognize the narrow diagnostic
+  additions. Exact canonical normalization now retains the original C02 blob
+  guard and negative gate-removal assertions: 27 passed/1.12s including sanitized
+  diagnostic output, bounded metadata execution and real nonzero exit propagation.
+  Full local units 414 passed/12.04s before two added diagnostic observation cases;
+  both added cases passed in that focused 27-case run. Full Ruff/format (327
+  files), inherited mypy (92 files), Django and production checks pass. These are
+  local infrastructure results, not service PASS or a root-cause conclusion.
+  Task 4 IN_PROGRESS/PENDING_CI; diagnosis only, no ownership core or Task 5 work.
+- Final diagnostic source local unit gate: 416 passed/11.99s, no skips. Diagnostic
+  observation additions preserve the strict inherited workflow blob contract.
