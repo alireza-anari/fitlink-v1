@@ -43,8 +43,10 @@ def test_container_process_arguments_are_sanitized(monkeypatch):
     monkeypatch.setattr(
         diag,
         "query",
-        lambda command: "PID PPID PGID SID STAT COMMAND\n"
-        "123 1 123 123 S python -c synthetic-private-content\n",
+        lambda command: (
+            "PID PPID PGID SID STAT COMMAND\n"
+            "123 1 123 123 S python -c synthetic-private-content\n"
+        ),
     )
     rows = diag.container_processes(
         [{"id": "a" * 64, "status": "running", "project": next(iter(diag.PROJECTS))}]

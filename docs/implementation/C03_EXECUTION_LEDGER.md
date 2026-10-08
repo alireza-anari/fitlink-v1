@@ -963,3 +963,14 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   Task 4 IN_PROGRESS/PENDING_CI; diagnosis only, no ownership core or Task 5 work.
 - Final diagnostic source local unit gate: 416 passed/11.99s, no skips. Diagnostic
   observation additions preserve the strict inherited workflow blob contract.
+- Published diagnostic checkpoint local 1e89cc9 -> remote 8a07f478c54b54d8aa7d74d1ab1d3125db7e2261,
+  tree 54b25eb199bebbd8ff437c5577307f0b64b7b05f, normal parent 411fc4f,
+  force=false; source Actions 37758067055. Protected refs remain unchanged.
+  Actual complete probe log 113247454008: real Compose fixture starts, existing
+  GNU timeout returns 124, container_alive_after_timeout=true. Probe fails closed
+  (exit 1) and removes only its own stateless fixture. This proves a hosted Docker
+  ownership defect, still not the identified cause of the three original hangs.
+  Foundation log 113247454148 is a distinct diagnostic-source formatting failure
+  before rehearsal: two newly added test lines were not re-formatted after their
+  addition. Corrected formatting only; no inherited check bypassed. Other two
+  service jobs remain under observation; no service PASS or behavioral RED claimed.
