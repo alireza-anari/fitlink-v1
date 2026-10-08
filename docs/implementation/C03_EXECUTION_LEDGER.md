@@ -1065,3 +1065,17 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   Neither reproduces its historical hang in this run. These are diagnostic
   observations, not service PASS, original root-cause proof or functional fixes.
   Foundation 113327374407 remains under its bounded observation window.
+- Metadata-evidence checkpoint local faa69b2069433913d93a8df55363bf20e76ed744 ->
+  published c3769b09d229d29de4b8b4b4f9baf237a3607ba6, exact tree
+  236e922145b6cc1248ea0267f5d7b2e7ea45a303; run 37783207165.
+  Actual complete probe log 113331261184 exposes the precise infrastructure RED:
+  at 3.1s Docker inspect returns 1 / inspect_missing_health_field. The classifier
+  matches Docker's fixed "map has no entry for key Health" failure, without
+  relaying raw stderr. Stateless container lacks a healthcheck; direct
+  .State.Health lookup breaks the whole container snapshot, so cleanup has no
+  owned IDs and reports complete=false. The detached host child is correctly
+  adopted and terminated. Final JSONL and terminal event survive; artifact
+  upload follows. Correct only this diagnostic template: index the optional
+  Health key, report health="none" when absent, retain metadata/privacy limits.
+  This diagnosed observability/cleanup defect is distinct from the original
+  three hangs; no functional asset-ingress correction is authorized or made.

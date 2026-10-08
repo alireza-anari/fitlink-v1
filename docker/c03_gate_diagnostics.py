@@ -60,6 +60,12 @@ WORDS = {
     "bash",
     "docker",
     "compose",
+    "docker-compose",
+    "inspect",
+    "top",
+    "ps",
+    "stop",
+    "rm",
     "build",
     "up",
     "down",
@@ -243,9 +249,10 @@ def containers():
         return None
     # Never inspect Config.Env, health output, commands, object keys or mounts.
     fmt = (
+        '{{$health := index .State "Health"}}'
         '{"id":{{json .Id}},"status":{{json .State.Status}},'
-        '"pid":{{.State.Pid}},"health":{{if .State.Health}}'
-        '{{json .State.Health.Status}}{{else}}"none"{{end}},'
+        '"pid":{{.State.Pid}},"health":{{if $health}}'
+        '{{json (index $health "Status")}}{{else}}"none"{{end}},'
         '"project":{{json (index .Config.Labels "com.docker.compose.project")}},'
         '"service":{{json (index .Config.Labels "com.docker.compose.service")}},'
         '"image":{{json .Config.Image}}}'
