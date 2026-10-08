@@ -1,0 +1,31 @@
+name: C03 Task 4 slice B real private MinIO
+on:
+  push:
+    branches: [diagnostics/c03-task4-storage-slice-b]
+permissions:
+  contents: read
+jobs:
+  private-storage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Existing real private MinIO gate - never Task 4 PASS
+        run: python docker/c03_storage_slice.py
+      - name: Redacted private-storage evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-slice-b-storage
+          path: |
+            .runtime/c03-triage/*.jsonl
+            .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
