@@ -58,6 +58,8 @@ NORMAL_ACTIONS = CONTROL_ACTIONS | frozenset(
         "athlete.baseline_write",
         "professional.profile_read",
         "professional.profile_write",
+        "asset.owner_read",
+        "asset.owner_write",
     }
 )
 

@@ -1,0 +1,53 @@
+name: C03 Task 4 slice A PostgreSQL validation
+on:
+  push:
+    branches: [diagnostics/c03-task4-postgresql-slice-a]
+permissions:
+  contents: read
+jobs:
+  targeted-triage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+        env:
+          POSTGRES_DB: fitlink
+          POSTGRES_USER: fitlink
+          POSTGRES_PASSWORD: ephemeral-triage-fixture
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U fitlink -d fitlink"
+          --health-interval 3s --health-timeout 3s --health-retries 30
+    env:
+      POSTGRES_HOST: '127.0.0.1'
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: fitlink
+      POSTGRES_USER: fitlink
+      POSTGRES_PASSWORD: ephemeral-triage-fixture
+      OTP_RATE_REDIS_URL: 'redis://127.0.0.1:6379/4'
+      CELERY_BROKER_URL: 'redis://127.0.0.1:6379/1'
+      CELERY_RESULT_BACKEND: 'redis://127.0.0.1:6379/2'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Frozen targeted environment
+        run: uv sync --frozen --group dev
+      - name: Slice A lifecycle and races only - never Task 4 PASS
+        run: uv run --frozen python docker/c03_triage_runner.py observe postgresql
+      - name: Redacted targeted evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-slice-a-postgresql
+          path: |
+            .runtime/c03-triage/*.jsonl
+            .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
