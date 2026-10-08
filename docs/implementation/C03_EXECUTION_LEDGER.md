@@ -65,9 +65,9 @@ No interface redesign is authorized. The approved corrected plan remains unchang
 
 ## Task states
 
-Task 1: STARTED — inherited gates green at 01d400d; metadata/source guards in progress.
+Task 1: COMPLETE — exact implementation head 63edc7c; Actions 37698722147 GREEN.
 Tasks 2–14: PENDING — not started.
-No C03 task COMPLETE or C03 PASS claim.
+C03 overall remains IN_PROGRESS; no C03 PASS claim.
 
 ## Task 1 CI bootstrap
 
@@ -393,3 +393,44 @@ No C03 task COMPLETE or C03 PASS claim.
   mypy 55 files, Django/production checks, no model-state drift, shell syntax and
   diff checks pass. Local PostgreSQL unavailable; exact-head hosted GREEN remains
   mandatory. Task 1 STARTED/PENDING_CI; Tasks 2–14 PENDING.
+
+## Recovery inspection and Task 1 completion (2026-10-08)
+
+- Recovery was read-only first: both checkout statuses, HEAD/tree/logs, all
+  staged/unstaged diffs and untracked paths, canonical ledger, remote execution
+  ref and run 37698722147 inspected before any change. Original checkout remains
+  at 5f399ec with all 17 unpublished files; preserved candidate copy also remains.
+  No reset, clean, stash, rematerialization or overwrite occurred.
+- Recovery checkout local 5ee402fd66e21f49a28d19b722ca10d1c8bd18ec maps to remote
+  63edc7c0bd641fea0da3e3ddbd9d4bc6cd06853e; both exact trees equal
+  bad6dce76654a836cbd58b524b1fdee65868e6cd. No unpublished newer work in this
+  checkout. All four protected refs rechecked and unchanged.
+- Run https://github.com/alireza-anari/fitlink-v1/actions/runs/37698722147:
+  both jobs completed SUCCESS on exactly 63edc7c. Actual complete logs inspected,
+  not inferred from the previous pending checkpoint.
+- PostgreSQL job 113056735108: all 269 inherited service tests; real Redis
+  durable quota prepare/restart/PING/verify; actual PostgreSQL/Redis readiness;
+  every installed additive migration SQL; no model-state drift; mypy 55 files;
+  all 135 selected C03 CI/schema/constraint/evidence cases including populated
+  historical C02 upgrade and final ownership guards. Exit 0, no selected skips.
+- Foundation job 113056735314: 311 current units, Ruff/format 285 files, mypy
+  88 files, frozen dependencies/static/Django/production checks; exact immutable
+  C01 source verification, original 70 units/90 backend cases and all original
+  viewport/transport/storage restarts; populated exact C01 same-database
+  prepare/verify; 710 current backend cases; two ASGI smoke and 38 C02 browser
+  cases; durable outbox broker restart and final 5 transport/1 storage/2 viewport
+  cases. Every required step exit 0, no selected skips.
+- Recovery executor restored Python 3.13.15 with unchanged frozen locks and
+  npm ci. Fresh local 311-unit run (11.99s), full Ruff/format, mypy 55 files,
+  Django/production checks and diff checks pass. No local PostgreSQL is available;
+  actual hosted evidence above is the required Task 1 service completion gate.
+- Task 1 checklist reviewed: CI bootstrap and behavioral RED checkpoints,
+  additive optional/unique schemas, matching evidence/revocation/target bindings,
+  NULL/metadata/immutability/runtime-role guards, historical populated upgrade,
+  original regressions and no drift are all covered by recorded actual runs.
+  Reviewed migration splitting/names differ from proposed filenames but preserve
+  the approved additive schema and no User/accounts/original migration changes.
+- Task 1: complete (validated source 63edc7c, tree bad6dce; cumulative hosted
+  docker/verify_c03_incremental.sh and inherited full rehearsal → SUCCESS).
+  This completion document does not replace implementation-head evidence.
+  Task 2 is next; no merge, deployment, C04 or future-domain work.
