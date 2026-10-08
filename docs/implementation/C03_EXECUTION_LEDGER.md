@@ -67,7 +67,8 @@ No interface redesign is authorized. The approved corrected plan remains unchang
 
 Task 1: COMPLETE — exact implementation head 63edc7c; Actions 37698722147 GREEN.
 Task 2: COMPLETE — exact source d619d7e; Actions 37723166576 both jobs GREEN.
-Tasks 3–14: PENDING — not started.
+Task 3: BLOCKED_EXECUTOR / REQUIRED_CORRECTIONS_PENDING — source 35d8f24; run 37726128979 PostgreSQL RED (9 failed / 67 passed).
+Tasks 4–14: PENDING — not started.
 C03 overall remains IN_PROGRESS; no C03 PASS claim.
 
 ## Task 1 CI bootstrap
@@ -590,3 +591,53 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   remains subject to the existing approved-wording release dependency.
 - Before expanding SQL receipt commands or repairing the step CHECK, exercise
   this command boundary against actual PostgreSQL. No Task 3 GREEN claimed.
+
+## Task 3 behavioral checkpoint and executor disconnection
+
+- Boundary local f8f97a8d149617f4b974832e1e3accf211ffe761 -> remote
+  35d8f24e9cf058982759f447453dfeb16ca303b8; exact tree
+  0cac0d4b3bb3664b00571d7ac8f2ec520fd440aa; parent 9424a32, force=false.
+  Local boundary quality: 380 units (10.83s), Ruff/format 311 files,
+  mypy 27 relevant files and diff check pass. Local migration-state check reports
+  no model changes; local PostgreSQL unavailable, hosted service is authoritative.
+- Run https://github.com/alireza-anari/fitlink-v1/actions/runs/37726128979
+  is source-bound to exactly 35d8f24. PostgreSQL job 113144593985 completed
+  FAILURE; its complete actual log was inspected. 269 inherited cases (74.22s),
+  real Redis durable restart and PostgreSQL/Redis readiness, 137 Task 1/CI cases
+  (28.12s) and all 78 Task 2 cases (13.60s) pass.
+- Task 3 actual command execution: 9 failed / 67 passed (10.46s). Eight failures
+  are real SQL receipt CHECK denials for baseline.grant_storage, preventing
+  optional/correction/revoke cases from reaching later behavior. One is the
+  reproduced missing onboarding-step CHECK. Resume, required-only decline/
+  submission, optimistic save/replay, cross-owner denials, audit rollback,
+  save-versus-submit and duplicate begin execute and pass. Do not label blocked
+  consent/revoke/correction cases GREEN. Foundation job 113144593715 was still
+  in the full inherited rehearsal at the last inspection; no completion claim.
+- Required next repair: a minimal additive Task 3 migration for finite wizard
+  steps and the two grant/revoke receipt command values, preserving all old
+  accepted values. This repairs the demonstrated installed-interface gap in
+  Task 3, not a Task 1 restart or a rewrite of existing migrations. Its SQL,
+  no-drift and corrected-head full regression gates remain mandatory.
+- Later unpublished local changes remain in the active recovery checkout:
+  apps/athletes/baseline.py (owner-serialized receipt read and consent ordering),
+  apps/athletes/validation.py (Decimal(8,2) upper boundary correction),
+  config/use_cases/c03_privacy.py (locked current consent rows),
+  tests/integration/c03/test_baseline_races.py (both committed save/revoke orders),
+  tests/unit/c03/test_baseline_fields.py (upper boundary regression).
+  The added decimal boundary first failed on the actual validator, then all
+  51 field/callback units passed after correction. These local changes are not
+  remotely synchronized or fully verified. Preserve and inspect them on resume.
+- The executor transport disconnected during a subsequent read-only inspection:
+  "exec-server transport disconnected; failed to resume exec-server session:
+  recovery timed out after 25s". Read-only pwd/status retries stalled and were
+  stopped; no reset, cleanup, stash, discard, checkout-over or replacement was
+  attempted. Final local status could not be re-read after that disconnection.
+- This remote documentation-only forward checkpoint records the blocker because
+  local file execution is unavailable. Source files remain exactly those of
+  35d8f24. On recovery, compare this remote ledger delta with local HEAD f8f97a8
+  and its five known unpublished edits; reconcile the ledger without overwriting
+  those edits. .superpowers/task3-sync.json still describes the source checkpoint.
+  Original fitlink-v1 checkout and its 17 unpublished files were never changed.
+- Protected refs were re-read and remain exactly the immutable heads recorded
+  above. Task 3 BLOCKED_EXECUTOR / REQUIRED_CORRECTIONS_PENDING, not COMPLETE;
+  Tasks 4–14 PENDING. No overall C03 PASS, C04, merge or deployment.
