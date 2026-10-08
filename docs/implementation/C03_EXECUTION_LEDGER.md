@@ -66,7 +66,7 @@ No interface redesign is authorized. The approved corrected plan remains unchang
 ## Task states
 
 Task 1: COMPLETE — exact implementation head 63edc7c; Actions 37698722147 GREEN.
-Task 2: STARTED — policy behavioral RED; hosted owner/race test checkpoint pending.
+Task 2: STARTED/PENDING_CI — behavioral retry/race RED observed; receipt correction ready.
 Tasks 3–14: PENDING — not started.
 C03 overall remains IN_PROGRESS; no C03 PASS claim.
 
@@ -495,3 +495,37 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   returning the audit UUID where OutcomeRecorder requires None; explicit typed
   record callbacks fixed that boundary without suppressing the check.
 - Task 2 STARTED/PENDING_BEHAVIORAL_CI; Tasks 3–14 remain PENDING.
+
+## Task 2 PostgreSQL behavioral checkpoint and receipt correction
+
+- Minimal-boundary sync local 550ff9ac00d94fa5a164468ceb430d673c7edd2c ->
+  remote 1c92d8bdfecaad4dfd1402ea430bffd9a88f4146, exact tree
+  df41c6183971aff11a80667969038b73df6e7c3e; parent fa63683, force=false.
+- Run 37722467130 PostgreSQL job 113133046549 actual logs inspected: 269
+  inherited cases, real Redis quota restart and PostgreSQL/Redis readiness,
+  all 136 Task 1/CI cases pass. Actual Task 2 command execution: 16 failed/62
+  passed (17.77s). Fourteen are behavioral RED: duplicate SQL failures on
+  create/replay/concurrent same/different operations, archived retry errors,
+  and the registration switch wrongly blocking an existing owned retry.
+- Two failures are test-fixture defects, not behavioral RED: expires_at equal
+  to created_at violates the retained C02 session_expiry CHECK before the
+  command. Corrected only the synthetic test time to created_at+1 second and
+  call at that valid expiry boundary. The C02 constraint is unchanged.
+- All 32 independent-connection create-versus-logout/restriction/suspension/
+  pending-deletion cases pass in both committed orders on the minimal boundary;
+  current owner/foreign UUID/state/rollback/metadata tests execute real services.
+- Correction serializes User, current owned profile and owner-scoped receipt;
+  checks command plus normalized input hash, binds the result UUID, and rebuilds
+  a safe current DTO. New keys return the existing profile with their own receipt;
+  same keys reuse one receipt. Only first creation audits/emits a created effect.
+  Archived/missing/foreign results remain unavailable; current authorization
+  precedes receipt conflicts. Registration is checked only for a new professional
+  row, with the existing locked authoritative switch, never for owner setup.
+- Focused security review: dual domains stay independent; no actor/owner supplied
+  by payload, no profile/role/staff/flag permission bypass; immutable account
+  actions outside the four finite additions retain prior behavior. No migration,
+  dependency, route, baseline/role seed, public projection or future-domain change.
+- Local corrected source: 329 units (10.62s), Ruff/format 300 files, full inherited
+  mypy plus profile modules 140 files, Django/production and diff checks pass.
+  Real corrected-head PostgreSQL and complete inherited rehearsal remain pending;
+  Task 2 is not COMPLETE and Task 3 has not started.

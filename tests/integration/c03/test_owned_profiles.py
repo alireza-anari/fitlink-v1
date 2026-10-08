@@ -139,10 +139,12 @@ def test_receipt_payload_conflict_returns_only_after_current_authorization(label
 def test_old_control_underage_or_ineligible_actor_has_no_profile_access(label, defect):
     s = make_actor()
     actor = s.actor
+    at = s.at
     if defect == "version":
         s.user.auth_version += 1
     elif defect in {"revoked", "expired"}:
-        change = {"revoked_at": s.at} if defect == "revoked" else {"expires_at": s.at}
+        at = s.at + timedelta(seconds=1)
+        change = {"revoked_at": s.at} if defect == "revoked" else {"expires_at": at}
         AccountSessionControl.objects.filter(pk=actor.control_id).update(**change)
     elif defect == "control":
         actor = replace(actor, scope=SessionScope.ACCOUNT_CONTROL)
@@ -157,9 +159,9 @@ def test_old_control_underage_or_ineligible_actor_has_no_profile_access(label, d
             s.user.is_active = False
     s.user.save()
     with pytest.raises(PermissionError):
-        create(label, actor, uuid4(), s.at)
+        create(label, actor, uuid4(), at)
     with pytest.raises(PermissionError):
-        read(label, actor, s.at)
+        read(label, actor, at)
     assert profile_model(label).objects.count() == 0
 
 
