@@ -861,3 +861,21 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   DRF parser alone cannot enforce the user request-size contract. Cost if wrong:
   later adapters must retain the same early scoped ingress boundary. No broad
   body-limit changes to existing C02 routes. Hosted behavioral RED still pending.
+- Probe correction checkpoint local 8f0dd48a0f2a042c02c1ef64ac6cd6c4e683d2ce
+  -> published 199dfb63c565446e5acbd1370f1cddc6fa4a96f2, tree
+  02ffb6ace824e137a5b63dc5dd9683b4bf56f461. Run 37745994600 PostgreSQL
+  job 113207499024 times out in cumulative C03; prior 113204961886 likewise.
+  Connector returns BlobNotFound for both completed cancelled job logs, so their
+  behavioral test results remain unknown. MinIO job is not yet complete. No
+  service gate is claimed GREEN or intended behavioral RED from this metadata.
+- Independently reproducible real transport RED: existing Django ASGI application
+  accepts 10,027,008 actual request bytes into route handling (404) rather than
+  enforcing the required 400 cap (one failure, 0.39s). Scoped pre-Django and
+  pre-CSRF caps make this and absent/lying-header wrapper cases pass (3/0.20s).
+  Bounded conditional-write/read and declaration/admission primitives now pass;
+  combined Task 4 units and CI contracts 40 passed/1.76s, no skips. No owner
+  lifecycle, finalization, readiness or scanner implementation in this checkpoint.
+- C03-only explicit pytest commands now have a 180-second process timeout and
+  30-second faulthandler trace with verbose case names to diagnose stalled gates.
+  Timeout is a failure, never a pass/skip. Inherited commands/timeouts untouched;
+  actual hosted PostgreSQL and private MinIO behavioral evidence still required.

@@ -11,6 +11,50 @@ from apps.assets.storage import FakePrivateStore
 pytestmark = pytest.mark.unit
 
 
+def test_real_asgi_application_rejects_oversized_ingress_before_parsing():
+    import asyncio
+
+    from asgiref.testing import ApplicationCommunicator
+
+    from config.asgi import application
+
+    async def run():
+        identifier = "00000000-0000-0000-0000-000000000001"
+        communicator = ApplicationCommunicator(
+            application,
+            {
+                "type": "http",
+                "asgi": {"version": "3.0"},
+                "http_version": "1.1",
+                "scheme": "http",
+                "method": "POST",
+                "path": f"/api/v1/profile-assets/{identifier}/body/",
+                "query_string": b"",
+                "headers": [
+                    (b"host", b"testserver"),
+                    (b"content-type", b"multipart/form-data; boundary=x"),
+                ],
+                "server": ("testserver", 80),
+            },
+        )
+        for _ in range(152):
+            await communicator.send_input(
+                {"type": "http.request", "body": b"x" * 65536, "more_body": True}
+            )
+        await communicator.send_input(
+            {"type": "http.request", "body": b"x" * 65536, "more_body": False}
+        )
+        response = await communicator.receive_output(timeout=10)
+        assert response["status"] == 400
+        assert (b"Cache-Control", b"no-store") in response["headers"] or (
+            b"cache-control",
+            b"no-store",
+        ) in response["headers"]
+        await communicator.wait(timeout=10)
+
+    asyncio.run(run())
+
+
 def test_size_limit_without_content_length():
     store = FakePrivateStore()
     assert callable(getattr(store, "put_stream", None)), "Bounded ingress absent"

@@ -17,4 +17,4 @@ dc up -d --wait db redis minio
 dc run --rm minio-init
 dc run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
 dc run --rm --no-deps checks uv run --frozen python docker/c03_storage_probe.py
-dc run --rm --no-deps checks uv run --frozen pytest tests/unit/test_storage.py tests/unit/c03/test_upload_contract.py tests/unit/c03/test_asset_validation.py tests/integration/c03/test_upload_lifecycle.py tests/integration/c03/test_upload_races.py tests/integration/c03/test_private_assets.py tests/integration/test_minio_storage.py -q --strict-markers
+dc run --rm --no-deps checks timeout 180s uv run --frozen pytest tests/unit/test_storage.py tests/unit/c03/test_upload_contract.py tests/unit/c03/test_asset_validation.py tests/integration/c03/test_upload_lifecycle.py tests/integration/c03/test_upload_races.py tests/integration/c03/test_private_assets.py tests/integration/test_minio_storage.py -vv --strict-markers -o faulthandler_timeout=30

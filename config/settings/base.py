@@ -183,3 +183,7 @@ MIDDLEWARE.insert(
     MIDDLEWARE.index("django.contrib.auth.middleware.AuthenticationMiddleware") + 1,
     "config.account_middleware.AccountMiddleware",
 )
+MIDDLEWARE.insert(
+    MIDDLEWARE.index("django.middleware.csrf.CsrfViewMiddleware"),
+    "config.upload_ingress.UploadRequestLimit",
+)
