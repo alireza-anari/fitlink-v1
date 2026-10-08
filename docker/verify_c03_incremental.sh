@@ -77,3 +77,6 @@ uv run --frozen pytest tests/unit/c03/test_ci_contract.py tests/unit/c03/test_sc
 
 # Task 2 explicit owner, current session, receipt and PostgreSQL race gates.
 uv run --frozen pytest tests/unit/c03/test_profile_policy.py tests/integration/c03/test_owned_profiles.py tests/integration/c03/test_profile_races.py -q --strict-markers
+
+# Task 3 private snapshots, bounded consent callback and PostgreSQL races.
+uv run --frozen pytest tests/unit/c03/test_baseline_fields.py tests/unit/c03/test_consent_callback_contract.py tests/integration/c03/test_baseline_workflow.py tests/integration/c03/test_baseline_consent.py tests/integration/c03/test_baseline_races.py -q --strict-markers

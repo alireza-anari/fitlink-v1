@@ -135,3 +135,15 @@ def test_task2_profile_authority_and_races_are_mandatory():
         "tests/integration/c03/test_owned_profiles.py",
         "tests/integration/c03/test_profile_races.py",
     } <= selected
+
+
+def test_task3_baseline_consent_and_races_are_mandatory():
+    source = ENTRY.read_text()
+    for suite in (
+        "test_baseline_fields",
+        "test_consent_callback_contract",
+        "test_baseline_workflow",
+        "test_baseline_consent",
+        "test_baseline_races",
+    ):
+        assert suite + ".py" in source

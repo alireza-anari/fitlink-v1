@@ -66,7 +66,7 @@ No interface redesign is authorized. The approved corrected plan remains unchang
 ## Task states
 
 Task 1: COMPLETE — exact implementation head 63edc7c; Actions 37698722147 GREEN.
-Task 2: STARTED/PENDING_CI — behavioral retry/race RED observed; receipt correction ready.
+Task 2: COMPLETE — exact source d619d7e; Actions 37723166576 both jobs GREEN.
 Tasks 3–14: PENDING — not started.
 C03 overall remains IN_PROGRESS; no C03 PASS claim.
 
@@ -529,3 +529,44 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   mypy plus profile modules 140 files, Django/production and diff checks pass.
   Real corrected-head PostgreSQL and complete inherited rehearsal remain pending;
   Task 2 is not COMPLETE and Task 3 has not started.
+
+## Task 2 complete head-bound regression evidence
+
+- Correction sync local 2f8392b47efb24bf8fb21afd9327552555d5328d -> remote
+  d619d7ee7e495e377157e4e1f99e111f103caeca; exact tree
+  d7f4270f71a698e7940c5f205db9b335a9b8f793; parent 1c92d8b, force=false.
+  Original checkout and all 17 unpublished files remain unchanged; recovery
+  checkout clean after synchronization.
+- Run https://github.com/alireza-anari/fitlink-v1/actions/runs/37723166576:
+  completed SUCCESS on exactly d619d7e; both complete job logs inspected.
+- PostgreSQL job 113135238455: 269 inherited cases; real Redis durable quota
+  restart/readiness; actual PostgreSQL SELECT/Redis PING; full additive SQL/no
+  migration-state drift/mypy 63 files; 136 Task 1/CI cases (23.76s) and all 78
+  Task 2 cases (11.87s). Duplicate/same-key creation, current owner denial,
+  receipt/current DTO/archival/flag/rollback and all 32 state/logout serialization
+  cases pass. Corrected valid expiry fixtures reach actual permission denial.
+- Foundation job 113135238351: 329 current units, full quality/frozen/static/
+  production checks; exact immutable C01 source and original 70 units/90 backend
+  with viewport/transport/storage restart checks; populated exact C01 same-DB
+  upgrade prepare/verify; 789 current backend cases (254.35s), two ASGI smoke and
+  all 38 C02 browser cases (262.26s); durable outbox broker restart; final five
+  transport/one storage/two viewport cases. All required steps exit 0; no selected
+  skips. This is current-source evidence, not the deferred exact C02 upgrade.
+- Task 2 checklist/security/migration review complete; no unresolved required
+  gate. Task 2: complete (source d619d7e, tree d7f4270; focused real-service command,
+  cumulative gate and whole inherited rehearsal → PASS). Task 3 is next; Tasks
+  3–14 remain unimplemented. No overall C03 PASS, C04, merge or deployment.
+
+## Task 3 started — baseline and self-storage contracts
+
+- Task 2 completion checkpoint local b7bb97a preserves verified source d619d7e.
+  Task 3 starts from that clean preserved workspace; no Task 1/2 restart.
+- Added specification tests for bounded field/unknown-input exclusion, resumable
+  drafts, optimistic receipt/current DTO, optional decline, immutable corrections,
+  self-grantee consent/common callback checks, current revoke/expiry filtering,
+  audit rollback and independent-connection save/submit/revoke/begin races.
+- Test-spec CI selection extends only the cumulative installed gate. Missing APIs
+  assert within collected tests; absent contracts are not mislabeled real SQL or
+  race behavioral RED. Existing profile SQL permits arbitrary onboarding_step;
+  a direct-SQL regression now captures that concrete installed-interface gap.
+- Task 3 STARTED/PENDING_RED; Tasks 4–14 PENDING. No later work begun.
