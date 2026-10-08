@@ -35,6 +35,7 @@ ACTIONS = (
     "baseline.submitted",
     "baseline.corrected",
     "baseline.cleared",
+    "baseline.read",
     "professional.profile_created",
     "professional.profile_saved",
     "professional.roles_changed",

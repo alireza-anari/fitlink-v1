@@ -1,10 +1,11 @@
 """Current-session own projection; no directory, foreign list or count."""
 
 from datetime import datetime
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from django.db import transaction
 
+from apps.accounts.contracts import OutcomeRecorder, SecurityOutcome
 from apps.accounts.sessions import AccountActor, locked_actor
 
 from .baseline import StoragePredicate, locked_baseline, locked_profile, project
@@ -38,11 +39,26 @@ def own_athlete_profile(actor: AccountActor, at: datetime) -> AthleteProfileDTO:
 
 
 def own_baseline(
-    actor: AccountActor, baseline_uuid: UUID, at: datetime, *, storage: StoragePredicate
+    actor: AccountActor,
+    baseline_uuid: UUID,
+    at: datetime,
+    *,
+    storage: StoragePredicate,
+    record: OutcomeRecorder,
 ) -> BaselineDTO:
     validate_context(actor, at)
     with transaction.atomic():
         user = locked_actor(actor, "athlete.baseline_read", at)
         profile = locked_profile(user)
         row = locked_baseline(profile, baseline_uuid)
-        return project(user, row, at, storage)
+        result = project(user, row, at, storage)
+        record(
+            SecurityOutcome(
+                "baseline.read",
+                "accepted",
+                row.id,
+                uuid4(),
+                reason_code="user_requested",
+            )
+        )
+        return result

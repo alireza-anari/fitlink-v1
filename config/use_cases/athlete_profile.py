@@ -151,4 +151,7 @@ def clear_optional_baseline(
 def own_baseline(actor: AccountActor, baseline_uuid: UUID, at: datetime) -> BaselineDTO:
     from apps.athletes.selectors import own_baseline as select_baseline
 
-    return select_baseline(actor, baseline_uuid, at, storage=baseline_storage_current)
+    record, _ = _callbacks(actor)
+    return select_baseline(
+        actor, baseline_uuid, at, storage=baseline_storage_current, record=record
+    )

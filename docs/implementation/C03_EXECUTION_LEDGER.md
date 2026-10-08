@@ -716,3 +716,32 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   The nine existing fixes remain in exact corrected source 519f33e/tree 80fe9b5,
   run 37734616101. Its completion does not waive this additional review gate.
   Task 3 is still IN_PROGRESS; do not close or advance.
+
+## Task 3 read-audit behavioral RED and correction
+
+- Original-nine correction sync local b101b512f3ac3cdd9eff39462d97f42a20121390
+  -> remote 519f33eef437b512198439b7133c18abdce2bb35, exact tree
+  80fe9b56306ce045c44c61330deeec1b99233c4f; parent 636803b, force=false.
+  Run 37734616101 PostgreSQL job 113171225506 complete SUCCESS; actual full
+  log inspected: 269 inherited (83.90s), real Redis restart/readiness, exact
+  athletes0010 SQL preserving six old commands and admitting only two new ones,
+  bounded step CHECK, no drift/mypy 68, 137 Task 1/CI (32.32s), 78 Task 2
+  (16.35s) and all 80 Task 3 cases (12.25s). Original nine failures resolved.
+- Audit-spec local 847072a -> remote 71ee9492ed1b2c93a1cbc2b6240f3713f2d326a0,
+  exact tree 69052ea490d115d00f17de77dfcab946061a72c9; parent 519f33e,
+  force=false. Run 37735002926 PostgreSQL job 113172428650 actual complete
+  log inspected: 269 inherited, real restart/readiness, 137 Task 1/CI, 78 Task 2
+  pass; Task 3 2 failed/80 passed. Actual RED: successful private read writes
+  zero audit rows; audit outage returns a private result (DID NOT RAISE).
+  These are behavior failures, not missing APIs, fixtures or collection errors.
+- Ruling: add only baseline.read to the finite governance audit allowlist using
+  additive governance0014; owner selector accepts the composition recorder and
+  writes metadata synchronously under its existing account/profile/baseline/
+  consent locks before returning. No outbox for reads and no private answer in
+  audit. This satisfies the approved read-audit privacy invariant, not a new
+  audit framework. Cost if wrong: narrowing rollback must retain accepted read
+  history; use feature disable/roll-forward, never delete audit history.
+- Preserved original 17 unpublished files byte-for-byte verified against the
+  recovery backup (zero missing or changed files). No original checkout changes.
+- Additional read correction and exact-head full hosted gates pending; Task 3
+  remains IN_PROGRESS. Tasks 4–14 unstarted; stop is still Task 3 completion.
