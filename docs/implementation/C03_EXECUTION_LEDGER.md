@@ -67,7 +67,7 @@ No interface redesign is authorized. The approved corrected plan remains unchang
 
 Task 1: COMPLETE — exact implementation head 63edc7c; Actions 37698722147 GREEN.
 Task 2: COMPLETE — exact source d619d7e; Actions 37723166576 both jobs GREEN.
-Task 3: BLOCKED_EXECUTOR / REQUIRED_CORRECTIONS_PENDING — source 35d8f24; run 37726128979 PostgreSQL RED (9 failed / 67 passed).
+Task 3: IN_PROGRESS / CORRECTED_HEAD_GATES_PENDING — continuing the existing behavioral RED cycle; not COMPLETE.
 Tasks 4–14: PENDING — not started.
 C03 overall remains IN_PROGRESS; no C03 PASS claim.
 
@@ -641,3 +641,65 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
 - Protected refs were re-read and remain exactly the immutable heads recorded
   above. Task 3 BLOCKED_EXECUTOR / REQUIRED_CORRECTIONS_PENDING, not COMPLETE;
   Tasks 4–14 PENDING. No overall C03 PASS, C04, merge or deployment.
+
+## Task 3 recovery inspection and bounded corrections (2026-10-08)
+
+- Latest user authorization narrows this execution to Task 3 only. Tasks 1 and 2
+  remain COMPLETE; no restart. Stop after Task 3 is fully verified and its ledger
+  synchronized. Tasks 4–14 remain PENDING; no Task 4, C04, merge or deploy.
+- First performed read-only status, HEAD/log, all staged/unstaged diffs, ledger,
+  remote execution ref, full source-tree comparison and both requested Actions
+  logs. Existing local HEAD f8f97a8/tree 0cac0d4 and remote 636803b/tree bfed96e
+  differ in exactly one blob: the recovery ledger. All other 345 blobs/modes match.
+  No staged changes. Four unpublished modified files remain: baseline.py,
+  c03_privacy.py and baseline_races/baseline_fields tests. All are preserved.
+  Original checkout remains at 5f399ec/tree 6af62b2 with all 17 unpublished files.
+- Reconciled only the existing remote ledger delta in a local forward docs commit
+  9589a736c71bb963f73237238883367877f0ac71. Its exact tree is bfed96e, matching
+  636803b. Other unpublished files were neither staged nor changed by reconciliation.
+- Read actual complete logs for preceding run 37726128979 (jobs 113144593715/
+  113144593985) and current checkpoint run 37726731278 (jobs 113146490210/
+  113146490439). Both source-equivalent runs reproduce the same nine failures:
+  eight legitimate grant command receipt inserts hit athletes_receipt_command;
+  one direct SQL health_upload step is wrongly allowed. Both foundation jobs
+  reached 9 failed/857 passed backend cases after original C01 and populated
+  same-DB upgrade; later browser/restart gates were skipped by this RED, not PASS.
+  Both PostgreSQL jobs pass 269 inherited, real durable Redis restart/readiness,
+  137 Task 1/CI and 78 Task 2 cases, then Task 3 9 failed/67 passed.
+- The prior remote note records a decimal fix that did not persist through executor
+  loss: validation.py is unchanged at its original integer upper bound. Its newer
+  test did persist. Re-ran it: actual RED rejects 999999.99; restored the exact
+  Decimal(8,2) bound already enforced by installed SQL. 51 field/callback units
+  then pass. Recovered all four actual unpublished files, not a presumed fifth.
+- Ruling: add athletes0010 for the exact installed Task 3 gaps — bound wizard
+  steps to the approved nine-step vocabulary and add baseline.grant_storage/
+  baseline.revoke_storage to the existing receipt CHECK. All six prior accepted
+  receipt commands remain; no User/accounts/original migration rewrite or data
+  backfill. This is the smallest repair of Task 3's advertised interfaces, despite
+  its planned migration-impact-none assumption. Cost if wrong: rollback must
+  disable this feature/roll forward rather than orphan newly accepted receipts.
+- Preserved owner-serialized receipt reads and locked current-consent rows.
+  Current consent anchors are now acquired before receipt/effect writes; current
+  authorization and exact ownership still precede receipt interpretation.
+- Security review found shared optional-default list aliasing in project(): a
+  caller's local result mutation appeared in a later denied-consent result.
+  A real projection regression failed with that leaked list. Copy projected
+  values before returning; no new data fields, authority, or sharing surface.
+- Cumulative CI adds only sqlmigrate athletes0010; all installed Task 3 tests,
+  inherited workflow/blob contract, old service gates and scripts remain mandatory.
+  Local and corrected-head hosted completion gates are pending.
+
+- Reviewed the newly reachable frozen-snapshot assertion against the installed
+  SQL guard and inherited evidence test: immutable UPDATE raises PostgreSQL
+  42501/InsufficientPrivilege (ProgrammingError), not CHECK-class IntegrityError.
+  Corrected only that Task 3 assertion to require ProgrammingError plus exact
+  SQLSTATE 42501; retained the real SQL UPDATE and snapshot immutability. This
+  test correction is not a product failure and weakens no database guard.
+- Local corrected work: full 382-unit suite (10.02s); Ruff/format 312 files;
+  inherited exact mypy command 91 files plus all three domain trees 68 files;
+  Django test/production, frozen lock, JS syntax, shell syntax and diff checks
+  pass. Local no-drift model comparison reports no changes; real database
+  history/SQL remain hosted gates. Initial generated-migration formatting and
+  a duplicated mypy argv target were command/format issues, fixed without
+  exemptions or suppressions. Corrected-head PostgreSQL and full rehearsal
+  remain PENDING; Task 3 is not COMPLETE.

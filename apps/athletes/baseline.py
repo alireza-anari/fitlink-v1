@@ -2,6 +2,7 @@
 
 import json
 from collections.abc import Callable
+from copy import deepcopy
 from datetime import datetime
 from hashlib import sha256
 from uuid import UUID
@@ -92,7 +93,7 @@ def project(
         "self_reported",
         row.submitted_at,
         row.updated_at,
-        answers,
+        deepcopy(answers),
         accessible,
         completed_steps(row),
     )
@@ -112,11 +113,9 @@ def request_hash(command: str, values: dict[str, object]) -> str:
 def receipt(
     user: User, operation_id: UUID, command: str, digest: str, object_uuid: UUID
 ) -> ProfileCommandReceipt | None:
-    row = (
-        ProfileCommandReceipt.objects.select_for_update()
-        .filter(owner=user, operation_id=operation_id)
-        .first()
-    )
+    row = ProfileCommandReceipt.objects.filter(
+        owner=user, operation_id=operation_id
+    ).first()
     if row is not None and (
         row.command != command
         or row.request_hash != digest
@@ -277,6 +276,7 @@ def mutate_baseline(
         user = locked_actor(actor, "athlete.baseline_write", at)
         profile = locked_profile(user)
         row = locked_baseline(profile, baseline_uuid)
+        storage(user, row, at)  # Consent anchors precede receipt/effect writes.
         digest = request_hash(
             command,
             {

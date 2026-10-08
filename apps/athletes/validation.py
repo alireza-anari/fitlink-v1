@@ -65,7 +65,7 @@ INTEGERS = {
 TEXT = {"equipment_other": 200, "nutrition_habits": 500}
 
 
-def _decimal(value: object, low: int, high: int, places: int) -> Decimal:
+def _decimal(value: object, low: int, high: int | Decimal, places: int) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (str, int, Decimal)):
         raise ValueError("Invalid decimal value")
     try:
@@ -107,7 +107,7 @@ def _records(value: object) -> list[dict[str, str]]:
             or entry["provenance"] != "self_reported"
         ):
             raise ValueError("Invalid approximate record")
-        number = _decimal(entry["value"], 0, 999999, 2)
+        number = _decimal(entry["value"], 0, Decimal("999999.99"), 2)
         if number <= 0:
             raise ValueError("Invalid approximate record value")
         if not isinstance(entry["observed_at"], str):

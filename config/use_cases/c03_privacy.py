@@ -67,21 +67,25 @@ def baseline_storage_current(user: User, row: BaselineAssessment, at: datetime) 
         at,
         scope_validator=validate_baseline_scope,
     )
-    return (
-        current
-        and Consent.objects.filter(
-            subject=user,
-            grantee=user,
-            purpose=STORAGE_PURPOSE,
-            text_version=DISCLOSURE_VERSION,
-            content_hash=DISCLOSURE_HASH,
-            granted_at__lte=at,
-            expires_at__gt=at,
-            revoked_at__isnull=True,
-            scopes__kind=STORAGE_KIND,
-            scopes__object_uuid=row.id,
-            scopes__object_version=DISCLOSURE_SCHEMA,
-        ).exists()
+    return current and bool(
+        list(
+            Consent.objects.select_for_update(of=("self",))
+            .filter(
+                subject=user,
+                grantee=user,
+                purpose=STORAGE_PURPOSE,
+                text_version=DISCLOSURE_VERSION,
+                content_hash=DISCLOSURE_HASH,
+                granted_at__lte=at,
+                expires_at__gt=at,
+                revoked_at__isnull=True,
+                scopes__kind=STORAGE_KIND,
+                scopes__object_uuid=row.id,
+                scopes__object_version=DISCLOSURE_SCHEMA,
+            )
+            .order_by("id")
+            .values_list("id", flat=True)
+        )
     )
 
 

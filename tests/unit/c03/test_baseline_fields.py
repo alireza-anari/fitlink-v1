@@ -142,3 +142,52 @@ def test_approximate_record_is_bounded_dated_self_report():
         normalize("measures", {"approximate_records": [record] * 6})
     with pytest.raises(ValueError):
         normalize("measures", {"approximate_records": [{**record, "injury": "hidden"}]})
+
+
+def test_record_decimal_eight_two_upper_limit():
+    record = {
+        "label": "lift",
+        "value": "999999.99",
+        "unit": "reps",
+        "observed_at": "2026-01-01T00:00:00+00:00",
+        "provenance": "self_reported",
+    }
+    assert (
+        normalize("measures", {"approximate_records": [record]})["approximate_records"][
+            0
+        ]["value"]
+        == "999999.99"
+    )
+
+
+def test_private_projection_defaults_cannot_carry_another_results_values(monkeypatch):
+    from types import SimpleNamespace
+    from uuid import uuid4
+
+    from apps.athletes.baseline import project
+    from apps.athletes.validation import OPTIONAL_DEFAULTS
+
+    monkeypatch.setitem(OPTIONAL_DEFAULTS, "approximate_records", [])
+    row = SimpleNamespace(
+        id=uuid4(),
+        athlete_id=uuid4(),
+        version=1,
+        state="draft",
+        schema_version=1,
+        sequence=1,
+        parent_id=None,
+        observed_at=datetime(2026, 1, 1, tzinfo=UTC),
+        age_at_assessment=36,
+        submitted_at=None,
+        updated_at=datetime(2026, 1, 1, tzinfo=UTC),
+        goals=[],
+        experience="",
+        available_days=[],
+        equipment=[],
+        equipment_other="",
+        facilities=[],
+    )
+    first = project(SimpleNamespace(), row, row.observed_at, lambda *_: False)
+    first.answers["approximate_records"].append({"label": "private"})
+    second = project(SimpleNamespace(), row, row.observed_at, lambda *_: False)
+    assert second.answers["approximate_records"] == []

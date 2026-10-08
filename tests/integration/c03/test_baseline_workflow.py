@@ -5,7 +5,7 @@ from decimal import Decimal
 from uuid import uuid4
 
 import pytest
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, ProgrammingError, transaction
 
 from apps.athletes.baseline_models import BaselineAssessment
 from apps.athletes.models import AthleteProfile
@@ -56,8 +56,9 @@ def test_submit_freezes_answers_and_correction_new_snapshot():
     old = command("submit_baseline", ctx.actor, row.id, row.version, uuid4(), ctx.at)
     with pytest.raises(ValueError):
         save(ctx, old, "goals", {"goals": ["endurance"]})
-    with pytest.raises(IntegrityError), transaction.atomic():
+    with pytest.raises(ProgrammingError) as frozen, transaction.atomic():
         BaselineAssessment.objects.filter(pk=old.id).update(height_cm=Decimal("180"))
+    assert frozen.value.__cause__.sqlstate == "42501"
     correction = command(
         "correct_baseline",
         ctx.actor,

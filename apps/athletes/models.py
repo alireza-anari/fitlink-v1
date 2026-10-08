@@ -32,6 +32,22 @@ class AthleteProfile(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
+                condition=models.Q(
+                    onboarding_step__in=[
+                        "basics",
+                        "goals",
+                        "experience",
+                        "availability",
+                        "facilities",
+                        "context",
+                        "habits",
+                        "measures",
+                        "review",
+                    ]
+                ),
+                name="athlete_onboarding_step",
+            ),
+            models.CheckConstraint(
                 condition=models.Q(status__in=["onboarding", "active", "archived"]),
                 name="athlete_profile_status",
             ),

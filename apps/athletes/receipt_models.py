@@ -33,6 +33,8 @@ class ProfileCommandReceipt(models.Model):
                         "baseline.submit",
                         "baseline.correct",
                         "baseline.clear",
+                        "baseline.grant_storage",
+                        "baseline.revoke_storage",
                     ]
                 ),
                 name="athletes_receipt_command",
