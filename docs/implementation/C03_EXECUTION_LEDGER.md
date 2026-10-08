@@ -845,3 +845,19 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   (0.81s); inherited workflow blob still exact. New test/script Ruff/format,
   shell syntax and diff checks pass. Hosted actual HTTP/storage behavioral
   failures are the next required gate, not collection or fixture failures.
+- Initial test checkpoint local 4afa78d6c7af12d0085d02b02357412ab062145e ->
+  published 759f1531c9d1a008818546ec61c5112aec32494c, exact tree
+  576abcb70305d19a06d6c2374c11691a0195d96f; parent 4843e7a, force=false.
+  Run 37745213821 foundation 113204962404 actual complete log: quality passes,
+  16 missing-contract failures/386 passing units. Storage job 113204962375
+  builds and starts actual MinIO/PostgreSQL/Redis and migrates, then fails before
+  tests: direct script invocation omitted repo root from sys.path. Not domain
+  RED or storage PASS. Reproduced exact ModuleNotFoundError locally and fixed
+  only the entrypoint path, following existing probe pattern without suppressions.
+  Fail-closed subprocess regression plus all 21 CI contracts now pass (1.46s).
+- Early ASGI and pre-CSRF request-cap tests added before implementation: two
+  missing-cap failures (0.20s). Ruling: cap the actual ASGI body before Django
+  spooling and the WSGI body before CSRF multipart parsing; otherwise a custom
+  DRF parser alone cannot enforce the user request-size contract. Cost if wrong:
+  later adapters must retain the same early scoped ingress boundary. No broad
+  body-limit changes to existing C02 routes. Hosted behavioral RED still pending.

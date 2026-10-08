@@ -122,6 +122,33 @@ def test_required_service_unavailable_is_failure():
     assert "passed" not in result.stdout
 
 
+def test_private_storage_probe_starts_from_script_path_and_fails_closed():
+    with socket.socket() as unavailable:
+        unavailable.bind(("127.0.0.1", 0))
+        result = subprocess.run(
+            [
+                "uv",
+                "run",
+                "--frozen",
+                "python",
+                str(ROOT / "docker/c03_storage_probe.py"),
+            ],
+            cwd=ROOT,
+            env={
+                **os.environ,
+                "POSTGRES_HOST": "127.0.0.1",
+                "POSTGRES_PORT": str(unavailable.getsockname()[1]),
+            },
+            capture_output=True,
+            text=True,
+            timeout=20,
+        )
+    assert result.returncode != 0
+    assert "C03 PostgreSQL/Redis/private MinIO readiness failed" in result.stdout
+    assert "ModuleNotFoundError" not in result.stderr
+    assert "passed" not in result.stdout
+
+
 def test_every_installed_mandatory_c03_test_selected():
     assert ENTRY.is_file(), "C03 cumulative test selection is missing"
     source = ENTRY.read_text() + (ROOT / "docker/verify_c03_storage.sh").read_text()

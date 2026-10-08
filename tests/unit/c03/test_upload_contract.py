@@ -60,3 +60,32 @@ def test_multipart_actual_request_cap_even_with_lying_header():
             "multipart/form-data; boundary=x",
             {"request": request},
         )
+
+
+@pytest.mark.parametrize("header", [[], [(b"content-length", b"1")]])
+def test_asgi_upload_cap_before_django_body_spooling(header):
+    import asyncio
+
+    assert importlib.util.find_spec("config.upload_ingress"), "Early ingress cap absent"
+    ingress = importlib.import_module("config.upload_ingress")
+    sent, delivered = [], []
+
+    async def application(scope, receive, send):
+        delivered.append(True)
+
+    async def receive():
+        return {"type": "http.request", "body": b"x" * 65536, "more_body": True}
+
+    async def send(message):
+        sent.append(message)
+
+    scope = {
+        "type": "http",
+        "method": "POST",
+        "path": "/api/v1/profile-assets/00000000-0000-0000-0000-000000000001/body/",
+        "headers": header,
+    }
+    asyncio.run(ingress.UploadBodyLimit(application)(scope, receive, send))
+    assert delivered == []
+    assert sent[0]["status"] == 400
+    assert (b"cache-control", b"no-store") in sent[0]["headers"]
