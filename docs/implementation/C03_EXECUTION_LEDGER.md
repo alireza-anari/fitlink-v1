@@ -703,3 +703,16 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   a duplicated mypy argv target were command/format issues, fixed without
   exemptions or suppressions. Corrected-head PostgreSQL and full rehearsal
   remain PENDING; Task 3 is not COMPLETE.
+
+## Task 3 sensitive read audit review gate
+
+- Self-review against approved plan section 14 (reads audited, no outbox) and
+  DOMAIN_MODEL AthleteProfile sensitive-access audit found own_baseline currently
+  returns optional sensitive values without synchronous audit. Add two actual
+  PostgreSQL regressions: metadata-only baseline.read with no outbox, and audit
+  failure preventing any private result. Current actor/consent/ownership remain
+  real; no mocked authorization or collection error substitutes for RED.
+- This is a Task 3 completion gap, not new scope or later privacy infrastructure.
+  The nine existing fixes remain in exact corrected source 519f33e/tree 80fe9b5,
+  run 37734616101. Its completion does not waive this additional review gate.
+  Task 3 is still IN_PROGRESS; do not close or advance.

@@ -182,3 +182,36 @@ def test_submitted_clear_uses_correction_not_snapshot_mutation():
             "clear_optional_baseline", ctx.actor, row.id, row.version, uuid4(), ctx.at
         )
     assert BaselineAssessment.objects.get(pk=row.id).height_cm is not None
+
+
+def test_sensitive_owner_read_has_metadata_audit_and_no_outbox():
+    from apps.governance.audit_models import AuditEvent
+    from apps.governance.outbox_models import OutboxEvent
+
+    ctx, row = setup()
+    grant(ctx, row)
+    row = save(ctx, row, "basics", {"height_cm": "170.0"})
+    before = OutboxEvent.objects.count()
+    result = read(ctx, row)
+    assert result.answers["height_cm"] is not None
+    events = AuditEvent.objects.filter(action="baseline.read", subject_uuid=row.id)
+    assert events.count() == 1
+    event = events.get()
+    assert event.actor_uuid == ctx.user.public_id
+    assert event.subject_type == "baseline" and event.result == "accepted"
+    assert event.changed_fields == []
+    assert OutboxEvent.objects.count() == before
+
+
+def test_sensitive_owner_read_audit_failure_returns_no_private_result(monkeypatch):
+    ctx, row = setup()
+    grant(ctx, row)
+    row = save(ctx, row, "basics", {"height_cm": "170.0"})
+    wiring = module("config.use_cases.athlete_profile")
+
+    def unavailable(*_args, **_kwargs):
+        raise RuntimeError("read audit unavailable")
+
+    monkeypatch.setattr(wiring, "append_event", unavailable)
+    with pytest.raises(RuntimeError, match="read audit unavailable"):
+        read(ctx, row)
