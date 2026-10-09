@@ -106,3 +106,41 @@ def test_internal_pytest_error_records_only_class_and_code_locations(monkeypatch
     )
     assert event["traceback"][-1]["file"] == "tests/unit/test_c03_triage_evidence.py"
     assert "synthetic-private-payload" not in json.dumps(event)
+
+
+def test_missing_source_preserves_original_exception_and_http_status():
+    from django.http import HttpResponse
+
+    triage = reporter()
+    namespace = {"response": HttpResponse("synthetic-private-payload", status=404)}
+    code = compile(
+        "assert response.status_code == 201", "/source-unavailable.py", "exec"
+    )
+    try:
+        exec(code, namespace)
+    except AssertionError:
+        info = pytest.ExceptionInfo.from_current()
+    data = triage.failure_data(info)
+    assert data["exception"] == "AssertionError"
+    assert data["actual_http_status"] == 404
+    assert data["traceback"][-1]["file"] == "<external>"
+    assert "synthetic-private-payload" not in json.dumps(data)
+
+
+def test_missing_pytest_source_uses_only_known_repository_assertion(monkeypatch):
+    from _pytest._code import Code
+    from django.http import HttpResponse
+
+    triage = reporter()
+    response = HttpResponse("synthetic-private-payload", status=404)
+    try:
+        assert response.status_code == 201, response.content
+    except AssertionError:
+        info = pytest.ExceptionInfo.from_current()
+    with monkeypatch.context() as scoped:
+        scoped.setattr(Code, "fullsource", property(lambda self: None))
+        data = triage.failure_data(info)
+    assert data["exception"] == "AssertionError"
+    assert data["actual_http_status"] == 404
+    assert data["expected_http_status"] == 201
+    assert "synthetic-private-payload" not in json.dumps(data)

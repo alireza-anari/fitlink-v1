@@ -1287,3 +1287,38 @@ unestablished. No speculative application or timeout correction made.
 Publish the reviewed metadata-only refinement/tests plus this ledger to
 the execution ref by guarded fast-forward, then require actual complete
 execution CI GREEN before Task4 completion. No diagnostic branch merged.
+
+## Evidenced Foundation reporter defect and correction
+
+Execution14f81dff4fc5736b73af1d46b70cbd6e33d8de0c/tree
+6a17f7a8872718a8193e6250a85e70e87877ed3b, run37903523863 FAILURE:
+PostgreSQL113731382616 GREEN (269C02passed61.52s; all395selectedC03
+cases verified by collection, cumulative natural0at92.1s, cleanuptrue);
+storage113731382404 GREEN (91passed/0failed/0skipped, pytest0at22.41s,
+natural0at181.9s, healthyPG/Redis/MinIO200, cleanuptrue); ownership
+113731382805 GREEN (actual124escapedcontainer then bounded owned cleanup).
+Artifacts PG11603122258,storage11603421642,ownership11603132904.
+
+Foundation113731382184 natural3at573.8s, cleanuptrue;953passedcalls,
+0failed/0skipped reports. Exact retained internalerror: AssertionError,
+active tests/unit/test_c03_triage_evidence.py::
+test_failure_preserves_http_assertion_and_trace_without_response_body.
+Trace: docker/c03_pytest_triage.py:226 pytest_runtest_makereport ->
+:207 failure_data -> _pytest/_code/code.py:270 statement. Installed
+pytest code asserts fullsource is not None; optional source was unavailable.
+This is an evidenced reporter defect, not a PostgreSQL lock or upload
+functional failure. Artifact11603444163 retains class/static frames.
+The underlying original test report was replaced by this reporter error;
+fixing it may reveal the original verdict, which must remain authoritative.
+
+Two focused regressions observed RED: real compiled missing-source frame
+reproduces exactAssertionError; missing pytest source for a known repository
+assertion loses expected status. Correction catches only source-availability
+errors; retains original exception/status/frames, and recovers the expected
+HTTP status from an enumerated static repository test line only. Never emits
+raw source, payload, exception message or unknown private file. Existing
+tests/production behavior/inheritedcommands/timeouts unchanged.
+37focusedpassed8.67s;484fullunitspassed40.00s;Ruff/format345files/diffGREEN.
+Read-only review: no Critical/Important finding; original pytest report and
+nonzero verdict remain unchanged. Publish only reporter, regressions and
+append-only ledger to execution ref; all hosted gates must still PASS.

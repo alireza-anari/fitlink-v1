@@ -204,7 +204,20 @@ def failure_data(info):
         response = entry.frame.f_locals.get("response")
         if response is not None and type(getattr(response, "status_code", None)) is int:
             data["actual_http_status"] = response.status_code
-            source = str(entry.statement)
+            try:
+                source = str(entry.statement)
+            except (AssertionError, IndexError, OSError):
+                # Optional source text can disappear or never exist for a frame.
+                # Retain the original exception/status without replacing its verdict.
+                source = ""
+                known_file = location(str(entry.path), "", entry.lineno)["file"]
+                if known_file in TESTS:
+                    try:
+                        source = (
+                            (ROOT / known_file).read_text().splitlines()[entry.lineno]
+                        )
+                    except (OSError, IndexError):
+                        pass
             expected = re.search(r"assert response.status_code == ([0-9]{3})", source)
             if expected:
                 data["expected_http_status"] = int(expected[1])
