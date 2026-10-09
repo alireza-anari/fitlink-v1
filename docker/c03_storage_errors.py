@@ -19,6 +19,12 @@ ERROR_TYPES = frozenset(
         "PermissionError",
         "RuntimeError",
         "ValueError",
+        "TypeError",
+        "AttributeError",
+        "OSError",
+        "FileNotFoundError",
+        "PytestUnhandledThreadExceptionWarning",
+        "PytestUnraisableExceptionWarning",
         "AssertionError",
         "OtherError",
     }

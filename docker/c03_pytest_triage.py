@@ -71,6 +71,7 @@ class Journal:
         self.started = time.monotonic()
         self.case_started = None
         self.node = None
+        self.last_node = None
         self.phase = "collection"
         self.cutoff = cutoff
         self.session_cutoff = session_cutoff
@@ -99,6 +100,7 @@ class Journal:
 
     def begin(self, node):
         self.node = safe_node(node)
+        self.last_node = self.node
         self.case_started = time.monotonic()
         self.recorded = False
         self.phase = "setup"
@@ -230,3 +232,19 @@ def pytest_sessionfinish(session, exitstatus):
     if JOURNAL:
         JOURNAL.emit("pytest_exit", exitstatus=int(exitstatus))
         JOURNAL.finish()
+
+
+def pytest_internalerror(excrepr, excinfo):
+    if JOURNAL:
+        # Never read exception text, frame locals or longrepr for a framework error.
+        from docker.c03_storage_errors import error_category
+
+        JOURNAL.emit(
+            "pytest_internalerror",
+            active_node=JOURNAL.node or JOURNAL.last_node,
+            exception=error_category(excinfo.value),
+            traceback=[
+                location(str(e.path), e.frame.code.name, e.lineno + 1)
+                for e in excinfo.traceback
+            ],
+        )

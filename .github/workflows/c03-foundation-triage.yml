@@ -1,0 +1,54 @@
+name: C03 Task4 Foundation internal-error evidence
+on:
+  push:
+    branches: [diagnostics/c03-task4-foundation-triage]
+permissions:
+  contents: read
+concurrency:
+  group: c03-foundation-triage-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  foundation-triage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Immutable completed C01 fixture
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/c01
+          persist-credentials: false
+      - name: Verify exact C01 source tree before use
+        run: python docker/c02_baseline.py .runtime/c01
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Frozen current-source prerequisite
+        run: |
+          uv sync --frozen --group dev
+          npm ci
+          npm run build:css
+      - name: Bounded unchanged Foundation rehearsal, expected diagnostic failure
+        run: |
+          code=0
+          python docker/c03_foundation_evidence.py || code=$?
+          if [ "$code" -eq 0 ]; then exit 1; fi
+          exit "$code"
+      - name: Redacted Foundation evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-foundation-internalerror
+          path: |
+            .runtime/c03-diagnostics/*.jsonl
+            .runtime/c03-foundation-evidence/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error

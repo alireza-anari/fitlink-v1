@@ -86,3 +86,35 @@ def test_observational_reporter_continues_after_session_snapshot(tmp_path, monke
     assert any(e["event"] == "session_snapshot" for e in events)
     assert any(e["event"] == "case_cutoff" for e in events)
     assert not any(e["event"] == "diagnostic_cutoff" for e in events)
+
+
+def test_wrapper_emits_internal_error_and_preserves_nonzero(
+    tmp_path, monkeypatch, capsys
+):
+    import importlib.util
+
+    import docker.c03_gate_diagnostics as diagnostics
+
+    spec = importlib.util.spec_from_file_location(
+        "foundation_wrapper", ROOT / "docker/c03_foundation_evidence.py"
+    )
+    wrapper = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(wrapper)
+    folder = tmp_path / "evidence"
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("C03_FOUNDATION_TRIAGE", "0")
+    monkeypatch.setattr(wrapper, "ROOT", tmp_path)
+    monkeypatch.setattr(wrapper, "FOLDER", folder)
+
+    def observe(phase, command, *, acceptance):
+        assert phase == "foundation" and command == ["sh", "docker/verify_c02.sh"]
+        assert acceptance is True
+        (folder / "test.jsonl").write_text(
+            json.dumps({"event": "pytest_internalerror", "exception": "ValueError"})
+            + "\n"
+        )
+        return 3
+
+    monkeypatch.setattr(diagnostics, "watch", observe)
+    assert wrapper.main() == 3
+    assert '"event": "pytest_internalerror"' in capsys.readouterr().out
