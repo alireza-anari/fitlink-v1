@@ -237,7 +237,15 @@ def parent_death():
         deadline = time.monotonic() + 5
         while time.monotonic() < deadline:
             status = status_path.read_text()
-            if "Seccomp:\t2" in status and "Uid:\t0\t" not in status:
+            fields = dict(
+                line.split(":", 1) for line in status.splitlines() if ":" in line
+            )
+            if (
+                fields["Seccomp"].strip() == "2"
+                and fields["NoNewPrivs"].strip() == "1"
+                and int(fields["Seccomp_filters"]) >= 2
+                and all(int(uid) != 0 for uid in fields["Uid"].split())
+            ):
                 break
             time.sleep(0.05)
         else:
