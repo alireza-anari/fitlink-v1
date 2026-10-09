@@ -16,6 +16,9 @@ from collections import deque
 from pathlib import Path
 from uuid import uuid4
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from docker.c03_storage_errors import ERROR_TYPES, error_category
+
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_FILES = {
     str(path.relative_to(ROOT))
@@ -439,6 +442,31 @@ def terminate_owned(child, marker):
 def progress_lines(text):
     """Only finite code/progress names; never relay raw child stdout/stderr."""
     for match in re.finditer(
+        r"(?m)^C03_STORAGE_PHASE (migrate|probe|pytest) "
+        r"(?:(start|success)|(failure) ([0-9]{1,3}))$",
+        text,
+    ):
+        progress = {
+            "kind": "storage_phase",
+            "name": match[1],
+            "state": match[2] or match[3],
+        }
+        if match[3]:
+            code = int(match[4])
+            if not 1 <= code <= 255:
+                continue
+            progress["returncode"] = code
+        yield progress
+    categories = "|".join(sorted(ERROR_TYPES))
+    for match in re.finditer(
+        rf"(?m)^(?:C03_STORAGE_ERROR ({categories})$|"
+        r"(?:E\s+)?(?:(?:django\.db\.utils|psycopg(?:\.errors)?|"
+        r"botocore\.exceptions|redis\.exceptions)\.)?"
+        rf"({categories}):[^\n]*$)",
+        text,
+    ):
+        yield {"kind": "storage_error", "error_type": match[1] or match[2]}
+    for match in re.finditer(
         r"(?m)^(tests/(?:unit|integration|e2e)(?:/[a-z0-9_]+)*\.py)::"
         r"((?:Test[A-Za-z0-9_]+::)?test_[a-zA-Z0-9_]+)",
         text,
@@ -482,6 +510,7 @@ def watch(phase, command):
     folder.mkdir(parents=True, exist_ok=True)
     path = folder / (phase + "-" + uuid4().hex + ".jsonl")
     with path.open("x") as output:
+        emission_lock = threading.Lock()
 
         def emit(event, **values):
             data = {
@@ -491,9 +520,10 @@ def watch(phase, command):
                 **values,
             }
             line = json.dumps(data, sort_keys=True)
-            output.write(line + "\n")
-            output.flush()
-            print("C03_DIAGNOSTIC " + line, flush=True)
+            with emission_lock:
+                output.write(line + "\n")
+                output.flush()
+                print("C03_DIAGNOSTIC " + line, flush=True)
 
         started = time.monotonic()
         baseline_rows = containers()
@@ -540,18 +570,26 @@ def watch(phase, command):
 
         def read_progress():
             tail = ""
+
+            def record(text):
+                for progress in progress_lines(text):
+                    progress_state["last"] = progress
+                    if progress["kind"] in {"storage_phase", "storage_error"}:
+                        emit(progress["kind"], progress=progress)
+
             while True:
                 try:
                     chunk = os.read(child.stdout.fileno(), 4096)
                 except (OSError, ValueError):
                     break
                 if not chunk:
+                    record(tail)
                     break
-                tail = (tail + chunk.decode(errors="replace"))[-8192:]
-                for progress in progress_lines(tail):
-                    progress_state["last"] = progress
-                if "\n" in tail:
-                    tail = tail.rsplit("\n", 1)[-1]
+                tail += chunk.decode(errors="replace")
+                while "\n" in tail:
+                    line, tail = tail.split("\n", 1)
+                    record(line)
+                tail = tail[-8192:]
 
         reader = threading.Thread(target=read_progress, daemon=True)
         reader.start()
@@ -594,6 +632,7 @@ def watch(phase, command):
                 code = child.poll()
                 if code is not None:
                     reason = "command_exited"
+                    reader.join(timeout=1)
                     emit("command_exited", returncode=code)
                     break
                 if time.monotonic() >= next_snapshot:
@@ -606,13 +645,14 @@ def watch(phase, command):
         except Exception as error:
             # Type only: exception text may contain private command arguments.
             reason = "diagnostic_error"
-            emit("diagnostic_error", error_type=type(error).__name__)
+            emit("diagnostic_error", error_type=error_category(error))
         finally:
             for sig in previous:
                 signal.signal(sig, signal.SIG_IGN)
             host_complete = terminate_owned(child, marker)
             cleanup = stop_owned_containers(phase, baseline)
             child.stdout.close()
+            reader.join(timeout=1)
             emit(
                 "diagnostic_finished",
                 reason=reason,
