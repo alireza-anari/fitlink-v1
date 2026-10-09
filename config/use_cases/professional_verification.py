@@ -7,11 +7,14 @@ from apps.governance.outbox import append_outbox
 from apps.professionals.verification_models import Verification
 
 
+def append_event(*args, **kwargs):
+    """Preserve the trusted binding audit seam and current audit implementation."""
+    return audit.append_event(*args, **kwargs)
+
+
 def binding_hooks(actor: AccountActor):
     def record(outcome: SecurityOutcome) -> None:
-        audit.append_event(
-            outcome, actor_uuid=actor.user_uuid, subject_type="verification"
-        )
+        append_event(outcome, actor_uuid=actor.user_uuid, subject_type="verification")
 
     def emit(case: Verification) -> None:
         append_outbox(

@@ -199,7 +199,7 @@ def test_assigned_sanitized_read_audited_source_never_read(settings, monkeypatch
 
 
 def test_queue_cannot_open_production_verification_with_seeded_mfa(settings):
-    s = submitted()
+    submitted()
     staff = reviewer(settings, None)
     StaffStepUpGrant.objects.filter(pk=staff.step).update(method="verified_mfa")
     settings.SETTINGS_ENV = "production"
