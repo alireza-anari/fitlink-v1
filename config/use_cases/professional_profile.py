@@ -15,6 +15,139 @@ from apps.professionals import services
 from apps.professionals.contracts import ProfessionalProfileDTO
 
 
+def _safe_asset(user, profile, identifier, purpose, credential_uuid):
+    from apps.assets.models import Asset
+    from apps.professionals.contracts import ProfileNotFound
+
+    row = (
+        Asset.objects.select_for_update()
+        .filter(
+            pk=identifier,
+            owner=user,
+            purpose=purpose,
+            classification="private_source",
+            state="ready",
+            revoked_at__isnull=True,
+        )
+        .first()
+    )
+    if row is None:
+        raise ProfileNotFound("Asset unavailable")
+    subject_matches = (
+        row.subject_kind == "professional_profile" and row.subject_uuid == profile.id
+    )
+    if credential_uuid is not None:
+        subject_matches = subject_matches or (
+            row.subject_kind == "professional_credential"
+            and row.subject_uuid == credential_uuid
+        )
+    if not subject_matches:
+        raise ProfileNotFound("Asset unavailable")
+    preview = "evidence_preview" if purpose.endswith("evidence") else "owner_preview"
+    attempt = (
+        row.processing_attempts.filter(processing_version=row.processing_version)
+        .order_by("-attempt")
+        .first()
+    )
+    if (
+        attempt is None
+        or attempt.state != "ready"
+        or attempt.algorithm_version != "jpeg-png-pixels-v1"
+        or attempt.scanner_engine != "ClamAV 1.5.4"
+        or not attempt.scanner_signature.isdecimal()
+        or not row.derivatives.filter(
+            processing_version=row.processing_version, purpose=preview, state="ready"
+        ).exists()
+    ):
+        raise ProfileNotFound("Asset unavailable")
+    return row
+
+
+def _hooks(actor, *, credential=False):
+    def record(outcome):
+        append_event(
+            outcome,
+            actor_uuid=actor.user_uuid,
+            subject_type="credential" if credential else "professional",
+        )
+
+    def emit(profile):
+        append_outbox(
+            "professional.profile_changed",
+            profile.id,
+            profile.version,
+            {"profile_uuid": str(profile.id), "user_uuid": str(actor.user_uuid)},
+            f"professional.profile_changed:{profile.id}:{profile.version}",
+        )
+
+    from .professional_verification import binding_hooks
+
+    binding_record, binding_emit = binding_hooks(actor)
+    return {
+        "record": record,
+        "emit": emit,
+        "binding_record": binding_record,
+        "binding_emit": binding_emit,
+    }
+
+
+def save_professional_step(actor, step, payload, expected_version, operation_id, at):
+    return services.save_professional_step(
+        actor,
+        step,
+        payload,
+        expected_version,
+        operation_id,
+        at,
+        **_hooks(actor),
+        asset_validator=_safe_asset,
+    )
+
+
+def create_credential(actor, payload, expected_profile_version, operation_id, at):
+    from apps.professionals.credentials import create_credential as create
+
+    return create(
+        actor,
+        payload,
+        expected_profile_version,
+        operation_id,
+        at,
+        **_hooks(actor, credential=True),
+        asset_validator=_safe_asset,
+    )
+
+
+def revise_credential(
+    actor, credential_uuid, payload, expected_version, operation_id, at
+):
+    from apps.professionals.credentials import revise_credential as revise
+
+    return revise(
+        actor,
+        credential_uuid,
+        payload,
+        expected_version,
+        operation_id,
+        at,
+        **_hooks(actor, credential=True),
+        asset_validator=_safe_asset,
+    )
+
+
+def withdraw_credential(actor, credential_uuid, expected_version, operation_id, at):
+    from apps.professionals.credentials import withdraw_credential as withdraw
+
+    return withdraw(
+        actor,
+        credential_uuid,
+        expected_version,
+        operation_id,
+        at,
+        **_hooks(actor, credential=True),
+    )
+
+
 def _registration_enabled() -> bool:
     try:
         # Serialize the fresh switch check with trusted flag changes.

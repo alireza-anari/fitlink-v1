@@ -16,6 +16,13 @@ from .policies import owned_profile, validate_context
 from .receipt_models import ProfileCommandReceipt
 from .selectors import own_professional_profile
 
+
+def save_professional_step(*args, **kwargs):
+    from .setup import save_professional_step as save
+
+    return save(*args, **kwargs)
+
+
 CREATE_HASH = sha256(b'{"command":"profile.create"}').hexdigest()
 
 
