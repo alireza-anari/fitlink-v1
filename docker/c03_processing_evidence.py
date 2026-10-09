@@ -11,6 +11,14 @@ sys.path.insert(0, str(ROOT))
 
 def main():
     os.chdir(ROOT)
+    folder = ROOT / ".runtime/c03-triage"
+    if folder.exists():
+        return 1
+    folder.mkdir(parents=True)
+    folder.chmod(0o777)
+    os.environ["COMPOSE_FILE"] = (
+        "compose.yaml:docker/compose.c03-processing-evidence.yml"
+    )
     from docker.c03_gate_diagnostics import watch
 
     result = watch(
@@ -19,6 +27,12 @@ def main():
     config_result = ROOT / ".runtime/c03-compose-check.json"
     if config_result.is_file():
         print("C03_COMPOSE_CHECK " + config_result.read_text(), flush=True)
+    for path in folder.glob("*.jsonl"):
+        for line in path.read_text().splitlines():
+            print(
+                "C03_PROCESSING_CASE " + json.dumps(json.loads(line), sort_keys=True),
+                flush=True,
+            )
     for path in (ROOT / ".runtime/c03-diagnostics").glob("storage-*.jsonl"):
         for line in path.read_text().splitlines():
             print(

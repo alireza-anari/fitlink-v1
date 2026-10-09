@@ -1,0 +1,5 @@
+services:
+  checks:
+    environment:
+      PYTEST_PLUGINS: docker.c03_pytest_triage
+      C03_TRIAGE_EVIDENCE_FILE: /app/.runtime/c03-triage/processing.jsonl
