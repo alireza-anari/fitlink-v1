@@ -90,8 +90,8 @@ def test_staff_without_capability_assignment_fresh_stepup_or_nonself_denied(
             revoked_at=timezone.now()
         )
     if fault == "owner_inactive":
-        s.user.is_active = False
-        s.user.save(update_fields=["is_active"])
+        s.user.state, s.user.is_active = "suspended", False
+        s.user.save(update_fields=["state", "is_active"])
     at = staff.at + timedelta(seconds=2) if fault == "expired" else timezone.now()
     with pytest.raises(DENIED):
         selectors().assigned_verification_detail(

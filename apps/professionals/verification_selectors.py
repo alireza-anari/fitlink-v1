@@ -3,6 +3,8 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
+from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
@@ -97,6 +99,8 @@ def assigned_verification_evidence(
 
 def submitted_verification_queue(actor, step_up_id, reason_code, cursor, at):
     validate_context(actor, at)
+    if settings.SETTINGS_ENV not in {"test", "development"}:
+        raise PermissionDenied("Verification unavailable")
     with transaction.atomic():
         user = locked_actor(actor, "staff.command", at)
         require_staff(

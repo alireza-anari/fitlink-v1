@@ -475,6 +475,10 @@ def prepare_verification(
             case.version += 1
             case.save(update_fields=["version", "updated_at"])
         _bind(profile, roles, credentials, case, requested)
+        # Different preparations with the same profile CAS version cannot both
+        # replace the draft target set. Receipt replay precedes this fence.
+        profile.version += 1
+        profile.save(update_fields=["version", "updated_at"])
         remember(
             user,
             operation_id,
@@ -805,7 +809,7 @@ def _staff_anchors(
     )
 
 
-def _staff_dto(case, targets, assignments):
+def _staff_dto(case, targets, assignments, *, include_evidence=True):
     from .contracts import (
         VerificationEvidenceDTO,
         VerificationStaffDTO,
@@ -814,9 +818,13 @@ def _staff_dto(case, targets, assignments):
     from .models import VerificationEvidence
 
     evidence = (
-        VerificationEvidence.objects.filter(target__in=targets)
-        .select_related("credential_revision")
-        .order_by("target__target", "id")
+        (
+            VerificationEvidence.objects.filter(target__in=targets)
+            .select_related("credential_revision")
+            .order_by("target__target", "id")
+        )
+        if include_evidence
+        else ()
     )
     return VerificationStaffDTO(
         case.id,
@@ -827,7 +835,9 @@ def _staff_dto(case, targets, assignments):
             VerificationTargetDTO(t.id, t.target, t.state, t.version)
             for t in sorted(targets, key=lambda row: row.target)
         ),
-        next((t.identity_name for t in targets if t.target == "identity"), ""),
+        next((t.identity_name for t in targets if t.target == "identity"), "")
+        if include_evidence
+        else "",
         tuple(
             VerificationEvidenceDTO(
                 e.credential_revision_id,
@@ -932,7 +942,9 @@ def assign_verification(
             )
         )
         emit(case)
-        return _staff_dto(case, targets, [assignment])
+        return _staff_dto(
+            case, targets, [assignment], include_evidence=receiver.pk == user.pk
+        )
 
 
 def start_verification_review(

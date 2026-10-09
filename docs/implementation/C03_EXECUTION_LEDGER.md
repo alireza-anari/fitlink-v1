@@ -1729,3 +1729,66 @@ queue lacks the same operational production closure as assigned-case reads.
 A seeded verified_mfa fixture must not open a production queue while no approved
 provider/config switch exists. Corrections wait for hosted behavioral RED on
 these new specs; no claim of success from source inspection.
+
+### Task 7 corrective RED checkpoints (not acceptance)
+
+Candidate10a08c2/run37976991026 completed FAILURE. Foundation113977679726:
+548 unit cases passed; complete installed suite journal1174passed/28failed/
+0skipped. One inherited credential rollback failure was AttributeError at its
+professional_verification.append_event monkeypatch;27 Task7 cases denied at
+accounts.policies.require_account_action because the plan §10 explicit
+professional.verify_submit action had not been installed. PostgreSQL113977679618
+stopped on that inherited rollback failure before Task7 (artifact11639787171,
+not a focused Task7 result). Storage/processing/ownership all succeeded.
+
+Regression-spec93b49191fd2b1bc3c73b0d1edde2b11890880bf7/run37977384614:
+foundation113978975341 stopped on unused fixture variable Ruff error;
+PostgreSQL113978975649 stopped on the same inherited audit seam. Both failures
+are retained, never represented as behavioral RED for the new production/CAS
+specs. Processing/storage/ownership succeeded; no weakening or skip added.
+
+Restored the existing trusted append_event seam through a dynamic governance
+wrapper so both inherited binding failure injection and current audit failure
+injection work. Fixed unused regression fixture binding. Locald9ddd59,
+remote dce19ebd46dec4b9fd90ba7a5b2a4794b4b027ae/tree
+ df3d77e8169b2bbcdb24d5f157e5e79616f9f05d, run37977960616.
+
+A focused new finite-action unit contract observed1failed/8passed at the exact
+require_account_action denial; minimum explicit professional.verify_submit
+allowlist addition then26passed with inherited profile policy units. It adds
+only the approved action, not a wildcard, grant or account schema change.
+This is installation of the Task7 submission dependency, not a restart/redo of
+completed Task2. Strengthened fixtures keep real current sessions while
+checking actual credential expiry, revoked sessions, inactive owner, non-self
+case authority and unbound derivative zero-I/O denial. Reassignment-result
+regression now rejects private snapshot/evidence metadata reaching the old
+reviewer after assignment has ended. Locald3b6719, remote
+ a3e24d7c3bd12fc3da2f7303781126120c6e9517/tree
+ a66338a44b936a6a07a264e82be147a24be4101f, run37978323018.
+Ruff381 files and95-file inherited/composition mypy pass locally. Hosted
+behavioral RED/GREEN remains mandatory; no Task7 COMPLETE claim.
+
+### Task 7 observed review RED and minimum corrections
+
+Run37978323018 PostgreSQL113982149132 actually reached all four focused files:
+42passed/4failed/0skipped, exit1 in16.520seconds. Task6 separately67passed/
+0failed/0skipped, exit0 in12.631seconds. Artifact11639444517/SHA256
+5785194cfca39d5983822971b11078a02afa1bdda5141446e13e11ebc7c10f4a
+inspected: failures are draft competing-payload CAS assertion, production queue
+not raising, reassignment-result private metadata assertion, and invalid
+owner-inactive fixture IntegrityError (account_state_active_consistency).
+Natural PostgreSQL gate exit1 in118.9seconds with complete cleanup. All earlier
+C02/PostgreSQL/Redis and inherited Task1–6 selections passed before Task7 RED.
+
+Minimum corrections: successful prepare advances the locked profile CAS version
+without touching evidence/decision counters; replay remains prior to the fence.
+Queue applies the same test/development-only operational closure as assigned
+case authority. Assignment result keeps the approved StaffDTO type but exposes
+identity/evidence only when the new live assignee is the acting reviewer;
+reassignment to another reviewer returns metadata without private evidence.
+No generic directory, production MFA shortcut or later-task decisions added.
+Inactive-owner fixture now uses valid suspended/is_active=false semantics,
+retaining the inherited database consistency constraint unchanged.
+Local54 focused inherited-profile/Task6/Task7/CI unit cases,88-file domain mypy,
+381-file Ruff lint/format and diff checks passed. Hosted focused/cumulative GREEN
+must still be obtained on the exact corrected published source head.
