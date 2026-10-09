@@ -1185,3 +1185,50 @@ as unavailable rather than clean. Review confirmed no remaining Important or
 Critical finding after correction. Explicit user maximum request/object cap of
 10,000,000 bytes overrides the earlier plan multipart-overhead allowance; the
 existing measured request cap and security assertions are unchanged.
+
+## Execution checkpoint d4e25040 — current Foundation RED
+
+Published guarded fast-forward from exact d50b82e9 parent: d4e250402992f3f182b285ca433de79eae9718c6,
+tree 381994de1a6cc270122209872f55f1d7cf91f927. Both isolated diagnostic
+workflows excluded; no diagnostic branch merged. Hosted run 37897396645
+completed FAILURE, with three successful jobs: c02-migrations 113711771590
+(269 C02 cases passed, cumulative C03 selection 395 planned cases, natural
+exit 0 at 81s and verified cleanup), c03-storage 113711771589 (all 91 passed,
+0 failed/0 skipped, pytest exit 0 at 22.337s, natural exit/cleanup 176.9s),
+and c03-timeout-probe 113711771492 (actual GNU124 escaped container observed;
+supervisor fixture detached child terminated, owned container removed, bounded
+deadline failed closed with cleanup true). Artifacts: PostgreSQL 11600559605;
+storage 11601605035; timeout ownership 11600653719.
+
+Foundation job 113711771224: required host quality/static/frozen gate passed,
+477 units in 21.91s. Exact C01/C02 wrapper returned naturally 1 at 581.2s,
+not a timeout/deadline. Artifact 11600823345. Last active child command was
+current fitlink-foundation-verify checks: uv run --frozen pytest tests/unit
+tests/integration -q --strict-markers. This follows immutable C01 and the
+exact same-database upgrade phases. Services were healthy, MinIO ready200,
+no PostgreSQL blockers; changing test DB activity shows work rather than
+a fixed DB deadlock. Cleanup host/containers true. Exact failed node was not
+retained by existing stdout redaction; no functional cause is guessed.
+Prior successful Task3 Foundation37735571394 took19m50s, but the current
+RED returned before15-minute observation cap; no timeout is changed here.
+
+Add only opt-in current-source pytest node/phase/failure metadata journal,
+loaded after conftest bootstrap. Immutable C01 source/compose and original
+verify_c02.sh/verify_foundation.sh commands remain byte-identical. A bounded
+non-terminating case observer cannot change test verdicts; existing whole-gate
+supervisor owns deadline and cleanup. No raw exceptions/private payloads
+emitted. Full diagnostic JSONL uploaded; safe failed reports and exits printed.
+Task4 remains incomplete pending exact RED evidence and remaining GREEN gates.
+
+The refinement regression initially exposed absent local C01/static fixtures
+and an unintended uv environment installation; restored exact committed C01
+fixture/archive and verified generated CSS, used the existing frozen Python
+environment. No test weakened. Review caught a new-test Git-history dependency
+in depth-one hosted checkout; fixed to reviewed immutable script blob IDs
+bebab2374dd3daf2d234cf5c0a94300ce3796b8a and
+344898c20c0d5ede46fe7d5e653df378c267d9b7 without fetching/changing protected refs.
+
+Refinement verification GREEN: 28 focused checks, 480 cumulative units in
+28.39s, Ruff/format345files, diff checks. Review confirmed no remaining
+Critical/Important finding. Publish diagnostic refinement only, no product
+correction or timeout change; continue autonomously to obtain exact node.

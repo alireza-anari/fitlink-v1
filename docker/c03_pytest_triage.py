@@ -76,6 +76,7 @@ class Journal:
         self.session_cutoff = session_cutoff
         self.terminate = terminate
         self.recorded = False
+        self.session_recorded = False
         self.lock = threading.Lock()
         self.stop = threading.Event()
         self.thread = threading.Thread(target=self.observe, daemon=True)
@@ -126,11 +127,16 @@ class Journal:
             ):
                 self.recorded = True
                 self.snapshot("case_cutoff")
-            if time.monotonic() - self.started >= self.session_cutoff:
-                self.snapshot("diagnostic_cutoff")
+            if (
+                not self.session_recorded
+                and time.monotonic() - self.started >= self.session_cutoff
+            ):
+                self.session_recorded = True
+                self.snapshot(
+                    "diagnostic_cutoff" if self.terminate else "session_snapshot"
+                )
                 if self.terminate:
                     os._exit(124)
-                return
 
     def finish(self):
         self.stop.set()
@@ -146,7 +152,13 @@ def pytest_configure(config):
     global JOURNAL
     path = os.environ.get("C03_TRIAGE_EVIDENCE_FILE")
     if path:
-        JOURNAL = Journal(path, cutoff=0.05, session_cutoff=120, terminate=True)
+        foundation = os.environ.get("C03_FOUNDATION_TRIAGE") == "1"
+        JOURNAL = Journal(
+            path,
+            cutoff=30 if foundation else 0.05,
+            session_cutoff=120,
+            terminate=not foundation,
+        )
 
 
 @pytest.hookimpl(wrapper=True, tryfirst=True)

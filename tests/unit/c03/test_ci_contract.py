@@ -41,8 +41,7 @@ C03_STORAGE_JOB = r"""  c03-storage:
 """
 DIAGNOSTIC_FOUNDATION = r"""        run: |
           if [ "$GITHUB_REF" = refs/heads/profiles/c03-cloud ]; then
-            python docker/c03_gate_diagnostics.py --acceptance foundation \
-              sh docker/verify_c02.sh
+            python docker/c03_foundation_evidence.py
           else
             sh docker/verify_c02.sh
           fi
@@ -67,6 +66,12 @@ TIMEOUT_PROBE = """  c03-timeout-probe:
       - name: Isolated actual Compose timeout ownership probe
         run: python docker/c03_timeout_probe.py
 """
+FOUNDATION_ARTIFACT = DIAGNOSTIC_ARTIFACT.format(phase="foundation").replace(
+    "          path: .runtime/c03-diagnostics/*.jsonl",
+    "          path: |\n            .runtime/c03-diagnostics/*.jsonl\n"
+    "            .runtime/c03-foundation-evidence/*.jsonl",
+)
+
 STORAGE_ARTIFACT = DIAGNOSTIC_ARTIFACT.format(phase="storage").replace(
     "          path: .runtime/c03-diagnostics/*.jsonl",
     "          path: |\n"
@@ -82,9 +87,10 @@ def inherited_workflow_is_intact(source):
     inherited = inherited.replace(
         DIAGNOSTIC_FOUNDATION, "        run: sh docker/verify_c02.sh\n"
     )
-    for phase in ("foundation", "postgresql", "timeout-probe"):
+    for phase in ("postgresql", "timeout-probe"):
         inherited = inherited.replace(DIAGNOSTIC_ARTIFACT.format(phase=phase), "")
     inherited = inherited.replace(STORAGE_ARTIFACT, "")
+    inherited = inherited.replace(FOUNDATION_ARTIFACT, "")
     inherited = inherited.replace(TIMEOUT_PROBE, "")
     inherited = inherited.replace(C03_STEP, "")
     inherited = inherited.replace(C03_STORAGE_JOB, "")

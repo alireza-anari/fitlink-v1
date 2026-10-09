@@ -123,6 +123,7 @@ services:
       <<: *app-env
       UV_NO_DEV: '0'
       PYTEST_ADDOPTS: '-o cache_dir=/tmp/fitlink-pytest-cache'
+      C03_FOUNDATION_TRIAGE: '${C03_FOUNDATION_TRIAGE:-}'
     command: ["uv", "run", "--frozen", "pytest", "tests/unit", "tests/integration", "-q"]
     healthcheck: {disable: true}
   browser:

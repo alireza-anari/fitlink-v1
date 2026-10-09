@@ -54,8 +54,7 @@ jobs:
       - name: Exact C01 upgrade and complete isolated C02 regression
         run: |
           if [ "$GITHUB_REF" = refs/heads/profiles/c03-cloud ]; then
-            python docker/c03_gate_diagnostics.py --acceptance foundation \
-              sh docker/verify_c02.sh
+            python docker/c03_foundation_evidence.py
           else
             sh docker/verify_c02.sh
           fi
@@ -64,7 +63,9 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: c03-foundation-diagnostics
-          path: .runtime/c03-diagnostics/*.jsonl
+          path: |
+            .runtime/c03-diagnostics/*.jsonl
+            .runtime/c03-foundation-evidence/*.jsonl
           include-hidden-files: true
           if-no-files-found: error
   c02-migrations:
