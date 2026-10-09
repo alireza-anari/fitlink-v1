@@ -198,3 +198,118 @@ def test_decision_restriction_both_commit_orders(settings, first):
     assert "coach" not in eligibility(s).verified_roles
     in_connection(lambda: restrict(s, "coach", release=True))
     assert eligibility(s).verified_roles == ("coach",)
+
+
+def ordered_connections(first, second):
+    committed = Event()
+
+    def leader():
+        try:
+            return in_connection(first)
+        finally:
+            committed.set()
+
+    def follower():
+        assert committed.wait(timeout=20)
+        try:
+            return in_connection(second)
+        except (ProfileConflict, PermissionDenied, PermissionError):
+            return "conflict"
+
+    with ThreadPoolExecutor(2) as pool:
+        a, b = pool.submit(leader), pool.submit(follower)
+        return a.result(timeout=30), b.result(timeout=30)
+
+
+@pytest.mark.parametrize("order", ["authority_first", "decision_first", "overlap"])
+@pytest.mark.parametrize(
+    "change", ["restricted", "suspended", "pending_deletion", "logout"]
+)
+def test_c02_current_authority_interleaves_with_decision(settings, order, change):
+    from django.utils import timezone
+
+    from apps.accounts.state import transition_account_state
+    from apps.governance.audit import append_event
+    from config.use_cases.identity import logout_account
+
+    s = review(settings)
+    captured = facts(s, "coach")
+
+    def invalidate():
+        if change == "logout":
+            return logout_account(s.staff.request, s.staff.actor, True, timezone.now())
+        return transition_account_state(
+            s.user.public_id, s.user.auth_version, change, timezone.now(), append_event
+        )
+
+    def decide():
+        return decision(s, "coach", captured=captured)
+
+    if order == "overlap":
+        _, result = race(invalidate, decide)
+    elif order == "authority_first":
+        _, result = ordered_connections(invalidate, decide)
+        assert result == "conflict"
+    else:
+        result, _ = ordered_connections(decide, invalidate)
+        assert result != "conflict"
+    assert VerificationDecision.objects.filter(target=captured[1]).count() == (
+        0 if result == "conflict" else 1
+    )
+    with pytest.raises((PermissionError, PermissionDenied)):
+        decision(s, "coach", captured=captured)
+    if change != "logout":
+        assert not eligibility(s).eligible
+
+
+@pytest.mark.parametrize("order", ["reassign_first", "decision_first", "overlap"])
+def test_reassignment_interleaves_with_terminal_effect(settings, order):
+    from datetime import timedelta
+
+    from django.utils import timezone
+
+    from apps.governance.staff_models import StaffCapabilityGrant
+
+    from .profile_helpers import make_actor
+    from .verification_helpers import command
+
+    s = review(settings)
+    captured = facts(s, "coach")
+    other = make_actor("+989123456783")
+    StaffCapabilityGrant.objects.create(
+        user=other.user,
+        capability="professional_verification",
+        granted_by=s.staff.user,
+        reason_code="staff_assigned",
+        valid_from=other.at,
+        valid_until=other.at + timedelta(hours=1),
+    )
+
+    def reassign():
+        return command(
+            "assign_verification",
+            s.staff.actor,
+            s.case.id,
+            other.user.public_id,
+            captured[0].version,
+            s.staff.step,
+            "case_conflict",
+            timezone.now(),
+        )
+
+    def decide():
+        return decision(s, "coach", captured=captured)
+
+    if order == "overlap":
+        results = race(reassign, decide)
+        assert results.count("conflict") == 1
+    elif order == "reassign_first":
+        _, result = ordered_connections(reassign, decide)
+        assert result == "conflict"
+    else:
+        result, reassignment = ordered_connections(decide, reassign)
+        assert reassignment == "conflict"
+        assert result != "conflict"
+        # The old case version cannot reassign after a committed decision.
+        with pytest.raises(ProfileConflict):
+            reassign()
