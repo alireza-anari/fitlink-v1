@@ -78,6 +78,25 @@ STORAGE_ARTIFACT = DIAGNOSTIC_ARTIFACT.format(phase="storage").replace(
     "            .runtime/c03-diagnostics/*.jsonl\n"
     "            .runtime/c03-triage/*.jsonl",
 )
+C03_PROCESSING_JOB = """  c03-processing:
+    if: github.ref == 'refs/heads/profiles/c03-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Frozen processing gate environment
+        run: uv sync --frozen --group dev
+      - name: C03 real scanner and durable non-eager worker
+        run: python docker/c03_processing_evidence.py
+"""
+
 # Exact approved C02 workflow blob, before the narrowly authorized extension.
 C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
 
@@ -94,6 +113,8 @@ def inherited_workflow_is_intact(source):
     inherited = inherited.replace(TIMEOUT_PROBE, "")
     inherited = inherited.replace(C03_STEP, "")
     inherited = inherited.replace(C03_STORAGE_JOB, "")
+    inherited = inherited.replace(C03_PROCESSING_JOB, "")
+    inherited = inherited.replace(DIAGNOSTIC_ARTIFACT.format(phase="processing"), "")
     data = inherited.encode()
     digest = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data)
     return digest.hexdigest() == C02_WORKFLOW_BLOB
@@ -127,7 +148,7 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 5
+    assert source.count("        if:") == 6
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)
 
@@ -202,6 +223,7 @@ def test_private_storage_probe_starts_from_script_path_and_fails_closed():
 def test_every_installed_mandatory_c03_test_selected():
     assert ENTRY.is_file(), "C03 cumulative test selection is missing"
     source = ENTRY.read_text() + (ROOT / "docker/verify_c03_storage.sh").read_text()
+    source += (ROOT / "docker/verify_c03_processing.sh").read_text()
     installed = {
         str(path.relative_to(ROOT))
         for folder in ("tests/unit/c03", "tests/integration/c03")
@@ -278,3 +300,22 @@ def test_storage_job_mutations_rejected(old, new):
     assert not inherited_workflow_is_intact(
         source.replace(C03_STORAGE_JOB, C03_STORAGE_JOB.replace(old, new))
     )
+
+
+def test_real_scanner_non_eager_worker_gate_installed_by_task5():
+    source = WORKFLOW.read_text()
+    assert C03_PROCESSING_JOB in source
+    gate = (ROOT / "docker/verify_c03_processing.sh").read_text()
+    for name in (
+        "scanner",
+        "worker",
+        "test_asset_processing.py",
+        "test_processing_worker.py",
+        "test_scanner_service.py",
+        "test_image_sanitization.py",
+        "test_scanner_contract.py",
+    ):
+        assert name in gate
+    compose = (ROOT / "compose.yaml").read_text()
+    assert "internal: true" in compose and "read_only: true" in compose
+    assert "scanner-signatures:/var/lib/clamav:ro" in compose

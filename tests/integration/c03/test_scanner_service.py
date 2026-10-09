@@ -1,0 +1,68 @@
+"""Required actual private ClamAV and signature readiness, never fake-only PASS."""
+
+from datetime import timedelta
+from io import BytesIO
+
+import pytest
+from django.utils import timezone
+from PIL import Image
+
+from apps.assets.storage import S3PrivateStore
+
+from .processing_helpers import api, prepared
+from .test_asset_processing import claimed
+
+pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
+
+
+def scanner():
+    from importlib.util import find_spec
+
+    assert find_spec("apps.assets.scanner"), "scanner unavailable"
+    from apps.assets.scanner import configured_scanner
+
+    return configured_scanner()
+
+
+def test_real_scanner_clean_malicious_and_signature_readiness():
+    s = scanner()
+    at = timezone.now()
+    output = BytesIO()
+    Image.new("RGB", (8, 8)).save(output, format="PNG")
+    clean = s.scan(output.getvalue(), at)
+    assert (
+        clean.status == "clean" and clean.engine == "ClamAV 1.5.4" and clean.signature
+    )
+    # Industry test string, no real malware or private source.
+    eicar = b"X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"
+    assert s.scan(eicar, at).status == "malicious"
+    assert s.scan(output.getvalue(), at + timedelta(days=4)).status == "stale"
+    assert s.scan(b"x" * 10000001, at).status == "limit"
+    assert s.scan(output.getvalue(), at).status == "clean"
+
+
+def test_real_private_minio_scanner_and_sanitizer(monkeypatch):
+    store = S3PrivateStore()
+    s = prepared(monkeypatch, store=store)
+    attempt = claimed(s)
+    try:
+        assert (
+            api().process_asset(
+                s.asset.id,
+                1,
+                attempt.lease_uuid,
+                timezone.now(),
+                store=store,
+                scanner=scanner(),
+            )
+            == "ready"
+        )
+        child = s.asset.derivatives.get(state="ready")
+        assert child.mime_type == "image/png" and child.width == 64
+        assert store.read_limited(s.asset.source_key, 10000000) == s.data
+        assert store.read_limited(child.key, 10000000) != s.data
+        assert store.backend.default_acl is None
+    finally:
+        store.delete(s.asset.source_key)
+        for child in s.asset.derivatives.all():
+            store.delete(child.key)

@@ -13,6 +13,7 @@ dependencies = [
   "channels-redis>=4.2,<5",
   "uvicorn[standard]>=0.34,<1",
   "django-storages[s3]>=1.14,<2",
+  "pillow==12.3.0",
 ]
 
 [dependency-groups]

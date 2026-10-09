@@ -1442,3 +1442,48 @@ source/CI plus explicitly identified new local diagnostic reproductions.
 Completion publication changes only this append-only ledger; implementation
 source is identical to the validated1edf checkpoint. Preserve branch and
 all surviving new workspaces; STOP after Task4 handoff.
+
+## Task 5 authorized preflight — 2026-10-09
+
+Latest explicit authorization: Task 5 ONLY, autonomous execution until PASS or
+new external blocker. Tasks 1–4 remain COMPLETE; Tasks 6–14/C04 unstarted.
+Fresh isolated clone at exact published 1f0b12b6c92bfc8fb201911637f3f19b9ff8481f,
+tree 8815763c6eab87b55429b13cf3d8e430064f7e3f; status/diffs/untracked empty.
+No usable prior checkout/Task 5 work existed here. Complete published ledger and
+approved plan read. No deleted unpublished state fabricated or backup requested.
+All four protected refs match ledger authority. Task 4 run 37907594072 verified
+SUCCESS at exact 1edf4e69/tree0491ffb8; all four complete jobs/logs inspected:
+113744715421/113744715848/113744715710/113744715729. Confirmed 488 host units,
+1039 Foundation passed/0 failed/0 skipped, inherited269PG, MinIO91/0/0,
+owned timeout fixture cleanup. Documentation rerun is not a prerequisite.
+Python3.13.15/frozen69packages installed, exact C01 fixture verified from Git
+archive, npm/build/JS succeeded; untouched full unit baseline488passed72.28s.
+Existing timeouts/ownership design and immutable scripts remain binding.
+
+Dependency review before change: official Pillow12.3.0 release/security/advisory
+pages and ClamAV1.5.4 release/official INSTREAM/Docker docs reviewed2026-10-09.
+Pillow restricted JPEG/PNG parsing needs full pixel rebuild and native isolation;
+PDF/EPS/JPEG2000/font/viewer paths are excluded. Latest stable verified12.3.0,
+MIT-CMU; pin exact version and uv artifact hashes. ClamAV1.5.4 incorporates the
+August2026 parser security fixes; separate GPLv2 daemon, no libclamav linking.
+Official clamav/clamav:1.5.4_base registry manifest resolved to
+sha256:7769870154c74ce31b0047dd8771e81f7c4269278bc005782e9e419e4922c73d
+(amd64 child4bd758114dbe0964edf6742cd8ddd98ed73eb8fcd70ce8bb4f53b19a79f07fe1).
+Real signature readiness/isolation and hosted service evidence still pending.
+No safety/vulnerability-free claim inferred from a version pin.
+
+## Task 5 continuation checkpoint
+
+Preserved all seven modified and ten untracked Task5 files at exact1f0b12b6,
+with no staged changes or production processor. All protected refs reverified
+unchanged via GitHub API; complete Task4 run/jobs/logs recheckedGREEN.
+Task5 prior26failures are missing-contract assertions, NOT behavioral RED.
+Ruling: establish minimal fail-closed callable boundaries before counting actual
+behavioral RED; do not label missing imports/contracts as product evidence.
+Cost if wrong: boundary checkpoint still cannot satisfy any completion gate.
+Existing CI selection test failed on omitted new processing script; include that
+owning gate in the installed-suite union, retaining exact inherited workflow.
+Compose browser inherits the new app networks together with network_mode;
+clear only browser's inherited networks to keep its original web loopback mode.
+No process/service/supervisor timeout changed. Publishing tests/infrastructure
+for required hosted RED; Task5 IN_PROGRESS, noTask6/C04/merge/deployment.

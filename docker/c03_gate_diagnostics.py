@@ -41,6 +41,7 @@ for test_file in TEST_FILES:
 
 PROJECTS = {
     "fitlink-c03-private-storage",
+    "fitlink-c03-private-processing",
     "fitlink-c02-immutable-c01",
     "fitlink-c02-exact-upgrade",
     "fitlink-foundation-verify",
@@ -50,8 +51,9 @@ QUERY_FAILURES = deque(maxlen=8)
 WINDOWS = {"postgresql": 240, "storage": 600, "foundation": 900}
 OWNED_PROJECTS = {
     "postgresql": set(),
-    "storage": {"fitlink-c03-private-storage"},
-    "foundation": PROJECTS - {"fitlink-c03-private-storage"},
+    "storage": {"fitlink-c03-private-storage", "fitlink-c03-private-processing"},
+    "foundation": PROJECTS
+    - {"fitlink-c03-private-storage", "fitlink-c03-private-processing"},
 }
 WORDS = {
     "uv",
