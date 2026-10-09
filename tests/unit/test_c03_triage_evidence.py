@@ -74,3 +74,35 @@ def test_failure_preserves_http_assertion_and_trace_without_response_body():
     assert data["expected_http_status"] == 201 and data["actual_http_status"] == 404
     assert data["traceback"][-1]["file"] == "tests/unit/test_c03_triage_evidence.py"
     assert "synthetic-private-payload" not in json.dumps(data)
+
+
+def test_internal_pytest_error_records_only_class_and_code_locations(monkeypatch):
+    triage = reporter()
+    assert callable(getattr(triage, "pytest_internalerror", None)), (
+        "Internal error evidence absent"
+    )
+    events = []
+
+    class Journal:
+        node = None
+        last_node = (
+            "tests/unit/test_c03_triage_evidence.py::"
+            "test_internal_pytest_error_records_only_class_and_code_locations"
+        )
+
+        def emit(self, event, **data):
+            events.append({"event": event, **data})
+
+    monkeypatch.setattr(triage, "JOURNAL", Journal())
+    try:
+        raise ValueError("synthetic-private-payload")
+    except ValueError:
+        info = pytest.ExceptionInfo.from_current()
+    triage.pytest_internalerror(None, info)
+    event = events[0]
+    assert event["exception"] == "ValueError"
+    assert event["active_node"].endswith(
+        "test_internal_pytest_error_records_only_class_and_code_locations"
+    )
+    assert event["traceback"][-1]["file"] == "tests/unit/test_c03_triage_evidence.py"
+    assert "synthetic-private-payload" not in json.dumps(event)

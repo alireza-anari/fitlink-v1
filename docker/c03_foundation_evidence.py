@@ -51,6 +51,7 @@ def main():
                     "pytest_exit",
                     "case_cutoff",
                     "session_snapshot",
+                    "pytest_internalerror",
                 } or (
                     event.get("event") == "test_report"
                     and event.get("outcome") != "passed"

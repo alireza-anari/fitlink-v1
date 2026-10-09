@@ -1232,3 +1232,58 @@ Refinement verification GREEN: 28 focused checks, 480 cumulative units in
 28.39s, Ruff/format345files, diff checks. Review confirmed no remaining
 Critical/Important finding. Publish diagnostic refinement only, no product
 correction or timeout change; continue autonomously to obtain exact node.
+
+## Foundation internal-error observation — a61f6e3b
+
+Hosted run37899524638 on a61f6e3b65fb05fa51a9c92c19de60d242f3744a,
+tree025336a6a78636b2d735d1bcaf76e0793ead66cf: C02/cumulativePG, real
+MinIO91 and ownership jobs GREEN again. Foundation113718559637 natural
+exit3 at559.7s, cleanuptrue. Reporter records952passed /0failed/0skipped
+case calls, pytest exit3 at189.527s. This is a pytest INTERNALERROR, not
+a recorded failed assertion. Its exception identity/trace is the exact
+remaining observation; no product or timeout correction is inferred.
+Artifact11601892064 contains redacted journal; binary download transfer
+to this host returns403, so use emitted logs. Safe session snapshot120s
+shows active evidence-guard teardown in PostgreSQL fixture flush, no
+blockers; this does not identify the later internal error.
+
+Local focused test_c03_triage_evidence (all4 prior cases) under active
+Foundation reporter passes; collection ordering alone cannot prove a
+hosted failing node. Add only pytest_internalerror hook with bounded
+class/category, last static node, source frames without locals/messages.
+Focused missing-hook regression RED. Preserve all gates and code; continue
+to obtain exact exception rather than guessing a source correction.
+
+New wrapper regression initially leaked its fake working directory/env
+into later local tests; cumulative suite caught20 fail-closed boot/check
+failures. Scoped fake cwd/env with monkeypatch restoration. This test did
+not exist in either prior hosted RED, so it cannot explain them. Both
+internalerror-hook and visible-output regressions observed RED then GREEN.
+
+Internal-error refinement local verification: 482 cumulative units passed
+in36.75s, focused24passed, Ruff/format345files and diff checks GREEN.
+Read-only review: no Critical/Important findings. Isolated diagnostic
+branch diagnostics/c03-task4-foundation-triage created at
+5f53cfda706a8bccbe3fad7ca569e9dd607751da,
+tree8070dbb44077ae04d7d3eff8fcb3a0297f60c8ea, parent exactlya61f6e3b.
+Six diagnostic-only files; this unpublished ledger excluded.
+Run37901832441 now executing job113725939593. It is expected diagnostic
+failure and cannot establish Task4 PASS. Execution ref remainsa61f6e3b.
+
+## Complete Foundation command observed GREEN on isolated diagnostic source
+
+Run37901832441 / job113725939593, source5f53cfda, completed expected
+diagnostic FAILURE solely because its workflow explicitly rejects a zero
+observed gate status. The unchanged full verify_c02.sh command itself
+returned0 naturally at871.2s; host/container cleanup complete. Current
+reporter: 1033passed/0failed/0skipped call reports, all three recorded pytest
+exits0 (220.017s,1.017s,0.461s); no internalerror/cutoff. Original immutable
+C01, same-database upgrade, current regressions/browser/restart commands
+all completed because the original set-e script reached its natural0 end.
+Artifact11603845636 c03-foundation-internalerror,63978bytes, digest
+13237572a5dc46d1a211ee4c5f99ff4b5a79a885f8f0b624289b25995507a0e7.
+The earlier internalerror did not recur; its exact class/cause remains
+unestablished. No speculative application or timeout correction made.
+Publish the reviewed metadata-only refinement/tests plus this ledger to
+the execution ref by guarded fast-forward, then require actual complete
+execution CI GREEN before Task4 completion. No diagnostic branch merged.
