@@ -319,3 +319,12 @@ def test_real_scanner_non_eager_worker_gate_installed_by_task5():
     compose = (ROOT / "compose.yaml").read_text()
     assert "internal: true" in compose and "read_only: true" in compose
     assert "scanner-signatures:/var/lib/clamav:ro" in compose
+
+
+def test_real_worker_crash_and_broker_restart_probe_is_mandatory():
+    gate = (ROOT / "docker/verify_c03_processing.sh").read_text()
+    for phase in ("prepare", "start", "recover", "scanner-outage", "scanner-restored"):
+        assert "docker/c03_processing_probe.py " + phase in gate
+    assert "kill -s SIGKILL worker" in gate
+    assert "restart redis" in gate
+    assert "--force-recreate worker" in gate

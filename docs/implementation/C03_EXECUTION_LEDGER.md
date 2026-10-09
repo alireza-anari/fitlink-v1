@@ -1511,3 +1511,35 @@ executor root cannot os.setgroups (EPERM), so it correctly returns unavailable;
 no root fallback, skip or security bypass. Hosted runner/container is nonroot.
 Durable attempt handler installed without longI/O; claim/release remain explicit
 fail-closed stubs for real hosted behavioralRED. Task5 remainsIN_PROGRESS.
+
+Hosted37927731734/source61be29ec: PG/storage/ownershipGREEN, scanner runtime
+started healthy and required tests executed; processingnatural1at193s cleanup
+true, but raw pytest verdicts were not retained. Added existing metadata-only
+triage journal to processing gate; exact behavioral evidence is pending that
+run, not inferred from error class alone. Foundation actual5JPEGfailed/510passed;
+PNG clean metadata removal and isolation probeGREEN. Fresh independent process
+on syntheticEXIF JPEG imports TIFF/ImageOps/ImageMath during decode; preloaded
+those before sandbox, retained explicit JPEG/PNG OPEN allowlist. Fix0ef7f67b/
+treefcd8d41d (local007fda7) and triage43f9e884/tree4bcbc571 (localab56c53).
+No service or task timeout widened; no raw exception/image/URL/log telemetry.
+
+Schema review finding before Task5 migration: installed attempts have lease
+and processing_version but no durable ownerauth/assetversion/subject authority
+snapshot. A restarted process cannot establish whether claim-time authority
+changed using only process-local facts. Ruling: separately named additive
+assets0008 will store owner_auth_version, asset_version and a restricted SHA256
+authority_hash, defaultempty only for legacy pending rows, positive/bounded when
+running. No User/oldmigration changes or feature backfill. Cost if wrong: strict
+binding may require harmless retry after unrelated profileversion changes.
+Task5 synthetic JPEG/PNG fixtures and SHA256 manifest created; no real evidence.
+
+
+### Task 5 durable processing implementation checkpoint (2026-10-09)
+
+- Authoritative case journal on remote head 43f9e884c5d066db0303cd4956a50602b4117b35, tree 4bcbc571f71475201881d9d9fa69a4f1687420f5: run 37928283771 processing job 113812440767 exited naturally 1, owned cleanup complete. 50 actual call reports: 28 passed and 22 failed. The receipt/recovery test failed at line 29, and duplicate/revocation/restart tests at claimed line 48 (`scan_due_assets` returned 0). Real ClamAV clean/malicious/signature readiness passed; all JPEG/PNG sanitizer and isolation cases passed. This establishes behavioral processing RED after healthy required services, not a fixture failure. Storage, PostgreSQL and ownership jobs passed on the same head; foundation quality/unit checks passed, inherited service rehearsal still in progress when inspected.
+- Implemented lease claims, historical failed attempt retention, eight-attempt ceiling, 300-second retry backoff, UUID-only non-eager prompts, periodic reconciliation, and independent source-read/scan/decode/object-write outside transactions. All inherited task/process/service/supervisor bounds retained.
+- Separately named additive assets0008 adds persisted owner_auth_version, asset_version and authority_hash, plus running-authority CHECK. The schema finding/ruling was recorded above before generation. Legacy pending metadata defaults to unclaimed values; running rows without authority are rejected rather than retrospectively authorized. No User, old migration, or accepted-source mutation.
+- Composition supplies trusted profile/role/credential and exact-record hold/consent fences. Holds never grant reads or cause deletion; no nonexistent professional consent grant is invented. User/parent locks precede Asset. Derivative inventory commits pending before immutable private write, allowing exact-byte adoption after crash. Fresh release rechecks authority, lease, revocation, source and scanner freshness.
+- Server-controlled PNG compression is fixed at level 9; reconstructed pixels carry no input metadata. Production configuration rejects enabled processing until sanitized delivery is installed.
+- Added bounded hosted test-only scanner barrier: commit receipt without prompt, discover through reconciler, actual Celery scan, SIGKILL worker, restart Redis, recover expired lease through production task, verify one ready effect and retained source; actual scanner outage/restoration checks follow. This checkpoint remains IN PROGRESS until actual hosted evidence passes; source contract is not service PASS.
+- Local Ruff lint/format and targeted mypy passed; 30 scanner/CI tests passed. Migration drift reported none (local PostgreSQL unavailable, so hosted SQL remains required).

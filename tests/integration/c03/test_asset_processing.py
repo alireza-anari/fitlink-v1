@@ -187,3 +187,69 @@ def test_clean_scanner_alone_never_ready(monkeypatch):
         != "ready"
     )
     assert not s.asset.derivatives.exists()
+
+
+def test_current_source_facts_and_storage_failure_fail_closed(monkeypatch):
+    s = prepared(monkeypatch)
+    attempt = claimed(s)
+    s.store.objects[s.asset.source_key] = b"changed bytes"
+    assert (
+        api().process_asset(
+            s.asset.id,
+            1,
+            attempt.lease_uuid,
+            timezone.now(),
+            store=s.store,
+            scanner=Scanner(),
+        )
+        != "ready"
+    )
+    assert not s.asset.derivatives.exists()
+
+
+def test_scanner_exception_is_bounded_and_retryable(monkeypatch):
+    s = prepared(monkeypatch)
+    attempt = claimed(s)
+
+    class Broken:
+        def scan(self, data, at):
+            raise RuntimeError("PRIVATE_SENTINEL https://private.invalid/source")
+
+    assert (
+        api().process_asset(
+            s.asset.id,
+            1,
+            attempt.lease_uuid,
+            timezone.now(),
+            store=s.store,
+            scanner=Broken(),
+        )
+        != "ready"
+    )
+    attempt.refresh_from_db()
+    assert attempt.failure_code == "scanner_unavailable"
+    assert "PRIVATE_SENTINEL" not in repr(attempt.__dict__)
+    assert not s.asset.derivatives.exists()
+
+
+def test_processing_claim_persists_authority_across_process_restart(monkeypatch):
+    s = prepared(monkeypatch)
+    attempt = claimed(s)
+    assert attempt.owner_auth_version == s.user.auth_version
+    s.asset.refresh_from_db()
+    assert attempt.asset_version == s.asset.version
+    assert len(attempt.authority_hash) == 64
+    s.user.auth_version += 1
+    s.user.save()
+    assert (
+        api().process_asset(
+            s.asset.id,
+            1,
+            attempt.lease_uuid,
+            timezone.now(),
+            store=s.store,
+            scanner=Scanner(),
+        )
+        != "ready"
+    )
+    assert not s.asset.derivatives.exists()

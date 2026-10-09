@@ -72,6 +72,9 @@ class AssetProcessingAttempt(models.Model):
     lease_until = models.DateTimeField(null=True, blank=True)
     attempt = models.PositiveSmallIntegerField(default=1)
     state = models.CharField(max_length=12, default="pending")
+    owner_auth_version = models.PositiveBigIntegerField(default=0)
+    asset_version = models.PositiveBigIntegerField(default=0)
+    authority_hash = models.CharField(max_length=64, blank=True)
     scanner_engine = models.CharField(max_length=64, blank=True)
     scanner_signature = models.CharField(max_length=128, blank=True)
     failure_code = models.CharField(max_length=32, blank=True)
@@ -88,6 +91,15 @@ class AssetProcessingAttempt(models.Model):
                 condition=~models.Q(state="running")
                 | models.Q(lease_uuid__isnull=False, lease_until__isnull=False),
                 name="attempt_running_lease",
+            ),
+            models.CheckConstraint(
+                condition=~models.Q(state="running")
+                | models.Q(
+                    owner_auth_version__gte=1,
+                    asset_version__gte=1,
+                    authority_hash__regex=r"^[0-9a-f]{64}$",
+                ),
+                name="attempt_running_authority",
             ),
             models.UniqueConstraint(
                 fields=["asset", "processing_version", "attempt"],

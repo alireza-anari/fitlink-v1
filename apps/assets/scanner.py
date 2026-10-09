@@ -13,6 +13,7 @@ class ScanResult:
     status: str
     engine: str = ""
     signature: str = ""
+    expires_at: datetime | None = None
 
 
 def interpret(response: bytes, version: str, at) -> ScanResult:
@@ -35,7 +36,7 @@ def interpret(response: bytes, version: str, at) -> ScanResult:
         status = "error"
     else:
         status = "unknown"
-    return ScanResult(status, engine, signature)
+    return ScanResult(status, engine, signature, stamp + timedelta(hours=72))
 
 
 class ClamScanner:

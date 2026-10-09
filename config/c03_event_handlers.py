@@ -1,6 +1,7 @@
 """Installed metadata receipts only; no publication or external side effects."""
 
 from apps.professionals.models import ProfessionalProfile
+from config.use_cases.asset_processing import request_processing as request_processing
 
 
 def professional_profile_metadata(event, at):

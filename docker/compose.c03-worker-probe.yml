@@ -1,0 +1,3 @@
+services:
+  worker:
+    command: ["uv", "run", "--frozen", "celery", "--quiet", "-A", "config.celery:app", "worker", "--loglevel=WARNING", "--concurrency=1", "--hostname=foundation@%h", "-I", "docker.c03_worker_fixture"]

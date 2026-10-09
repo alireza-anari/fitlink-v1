@@ -7,7 +7,7 @@ from urllib.parse import urlsplit
 from apps.accounts.security_config import load_security_config
 
 from .base import *  # noqa: F403
-from .base import DATABASES, STORAGES, env
+from .base import ASSET_PROCESSING_ENABLED, DATABASES, STORAGES, env
 
 DEBUG = False
 SECRET_KEY = env.str_value("DJANGO_SECRET_KEY", required=True)
@@ -131,3 +131,8 @@ CELERY_REDIS_BACKEND_USE_SSL = {"ssl_cert_reqs": ssl.CERT_REQUIRED}
 ACCOUNT_SECURITY = load_security_config(os.environ, production=True)
 
 SETTINGS_ENV = "production"
+
+
+# Task 5 has no installed sanitized delivery route; production stays closed.
+if ASSET_PROCESSING_ENABLED:
+    env.invalid("ASSET_PROCESSING_ENABLED")

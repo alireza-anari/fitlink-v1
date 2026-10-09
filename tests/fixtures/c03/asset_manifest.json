@@ -1,0 +1,18 @@
+[
+  {
+    "file": "synthetic.png",
+    "sha256": "313fc7da55764dee46c524c95d06b589e4dfb61266178749c5aab63de4aecd6e",
+    "mime": "image/png",
+    "width": 64,
+    "height": 48,
+    "synthetic": true
+  },
+  {
+    "file": "synthetic.jpg",
+    "sha256": "adc2fd5401b4aa6024afdcb6697e98005ffa00ef9b98f9d19d3d1586f2fe10d7",
+    "mime": "image/jpeg",
+    "width": 64,
+    "height": 48,
+    "synthetic": true
+  }
+]

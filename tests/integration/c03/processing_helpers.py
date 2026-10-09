@@ -21,7 +21,7 @@ def api():
     from importlib.util import find_spec
 
     assert find_spec("apps.assets.processing"), "processing command absent"
-    return importlib.import_module("apps.assets.processing")
+    return importlib.import_module("config.use_cases.asset_processing")
 
 
 def prepared(monkeypatch, data=None, store=None):

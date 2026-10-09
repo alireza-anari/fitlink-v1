@@ -155,7 +155,7 @@ def decode(data, mime, edge):
         clean = Image.frombytes(mode, pixels.size, pixels.tobytes())
         clean.thumbnail((edge, edge), Image.Resampling.LANCZOS)
         output = BytesIO()
-        clean.save(output, format="PNG")
+        clean.save(output, format="PNG", compress_level=9)
         result = output.getvalue()
         if len(result) > 10_000_000:
             raise ValueError("Output limit")
