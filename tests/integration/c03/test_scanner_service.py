@@ -88,3 +88,25 @@ def test_real_daemon_stream_limit_and_incomplete_stream_timeout():
         with pytest.raises(TimeoutError):
             conn.recv(512)
     assert s.scan(b"synthetic", timezone.now()).status == "clean"
+
+
+def test_real_daemon_unknown_reply_never_becomes_clean():
+    import socket
+    import time
+
+    from apps.assets.scanner import interpret
+
+    s = scanner()
+    at = timezone.now()
+    assert s.scan(b"synthetic", at).status == "clean"
+    version = (
+        s._command(b"zVERSION\0", None, time.monotonic() + 2)
+        .rstrip(b"\0")
+        .decode("ascii")
+    )
+    with socket.create_connection((s.host, s.port), timeout=2) as conn:
+        conn.settimeout(2)
+        conn.sendall(b"zC03_UNKNOWN\0")
+        reply = conn.recv(512)
+        assert reply and interpret(reply, version, at).status == "unknown"
+    assert s.scan(b"synthetic", timezone.now()).status == "clean"

@@ -326,7 +326,15 @@ def test_real_scanner_non_eager_worker_gate_installed_by_task5():
 
 def test_real_worker_crash_and_broker_restart_probe_is_mandatory():
     gate = (ROOT / "docker/verify_c03_processing.sh").read_text()
-    for phase in ("prepare", "start", "recover", "scanner-outage", "scanner-restored"):
+    for phase in (
+        "prepare",
+        "start",
+        "recover",
+        "scanner-outage",
+        "scanner-restored",
+        "periodic-prepare",
+        "periodic-verify",
+    ):
         assert "docker/c03_processing_probe.py " + phase in gate
     assert "kill -s SIGKILL worker" in gate
     assert "restart redis" in gate

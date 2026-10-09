@@ -37,6 +37,7 @@ from config.use_cases.asset_processing import scan_due_assets  # noqa: E402
 from docker.c03_worker_fixture import STAGE, crash_probe  # noqa: E402
 
 PHONE = "+989100000005"
+PERIODIC_PHONE = "+989100000006"
 
 
 def evidence(stage):
@@ -44,11 +45,11 @@ def evidence(stage):
         stream.write(json.dumps({"event": "real_worker_probe", "stage": stage}) + "\n")
 
 
-def row():
-    return Asset.objects.get(owner__phone=PHONE)
+def row(phone=PHONE):
+    return Asset.objects.get(owner__phone=phone)
 
 
-def prepare():
+def prepare(phone=PHONE):
     isolation = isolation_probe()
     assert all(
         isolation.get(k)
@@ -60,7 +61,7 @@ def prepare():
     data = output.getvalue()
     assert configured_scanner().scan(data, at).status == "clean"
     user = User.objects.create_user(
-        PHONE,
+        phone,
         birth_date=date(1990, 1, 1),
         adult_attested_at=at,
         adult_attestation_version="adult-v1",
@@ -170,6 +171,26 @@ def recover():
     evidence("broker_restart_expired_lease_recovered_once")
 
 
+def periodic_prepare():
+    prepare(PERIODIC_PHONE)
+
+
+def periodic_verify():
+    asset = row(PERIODIC_PHONE)
+    deadline = time.monotonic() + 35
+    while time.monotonic() < deadline:
+        asset.refresh_from_db()
+        if asset.state == "ready":
+            break
+        time.sleep(0.1)
+    assert (
+        asset.state == "ready" and asset.derivatives.filter(state="ready").count() == 1
+    )
+    assert asset.processing_attempts.filter(state="ready").count() == 1
+    assert AssetProcessingAttempt.objects.filter(asset=asset).count() == 1
+    evidence("actual_separate_beat_recovered_missed_prompt")
+
+
 def scanner_outage():
     assert configured_scanner().scan(b"synthetic", timezone.now()).status != "clean"
     assert row().derivatives.count() == 1
@@ -191,6 +212,8 @@ if __name__ == "__main__":
             "prepare": prepare,
             "start": start,
             "recover": recover,
+            "periodic-prepare": periodic_prepare,
+            "periodic-verify": periodic_verify,
             "scanner-outage": scanner_outage,
             "scanner-restored": scanner_restored,
         }[phase]()

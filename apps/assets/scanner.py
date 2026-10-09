@@ -65,6 +65,8 @@ class ClamScanner:
                 .rstrip(b"\0")
                 .decode("ascii")
             )
+            if current != version:
+                return ScanResult("stale")
             return interpret(response, current, at)
         except TimeoutError:
             return ScanResult("timeout")

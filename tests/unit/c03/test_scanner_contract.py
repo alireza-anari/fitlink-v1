@@ -113,3 +113,18 @@ def test_disabled_reconciler_never_enters_claim_boundary(monkeypatch, settings):
     monkeypatch.setattr(asset_processing.processing, "scan_due_assets", claim)
     assert asset_processing.scan_due_assets(timezone.now()) == 0
     assert calls == []
+
+
+def test_signature_change_during_scan_is_not_a_clean_attestation(monkeypatch):
+    scanner = api().ClamScanner("127.0.0.1", 1)
+    at = datetime.now(UTC)
+    stamp = at.strftime("%a %b %d %H:%M:%S %Y")
+    replies = iter(
+        [
+            f"ClamAV 1.5.4/28000/{stamp}\0".encode(),
+            b"stream: OK\0",
+            f"ClamAV 1.5.4/28001/{stamp}\0".encode(),
+        ]
+    )
+    monkeypatch.setattr(scanner, "_command", lambda *args: next(replies))
+    assert scanner.scan(b"synthetic", at).status == "stale"

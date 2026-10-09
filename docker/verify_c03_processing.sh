@@ -11,7 +11,7 @@ dc() { docker compose -p "$project" --env-file "$env_file" --profile test "$@"; 
 cleanup() { dc down --remove-orphans >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 python docker/c03_compose_check.py "$project" "$env_file"
-dc build scanner scanner-signatures minio minio-init checks worker
+dc build scanner scanner-signatures minio minio-init checks worker asset-beat
 dc up -d --wait db redis minio scanner
 dc run --rm minio-init
 dc run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
@@ -33,3 +33,7 @@ dc stop scanner
 dc run --rm --no-deps checks timeout -k 5s 30s uv run --frozen python docker/c03_processing_probe.py scanner-outage
 dc up -d --wait scanner
 dc run --rm --no-deps checks timeout -k 5s 30s uv run --frozen python docker/c03_processing_probe.py scanner-restored
+# Independent actual Beat discovers a second receipt with no prompt at all.
+dc run --rm --no-deps checks timeout -k 5s 60s uv run --frozen python docker/c03_processing_probe.py periodic-prepare
+dc up -d asset-beat
+dc run --rm --no-deps checks timeout -k 5s 40s uv run --frozen python docker/c03_processing_probe.py periodic-verify
