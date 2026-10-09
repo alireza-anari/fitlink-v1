@@ -154,6 +154,11 @@ C03_PROCESSING_JOB = """  c03-processing:
         run: python docker/c03_processing_evidence.py
 """
 
+TASK8_REPORT = """      - name: Task 8 metadata-only PostgreSQL verdict
+        if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
+        run: sh docker/verify_c03_incremental.sh --task8-evidence
+"""
+
 # Exact approved C02 workflow blob, before the narrowly authorized extension.
 C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
 
@@ -169,6 +174,7 @@ def inherited_workflow_is_intact(source):
     inherited = inherited.replace(FOUNDATION_ARTIFACT, "")
     inherited = inherited.replace(TIMEOUT_PROBE, "")
     inherited = inherited.replace(C03_STEP, "")
+    inherited = inherited.replace(TASK8_REPORT, "")
     inherited = inherited.replace(C03_STORAGE_JOB, "")
     inherited = inherited.replace(C03_PROCESSING_JOB, "")
     inherited = inherited.replace(PROCESSING_ARTIFACT, "")
@@ -205,7 +211,8 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 6
+    assert source.count("        if:") == 7
+    assert source.count(TASK8_REPORT) == 1
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)
 

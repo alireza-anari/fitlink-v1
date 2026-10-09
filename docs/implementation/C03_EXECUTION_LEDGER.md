@@ -1905,3 +1905,20 @@ contracts and missing CI selection. Full focused specification collects71cases
 without collection errors. Minimal exact Task8 cumulative selection added,
 inherited commands/timeouts/services/workflow unchanged. No migration.
 Hosted PostgreSQL behavioral/race RED pending. No Task8 implementation yet.
+
+### Task 8 RED observability follow-up (no production implementation)
+
+Test-specification API commit `fa3d0c9c42e4c987549b7ac7399a38bba5455dd4`,
+tree `4f612a25ddddeb5062e82cfe8d45340d90b3832b`, run `37985939065` attempt 1:
+Foundation unit check fails on six missing Task 8 contracts (550 passed).
+PostgreSQL reaches the four new Task 8 suites and exits naturally with status 1;
+inherited C02 has 269 passed and the durable Redis restart probe passes.
+Storage, processing, and timeout ownership jobs pass. PostgreSQL artifact
+`11643551462` has digest `sha256:aa04ba4ea5b8f84764882cf1b31e79b52cc59d3a2e56194850786deab4f08e6b`.
+The artifact reader returns a ZIP reference but materialization returns HTTP 403;
+the supervisor intentionally suppresses raw child output. Individual PostgreSQL
+RED failures remain unclaimed until their redacted journal can be read.
+The permitted minimal workflow adaptation adds an always-run metadata-only
+journal report using the incremental script, outside the supervisor. It neither
+changes pytest selection nor masks the cumulative gate exit, and adds a bounded
+30-second reporting command. Production Task 8 code is still absent.

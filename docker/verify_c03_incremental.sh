@@ -2,6 +2,38 @@
 # Explicit cumulative C03 selections. Extend in each owning task, never skip.
 set -eu
 
+# Read the existing redacted observer journal outside the stdout supervisor.
+# This reporting mode never executes or changes an acceptance gate.
+if [ "${1:-}" = --task8-evidence ]; then
+  timeout -k 10s 30s uv run --frozen python - <<'REPORT'
+import json
+from pathlib import Path
+
+selected = (
+    "tests/unit/c03/test_publication_eligibility.py::",
+    "tests/integration/c03/test_verification_decisions.py::",
+    "tests/integration/c03/test_verification_decision_races.py::",
+    "tests/integration/c03/test_verification_revocation.py::",
+)
+counts = {"passed": 0, "failed": 0, "skipped": 0}
+for path in sorted(Path(".runtime/c03-diagnostics").glob("foundation-*.jsonl")):
+    events = [json.loads(line) for line in path.read_text().splitlines()]
+    if not any(event.get("node", "").startswith(selected) for event in events):
+        continue
+    for event in events:
+        chosen = event.get("node", "").startswith(selected)
+        if event.get("event") == "test_report" and chosen:
+            if event.get("phase") == "call" and event.get("outcome") in counts:
+                counts[event["outcome"]] += 1
+            if event.get("outcome") != "passed":
+                print("C03_TASK8 " + json.dumps(event, sort_keys=True), flush=True)
+        if event.get("event") in {"pytest_exit", "pytest_internalerror"}:
+            print("C03_TASK8 " + json.dumps(event, sort_keys=True), flush=True)
+print("C03_TASK8_COUNTS " + json.dumps(counts, sort_keys=True), flush=True)
+REPORT
+  exit 0
+fi
+
 # Bound the entire C03 gate, including readiness/SQL/type checking and cleanup.
 # A timed-out process is a failed gate; the inherited job timeout is unchanged.
 if [ "${C03_GATE_CHILD:-}" != 1 ]; then
