@@ -353,3 +353,212 @@ def test_credential_receipt_version_and_reclassification_denied():
     with pytest.raises(contracts.ProfileConflict):
         revise(s, dto, source_asset=asset.id)
     assert newer.version == dto.version + 1
+
+
+@pytest.mark.parametrize("selected", [[], ["coach"], ["nutritionist"]])
+def test_declaration_edit_preserves_evidence_and_unrelated_pending(selected):
+    s = owner()
+    save(s, "identity", {"identity_name": "علی", "roles": ["coach", "nutritionist"]})
+    pending = targets(s)
+    before = counters(s)
+    versions = {
+        r.role: (r.declaration_version, r.decision_version)
+        for r in s.profile.roles.all()
+    }
+    save(s, "identity", {"roles": selected})
+    assert counters(s) == before
+    for role in s.profile.roles.all():
+        assert role.declared_active == (role.role in selected)
+        assert role.declaration_version == versions[role.role][0] + (
+            role.role not in selected
+        )
+        assert role.decision_version == versions[role.role][1]
+    for kind, target in pending.items():
+        target.refresh_from_db()
+        assert target.state == (
+            "stale"
+            if kind in {"coach", "nutritionist"} and kind not in selected
+            else "submitted"
+        )
+    s.profile.refresh_from_db()
+    assert s.profile.state == "setup"
+
+
+def test_identity_name_stales_only_identity_and_preserves_role_counters():
+    s = owner()
+    save(s, "identity", {"identity_name": "علی", "roles": ["coach", "nutritionist"]})
+    pending = targets(s)
+    before = counters(s)
+    save(s, "identity", {"identity_name": "نام جدید"})
+    assert counters(s) == {**before, "identity": before["identity"] + 1}
+    for kind, target in pending.items():
+        target.refresh_from_db()
+        assert target.state == ("stale" if kind == "identity" else "submitted")
+
+
+def test_first_other_role_declaration_retains_coach_approval():
+    s = owner()
+    save(s, "identity", {"identity_name": "علی", "roles": ["coach"]})
+    role = s.profile.roles.get(role="coach")
+    case = Verification.objects.create(profile=s.profile, sequence=1)
+    target = VerificationTarget.objects.create(
+        verification=case,
+        target="coach",
+        role=role,
+        bound_evidence_revision=role.evidence_revision,
+        bound_declaration_version=role.declaration_version,
+        bound_decision_version=role.decision_version,
+        target_snapshot_hash="c" * 64,
+    )
+    decision = VerificationDecision.objects.create(
+        target=target,
+        profile=s.profile,
+        target_kind="coach",
+        actor=s.user,
+        decision="approve",
+        reason_code="credentials_approved",
+        target_snapshot_hash="c" * 64,
+        bound_evidence_revision=role.evidence_revision,
+        decision_sequence=1,
+        decided_at=timezone.now(),
+    )
+    target.state = "approved"
+    target.save()
+    case.state, case.submitted_at, case.decided_at, case.snapshot_hash = (
+        "decided",
+        timezone.now(),
+        timezone.now(),
+        "d" * 64,
+    )
+    case.save()
+    before = list(VerificationDecision.objects.values())
+    save(s, "identity", {"roles": ["coach", "nutritionist"]})
+    role.refresh_from_db()
+    target.refresh_from_db()
+    decision.refresh_from_db()
+    assert (
+        role.evidence_revision,
+        role.declaration_version,
+        role.decision_version,
+    ) == (1, 1, 1)
+    assert target.state == "approved"
+    assert list(VerificationDecision.objects.values()) == before
+    assert s.profile.roles.count() == 2
+
+
+@pytest.mark.parametrize("sink", ["audit", "outbox", "binding_audit"])
+def test_credential_failure_rolls_back_binding_revision_and_receipt(monkeypatch, sink):
+    from apps.professionals.receipt_models import ProfileCommandReceipt
+    from apps.professionals.verification_models import VerificationHistory
+    from config.use_cases import professional_profile as api
+    from config.use_cases import professional_verification
+
+    s = owner()
+    save(s, "identity", {"identity_name": "علی", "roles": ["coach", "nutritionist"]})
+    pending = targets(s)
+    before = counters(s)
+    operation = uuid4()
+
+    def fail(*args, **kwargs):
+        raise RuntimeError("audit unavailable")
+
+    module = professional_verification if sink == "binding_audit" else api
+    monkeypatch.setattr(
+        module, "append_outbox" if sink == "outbox" else "append_event", fail
+    )
+    with pytest.raises(RuntimeError):
+        command(
+            "create_credential",
+            s.actor,
+            payload(source_asset=ready(s).id),
+            s.profile.version,
+            operation,
+            timezone.now(),
+        )
+    assert counters(s) == before
+    assert not Credential.objects.exists()
+    assert not CredentialRevision.objects.exists()
+    assert not VerificationDecision.objects.exists()
+    assert not VerificationHistory.objects.exists()
+    assert not ProfileCommandReceipt.objects.filter(operation_id=operation).exists()
+    pending["identity"].refresh_from_db()
+    assert pending["identity"].state == "submitted"
+
+
+def test_assistant_cannot_create_read_revise_or_withdraw_owner_credential():
+    from apps.professionals.models import AssistantMembership
+    from apps.professionals.selectors import own_credential
+
+    s = owner()
+    dto = create(s, source_asset=ready(s).id)
+    other = owner("+989123456781")
+    AssistantMembership.objects.create(profile=s.profile, assistant=other.user)
+    operations = [
+        lambda: command(
+            "create_credential",
+            other.actor,
+            payload(source_asset=ready(s).id),
+            other.profile.version,
+            uuid4(),
+            timezone.now(),
+        ),
+        lambda: command(
+            "revise_credential",
+            other.actor,
+            dto.id,
+            payload(title="bad"),
+            dto.version,
+            uuid4(),
+            timezone.now(),
+        ),
+        lambda: command(
+            "withdraw_credential",
+            other.actor,
+            dto.id,
+            dto.version,
+            uuid4(),
+            timezone.now(),
+        ),
+        lambda: own_credential(other.actor, dto.id, timezone.now()),
+    ]
+    for operation in operations:
+        with pytest.raises(contracts.ProfileNotFound):
+            operation()
+    assert Credential.objects.count() == CredentialRevision.objects.count() == 1
+
+
+def test_credential_receipt_rechecks_revoked_session_and_hides_source():
+    from dataclasses import asdict
+
+    from apps.accounts.security_models import AccountSessionControl
+
+    s = owner()
+    operation, source = uuid4(), ready(s)
+    dto = command(
+        "create_credential",
+        s.actor,
+        payload(source_asset=source.id),
+        1,
+        operation,
+        timezone.now(),
+    )
+    assert not {
+        "source_key",
+        "source_asset",
+        "source_sha256",
+        "signed_url",
+        "approved_roles",
+    } & set(asdict(dto))
+    AccountSessionControl.objects.filter(pk=s.actor.control_id).update(
+        revoked_at=timezone.now()
+    )
+    with pytest.raises(PermissionError):
+        command(
+            "create_credential",
+            s.actor,
+            payload(source_asset=source.id),
+            1,
+            operation,
+            timezone.now(),
+        )
+    assert CredentialRevision.objects.count() == 1

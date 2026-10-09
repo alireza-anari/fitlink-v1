@@ -219,11 +219,12 @@ def revise_credential(
             return project_credential(row)
         if row.version != expected_version or row.withdrawn_at:
             raise ProfileConflict("Credential version conflict")
-        role = _role(profile, roles, values["role"])
-        if row.category != values["category"] or row.role_id != (
-            role.id if role else None
+        existing_role = next((r for r in roles if r.id == row.role_id), None)
+        if row.category != values["category"] or values["role"] != (
+            existing_role.role if existing_role else None
         ):
             raise ValueError("Credential target is immutable")
+        role = _role(profile, roles, values["role"])
         target_evidence_changed(
             profile,
             role,

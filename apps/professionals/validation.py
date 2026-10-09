@@ -113,7 +113,11 @@ def normalize_step(step: str, payload: ProfessionalStepInput) -> dict[str, objec
                 required=name in {"display_name", "identity_name"},
             )
         elif name == "roles":
-            result[name] = sorted(tokens(value, 2, {"coach", "nutritionist"}))
+            result[name] = (
+                sorted(tokens(value, 2, {"coach", "nutritionist"}))
+                if value != []
+                else []
+            )
         elif name == "experience_years":
             if value is not None and (type(value) is not int or not 0 <= value <= 80):
                 raise ValueError("Invalid declared experience")

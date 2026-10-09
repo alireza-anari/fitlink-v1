@@ -59,3 +59,7 @@ def test_online_only_needs_no_fake_location():
         ]
         == []
     )
+
+
+def test_all_declarations_can_be_deactivated_during_private_setup():
+    assert normalize("identity", {"roles": []}) == {"roles": []}
