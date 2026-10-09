@@ -154,4 +154,7 @@ for path in sorted(Path(".runtime/c03-diagnostics").glob("foundation-*.jsonl")):
             print("C03_TASK7 " + json.dumps(event, sort_keys=True), flush=True)
 print("C03_TASK7_COUNTS " + json.dumps(counts, sort_keys=True), flush=True)
 PY
-exit "$task7_exit"
+[ "$task7_exit" -eq 0 ] || exit "$task7_exit"
+
+# Task 8 independent outcomes and current eligibility; PostgreSQL races mandatory.
+C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnostics timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_publication_eligibility.py tests/integration/c03/test_verification_decisions.py tests/integration/c03/test_verification_decision_races.py tests/integration/c03/test_verification_revocation.py -q --strict-markers -o faulthandler_timeout=30

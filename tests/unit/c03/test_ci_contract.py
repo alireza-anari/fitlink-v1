@@ -54,6 +54,19 @@ def test_task7_mandatory_selections_cannot_be_omitted():
         assert not all(item in source.replace(name, "omitted") for item in required)
 
 
+def test_task8_mandatory_selections_cannot_be_omitted():
+    source = ENTRY.read_text()
+    required = (
+        "tests/unit/c03/test_publication_eligibility.py",
+        "tests/integration/c03/test_verification_decisions.py",
+        "tests/integration/c03/test_verification_decision_races.py",
+        "tests/integration/c03/test_verification_revocation.py",
+    )
+    assert all(name in source for name in required), "Task 8 selection missing"
+    for name in required:
+        assert not all(item in source.replace(name, "omitted") for item in required)
+
+
 TRIGGER = "    branches: [accounts/c02-cloud, profiles/c03-cloud]"
 C03_STEP = r"""      - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'

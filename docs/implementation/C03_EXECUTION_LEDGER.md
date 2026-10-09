@@ -1887,3 +1887,21 @@ substituted-source acceptance in this final run. No mandatory step/test skip.
 - Security/code review complete with separate read-only reviewer; all Critical/Important/Minor findings resolved and subsequent real PostgreSQL tests GREEN. Current active adult normal owner/account authority remains separate from declarations. Immutable independent identity/Coach/Nutritionist snapshots/evidence, current evidence/category matching, target-only withdrawal and coarse owner history, capability-backed assignment/reassignment/start, minimal queue25/cursor, non-self current assigned case detail and audited sanitized derivative reads are installed. Competing draft CAS, submit/edit/assignment/read races, live assignment invalidation, fresh case step-up/reason/current auth/session/owner denial, audit rollback/no evidence release and raw-source denial verified. Production staff verification remains closed pending reviewed provider/config. No source keys/signed URLs/raw hashes in DTOs or audit/outbox values.
 - Migration impact **NONE**; installed schema and all guards preserved. No workflow/timeouts/service-gate change, dependency change, User/schema rewrite, approve/reject/revoke command, role restriction, publication_eligibility/verified_roles, public profile/Marketplace, Task8 or C04 work. Tasks1–6 remain COMPLETE; Task7 alone completed. No merge, deployment or force push. Protected main/foundation/c01-cloud/accounts/c02-cloud/profiles/c03-plan refs retained.
 - Completion publication is documentation only, retaining this exact validated implementation source and every failed checkpoint. Guarded non-forced fast-forward from actual remote7a6457a7 parent; no synthetic local ancestry is pushed. Legitimate local Task7 commit history preserved. Verify exact remote/documentation tree and protected refs after publication. **TASK_7_COMPLETE — STOP; do not begin Task8.**
+
+## Task 8 recovery and behavioral specification (2026-10-09)
+
+Authorization: C03 Task 8 ONLY; Tasks 1–7 remain COMPLETE. Fresh isolated
+checkout starts at b21534918d96300a8812c5b07aca672ebcfafde6, exact tree
+ce2bd97fdfd9d712bdb1a202a8ba827fb1e6c512. Initial staged/unstaged/untracked
+inspection empty. Protected refs match the approved four immutable baselines.
+Task 7 run37979891641 attempt1 verified head7a6457a/tree38d1c91, SUCCESS,
+all five required jobs successful. No Task7 documentation-run reopening.
+Python3.13.15/frozen dependencies recovered; local PostgreSQL/Docker absent,
+hosted real services mandatory. Baseline CI/intake unit selection35passed.
+Shell push has no credentials; guarded authenticated GitHub API synchronization
+uses real published parent, exact tree/modes and force=false.
+Task8 unit RED7failed/0passed: four missing commands, typed eligibility/binding
+contracts and missing CI selection. Full focused specification collects71cases
+without collection errors. Minimal exact Task8 cumulative selection added,
+inherited commands/timeouts/services/workflow unchanged. No migration.
+Hosted PostgreSQL behavioral/race RED pending. No Task8 implementation yet.
