@@ -6,6 +6,7 @@ import json
 import os
 import platform
 import resource
+import signal
 import socket
 import sys
 import warnings
@@ -50,6 +51,7 @@ def isolate():
     # fail closed. No credential or privileged descriptor is inherited.
     if sys.platform != "linux" or platform.machine() != "x86_64":
         raise RuntimeError("Isolation unavailable")
+    expected_parent = int(os.environ["C03_DECODER_PARENT_PID"])
     libc = ctypes.CDLL(None, use_errno=True)
     resource.setrlimit(resource.RLIMIT_AS, (512 * 1024 * 1024,) * 2)
     resource.setrlimit(resource.RLIMIT_CPU, (20, 20))
@@ -62,6 +64,14 @@ def isolate():
         os.setgid(65534)
         os.setuid(65534)
     if os.getuid() == 0 or os.geteuid() == 0:
+        raise RuntimeError("Isolation unavailable")
+    # Credential changes clear PDEATHSIG, so install it only after dropping uid.
+    # The trusted caller PID also detects death during startup/imports.
+    if expected_parent <= 1 or os.getppid() != expected_parent:
+        raise RuntimeError("Isolation unavailable")
+    if libc.prctl(1, signal.SIGKILL, 0, 0, 0):
+        raise RuntimeError("Isolation unavailable")
+    if os.getppid() != expected_parent:
         raise RuntimeError("Isolation unavailable")
     os.environ.clear()
     # Strict syscall allowlist: no file open, network, exec, process/thread

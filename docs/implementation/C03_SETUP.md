@@ -63,6 +63,9 @@ RGB/RGBA pixels into a new object and writes deterministic PNG compression level
 Input EXIF/GPS/text/comments/XMP/ICC metadata is never copied. A scanner CLEAN
 alone cannot authorize release. Local root environments unable to drop privileges
 produce unavailable results; no root fallback or selected-test skip is provided.
+After privilege drop, Linux parent-death SIGKILL and trusted caller-PID race checks
+prevent a blocked decoder from surviving a killed worker parent. The syscall filter
+then denies changing that safeguard before any untrusted input is read.
 
 `scanner-signatures` has an internet connection only to obtain official databases.
 It receives no uploaded bytes and exits before scanner startup. `scanner` has only

@@ -184,6 +184,7 @@ services:
       <<: *app-env
       UV_NO_DEV: '0'
       PYTEST_ADDOPTS: '-o cache_dir=/tmp/fitlink-pytest-cache'
+      C03_FOUNDATION_TRIAGE: '${C03_FOUNDATION_TRIAGE:-}'
       PLAYWRIGHT_BROWSERS_PATH: /opt/playwright
       E2E_BASE_URL: http://127.0.0.1:8000
     command: ["uv", "run", "--frozen", "pytest", "tests/e2e", "-q", "-m", "e2e"]

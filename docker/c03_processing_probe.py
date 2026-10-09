@@ -202,11 +202,11 @@ def parent_death():
     # cannot unblock the decoder. Only actual parent-death handling kills it.
     read_fd, write_fd = os.pipe()
     parent_code = (
-        "import subprocess,sys; "
+        "import os,subprocess,sys; "
         "child=subprocess.Popen([sys.executable,'-I','-B',sys.argv[2],"
         "'image/png','512'],stdin=int(sys.argv[1]),stdout=subprocess.DEVNULL,"
         "stderr=subprocess.DEVNULL,close_fds=True,start_new_session=True,"
-        "env={'LANG':'C.UTF-8'}); "
+        "env={'LANG':'C.UTF-8','C03_DECODER_PARENT_PID':str(os.getpid())}); "
         "print(child.pid,flush=True); sys.stdin.buffer.read()"
     )
     child_pid = None

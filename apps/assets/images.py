@@ -73,7 +73,7 @@ def _run(data: bytes, args: list[str]) -> bytes:
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
-        env={"LANG": "C.UTF-8"},
+        env={"LANG": "C.UTF-8", "C03_DECODER_PARENT_PID": str(os.getpid())},
         close_fds=True,
         start_new_session=True,
     ) as child:
