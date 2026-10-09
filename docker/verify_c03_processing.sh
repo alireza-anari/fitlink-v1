@@ -37,3 +37,6 @@ dc run --rm --no-deps checks timeout -k 5s 30s uv run --frozen python docker/c03
 dc run --rm --no-deps checks timeout -k 5s 60s uv run --frozen python docker/c03_processing_probe.py periodic-prepare
 dc up -d asset-beat
 dc run --rm --no-deps checks timeout -k 5s 40s uv run --frozen python docker/c03_processing_probe.py periodic-verify
+
+# Actual sandboxed decoder must die when its direct parent is SIGKILLed.
+dc run --rm --no-deps checks timeout -k 5s 20s uv run --frozen python docker/c03_processing_probe.py parent-death

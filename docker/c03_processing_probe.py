@@ -191,6 +191,84 @@ def periodic_verify():
     evidence("actual_separate_beat_recovered_missed_prompt")
 
 
+def parent_death():
+    import selectors
+    import signal
+    import subprocess
+
+    from apps.assets.images import DECODER_PATH
+
+    # Grandparent retains the writer: closing the direct parent's descriptors
+    # cannot unblock the decoder. Only actual parent-death handling kills it.
+    read_fd, write_fd = os.pipe()
+    parent_code = (
+        "import subprocess,sys; "
+        "child=subprocess.Popen([sys.executable,'-I','-B',sys.argv[2],"
+        "'image/png','512'],stdin=int(sys.argv[1]),stdout=subprocess.DEVNULL,"
+        "stderr=subprocess.DEVNULL,close_fds=True,start_new_session=True,"
+        "env={'LANG':'C.UTF-8'}); "
+        "print(child.pid,flush=True); sys.stdin.buffer.read()"
+    )
+    child_pid = None
+    parent = subprocess.Popen(
+        [
+            sys.executable,
+            "-I",
+            "-B",
+            "-c",
+            parent_code,
+            str(read_fd),
+            str(DECODER_PATH),
+        ],
+        pass_fds=(read_fd,),
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        env={"LANG": "C.UTF-8"},
+        close_fds=True,
+    )
+    os.close(read_fd)
+    try:
+        with selectors.DefaultSelector() as selector:
+            selector.register(parent.stdout, selectors.EVENT_READ)
+            assert selector.select(5), "Owned decoder parent unavailable"
+            child_pid = int(parent.stdout.readline(32))
+        status_path = Path(f"/proc/{child_pid}/status")
+        deadline = time.monotonic() + 5
+        while time.monotonic() < deadline:
+            status = status_path.read_text()
+            if "Seccomp:\t2" in status and "Uid:\t0\t" not in status:
+                break
+            time.sleep(0.05)
+        else:
+            raise AssertionError("Actual decoder sandbox not installed")
+        evidence("actual_decoder_blocked_with_sandbox_installed")
+        parent.kill()
+        parent.wait(timeout=2)
+        deadline = time.monotonic() + 2
+        while time.monotonic() < deadline:
+            if not status_path.exists() or "State:\tZ" in status_path.read_text():
+                evidence("actual_decoder_died_on_parent_sigkill")
+                return
+            time.sleep(0.05)
+        raise AssertionError("Decoder survived its killed parent")
+    finally:
+        # Exact owned test process only; a failing probe never leaks a process.
+        if parent.poll() is None:
+            parent.kill()
+            parent.wait(timeout=2)
+        if child_pid and Path(f"/proc/{child_pid}").exists():
+            try:
+                os.killpg(child_pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        os.close(write_fd)
+        if parent.stdin:
+            parent.stdin.close()
+        if parent.stdout:
+            parent.stdout.close()
+
+
 def scanner_outage():
     assert configured_scanner().scan(b"synthetic", timezone.now()).status != "clean"
     assert row().derivatives.count() == 1
@@ -209,6 +287,7 @@ if __name__ == "__main__":
     try:
         evidence("probe_" + phase + "_started")
         {
+            "parent-death": parent_death,
             "prepare": prepare,
             "start": start,
             "recover": recover,

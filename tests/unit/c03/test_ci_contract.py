@@ -334,6 +334,7 @@ def test_real_worker_crash_and_broker_restart_probe_is_mandatory():
         "scanner-restored",
         "periodic-prepare",
         "periodic-verify",
+        "parent-death",
     ):
         assert "docker/c03_processing_probe.py " + phase in gate
     assert "kill -s SIGKILL worker" in gate
