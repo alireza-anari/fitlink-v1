@@ -10,7 +10,7 @@ python docker/generate_env.py "$env_file"
 dc() { docker compose -p "$project" --env-file "$env_file" --profile test "$@"; }
 cleanup() { dc down --remove-orphans >/dev/null 2>&1 || true; }
 trap cleanup EXIT
-dc config --quiet
+python docker/c03_compose_check.py "$project" "$env_file"
 dc build scanner scanner-signatures minio minio-init checks worker
 dc up -d --wait db redis minio scanner
 dc run --rm minio-init

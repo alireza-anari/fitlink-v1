@@ -16,6 +16,9 @@ def main():
     result = watch(
         "storage", ["sh", "docker/verify_c03_processing.sh"], acceptance=True
     )
+    config_result = ROOT / ".runtime/c03-compose-check.json"
+    if config_result.is_file():
+        print("C03_COMPOSE_CHECK " + config_result.read_text(), flush=True)
     for path in (ROOT / ".runtime/c03-diagnostics").glob("storage-*.jsonl"):
         for line in path.read_text().splitlines():
             print(
