@@ -1827,3 +1827,63 @@ network/disk/fork/nonroot case. Their privileged sandbox cannot run locally;
 no test/code/sandbox relaxation was made. Hosted unit/real processing gates are
 mandatory authority. Local migration drift reports none but PostgreSQL is
 unavailable locally; no local SQL/concurrency acceptance claimed.
+
+### Task 7 final-head service evidence and retained failed runs
+
+Final validation source remote7a6457a7e969393bcc43417f86597340ad0ef613/tree
+38d1c9173ab32915e9e4c798a2bdd7a2cde4fffb (local8d7b226 identical tree),
+new run37979891641 attempt1. PostgreSQL113987416117 SUCCESS: exact Task7
+selection49passed/0failed/0skipped (all-phase skips0), pytest exit0 in22.512s;
+Task6 separately67passed/0failed/0skipped, exit0 in16.081s. Real independent
+connections cover duplicate submit, submit/evidence edit, competing prepares,
+assignment CAS, reassignment/read; stronger valid/invalid historical identity
+fixtures all passed. Real PostgreSQL17.11/Redis7.4.11;269 inherited C02 cases
+and durable Redis quota restart prepare/verify passed. Natural cumulative
+PostgreSQL gate0 in149.8s, complete cleanup. Artifact11640062992/SHA256
+21f99c50eb075bf9c29ef953397c0321817f7aeee81d47029fa38eb8cff1a6e2
+inspected; each focused pytest exit0 with no mandatory skip.
+Storage113987416067 SUCCESS:91passed/0failed/0skipped, exit0, real private
+MinIO/owned upload contracts; artifact11640926407/SHA256
+5988fd3d89ec338fbae9b43ac829ba76e644b4deaadd7e7357e37cb4b418f708.
+Processing113987416318 SUCCESS:62passed/0failed/0skipped, exit0, real private
+scanner/non-eager worker; natural0 in315.7s, complete cleanup; artifact
+11639918302/SHA25618de3c155995182d8b2006553f890e7030750692ae0553bb58d13bedb3e45674.
+Ownership113987416375 SUCCESS: deliberately forced isolated Compose timeout
+probe, expected diagnostic failure=true, complete owned cleanup in4.3s;
+artifact11640092382/SHA256
+1f6a52c71b1e5f54368d4d87690e384248b729cbd54eb4cee660772d53125e5e.
+All those jobs executed at this exact final source; no substituted-source
+service claim. Foundation is still pending at this checkpoint.
+
+Prior complete failed foundation runs retained: dce19ebd/run37977960616 job
+113980907755 had548host unit passes and1175passed/33failed/0skipped in the
+installed journal, natural1 in672.4s from the missing finite action. a3e24d7/
+run37978323018 job113982148763 had549unit passes and1209passed/4failed/0skipped,
+natural1 in504.3s from the observed three review gaps/invalid fixture.
+Corrected deccbdc/run37979084358 foundation113984707464 had1253reported
+passes/0failed/0skipped but the unchanged900s observation expired at901.9s,
+complete cleanup, observed_returncode=null. Artifact11640977385/SHA256
+be494fd0efc098d3394f3920567bf4d1693ae949135c0f7aeea3e691e853c983.
+It is FAILURE and is not Task7 acceptance or complete inherited gate evidence.
+No timeout increase, cutoff success relabel, test skip or service weakening.
+
+Reviewer rechecked the corrected historical same-approval fixture and final
+source tree; all Critical/Important/Minor findings resolved. Review is source
+inspection only, distinct from hosted acceptance evidence.
+
+## Task 7 COMPLETE — immutable submission and assigned private review intake
+
+Authoritative final Task7 implementation SHA:
+`7a6457a7e969393bcc43417f86597340ad0ef613`, tree
+`38d1c9173ab32915e9e4c798a2bdd7a2cde4fffb`. NEW hosted GitHub Actions run
+[37979891641](https://github.com/alireza-anari/fitlink-v1/actions/runs/37979891641),
+attempt1, completed **SUCCESS** at2026-10-09T19:36:30Z. Actual run head/tree,
+all five job verdicts, mandatory step inventory, logs and downloaded acceptance
+journals inspected before this completion record. No rerun/carried job or
+substituted-source acceptance in this final run. No mandatory step/test skip.
+
+- Foundation [113987416252](https://github.com/alireza-anari/fitlink-v1/actions/runs/37979891641/job/113987416252) SUCCESS.549host unit cases passed in19.69s; frozen uv/npm dependencies, CSS/ES modules/hashed static build, Ruff lint/format, inherited/composition mypy, Django test/production checks passed. Complete unchanged immutable exact C01 rehearsal and populated same-database upgrade passed. Current-source complete installed unit/integration suite1216passed, actual C02 browser38passed, browser smoke/Redis/channel/non-eager worker/MinIO restart and final smoke passed. Journals total **1264passed/0failed/0skipped**, all-phase skips0 and all six pytest exits0. Supervisor natural0 in738.9seconds, complete owned host/container cleanup; unchanged900second observation. Downloaded artifact11640768824/SHA256 `ed77f5930f6047ee93f9d9ac6a0a6b8acba3d3f6cdf9edae0d501a76c9efdaa0` is separately retained from every earlier failed artifact.
+- PostgreSQL113987416117 SUCCESS; focused Task7 **49passed/0failed/0skipped**, Task6 **67passed/0failed/0skipped**, real concurrency and inherited C02/Task1–6 SQL/service/Redis restart gates GREEN. Processing113987416318 SUCCESS (**62/0/0**), storage113987416067 SUCCESS (**91/0/0**), ownership113987416375 SUCCESS. Exact service artifact IDs/hashes and measured exits are recorded immediately above. All jobs executed at this implementation SHA in attempt1.
+- Security/code review complete with separate read-only reviewer; all Critical/Important/Minor findings resolved and subsequent real PostgreSQL tests GREEN. Current active adult normal owner/account authority remains separate from declarations. Immutable independent identity/Coach/Nutritionist snapshots/evidence, current evidence/category matching, target-only withdrawal and coarse owner history, capability-backed assignment/reassignment/start, minimal queue25/cursor, non-self current assigned case detail and audited sanitized derivative reads are installed. Competing draft CAS, submit/edit/assignment/read races, live assignment invalidation, fresh case step-up/reason/current auth/session/owner denial, audit rollback/no evidence release and raw-source denial verified. Production staff verification remains closed pending reviewed provider/config. No source keys/signed URLs/raw hashes in DTOs or audit/outbox values.
+- Migration impact **NONE**; installed schema and all guards preserved. No workflow/timeouts/service-gate change, dependency change, User/schema rewrite, approve/reject/revoke command, role restriction, publication_eligibility/verified_roles, public profile/Marketplace, Task8 or C04 work. Tasks1–6 remain COMPLETE; Task7 alone completed. No merge, deployment or force push. Protected main/foundation/c01-cloud/accounts/c02-cloud/profiles/c03-plan refs retained.
+- Completion publication is documentation only, retaining this exact validated implementation source and every failed checkpoint. Guarded non-forced fast-forward from actual remote7a6457a7 parent; no synthetic local ancestry is pushed. Legitimate local Task7 commit history preserved. Verify exact remote/documentation tree and protected refs after publication. **TASK_7_COMPLETE — STOP; do not begin Task8.**
