@@ -54,8 +54,8 @@ jobs:
       - name: Exact C01 upgrade and complete isolated C02 regression
         run: |
           if [ "$GITHUB_REF" = refs/heads/profiles/c03-cloud ]; then
-            echo "C03 diagnostic checkpoint: expected FAILURE; no service PASS"
-            python docker/c03_gate_diagnostics.py foundation sh docker/verify_c02.sh
+            python docker/c03_gate_diagnostics.py --acceptance foundation \
+              sh docker/verify_c02.sh
           else
             sh docker/verify_c02.sh
           fi
@@ -148,8 +148,7 @@ jobs:
       - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'
         run: |
-          echo "C03 diagnostic checkpoint: expected FAILURE; no service PASS"
-          python docker/c03_gate_diagnostics.py postgresql \
+          python docker/c03_gate_diagnostics.py --acceptance postgresql \
             sh docker/verify_c03_incremental.sh
       - name: C03 bounded diagnostic evidence
         if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
@@ -176,15 +175,15 @@ jobs:
         run: uv sync --frozen --group dev
       - name: C03 real private MinIO and owned upload contracts
         run: |
-          echo "C03 diagnostic checkpoint: expected FAILURE; no service PASS"
-          python docker/c03_gate_diagnostics.py storage \
-            sh docker/verify_c03_storage.sh
+          python docker/c03_storage_slice.py
       - name: C03 bounded diagnostic evidence
         if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: c03-storage-diagnostics
-          path: .runtime/c03-diagnostics/*.jsonl
+          path: |
+            .runtime/c03-diagnostics/*.jsonl
+            .runtime/c03-triage/*.jsonl
           include-hidden-files: true
           if-no-files-found: error
   c03-timeout-probe:

@@ -40,6 +40,11 @@ def test_only_foundation_routes_and_identity_model():
         "api/v1/staff/recovery/<uuid:request_uuid>/apply/",
         "api/v1/privacy/requests/",
         "api/v1/privacy/requests/<uuid:request_uuid>/",
+        # Exactly the Task 4 private POST adapters; no content/download route.
+        "api/v1/profile-assets/begin/",
+        "api/v1/profile-assets/<uuid:asset_uuid>/body/",
+        "api/v1/profile-assets/<uuid:asset_uuid>/finalize/",
+        "api/v1/profile-assets/<uuid:asset_uuid>/abandon/",
     }
     assert settings.AUTH_USER_MODEL == "accounts.User"
     assert "django.contrib.admin" not in settings.INSTALLED_APPS

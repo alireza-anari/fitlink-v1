@@ -208,8 +208,9 @@ def main():
                 query(["docker", "rm", "-f", supervised_name], seconds=3)
                 if escaped_alive():
                     os.kill(json.loads(escaped_path.read_text())["pid"], signal.SIGKILL)
-        # This owning RED job is intentionally never an application gate PASS.
-        return 1
+        # Pass only the independently verified supervisor ownership contract;
+        # the original GNU-timeout observation alone cannot establish success.
+        return 0 if verified else 1
 
 
 if __name__ == "__main__":

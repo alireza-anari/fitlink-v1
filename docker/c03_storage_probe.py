@@ -7,17 +7,20 @@ from pathlib import Path
 import django
 from redis import Redis
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from docker.c03_storage_errors import error_category
+
 
 def main() -> int:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.test")
-    django.setup()
-    from django.conf import settings
-    from django.db import connection
-
-    from apps.assets.storage import S3PrivateStore
-
     try:
+        django.setup()
+        from django.conf import settings
+        from django.db import connection
+
+        from apps.assets.storage import S3PrivateStore
+
         if connection.vendor != "postgresql":
             raise RuntimeError("PostgreSQL required")
         with connection.cursor() as cursor:
@@ -30,7 +33,8 @@ def main() -> int:
             raise RuntimeError("Redis unavailable")
         store = S3PrivateStore()
         store.backend.connection.meta.client.head_bucket(Bucket=settings.S3_BUCKET_NAME)
-    except Exception:
+    except Exception as error:
+        print("C03_STORAGE_ERROR " + error_category(error), flush=True)
         print("C03 PostgreSQL/Redis/private MinIO readiness failed", flush=True)
         return 1
     print("C03 real PostgreSQL/Redis/private MinIO readiness passed", flush=True)

@@ -1079,3 +1079,109 @@ C03 overall remains IN_PROGRESS; no C03 PASS claim.
   Health key, report health="none" when absent, retain metadata/privacy limits.
   This diagnosed observability/cleanup defect is distinct from the original
   three hangs; no functional asset-ingress correction is authorized or made.
+
+## Authorized published-state recovery — 2026-10-09
+
+Automated workspace maintenance deleted all four former C03 worktrees.
+The unpublished ledger lines, original local index, staged/unstaged/untracked
+workspace-only files and any other state absent from surviving published Git
+objects have no backup and cannot be restored byte-for-byte. They are classified
+UNRECOVERABLE_UNPUBLISHED_STATE. One bounded non-destructive salvage search of the
+remaining workspace found no ledger, reflog, Git objects/worktrees metadata or
+editor recovery files: UNRECOVERABLE_UNPUBLISHED_STATE_CONFIRMED.
+
+The user explicitly authorized reconstruction from published checkpoints and
+hosted evidence, superseding preservation requirements for destroyed material.
+This ledger retains every committed historical byte above and appends only new
+source/evidence-backed recovery findings. No missing unpublished content is
+fabricated, approximated or represented as restored.
+
+Fresh source: storage diagnostic 206b7aa72f099533701f4eef3f64277e9555f6a7,
+tree 37cf42e36bb52c7712a7ccc8478de9bfa93fd349. Git clone includes surviving
+ancestry; execution d50b82e9fba64199f09b1e65615c6c6b9ce416cc is an ancestor.
+Verified refs: profiles/c03-cloud d50b82e9fba64199f09b1e65615c6c6b9ce416cc;
+PostgreSQL diagnostic e034e9d2501b2d1e6f4a0689af923e900596bd3b;
+profiles/c03-plan 79fd62e583cbe81f335bb08fce0eb43ff36b0167;
+accounts/c02-cloud 0905be6c6ca608d469fe33e87f514b22591132d1;
+foundation/c01-cloud 75c551e5b9bbbfb7777ee52b09a1993b681e921a;
+main 8ede9a451db6103f4e3ebf65784ee9f16b96feb2. Protected/unrelated refs
+match known published checkpoints; none modified. Tasks 1–3 retain committed
+completion evidence; Task 4 remains incomplete; Task 5/C04 unstarted.
+
+Authoritative subsequent evidence to re-inspect: PostgreSQL Slice A
+37842121259 SUCCESS on e034e9d2. Storage 37886246054 attempt 3/job 113687873212
+on 206b7aa7: migrations/probe succeeded; pytest startup exited 1 with
+ModuleNotFoundError then ImportError; no test journal; all 91 acceptance cases
+unverified; services healthy/readiness 200; cleanup complete; artifact
+c03-slice-b-storage 11598036850. This is a recovered evidence summary, not
+restoration of the deleted unpublished ledger. Current work continues Task 4 only.
+
+## Recovered Task 4 — import and private CORS closure
+
+Local console-entry reproduction on published 206b7aa7 identifies missing module
+docker and importing plugin docker.c03_pytest_triage. A focused actual-command
+collection regression failed with exit 1, then passed after changing only storage
+pytest invocation to Python's module entry point. 35 focused checks / 462 units,
+mypy and Django/production checks passed. Published b1a835d3621b52b3fb8c995fba8de4131f293bc0,
+tree 90a78e3e89ccc438e6d5138d4213591abf177098, storage diagnostic only.
+Hosted 37895422247/job 113705565729 executed all 91 cases: 90 passed / 1 failed,
+pytest exit 1. Exact remaining RED: real private roundtrip test line 48,
+foreign-origin preflight exposes access-control-allow-origin. Artifact 11600167114;
+natural exit/cleanup complete. No missing-import identity guessed from old logs.
+
+Pinned official MinIO source 9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a,
+internal/config/api/api.go, defines MINIO_API_CORS_ALLOW_ORIGIN and '*' default,
+including empty values. cmd/api-router.go matches configured patterns against
+browser Origin. Set a non-origin sentinel 'none' in private service configuration;
+no valid URL or opaque null origin matches it. Existing real denial assertion
+unchanged, strengthened to also test app-like localhost and opaque null origins.
+Four policy regressions RED then GREEN; 466 units GREEN. Generated pytest fixture
+copies caused an initial format failure; moved those copies intact under ignored
+.runtime and rechecked all tracked source: Ruff/format GREEN.
+
+Published 7361d9c8fd6e9db057f3e68988474e2258ee6838, tree
+1609336d1b2db94681d90bebddbdb4d0ff6f589e. Hosted Slice B 37896016320 /
+job 113707419863 SUCCESS: all 91 cases completed, 91 passed / 0 failed / 0 skipped;
+pytest exit 0 at 22.330s. Supervisor natural command exit 0, terminal 173.6s,
+host/container cleanup complete, no deadline/cutoff. Actual required private-store
+nodes inspected: internal bounded write/read/head, immutable replay rejection,
+anonymous GET/PUT and bucket-list 403, foreign/app/null CORS denied, real Django
+multipart -> private MinIO -> quarantine finalization, no public ACL/derivative,
+owner/foreign/staff raw-source unavailability, missing/size/type/foreign storage
+facts rejected, inherited signed-read bound. Complete real MinIO acceptance,
+not fake-only readiness. Task 4 remains incomplete pending cumulative/inherited CI.
+
+Transition out of diagnostic-only CI now adds explicit bounded acceptance mode:
+only natural command exit 0 plus exact true host/container cleanup may PASS;
+deadline, cancellation, unknown cleanup or nonzero exit fail closed. Existing
+diagnostic mode still never passes. 9 new acceptance regressions RED then GREEN;
+40 focused acceptance/CI/ownership checks and 475 cumulative units GREEN.
+Inherited C02 workflow blob check and all negative gate-mutation tests retained;
+original verify_c02.sh/verify_foundation.sh and protected C01 source unchanged.
+Independent timeout probe now passes only when its actual bounded ownership
+contract is verified, not merely because its GNU-timeout observation returned.
+No Task 5 processing/scanner/worker behavior introduced. Full execution-source
+hosted verification still pending; no Task 4 COMPLETE claim yet.
+
+Slice B successful artifact verified: c03-slice-b-storage ID 11600148393,
+12829 bytes, digest sha256:f68118360cf7e0dc99ad716fc7d94543944b407b18b0a75fef96214dc80e7435.
+Final local required checks: 475 units passed in 26.65s; required mypy 93
+source files passed; Django test and production checks passed; Ruff and format
+343 files passed. An optional broad mypy scan included untouched inherited
+configuration lacking typing/stubs; no unrelated configuration changed.
+Application/use-case files remain byte-identical to verified Slice A e034e9d2.
+
+Prepare execution publication on an isolated fresh profiles/c03-cloud worktree
+based exactly on d50b82e9. Copy evidenced Task 4 source and gate/test changes;
+exclude both isolated diagnostic-branch workflows. No diagnostic branch is
+merged and no protected ref is changed. This implementation checkpoint still
+requires actual cumulative PostgreSQL, real storage, timeout ownership and
+complete inherited Foundation results before Task 4 COMPLETE.
+
+Focused read-only code review found no Critical production findings. Important
+supervisor ownership gaps corrected with 2 RED→GREEN regressions: reject failed
+subreaper setup before launching any child, and treat truncated process inventory
+as unavailable rather than clean. Review confirmed no remaining Important or
+Critical finding after correction. Explicit user maximum request/object cap of
+10,000,000 bytes overrides the earlier plan multipart-overhead allowance; the
+existing measured request cap and security assertions are unchanged.

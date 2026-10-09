@@ -17,8 +17,7 @@ TRIGGER = "    branches: [accounts/c02-cloud, profiles/c03-cloud]"
 C03_STEP = r"""      - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'
         run: |
-          echo "C03 diagnostic checkpoint: expected FAILURE; no service PASS"
-          python docker/c03_gate_diagnostics.py postgresql \
+          python docker/c03_gate_diagnostics.py --acceptance postgresql \
             sh docker/verify_c03_incremental.sh
 """
 C03_STORAGE_JOB = r"""  c03-storage:
@@ -38,14 +37,12 @@ C03_STORAGE_JOB = r"""  c03-storage:
         run: uv sync --frozen --group dev
       - name: C03 real private MinIO and owned upload contracts
         run: |
-          echo "C03 diagnostic checkpoint: expected FAILURE; no service PASS"
-          python docker/c03_gate_diagnostics.py storage \
-            sh docker/verify_c03_storage.sh
+          python docker/c03_storage_slice.py
 """
-DIAGNOSTIC_FOUNDATION = """        run: |
+DIAGNOSTIC_FOUNDATION = r"""        run: |
           if [ "$GITHUB_REF" = refs/heads/profiles/c03-cloud ]; then
-            echo "C03 diagnostic checkpoint: expected FAILURE; no service PASS"
-            python docker/c03_gate_diagnostics.py foundation sh docker/verify_c02.sh
+            python docker/c03_gate_diagnostics.py --acceptance foundation \
+              sh docker/verify_c02.sh
           else
             sh docker/verify_c02.sh
           fi
@@ -70,6 +67,12 @@ TIMEOUT_PROBE = """  c03-timeout-probe:
       - name: Isolated actual Compose timeout ownership probe
         run: python docker/c03_timeout_probe.py
 """
+STORAGE_ARTIFACT = DIAGNOSTIC_ARTIFACT.format(phase="storage").replace(
+    "          path: .runtime/c03-diagnostics/*.jsonl",
+    "          path: |\n"
+    "            .runtime/c03-diagnostics/*.jsonl\n"
+    "            .runtime/c03-triage/*.jsonl",
+)
 # Exact approved C02 workflow blob, before the narrowly authorized extension.
 C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
 
@@ -79,8 +82,9 @@ def inherited_workflow_is_intact(source):
     inherited = inherited.replace(
         DIAGNOSTIC_FOUNDATION, "        run: sh docker/verify_c02.sh\n"
     )
-    for phase in ("foundation", "postgresql", "storage", "timeout-probe"):
+    for phase in ("foundation", "postgresql", "timeout-probe"):
         inherited = inherited.replace(DIAGNOSTIC_ARTIFACT.format(phase=phase), "")
+    inherited = inherited.replace(STORAGE_ARTIFACT, "")
     inherited = inherited.replace(TIMEOUT_PROBE, "")
     inherited = inherited.replace(C03_STEP, "")
     inherited = inherited.replace(C03_STORAGE_JOB, "")
@@ -258,7 +262,7 @@ def test_private_storage_gate_installed_by_task4():
     "old,new",
     [
         ("refs/heads/profiles/c03-cloud", "refs/heads/accounts/c02-cloud"),
-        ("sh docker/verify_c03_storage.sh", "true"),
+        ("python docker/c03_storage_slice.py", "true"),
         ("    timeout-minutes: 30", "    continue-on-error: true"),
     ],
 )

@@ -30,6 +30,9 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:?generate development root user}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?generate development root password}
+      # Pinned MinIO maps empty CORS to '*'. This non-origin sentinel denies
+      # every browser origin; ingress is through same-origin Django only.
+      MINIO_API_CORS_ALLOW_ORIGIN: 'none'
     command: ["minio", "server", "/data", "--quiet", "--console-address", ":9001"]
     ports: ["127.0.0.1:${MINIO_HOST_PORT:-9000}:9000", "127.0.0.1:${MINIO_CONSOLE_HOST_PORT:-9001}:9001"]
     volumes: ["minio-data:/data"]

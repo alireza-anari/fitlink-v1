@@ -16,6 +16,9 @@ from collections import deque
 from pathlib import Path
 from uuid import uuid4
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from docker.c03_storage_errors import ERROR_TYPES, error_category
+
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_FILES = {
     str(path.relative_to(ROOT))
@@ -130,7 +133,7 @@ def process_rows(marker, proc=Path("/proc"), owner_pid=None):
     owned = set()
     for index, path in enumerate(proc.iterdir()):
         if index >= 4096:
-            break
+            return None
         if not path.name.isdecimal():
             continue
         try:
@@ -439,6 +442,31 @@ def terminate_owned(child, marker):
 def progress_lines(text):
     """Only finite code/progress names; never relay raw child stdout/stderr."""
     for match in re.finditer(
+        r"(?m)^C03_STORAGE_PHASE (migrate|probe|pytest) "
+        r"(?:(start|success)|(failure) ([0-9]{1,3}))$",
+        text,
+    ):
+        progress = {
+            "kind": "storage_phase",
+            "name": match[1],
+            "state": match[2] or match[3],
+        }
+        if match[3]:
+            code = int(match[4])
+            if not 1 <= code <= 255:
+                continue
+            progress["returncode"] = code
+        yield progress
+    categories = "|".join(sorted(ERROR_TYPES))
+    for match in re.finditer(
+        rf"(?m)^(?:C03_STORAGE_ERROR ({categories})$|"
+        r"(?:E\s+)?(?:(?:django\.db\.utils|psycopg(?:\.errors)?|"
+        r"botocore\.exceptions|redis\.exceptions)\.)?"
+        rf"({categories}):[^\n]*$)",
+        text,
+    ):
+        yield {"kind": "storage_error", "error_type": match[1] or match[2]}
+    for match in re.finditer(
         r"(?m)^(tests/(?:unit|integration|e2e)(?:/[a-z0-9_]+)*\.py)::"
         r"((?:Test[A-Za-z0-9_]+::)?test_[a-zA-Z0-9_]+)",
         text,
@@ -468,7 +496,26 @@ def progress_lines(text):
             yield {"kind": "cumulative_phase", "name": name}
 
 
-def watch(phase, command):
+def acceptance_status(code, reason, host_complete, containers_complete):
+    if (
+        type(code) is int
+        and code == 0
+        and reason == "command_exited"
+        and host_complete is True
+        and containers_complete is True
+    ):
+        return 0
+    return code if type(code) is int and code > 0 else 1
+
+
+def enable_subreaper():
+    try:
+        return ctypes.CDLL(None).prctl(36, 1, 0, 0, 0) == 0
+    except (AttributeError, OSError):
+        return False
+
+
+def watch(phase, command, *, acceptance=False):
     if phase not in PHASES or not command:
         raise ValueError("Invalid diagnostic boundary")
     marker = ("C03_DIAGNOSTIC_OWNER=" + uuid4().hex).encode()
@@ -482,6 +529,7 @@ def watch(phase, command):
     folder.mkdir(parents=True, exist_ok=True)
     path = folder / (phase + "-" + uuid4().hex + ".jsonl")
     with path.open("x") as output:
+        emission_lock = threading.Lock()
 
         def emit(event, **values):
             data = {
@@ -491,9 +539,10 @@ def watch(phase, command):
                 **values,
             }
             line = json.dumps(data, sort_keys=True)
-            output.write(line + "\n")
-            output.flush()
-            print("C03_DIAGNOSTIC " + line, flush=True)
+            with emission_lock:
+                output.write(line + "\n")
+                output.flush()
+                print("C03_DIAGNOSTIC " + line, flush=True)
 
         started = time.monotonic()
         baseline_rows = containers()
@@ -507,13 +556,17 @@ def watch(phase, command):
             emit(
                 "diagnostic_finished",
                 reason="fresh_runner_ownership_unavailable",
-                expected_diagnostic_failure=True,
+                expected_diagnostic_failure=not acceptance,
             )
             return 1
-        try:
-            subreaper = ctypes.CDLL(None).prctl(36, 1, 0, 0, 0) == 0
-        except (AttributeError, OSError):
-            subreaper = False
+        subreaper = enable_subreaper()
+        if not subreaper:
+            emit(
+                "diagnostic_finished",
+                reason="host_process_ownership_unavailable",
+                expected_diagnostic_failure=not acceptance,
+            )
+            return 1
         child = subprocess.Popen(
             command,
             start_new_session=True,
@@ -532,7 +585,7 @@ def watch(phase, command):
             command=safe_command(command),
             stdin_tty=sys.stdin.isatty(),
             observation_seconds=seconds,
-            expected_diagnostic_failure=True,
+            expected_diagnostic_failure=not acceptance,
             subreaper=subreaper,
         )
 
@@ -540,18 +593,26 @@ def watch(phase, command):
 
         def read_progress():
             tail = ""
+
+            def record(text):
+                for progress in progress_lines(text):
+                    progress_state["last"] = progress
+                    if progress["kind"] in {"storage_phase", "storage_error"}:
+                        emit(progress["kind"], progress=progress)
+
             while True:
                 try:
                     chunk = os.read(child.stdout.fileno(), 4096)
                 except (OSError, ValueError):
                     break
                 if not chunk:
+                    record(tail)
                     break
-                tail = (tail + chunk.decode(errors="replace"))[-8192:]
-                for progress in progress_lines(tail):
-                    progress_state["last"] = progress
-                if "\n" in tail:
-                    tail = tail.rsplit("\n", 1)[-1]
+                tail += chunk.decode(errors="replace")
+                while "\n" in tail:
+                    line, tail = tail.split("\n", 1)
+                    record(line)
+                tail = tail[-8192:]
 
         reader = threading.Thread(target=read_progress, daemon=True)
         reader.start()
@@ -594,6 +655,7 @@ def watch(phase, command):
                 code = child.poll()
                 if code is not None:
                     reason = "command_exited"
+                    reader.join(timeout=1)
                     emit("command_exited", returncode=code)
                     break
                 if time.monotonic() >= next_snapshot:
@@ -606,27 +668,32 @@ def watch(phase, command):
         except Exception as error:
             # Type only: exception text may contain private command arguments.
             reason = "diagnostic_error"
-            emit("diagnostic_error", error_type=type(error).__name__)
+            emit("diagnostic_error", error_type=error_category(error))
         finally:
             for sig in previous:
                 signal.signal(sig, signal.SIG_IGN)
             host_complete = terminate_owned(child, marker)
             cleanup = stop_owned_containers(phase, baseline)
             child.stdout.close()
+            reader.join(timeout=1)
             emit(
                 "diagnostic_finished",
                 reason=reason,
                 observed_returncode=code,
                 host_cleanup_complete=host_complete,
                 container_cleanup=cleanup,
-                expected_diagnostic_failure=True,
+                expected_diagnostic_failure=not acceptance,
                 last_safe_progress=progress_state["last"],
             )
             for sig, handler in previous.items():
                 signal.signal(sig, handler)
+        if acceptance:
+            return acceptance_status(code, reason, host_complete, cleanup["complete"])
         # Even command success is only an observation, never diagnostic PASS.
         return code if code is not None and code > 0 else 1
 
 
 if __name__ == "__main__":
-    sys.exit(watch(sys.argv[1], sys.argv[2:]))
+    acceptance = sys.argv[1] == "--acceptance"
+    args = sys.argv[2:] if acceptance else sys.argv[1:]
+    sys.exit(watch(args[0], args[1:], acceptance=acceptance))

@@ -40,3 +40,51 @@ def owned_profile(
     if row is None:
         raise ProfileNotFound("Profile unavailable")
     return row
+
+
+def owned_asset_subject(user: User, purpose: str, identifier: UUID):
+    """Exact current professional purpose; profile/role existence grants no access."""
+    from apps.assets.contracts import AssetNotFound, AssetSubject
+    from apps.assets.validation import PURPOSES
+
+    from .credential_models import Credential
+    from .profile_models import ProfessionalRole
+
+    if not isinstance(purpose, str) or purpose not in PURPOSES:
+        raise ValueError("Invalid upload purpose")
+    if not isinstance(identifier, UUID):
+        raise AssetNotFound("Asset unavailable")
+    profile = (
+        ProfessionalProfile.objects.select_for_update()
+        .filter(user=user)
+        .exclude(state="archived")
+        .first()
+    )
+    if profile is None:
+        raise AssetNotFound("Asset unavailable")
+    if purpose in {"avatar", "cover", "logo"}:
+        if profile.id != identifier:
+            raise AssetNotFound("Asset unavailable")
+        return AssetSubject("professional_profile", profile.id)
+    credential = (
+        Credential.objects.select_for_update()
+        .filter(
+            pk=identifier,
+            profile=profile,
+            withdrawn_at__isnull=True,
+            category="identity" if purpose == "identity_evidence" else "qualification",
+        )
+        .first()
+    )
+    if credential is None:
+        raise AssetNotFound("Asset unavailable")
+    if purpose == "credential_evidence" and (
+        credential.role_id is None
+        or not ProfessionalRole.objects.filter(
+            pk=credential.role_id,
+            profile=profile,
+            declared_active=True,
+        ).exists()
+    ):
+        raise AssetNotFound("Asset unavailable")
+    return AssetSubject("professional_credential", credential.id)
