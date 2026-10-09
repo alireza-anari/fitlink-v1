@@ -13,6 +13,34 @@ pytestmark = pytest.mark.unit
 ROOT = Path(__file__).resolve().parents[3]
 WORKFLOW = ROOT / ".github/workflows/ci.yml"
 ENTRY = ROOT / "docker/verify_c03_incremental.sh"
+
+
+def task6_selected(source):
+    required = {
+        "tests/unit/c03/test_professional_fields.py",
+        "tests/unit/c03/test_verification_binding.py",
+        "tests/integration/c03/test_professional_setup.py",
+        "tests/integration/c03/test_credential_revisions.py",
+        "tests/integration/c03/test_bound_edit_races.py",
+    }
+    return required <= set(
+        re.findall(r"tests/(?:unit|integration)/c03/test_[\w]+\.py", source)
+    )
+
+
+def test_task6_mandatory_selections_cannot_be_omitted():
+    source = ENTRY.read_text()
+    assert task6_selected(source), "Task 6 mandatory selection missing"
+    for name in (
+        "test_professional_fields",
+        "test_verification_binding",
+        "test_professional_setup",
+        "test_credential_revisions",
+        "test_bound_edit_races",
+    ):
+        assert not task6_selected(source.replace(name + ".py", "omitted.py"))
+
+
 TRIGGER = "    branches: [accounts/c02-cloud, profiles/c03-cloud]"
 C03_STEP = r"""      - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'

@@ -97,3 +97,6 @@ timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_baseline_fields.p
 # Task 4 PostgreSQL ingress/state/authority races. Real private-store suites are
 # separately mandatory in the exact-C03-only docker/verify_c03_storage.sh job.
 timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_gate_diagnostics.py tests/unit/c03/test_upload_contract.py tests/unit/c03/test_asset_validation.py tests/unit/c03/test_source_non_delivery.py tests/integration/c03/test_upload_lifecycle.py tests/integration/c03/test_upload_races.py -vv --strict-markers -o faulthandler_timeout=30
+
+# Task 6 private setup, immutable credentials and exact per-target races.
+timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_professional_fields.py tests/unit/c03/test_verification_binding.py tests/integration/c03/test_professional_setup.py tests/integration/c03/test_credential_revisions.py tests/integration/c03/test_bound_edit_races.py -q --strict-markers -o faulthandler_timeout=30
