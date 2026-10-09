@@ -139,32 +139,56 @@ def test_submission_denies_current_invalid_evidence(fault):
     assert Verification.objects.get(pk=s.case.id).state == "draft"
 
 
-def test_existing_identity_approval_reused_without_resubmission():
-    s = prepared(("identity",))
+def historical_identity(settings, decision="approve"):
+    # Imported historical outcome only: Task7 exposes no decision command.
     from apps.professionals.models import VerificationDecision
 
+    from .verification_helpers import assign, reviewer
+
+    s = submitted(("identity",))
+    staff = reviewer(settings, s.case.id)
+    assigned = assign(s, staff)
+    command(
+        "start_verification_review",
+        staff.actor,
+        s.case.id,
+        assigned.version,
+        staff.step,
+        "verification_review",
+        timezone.now(),
+    )
     target = VerificationTarget.objects.get(verification_id=s.case.id)
-    VerificationDecision.objects.create(
+    s.historical_decision = VerificationDecision.objects.create(
         target=target,
         profile=s.profile,
         target_kind="identity",
-        actor=s.user,
-        decision="approve",
-        reason_code="identity_verified",
+        actor=staff.user,
+        decision=decision,
+        reason_code="identity_verified"
+        if decision == "approve"
+        else "credentials_invalid",
         target_snapshot_hash=target.target_snapshot_hash,
         bound_evidence_revision=target.bound_evidence_revision,
         decision_sequence=1,
         decided_at=timezone.now(),
     )
-    target.state = "approved"
-    target.save()
+    target.state = "approved" if decision == "approve" else "rejected"
+    target.version += 1
+    target.save(update_fields=["state", "version", "updated_at"])
     case = Verification.objects.get(pk=s.case.id)
-    case.state, case.submitted_at, case.decided_at = (
-        "decided",
-        timezone.now(),
-        timezone.now(),
-    )
-    case.save()
+    case.state, case.decided_at = "decided", timezone.now()
+    case.version += 1
+    case.save(update_fields=["state", "decided_at", "version", "updated_at"])
+    s.profile.identity_decision_version += 1
+    s.profile.save(update_fields=["identity_decision_version", "updated_at"])
+    s.staff, s.identity_target = staff, target
+    return s
+
+
+def test_existing_identity_approval_reused_without_resubmission(settings):
+    from apps.professionals.models import VerificationDecision
+
+    s = historical_identity(settings)
     dto = command(
         "prepare_verification",
         s.actor,
@@ -175,6 +199,45 @@ def test_existing_identity_approval_reused_without_resubmission():
     )
     assert tuple(t.target for t in dto.targets) == ("coach",)
     assert VerificationDecision.objects.count() == 1
+
+
+@pytest.mark.parametrize("fault", ["rejected", "revoked", "expired"])
+def test_invalid_historical_identity_cannot_be_reused(settings, fault):
+    from apps.accounts.security_models import AccountSessionControl
+    from apps.professionals.models import VerificationDecision
+
+    s = historical_identity(settings, "reject" if fault == "rejected" else "approve")
+    at = timezone.now()
+    if fault == "revoked":
+        VerificationDecision.objects.create(
+            target=s.identity_target,
+            profile=s.profile,
+            target_kind="identity",
+            actor=s.staff.user,
+            decision="revoke",
+            revoked_approval=s.historical_decision,
+            reason_code="evidence_revoked",
+            target_snapshot_hash=s.identity_target.target_snapshot_hash,
+            bound_evidence_revision=s.identity_target.bound_evidence_revision,
+            decision_sequence=2,
+            decided_at=at,
+        )
+        s.profile.identity_decision_version += 1
+        s.profile.save(update_fields=["identity_decision_version", "updated_at"])
+    if fault == "expired":
+        at = at.replace(year=2031)
+        AccountSessionControl.objects.filter(pk=s.actor.control_id).update(
+            expires_at=at.replace(year=2032)
+        )
+    with pytest.raises(ValueError, match="Shared identity review required"):
+        command(
+            "prepare_verification",
+            s.actor,
+            ("coach",),
+            s.profile.version,
+            uuid4(),
+            at,
+        )
 
 
 @pytest.mark.parametrize(

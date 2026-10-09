@@ -1792,3 +1792,38 @@ retaining the inherited database consistency constraint unchanged.
 Local54 focused inherited-profile/Task6/Task7/CI unit cases,88-file domain mypy,
 381-file Ruff lint/format and diff checks passed. Hosted focused/cumulative GREEN
 must still be obtained on the exact corrected published source head.
+
+### Task 7 focused GREEN and independent final review
+
+Corrected implementation remote deccbdc8645105c294593ac917b27241c0f5e90b/tree
+6dfe634c856a061b9a3af838e146af8ec62ab55f (local09fbbb6 identical tree),
+new run37979084358. PostgreSQL113984707573 SUCCESS: exact four-file Task7
+selection46passed/0failed/0skipped, exit0 in20.858seconds; Task6 separately
+67passed/0failed/0skipped, exit0 in16.310seconds. Real independent-connection
+submit/edit/prepare/assignment/read races passed. Artifact11640766171/SHA256
+ae9fc9f35a70bd097a9714936d62b9c9cff6b9719ef07d1ace38ca795bc587c7
+inspected; natural gate0 in152.2seconds with complete owned cleanup. Existing
+C02, Redis restart/quota, schema/constraint/Task1–6 gates retained. Full run
+foundation still pending, so this is focused GREEN, not Task7 COMPLETE.
+
+Explicit requesting-code-review skill dispatched a separate read-only reviewer
+on the precise base/head (no full session history). It found no Critical or
+Important production-code issue. Both Minor findings addressed: historical
+identity fixture now really submits, assigns and starts review, then seeds an
+independent capable reviewer's immutable historical terminal outcome/counters;
+adds rejected/revoked/expired identity-reuse denial, without adding any decision
+command. Reviewer caught missing revoked_approval in the new fixture; linked
+the exact same-target historical approval, preserving installed CHECK/SQL
+guards. Task7 counts now filter the exact selected node prefixes; validated
+against the actual prior mixed Task6/Task7 artifact, yielding42/4/0 rather than
+including67 Task6 cases. Command selections, strict markers, timeouts and all
+inherited service gates unchanged. Ruff381/diff/shell syntax and35 relevant
+unit cases pass locally. New final head must revalidate stronger tests and
+all inherited gates before completion.
+
+Local complete unit diagnostic had537passed/11failed on this restricted host:
+ten existing PNG/JPEG clean-pixel sanitizer cases and existing isolated-process
+network/disk/fork/nonroot case. Their privileged sandbox cannot run locally;
+no test/code/sandbox relaxation was made. Hosted unit/real processing gates are
+mandatory authority. Local migration drift reports none but PostgreSQL is
+unavailable locally; no local SQL/concurrency acceptance claimed.

@@ -128,16 +128,28 @@ uv run --frozen python - <<'PY'
 import json
 from pathlib import Path
 
+selected = (
+    "tests/unit/c03/test_verification_contract.py::",
+    "tests/integration/c03/test_verification_submission.py::",
+    "tests/integration/c03/test_verification_staff.py::",
+    "tests/integration/c03/test_verification_assignment_races.py::",
+)
 counts = {"passed": 0, "failed": 0, "skipped": 0}
 for path in sorted(Path(".runtime/c03-diagnostics").glob("foundation-*.jsonl")):
-    for line in path.read_text().splitlines():
-        event = json.loads(line)
-        if event.get("event") == "test_report" and event.get("phase") == "call":
+    events = [json.loads(line) for line in path.read_text().splitlines()]
+    if not any(event.get("node", "").startswith(selected) for event in events):
+        continue
+    for event in events:
+        if (event.get("event") == "test_report"
+                and event.get("phase") == "call"
+                and event.get("node", "").startswith(selected)):
             outcome = event.get("outcome")
             if outcome in counts:
                 counts[outcome] += 1
         if event.get("event") in {"pytest_exit", "pytest_internalerror"} or (
-            event.get("event") == "test_report" and event.get("outcome") != "passed"
+            event.get("event") == "test_report"
+            and event.get("node", "").startswith(selected)
+            and event.get("outcome") != "passed"
         ):
             print("C03_TASK7 " + json.dumps(event, sort_keys=True), flush=True)
 print("C03_TASK7_COUNTS " + json.dumps(counts, sort_keys=True), flush=True)
