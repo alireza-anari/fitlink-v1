@@ -36,3 +36,23 @@ def test_private_dtos_are_explicit(name):
     assert not {"source_key", "signed_url", "phone", "verified_roles"} & set(
         getattr(contracts, name).__dataclass_fields__
     )
+
+
+def test_verification_submission_uses_finite_account_action():
+    from datetime import date
+
+    from django.utils import timezone
+
+    from apps.accounts.models import User
+    from apps.accounts.policies import require_account_action
+
+    user = User(
+        birth_date=date(1990, 1, 1),
+        adult_attested_at=timezone.now(),
+        adult_attestation_version="adult-v1",
+    )
+    require_account_action(user, "professional.verify_submit", "normal")
+    with pytest.raises(PermissionError):
+        require_account_action(user, "professional.verify_submit", "account_control")
+    with pytest.raises(PermissionError):
+        require_account_action(user, "professional.verify_override", "normal")

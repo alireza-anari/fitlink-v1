@@ -30,7 +30,7 @@ def test_reassignment_invalidates_old_reviewer(settings):
         valid_from=staff.at,
         valid_until=staff.at + timedelta(hours=1),
     )
-    command(
+    reassigned = command(
         "assign_verification",
         staff.actor,
         s.case.id,
@@ -40,6 +40,7 @@ def test_reassignment_invalidates_old_reviewer(settings):
         "case_conflict",
         timezone.now(),
     )
+    assert reassigned.identity_name == "" and reassigned.evidence == ()
     with pytest.raises(DENIED):
         selectors().assigned_verification_detail(
             staff.actor, s.case.id, staff.step, "verification_review", timezone.now()
@@ -56,6 +57,8 @@ def test_reassignment_invalidates_old_reviewer(settings):
         "auth",
         "reason",
         "superuser",
+        "logout",
+        "owner_inactive",
     ],
 )
 def test_staff_without_capability_assignment_fresh_stepup_or_nonself_denied(
@@ -80,6 +83,15 @@ def test_staff_without_capability_assignment_fresh_stepup_or_nonself_denied(
     if fault == "auth":
         staff.user.auth_version += 1
         staff.user.save()
+    if fault == "logout":
+        from apps.accounts.security_models import AccountSessionControl
+
+        AccountSessionControl.objects.filter(pk=staff.actor.control_id).update(
+            revoked_at=timezone.now()
+        )
+    if fault == "owner_inactive":
+        s.user.is_active = False
+        s.user.save(update_fields=["is_active"])
     at = staff.at + timedelta(seconds=2) if fault == "expired" else timezone.now()
     with pytest.raises(DENIED):
         selectors().assigned_verification_detail(
@@ -233,3 +245,73 @@ def test_queue_cursor_returns_at_most_25_without_duplicate_cases(settings):
     )
     assert len(next_page.items) == 3 and next_page.next_cursor is None
     assert not {x.id for x in queue.items} & {x.id for x in next_page.items}
+
+
+def test_self_case_denied_with_real_capability_and_case_stepup(settings):
+    from django.db import transaction
+
+    from apps.governance.staff import MockStepUpProvider, issue_mock_step_up
+    from apps.governance.staff_models import StaffCapabilityGrant
+
+    s = submitted()
+    staff = reviewer(settings, s.case.id)
+    StaffCapabilityGrant.objects.create(
+        user=s.user,
+        granted_by=staff.user,
+        capability="professional_verification",
+        reason_code="staff_assigned",
+        valid_from=s.at,
+        valid_until=s.at + timedelta(hours=1),
+    )
+    provider = MockStepUpProvider()
+    assertion = provider.prepare(
+        s.user.public_id, "professional_verification", s.case.id, s.at
+    )
+    with transaction.atomic():
+        step = issue_mock_step_up(
+            s.user,
+            "professional_verification",
+            s.case.id,
+            assertion.raw_assertion,
+            staff.user,
+            s.at,
+            provider,
+        )
+    with pytest.raises(DENIED):
+        command(
+            "assign_verification",
+            s.actor,
+            s.case.id,
+            staff.user.public_id,
+            s.case.version,
+            step,
+            "staff_assigned",
+            timezone.now(),
+        )
+    with pytest.raises(DENIED):
+        selectors().assigned_verification_detail(
+            s.actor, s.case.id, step, "verification_review", timezone.now()
+        )
+
+
+def test_unbound_evidence_denied_before_storage(settings, monkeypatch):
+    from apps.assets.storage import FakePrivateStore
+
+    from .test_credential_revisions import ready
+
+    s = submitted()
+    staff = reviewer(settings, s.case.id)
+    assign(s, staff)
+    asset = ready(s)
+    reads = []
+    monkeypatch.setattr(FakePrivateStore, "read_limited", lambda *args: reads.append(1))
+    with pytest.raises(DENIED):
+        selectors().assigned_verification_evidence(
+            staff.actor,
+            s.case.id,
+            asset.id,
+            staff.step,
+            "verification_review",
+            timezone.now(),
+        )
+    assert reads == []

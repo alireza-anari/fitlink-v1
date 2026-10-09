@@ -118,6 +118,11 @@ def test_submission_denies_current_invalid_evidence(fault):
     if fault == "expired":
         # Source metadata is immutable; expire by evaluating after its date.
         at = timezone.now().replace(year=2031)
+        from apps.accounts.security_models import AccountSessionControl
+
+        AccountSessionControl.objects.filter(pk=s.actor.control_id).update(
+            expires_at=at.replace(year=2032)
+        )
     else:
         at = timezone.now()
         if fault == "withdrawn":
@@ -125,7 +130,11 @@ def test_submission_denies_current_invalid_evidence(fault):
         else:
             asset.state = "revoked" if fault == "revoked" else "quarantined"
             asset.save(update_fields=["state"])
-    with pytest.raises((ValueError, LookupError, PermissionError)):
+    with (
+        pytest.raises(ValueError, match="expired")
+        if fault == "expired"
+        else pytest.raises((ValueError, LookupError, PermissionError))
+    ):
         command("submit_verification", s.actor, s.case.id, s.case.version, uuid4(), at)
     assert Verification.objects.get(pk=s.case.id).state == "draft"
 
