@@ -34,8 +34,14 @@ def location(filename, function, line):
         path = Path(filename).resolve().relative_to(ROOT).as_posix()
     except ValueError:
         path = "<external>"
+        # Pytest's rewritten cache can retain the host compile-time filename
+        # when mounted into a container. Normalize only known static test code.
+        for known_file, functions in TESTS.items():
+            if filename.endswith("/" + known_file) and function in functions:
+                path = known_file
+                break
         for package in ("_pytest", "pluggy", "django", "psycopg", "rest_framework"):
-            if f"/{package}/" in filename:
+            if path == "<external>" and f"/{package}/" in filename:
                 path = package + "/" + filename.split(f"/{package}/", 1)[1]
                 break
         if Path(filename).name in {
@@ -210,7 +216,9 @@ def failure_data(info):
                 # Optional source text can disappear or never exist for a frame.
                 # Retain the original exception/status without replacing its verdict.
                 source = ""
-                known_file = location(str(entry.path), "", entry.lineno)["file"]
+                known_file = location(
+                    str(entry.path), entry.frame.code.name, entry.lineno
+                )["file"]
                 if known_file in TESTS:
                     try:
                         source = (

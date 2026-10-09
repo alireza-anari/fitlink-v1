@@ -144,3 +144,40 @@ def test_missing_pytest_source_uses_only_known_repository_assertion(monkeypatch)
     assert data["actual_http_status"] == 404
     assert data["expected_http_status"] == 201
     assert "synthetic-private-payload" not in json.dumps(data)
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "test_failure_preserves_http_assertion_and_trace_without_response_body",
+        "test_internal_pytest_error_records_only_class_and_code_locations",
+        "test_missing_pytest_source_uses_only_known_repository_assertion",
+    ],
+)
+def test_relocated_pytest_code_retains_known_source_contract(case, monkeypatch):
+    path = ROOT / "tests/unit/test_c03_triage_evidence.py"
+    # Pytest's rewritten bytecode retains its compile-time host co_filename
+    # when the same source and cache are mounted at /app in a container.
+    namespace = {"__file__": str(path), "__name__": "relocated_evidence_case"}
+    exec(
+        compile(
+            path.read_text(),
+            "/unavailable-host/tests/unit/test_c03_triage_evidence.py",
+            "exec",
+        ),
+        namespace,
+    )
+    arguments = {} if case.startswith("test_failure_") else {"monkeypatch": monkeypatch}
+    assert namespace[case](**arguments) is None
+
+
+def test_known_test_mapping_redacts_parent_and_requires_known_function():
+    triage = reporter()
+    file = "tests/unit/test_c03_triage_evidence.py"
+    function = "test_node_parameters_and_foreign_paths_are_redacted"
+    data = triage.location("/django/synthetic-private-parent/" + file, function, 1)
+    assert data["file"] == file
+    assert "synthetic-private-parent" not in json.dumps(data)
+    assert triage.location("/unavailable/" + file, "unknown_function", 1)["file"] == (
+        "<external>"
+    )

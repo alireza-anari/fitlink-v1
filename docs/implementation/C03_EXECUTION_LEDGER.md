@@ -1322,3 +1322,51 @@ tests/production behavior/inheritedcommands/timeouts unchanged.
 Read-only review: no Critical/Important finding; original pytest report and
 nonzero verdict remain unchanged. Publish only reporter, regressions and
 append-only ledger to execution ref; all hosted gates must still PASS.
+
+## Relocated pytest bytecode source mapping RED to GREEN
+
+Source7fba2047b5afe788928edffb305ea51f2687b375/tree
+33518c6a567380b64e4a82e477d37ec93529f418, run37905152598 FAILURE:
+PG113736730699 GREEN (269C02passed73.23s, cumulative395natural0
+at109.9s, cleanuptrue); storage113736730575 GREEN (91passed/0failed/
+0skipped,pytest0at14.197s,natural0at145.9s,cleanuptrue); ownership
+113736730808 GREEN. Artifacts PG11604137326,storage11603553895,
+ownership11604430638.
+
+Foundation113736730711 now returns natural1at584.8s with original
+verdict preserved (rather than INTERNALERROR):1026passed/3failed/0skipped.
+Exact failed nodes in tests/unit/test_c03_triage_evidence.py:
+- test_failure_preserves_http_assertion_and_trace_without_response_body:
+  KeyError at74, expected_http_status absent; actual404 retained.
+- test_internal_pytest_error_records_only_class_and_code_locations:
+  AssertionError at107, code location mismatched.
+- test_missing_pytest_source_uses_only_known_repository_assertion:
+  KeyError at145, expected_http_status absent; actual404 retained.
+Each test code frame maps external in the container, despite its current
+static source being present. Cleanup complete; artifact11603564867.
+
+Installedpytest rewrite._read_pyc validates source mtime/size then
+marshal.loads the cached code unchanged; original co_filename survives.
+A real local pytest cache portability reproduction passed on its first
+source root, then failed after source+cache copy2 and original root rename:
+same_path=false and compile_origin_exists=false. Both source copies and
+evidence preserved under ignored.runtime; no raw private paths emitted.
+This proves the path portability mechanism independently. Hosted raw path
+prefix was deliberately redacted; inference from external frames, missing
+source and host-unit-before-container execution is consistent with this
+mechanism. The earlier isolated5f workflow omitted host current-unit tests
+and completed the whole rehearsal0, also consistent with fresh cache paths.
+
+All three unchanged failing functions compiled under relocated source
+filename reproduce their exact KeyError/AssertionError REDs locally.
+Normalize only an exact known static TESTS suffix AND known function to
+its canonical repository path; fallback assertion lookup uses the actual
+frame function. All three GREEN. A privacy regression additionally caught
+framework-looking parent overriding canonical paths; preserve canonical
+mapping precedence, so private parent text never appears. Unknown files/
+functions remain external and cannot enable source fallback. No arbitrary
+file read, raw source/private payload emission or verdict conversion.
+488fullunitspassed34.30s;11activeFoundation reporter casespassed2.66s;
+Ruff/format345files/diffGREEN. Read-only review: no Critical/Important
+finding. Only reporter/test/append-only ledger change; application,
+inheritedscripts and timeouts unchanged. Continue required hosted gates.
