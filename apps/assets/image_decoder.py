@@ -11,11 +11,22 @@ import sys
 import warnings
 from io import BytesIO
 
-from PIL import Image, ImageFile, JpegImagePlugin, PngImagePlugin
+from PIL import (
+    Image,
+    ImageFile,
+    ImageMath,
+    ImageOps,
+    JpegImagePlugin,
+    PngImagePlugin,
+    TiffImagePlugin,
+)
 
-# Load only the two permitted plugins and their native codecs before filesystem
-# access is removed. Never call Image.init(), which registers unrelated parsers.
-assert JpegImagePlugin and PngImagePlugin
+# JPEG's EXIF DPI probe lazily imports TIFF metadata and pixel helpers. Preload
+# dependencies before closing file access, then retain only permitted parsers.
+# No TIFF image can enter decode(): its format allowlist is always explicit.
+assert JpegImagePlugin and PngImagePlugin and TiffImagePlugin and ImageOps and ImageMath
+Image.preinit()
+Image.OPEN = {name: Image.OPEN[name] for name in ("JPEG", "PNG")}
 ImageFile.LOAD_TRUNCATED_IMAGES = False
 Image.MAX_IMAGE_PIXELS = 20_000_000
 warnings.simplefilter("error")
