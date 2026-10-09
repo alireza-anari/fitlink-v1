@@ -116,3 +116,28 @@ def own_professional_profile(
                 )
             ),
         )
+
+
+def own_verification(actor: AccountActor, verification_uuid: UUID, at: datetime):
+    """Coarse immutable target/history view with no staff-private explanation."""
+    from uuid import uuid4
+
+    from apps.accounts.contracts import SecurityOutcome
+    from apps.governance import audit
+
+    from .setup import locked_profile
+    from .verification import _case, _owner_dto
+
+    validate_context(actor, at)
+    with transaction.atomic():
+        user = locked_actor(actor, "professional.profile_read", at)
+        profile = locked_profile(user)
+        case = _case(profile, verification_uuid)
+        audit.append_event(
+            SecurityOutcome(
+                "verification.read", "succeeded", case.id, uuid4(), (), "user_requested"
+            ),
+            actor_uuid=actor.user_uuid,
+            subject_type="verification",
+        )
+        return _owner_dto(case)

@@ -28,3 +28,17 @@ def athlete_baseline_metadata(event, at):
         ).exists()
         else "skipped"
     )
+
+
+def verification_metadata(event, at):
+    from apps.professionals.models import Verification
+
+    return (
+        "applied"
+        if Verification.objects.filter(
+            pk=event.aggregate_uuid,
+            version=event.aggregate_version,
+            profile__user__public_id=event.payload["user_uuid"],
+        ).exists()
+        else "skipped"
+    )

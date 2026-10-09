@@ -1,6 +1,6 @@
 """Private ingress exposes workflow metadata, never keys, hashes or URLs."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID
 
@@ -41,3 +41,4 @@ class AuthorizedAssetRead:
     asset_uuid: UUID
     derivative_uuid: UUID
     content_type: str
+    content: bytes = field(default=b"", repr=False)

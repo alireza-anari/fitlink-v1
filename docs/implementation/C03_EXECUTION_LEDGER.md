@@ -1676,3 +1676,37 @@ exit1 on missing five commands/three DTOs. New CI selection test observed1fail
 on omitted Task7 gate, then minimum exact selection added; inherited gates,
 workflow, timeouts and services unchanged. Task7 behavioral PostgreSQL RED
 pending hosted test-spec execution. Test fixtures are synthetic only.
+
+### Task 7 hosted RED and minimum implementation
+
+Test-spec remote302062fa13dbe88e20d6848fc196508201bba2a7/tree4563ebdc64d1b158cb86e45f88cace87003f1c2b;
+localc6249b2/e67956ad preserves the original script executable bit, which the
+first API tree incorrectly encoded100644. Restore100755 in next guarded tree;
+content unchanged. No forced ref or synthetic local ancestry is published.
+Run37975683660 PostgreSQL113973261390:269C02 cases passed, Redis quota restart
+prepare/verify passed, PostgreSQL17.11/Redis7.4.11 and inherited C03 gates healthy.
+New four-file Task7 selection actually executed:29failed/0passed/0skipped,
+pytest exit1 in9.143seconds. Downloaded artifact11638432107/SHA256
+705ca9fb81cde2c42512a2174c679d07056069051e35ae541c170ebfbc926db1:
+actual call traces end at verification_helpers.command AssertionError after
+real owned profile/setup/credential fixtures. Natural gate exit1 in123.5seconds,
+complete host/container cleanup. Foundation113973261744 passed quality/build
+then8new contract failures/540passed; its missing artifact follows early RED,
+not a service acceptance claim. Storage113973261867 and ownership113973261910
+passed. Processing remains separately observed; this is not Task7 completion.
+
+Implemented draft preparation/submission with immutable relational identity/
+role evidence snapshots, targeted withdrawal/history, capability-backed live
+assignment/reassignment/start, bounded minimal queue and assigned audited
+metadata/derivative reads. Original source delivery remains uniformly denied.
+Safe processed asset policy moved verbatim from composition into professionals
+and composition delegates to it, preserving Task6 behavior and removing reverse
+config imports from domain selectors. Only private derivative IDs/MIME/bytes
+(repr-hidden) cross delivery; no source keys, raw hashes or signed URLs.
+No migration, decision/revocation/restriction/eligibility/public/Task8 behavior.
+
+Ruling: current-source Task6 absence assertion must now permit exactly
+submit_verification, while retaining binding-helper assertions and every Task8
+absence assertion. This is a stage-specific scope guard extension, not weakened
+Task6 positive behavior. Cost if wrong: explicit Task8 negative assertions and
+new Task7 contract still reject premature decision/publication commands.

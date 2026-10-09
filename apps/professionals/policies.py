@@ -88,3 +88,51 @@ def owned_asset_subject(user: User, purpose: str, identifier: UUID):
     ):
         raise AssetNotFound("Asset unavailable")
     return AssetSubject("professional_credential", credential.id)
+
+
+def ready_asset(user, profile, identifier, purpose, credential_uuid):
+    from apps.assets.models import Asset
+    from apps.professionals.contracts import ProfileNotFound
+
+    row = (
+        Asset.objects.select_for_update()
+        .filter(
+            pk=identifier,
+            owner=user,
+            purpose=purpose,
+            classification="private_source",
+            state="ready",
+            revoked_at__isnull=True,
+        )
+        .first()
+    )
+    if row is None:
+        raise ProfileNotFound("Asset unavailable")
+    subject_matches = (
+        row.subject_kind == "professional_profile" and row.subject_uuid == profile.id
+    )
+    if credential_uuid is not None:
+        subject_matches = subject_matches or (
+            row.subject_kind == "professional_credential"
+            and row.subject_uuid == credential_uuid
+        )
+    if not subject_matches:
+        raise ProfileNotFound("Asset unavailable")
+    preview = "evidence_preview" if purpose.endswith("evidence") else "owner_preview"
+    attempt = (
+        row.processing_attempts.filter(processing_version=row.processing_version)
+        .order_by("-attempt")
+        .first()
+    )
+    if (
+        attempt is None
+        or attempt.state != "ready"
+        or attempt.algorithm_version != "jpeg-png-pixels-v1"
+        or attempt.scanner_engine != "ClamAV 1.5.4"
+        or not attempt.scanner_signature.isdecimal()
+        or not row.derivatives.filter(
+            processing_version=row.processing_version, purpose=preview, state="ready"
+        ).exists()
+    ):
+        raise ProfileNotFound("Asset unavailable")
+    return row

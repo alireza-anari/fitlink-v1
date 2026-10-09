@@ -38,7 +38,7 @@ def test_binding_fields_are_exact_and_cosmetics_are_unbound():
     }
 
 
-def test_task6_exposes_only_bounded_binding_helpers():
+def test_binding_helpers_preserved_without_task8_authority():
     assert importlib.util.find_spec("apps.professionals.verification"), (
         "Binding helpers absent"
     )
@@ -46,7 +46,6 @@ def test_task6_exposes_only_bounded_binding_helpers():
     assert callable(module.target_evidence_changed)
     assert callable(module.target_declaration_changed)
     for name in (
-        "submit_verification",
         "decide_verification_target",
         "approve",
         "publication_eligibility",

@@ -128,3 +128,59 @@ def test_submission_denies_current_invalid_evidence(fault):
     with pytest.raises((ValueError, LookupError, PermissionError)):
         command("submit_verification", s.actor, s.case.id, s.case.version, uuid4(), at)
     assert Verification.objects.get(pk=s.case.id).state == "draft"
+
+
+def test_existing_identity_approval_reused_without_resubmission():
+    s = prepared(("identity",))
+    from apps.professionals.models import VerificationDecision
+
+    target = VerificationTarget.objects.get(verification_id=s.case.id)
+    VerificationDecision.objects.create(
+        target=target,
+        profile=s.profile,
+        target_kind="identity",
+        actor=s.user,
+        decision="approve",
+        reason_code="identity_verified",
+        target_snapshot_hash=target.target_snapshot_hash,
+        bound_evidence_revision=target.bound_evidence_revision,
+        decision_sequence=1,
+        decided_at=timezone.now(),
+    )
+    target.state = "approved"
+    target.save()
+    case = Verification.objects.get(pk=s.case.id)
+    case.state, case.submitted_at, case.decided_at = (
+        "decided",
+        timezone.now(),
+        timezone.now(),
+    )
+    case.save()
+    dto = command(
+        "prepare_verification",
+        s.actor,
+        ("coach",),
+        s.profile.version,
+        uuid4(),
+        timezone.now(),
+    )
+    assert tuple(t.target for t in dto.targets) == ("coach",)
+    assert VerificationDecision.objects.count() == 1
+
+
+@pytest.mark.parametrize(
+    "targets", [(), ("identity", "identity"), ("other",), ("coach",)]
+)
+def test_request_targets_are_explicit_and_identity_required(targets):
+    from .test_professional_setup import owner
+
+    s = owner()
+    with pytest.raises(ValueError):
+        command(
+            "prepare_verification",
+            s.actor,
+            targets,
+            s.profile.version,
+            uuid4(),
+            timezone.now(),
+        )

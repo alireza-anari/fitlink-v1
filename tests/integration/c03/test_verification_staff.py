@@ -151,3 +151,48 @@ def test_audit_failure_prevents_evidence_read(settings, monkeypatch):
         )
     assert calls == []
     assert Verification.objects.get(pk=s.case.id).state == "submitted"
+
+
+def test_assigned_sanitized_read_audited_source_never_read(settings, monkeypatch):
+    from hashlib import sha256
+
+    from apps.assets.contracts import AssetNotFound
+    from apps.assets.storage import FakePrivateStore
+    from apps.governance.audit_models import AuditEvent
+
+    s = submitted()
+    staff = reviewer(settings, s.case.id)
+    assign(s, staff)
+    asset = s.assets["identity"][0]
+    derivative = asset.derivatives.get()
+    clean = b"synthetic sanitized derivative"
+    derivative.sha256 = sha256(clean).hexdigest()
+    derivative.save()
+    store = FakePrivateStore()
+    store.put(derivative.key, clean, derivative.mime_type)
+    reads = []
+    original = store.read_limited
+
+    def read(key, limit):
+        reads.append(key)
+        return original(key, limit)
+
+    monkeypatch.setattr(store, "read_limited", read)
+    monkeypatch.setattr("apps.assets.delivery.get_private_store", lambda: store)
+    result = selectors().assigned_verification_evidence(
+        staff.actor,
+        s.case.id,
+        asset.id,
+        staff.step,
+        "verification_review",
+        timezone.now(),
+    )
+    assert result.content == clean and reads == [derivative.key]
+    assert AuditEvent.objects.filter(
+        action="asset.read", actor_uuid=staff.user.public_id, subject_uuid=asset.id
+    ).exists()
+    from config.use_cases.profile_assets import authorized_profile_download
+
+    with pytest.raises(AssetNotFound):
+        authorized_profile_download(staff.actor, asset.id, "source", timezone.now())
+    assert reads == [derivative.key]

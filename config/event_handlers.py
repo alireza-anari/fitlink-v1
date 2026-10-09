@@ -11,6 +11,7 @@ from config.c03_event_handlers import (
     athlete_baseline_metadata,
     professional_profile_metadata,
     request_processing,
+    verification_metadata,
 )
 
 
@@ -66,5 +67,6 @@ HANDLERS = MappingProxyType(
         "professional.profile_changed": professional_profile_metadata,
         "athlete.baseline_changed": athlete_baseline_metadata,
         "asset.processing_requested": request_processing,
+        "verification.changed": verification_metadata,
     }
 )

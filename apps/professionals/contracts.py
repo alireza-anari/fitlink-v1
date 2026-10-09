@@ -70,3 +70,60 @@ class CredentialDTO:
     expires_on: date | None
     current_revision_id: UUID | None
     withdrawn_at: datetime | None
+
+
+@dataclass(frozen=True)
+class VerificationTargetDTO:
+    id: UUID
+    target: str
+    state: str
+    version: int
+
+
+@dataclass(frozen=True)
+class VerificationOwnerDTO:
+    id: UUID
+    sequence: int
+    state: str
+    version: int
+    submitted_at: datetime | None
+    targets: tuple[VerificationTargetDTO, ...]
+    history: tuple[tuple[str, UUID | None, datetime], ...]
+
+
+@dataclass(frozen=True)
+class VerificationEvidenceDTO:
+    revision_uuid: UUID
+    asset_uuid: UUID
+    category: str
+    type_code: str
+    issuer: str
+    title: str
+    issued_on: date | None
+    expires_on: date | None
+
+
+@dataclass(frozen=True)
+class VerificationStaffDTO:
+    id: UUID
+    state: str
+    version: int
+    submitted_at: datetime | None
+    targets: tuple[VerificationTargetDTO, ...]
+    identity_name: str
+    evidence: tuple[VerificationEvidenceDTO, ...]
+    assignment_uuid: UUID | None
+
+
+@dataclass(frozen=True)
+class VerificationQueueItem:
+    id: UUID
+    state: str
+    submitted_at: datetime
+    requested_targets: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class VerificationQueueDTO:
+    items: tuple[VerificationQueueItem, ...]
+    next_cursor: tuple[datetime, UUID] | None
