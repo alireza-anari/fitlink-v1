@@ -54,6 +54,7 @@ def prepared(targets=("identity", "coach", "nutritionist")):
         uuid4(),
         timezone.now(),
     )
+    s.profile.refresh_from_db()
     return s
 
 

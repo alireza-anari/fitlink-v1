@@ -184,3 +184,36 @@ def test_request_targets_are_explicit_and_identity_required(targets):
             uuid4(),
             timezone.now(),
         )
+
+
+def test_submission_audit_failure_rolls_back_snapshot_and_outbox(monkeypatch):
+    from apps.governance.outbox_models import OutboxEvent
+
+    s = prepared()
+    old_targets = list(
+        VerificationTarget.objects.filter(verification_id=s.case.id).values_list(
+            "id", flat=True
+        )
+    )
+    old_events = OutboxEvent.objects.count()
+
+    def fail(*args, **kwargs):
+        raise RuntimeError("Injected audit failure")
+
+    monkeypatch.setattr("apps.governance.audit.append_event", fail)
+    with pytest.raises(RuntimeError):
+        command(
+            "submit_verification",
+            s.actor,
+            s.case.id,
+            s.case.version,
+            uuid4(),
+            timezone.now(),
+        )
+    assert Verification.objects.get(pk=s.case.id).state == "draft"
+    assert set(
+        VerificationTarget.objects.filter(verification_id=s.case.id).values_list(
+            "id", flat=True
+        )
+    ) == set(old_targets)
+    assert OutboxEvent.objects.count() == old_events

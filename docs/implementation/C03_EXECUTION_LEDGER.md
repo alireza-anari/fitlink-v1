@@ -1710,3 +1710,22 @@ submit_verification, while retaining binding-helper assertions and every Task8
 absence assertion. This is a stage-specific scope guard extension, not weakened
 Task6 positive behavior. Cost if wrong: explicit Task8 negative assertions and
 new Task7 contract still reject premature decision/publication commands.
+
+### Task 7 candidate and review regression specs
+
+Candidate remote10a08c2c8f131db97c61939a29d6839bec989b84/tree
+d9791c963f917499456ed62f03b8e653eec21c44 (local38aa1fd identical tree),
+new run37976991026. Local51focused Task6/Task7/CI unit cases passed;39-file
+mypy,381-file Ruff lint/format and diff checks passed. Drift detected none;
+local PostgreSQL is unavailable so SQL/concurrency acceptance remains hosted.
+Original executable script mode restored and exact local/API tree equality
+verified. No synthetic local ancestry or forced publication.
+
+Fresh inline security review adds actual PostgreSQL regression specs for draft
+prepare CAS, submit/edit and reassign/read independent connections, queue25+
+cursor and mutation audit rollback. Two suspected Important gaps are pinned
+before corrections: draft preparation does not advance its profile CAS anchor;
+queue lacks the same operational production closure as assigned-case reads.
+A seeded verified_mfa fixture must not open a production queue while no approved
+provider/config switch exists. Corrections wait for hosted behavioral RED on
+these new specs; no claim of success from source inspection.

@@ -196,3 +196,40 @@ def test_assigned_sanitized_read_audited_source_never_read(settings, monkeypatch
     with pytest.raises(AssetNotFound):
         authorized_profile_download(staff.actor, asset.id, "source", timezone.now())
     assert reads == [derivative.key]
+
+
+def test_queue_cannot_open_production_verification_with_seeded_mfa(settings):
+    s = submitted()
+    staff = reviewer(settings, None)
+    StaffStepUpGrant.objects.filter(pk=staff.step).update(method="verified_mfa")
+    settings.SETTINGS_ENV = "production"
+    with pytest.raises(DENIED):
+        selectors().submitted_verification_queue(
+            staff.actor, staff.step, "verification_review", None, timezone.now()
+        )
+
+
+def test_queue_cursor_returns_at_most_25_without_duplicate_cases(settings):
+    from apps.professionals.models import ProfessionalProfile
+
+    s = submitted()
+    staff = reviewer(settings, None)
+    for i in range(27):
+        person = make_actor(f"+98912345{6900 + i:04d}")
+        profile = ProfessionalProfile.objects.create(user=person.user)
+        Verification.objects.create(
+            profile=profile, sequence=1, state="submitted", submitted_at=s.at
+        )
+    queue = selectors().submitted_verification_queue(
+        staff.actor, staff.step, "verification_review", None, timezone.now()
+    )
+    assert len(queue.items) == 25 and queue.next_cursor is not None
+    next_page = selectors().submitted_verification_queue(
+        staff.actor,
+        staff.step,
+        "verification_review",
+        queue.next_cursor,
+        timezone.now(),
+    )
+    assert len(next_page.items) == 3 and next_page.next_cursor is None
+    assert not {x.id for x in queue.items} & {x.id for x in next_page.items}
