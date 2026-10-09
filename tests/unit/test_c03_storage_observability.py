@@ -3,6 +3,7 @@
 import importlib.util
 import json
 import os
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -12,6 +13,36 @@ from django.db import OperationalError
 
 pytestmark = pytest.mark.unit
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def test_actual_storage_pytest_launcher_loads_repository_evidence_plugin(tmp_path):
+    line = next(
+        line
+        for line in (ROOT / "docker/verify_c03_storage.sh").read_text().splitlines()
+        if line.startswith("storage_phase pytest ")
+    )
+    command = shlex.split(line)
+    entry = command[command.index("--frozen") + 1 :]
+    entry = entry[: next(i for i, arg in enumerate(entry) if arg.startswith("tests/"))]
+    if entry[0] == "python":
+        entry[0] = sys.executable
+    else:
+        entry[0] = str(Path(sys.executable).parent / entry[0])
+    journal = tmp_path / "collection.jsonl"
+    environment = {**os.environ, "PYTEST_PLUGINS": "docker.c03_pytest_triage"}
+    environment.pop("PYTHONPATH", None)
+    environment["C03_TRIAGE_EVIDENCE_FILE"] = str(journal)
+    result = subprocess.run(
+        [*entry, "tests/unit/test_storage.py", "--collect-only", "-q"],
+        cwd=ROOT,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=20,
+    )
+    assert result.returncode == 0
+    events = [json.loads(line) for line in journal.read_text().splitlines()]
+    assert any(e["event"] == "pytest_exit" and e["exitstatus"] == 0 for e in events)
 
 
 def load(name):
