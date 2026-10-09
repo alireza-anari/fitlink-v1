@@ -119,4 +119,27 @@ for path in sorted(Path(".runtime/c03-diagnostics").glob("foundation-*.jsonl")):
             print("C03_TASK6 " + json.dumps(event, sort_keys=True), flush=True)
 print("C03_TASK6_COUNTS " + json.dumps(counts, sort_keys=True), flush=True)
 PY
-exit "$task6_exit"
+[ "$task6_exit" -eq 0 ] || exit "$task6_exit"
+
+# Task 7 assigned verification intake and real PostgreSQL races.
+task7_exit=0
+C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnostics timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_verification_contract.py tests/integration/c03/test_verification_submission.py tests/integration/c03/test_verification_staff.py tests/integration/c03/test_verification_assignment_races.py -q --strict-markers -o faulthandler_timeout=30 || task7_exit=$?
+uv run --frozen python - <<'PY'
+import json
+from pathlib import Path
+
+counts = {"passed": 0, "failed": 0, "skipped": 0}
+for path in sorted(Path(".runtime/c03-diagnostics").glob("foundation-*.jsonl")):
+    for line in path.read_text().splitlines():
+        event = json.loads(line)
+        if event.get("event") == "test_report" and event.get("phase") == "call":
+            outcome = event.get("outcome")
+            if outcome in counts:
+                counts[outcome] += 1
+        if event.get("event") in {"pytest_exit", "pytest_internalerror"} or (
+            event.get("event") == "test_report" and event.get("outcome") != "passed"
+        ):
+            print("C03_TASK7 " + json.dumps(event, sort_keys=True), flush=True)
+print("C03_TASK7_COUNTS " + json.dumps(counts, sort_keys=True), flush=True)
+PY
+exit "$task7_exit"

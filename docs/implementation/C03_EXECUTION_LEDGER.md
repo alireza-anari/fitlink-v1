@@ -1660,3 +1660,19 @@ Authoritative final implementation: `0153cef544dbf3675fbf6eadf6959b9bb06a8e77`, 
 - Final run job inventory: foundation113943907111 SUCCESS; carried same-source processing113943962886, storage113943908260, PostgreSQL113943909446 and ownership113943909797 SUCCESS. Their actual originally executed attempt1 IDs are113892444707/113892445187/113892445254/113892445184, respectively. Focused Task6 **67passed/0failed/0skipped** and all inherited Task1–5 mandatory service/constraint/race/processing gates remain GREEN at this exact implementation head.
 - Security review completed as explicitly recorded author self-review. No unresolved Critical/Important finding or deferred minor; prior behavioral corrections and their RED evidence remain above. Both is exactly two independent declaration rows, with no verified authority; identity and each role have independent evidence/declaration/decision binding semantics. Immutable credential/source/submitted history, private processed attachments, current owner/session authorization, assistant denial, receipt/version/race behavior and cosmetic non-invalidation were verified. No migration, User/schema change, raw-source delivery, public profile/location/search, owner/staff UI, submission/approval/revocation/eligibility, Task7 or C04 behavior was introduced.
 - Completion publication is documentation only, retaining the exact validated source SHA/tree and all failed evidence. Guarded non-forced API fast-forward uses the actual remote0153cef parent; no synthetic local Task6 ancestry is pushed. Preserve the local execution checkout and its legitimate existing Task6 commits. Protected references must be rechecked before and after publication. No merge, deployment or later task is authorized or performed. Stop after Task6.
+
+## Task 7 recovery and test-spec checkpoint (2026-10-09)
+
+Exact fresh Git checkout on profiles/c03-cloud: a9aeeb77ddf3a4b0b28ae553c9a510feed8d45ea,
+tree a87ad180f7bd013a3b340f036ad0b86a61755c2c. Clean status, staged/unstaged/untracked
+inspection empty; no legitimate Task7 work lost or replaced. Remote ls-remote
+and authenticated Git ref agree. Task6 implementation0153cef and run37951875791
+attempt4 SUCCESS/all five jobs verified. Tasks1–6 remain complete.
+Read approved plan and installed schema/guards. Task7 migration impact NONE.
+No per-task delegation, Task8/C04, merge/deploy or protected-ref changes.
+Python3.13/frozen environment recovered inside scratch; local PostgreSQL/Docker
+unavailable, existing hosted gates are mandatory. Unit contract RED8failed,
+exit1 on missing five commands/three DTOs. New CI selection test observed1fail
+on omitted Task7 gate, then minimum exact selection added; inherited gates,
+workflow, timeouts and services unchanged. Task7 behavioral PostgreSQL RED
+pending hosted test-spec execution. Test fixtures are synthetic only.
