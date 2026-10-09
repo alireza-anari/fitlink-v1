@@ -1487,3 +1487,27 @@ Compose browser inherits the new app networks together with network_mode;
 clear only browser's inherited networks to keep its original web loopback mode.
 No process/service/supervisor timeout changed. Publishing tests/infrastructure
 for required hosted RED; Task5 IN_PROGRESS, noTask6/C04/merge/deployment.
+
+Task5 test/infrastructure checkpoint remote c0f5d420/tree6cf6e118 (local0baffa9
+same tree); diagnostic checkpoint cc3901ab/tree5f0e2a9 (local5479e38 same tree).
+Never publish synthetic local ancestry. Hosted37926898643 processing/storage
+fail before tests; diagnostic37927253837 processing113809055020 establishes
+Compose network_mode_conflict. !reset[] retains a networks key that conflicts
+with browser network_mode. Remove networks from app anchor; attach scan-private
+only to checks/worker, preserving browser's original loopback network_mode.
+This is evidenced infrastructure correction, not processing behavioral RED.
+Local minimal callable boundary19failed/7passed:10pixel results unavailable,
+isolation probe unavailable and scanner return/limit/timeout defects. Hostile
+cases passing solely because unavailable are NOT decoder validation evidence.
+Initial socket test process remained alive because fail-closed stub did not
+connect to a non-daemon test listener; terminated only that owned pytest child.
+Subsequent bounded image-only11failed/7passed reproduces pixel/isolationRED.
+Scanner now passes finite parsing/deadline/socket/cap cases. Decoder implemented
+with separate isolated CPython, no inherited secrets/fds, fixed30s timeout,
+bounded pipes/CPU20s/address space512MiB/output10MB, nonroot+no_new_privs and
+strict amd64 syscall allowlist forbidding file opens/writes/network/fork/exec.
+Full pixel reconstruction strips metadata. Hosted validation PENDING: local
+executor root cannot os.setgroups (EPERM), so it correctly returns unavailable;
+no root fallback, skip or security bypass. Hosted runner/container is nonroot.
+Durable attempt handler installed without longI/O; claim/release remain explicit
+fail-closed stubs for real hosted behavioralRED. Task5 remainsIN_PROGRESS.

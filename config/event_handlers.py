@@ -4,6 +4,7 @@ from types import MappingProxyType
 
 from apps.accounts.models import User
 from apps.accounts.security_models import AccountSessionControl
+from apps.assets.processing import request_processing
 from apps.governance.consent_models import Consent
 from apps.governance.flag_models import FeatureFlag
 from apps.governance.privacy_models import PrivacyRequest
@@ -64,5 +65,6 @@ HANDLERS = MappingProxyType(
         "feature_flag.changed": flag_metadata,
         "professional.profile_changed": professional_profile_metadata,
         "athlete.baseline_changed": athlete_baseline_metadata,
+        "asset.processing_requested": request_processing,
     }
 )

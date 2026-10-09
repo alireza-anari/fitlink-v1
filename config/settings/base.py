@@ -124,6 +124,15 @@ CELERY_BEAT_SCHEDULE: dict[str, Any] = {
     "c02-outbox-scan": {"task": "apps.governance.tasks.scan_pending", "schedule": 30.0},
 }
 CELERY_IMPORTS = ("config.tasks", "apps.governance.tasks")
+ASSET_PROCESSING_ENABLED = env.bool_value("ASSET_PROCESSING_ENABLED", False)
+ASSET_SCANNER_HOST = env.str_value("ASSET_SCANNER_HOST")
+ASSET_SCANNER_PORT = env.bounded_int("ASSET_SCANNER_PORT", 3310, 65535)
+if ASSET_PROCESSING_ENABLED and ASSET_SCANNER_HOST not in {
+    "scanner",
+    "127.0.0.1",
+    "localhost",
+}:
+    env.invalid("ASSET_SCANNER_HOST")
 CELERY_BROKER_CONNECTION_TIMEOUT = 2
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BROKER_CONNECTION_MAX_RETRIES = 10
