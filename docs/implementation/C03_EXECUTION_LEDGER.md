@@ -1370,3 +1370,75 @@ file read, raw source/private payload emission or verdict conversion.
 Ruff/format345files/diffGREEN. Read-only review: no Critical/Important
 finding. Only reporter/test/append-only ledger change; application,
 inheritedscripts and timeouts unchanged. Continue required hosted gates.
+
+## Task 4 COMPLETE — authoritative recovered execution handoff
+
+Current task status supersedes earlier historical IN_PROGRESS entries:
+Tasks1–3 COMPLETE unchanged. Task4 COMPLETE on validated implementation
+1edf4e69bedd562708b9dbc0a252015ebfd1a7c6,
+tree0491ffb8de1cb44533cc6dd3f8621213e8ed9b52.
+Tasks5–14 NOT STARTED. C04 NOT STARTED. C03 overall IN_PROGRESS.
+No merge, deployment, force push or protected/unrelated ref mutation.
+
+Authoritative full execution run37907594072 SUCCESS; actual complete job
+steps/logs inspected, all four jobs GREEN:
+- foundation113744715421: frozen/static/Ruff/format/mypy/Django/production
+  checks passed;488hostunitspassed17.78s. Unchanged complete
+  verify_c02.sh rehearsal natural0at683.2s, host/container cleanuptrue.
+  Immutable pinnedC01 baseline, populated same-database exact upgrade,
+  current full regressions, native browser gates and real Redis/MinIO/
+  worker restarts all reached the original set-e command end successfully.
+  Current check/restart journal1039passed/0failed/0skipped; all3pytest
+  exits0 (138.241s,0.303s,0.673s). No internalerror or cutoff.
+- c02-migrations113744715848:269C02passed72.94s; real Redis restart
+  durable-limit probe passed; complete installedC03 selection395cases
+  (verified local collection, including Task4 lifecycle/races/authority),
+  naturalcommand0at108.6s, host/container cleanuptrue. Global conftest
+  rejects selected skips. This is cumulative compatibility verification,
+  not a repeat of completed Task1–3 implementation or isolated SliceA.
+- c03-storage113744715710: REAL privateMinIO, healthyPG/Redis/MinIO,
+  readiness200; migration/probe/pytest phases succeed;91passed/0failed/
+  0skipped, pytest0at19.001s; naturalcommand0at165.3s and cleanuptrue.
+  Required real store nodes inspected: authenticated immutable bounded
+  operations; anonymousGET/PUT/bucket-list403; foreign/app/nullCORSdenied;
+  actualDjango multipart into privateopaque source; finalization verifies
+  authoritative object facts and leaves it private/quarantined; missing,
+  oversized, size/type/binding changes fail closed. Lifecycle/owner/
+  fresh-account/replay races pass. Rawsource owner/foreign/staff delivery
+  unavailable, no signedPUT/browsercredentials/directupload path.
+- c03-timeout-probe113744715729: originalGNU124 container escape observed;
+  bounded supervisor fails closed and verifies detached-child termination
+  plus owned container removal. Both cleanup facts true. No global prune
+  or persistent/external data deletion. This independent ownership proof
+  does not retrospectively attribute all historical hangs to one cause.
+
+Run37907594072 artifact metadata verified:
+- c03-foundation-diagnostics11605782119,60294bytes,
+  sha256:396f7cd53470643178fcbe3245fa9c7cba9d1e1f5030ee856177577659126e8e.
+- c03-storage-diagnostics11605585981,14972bytes,
+  sha256:ef0bc047ba1e490469958976c2d29556fbd72b38fc184f761c49eabf1f25b2de.
+- c03-postgresql-diagnostics11605336208,4717bytes,
+  sha256:645918a36ab08e3597a4b24f95881044f0f9b4efd0c3cc7994585d0619730f70.
+- c03-timeout-probe-diagnostics11604769289,900bytes,
+  sha256:93c6d96f618f33eb69c37e34937149e57ea4aeefbba086b3fde8478c7b4fb7c4.
+
+Source1edf push run initially invisible, then37907594072 appeared and
+finishedGREEN without duplicate publication; delayed visibility resolved.
+SliceA e034e9d2/run37842121259 remains authoritativeGREEN unchanged.
+Task4 production wiring recovered faithfully from publishedSliceA; current
+recovery corrections address pytest launcher, privateMinIOCORS and
+fail-closed diagnostic ownership/source portability. No scan, sanitizer,
+image decoding, derivative creation or READY shortcut; Task5 not begun.
+Focused security reviews found no remaining Critical/Important issue,
+with RED→GREEN regressions for identified Important ownership/diagnostic
+issues. Inheritedscript blobs and protected main/C01/C02/plan refs remain
+exactly the immutable SHAs recorded above.
+
+This handoff preserves the committed historical ledger prefix exactly.
+UNRECOVERABLE_UNPUBLISHED_STATE_CONFIRMED remains final: deleted original
+index/unpublished lines/local-only files were not restored or fabricated.
+New workspace/evidence comes solely from published refs and verified
+source/CI plus explicitly identified new local diagnostic reproductions.
+Completion publication changes only this append-only ledger; implementation
+source is identical to the validated1edf checkpoint. Preserve branch and
+all surviving new workspaces; STOP after Task4 handoff.
