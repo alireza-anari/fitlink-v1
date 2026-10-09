@@ -19,6 +19,7 @@ from .scanner import configured_scanner
 from .storage import get_private_store
 
 MAX_ATTEMPTS = 8
+ALGORITHM_VERSION = "jpeg-png-pixels-v1"
 LEASE_SECONDS = 60
 RETRY_SECONDS = 300
 
@@ -80,6 +81,7 @@ def _fenced(asset_id, pv, lease, authority, at):
         or attempt.owner_auth_version != user.auth_version
         or attempt.asset_version != asset.version
         or attempt.authority_hash != digest
+        or attempt.algorithm_version != ALGORITHM_VERSION
     ):
         return None
     return asset, attempt
@@ -142,7 +144,7 @@ def scan_due_assets(at, batch_size=100, *, enqueue=None, authority=None):
                         processing_version=asset.processing_version,
                         attempt=attempt.attempt + 1,
                     )
-                if attempt.attempt > MAX_ATTEMPTS:
+                if attempt.attempt > MAX_ATTEMPTS or attempt.prompt_attempt >= 8:
                     _retire(attempt, "exhausted")
                     asset.state, asset.rejection_code = "rejected", "exhausted"
                     asset.version += 1
@@ -154,6 +156,8 @@ def scan_due_assets(at, batch_size=100, *, enqueue=None, authority=None):
                 attempt.state, attempt.failure_code = "running", ""
                 attempt.lease_uuid = uuid4()
                 attempt.lease_until = at + timedelta(seconds=LEASE_SECONDS)
+                attempt.prompt_attempt += 1
+                attempt.algorithm_version = ALGORITHM_VERSION
                 attempt.owner_auth_version = user.auth_version
                 attempt.asset_version, attempt.authority_hash = asset.version, digest
                 attempt.save()

@@ -72,6 +72,8 @@ class AssetProcessingAttempt(models.Model):
     lease_until = models.DateTimeField(null=True, blank=True)
     attempt = models.PositiveSmallIntegerField(default=1)
     state = models.CharField(max_length=12, default="pending")
+    prompt_attempt = models.PositiveSmallIntegerField(default=0)
+    algorithm_version = models.CharField(max_length=32, blank=True)
     owner_auth_version = models.PositiveBigIntegerField(default=0)
     asset_version = models.PositiveBigIntegerField(default=0)
     authority_hash = models.CharField(max_length=64, blank=True)
@@ -100,6 +102,18 @@ class AssetProcessingAttempt(models.Model):
                     authority_hash__regex=r"^[0-9a-f]{64}$",
                 ),
                 name="attempt_running_authority",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(prompt_attempt__lte=8),
+                name="attempt_prompt_bound",
+            ),
+            models.CheckConstraint(
+                condition=~models.Q(state="running")
+                | models.Q(
+                    prompt_attempt__gte=1,
+                    algorithm_version="jpeg-png-pixels-v1",
+                ),
+                name="attempt_running_algorithm",
             ),
             models.UniqueConstraint(
                 fields=["asset", "processing_version", "attempt"],

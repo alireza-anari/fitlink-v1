@@ -4,6 +4,7 @@ import json
 import os
 import sys
 import time
+import traceback
 from datetime import date, timedelta
 from hashlib import sha256
 from io import BytesIO
@@ -183,10 +184,36 @@ def scanner_restored():
 
 
 if __name__ == "__main__":
-    {
-        "prepare": prepare,
-        "start": start,
-        "recover": recover,
-        "scanner-outage": scanner_outage,
-        "scanner-restored": scanner_restored,
-    }[sys.argv[1]]()
+    phase = sys.argv[1]
+    try:
+        evidence("probe_" + phase + "_started")
+        {
+            "prepare": prepare,
+            "start": start,
+            "recover": recover,
+            "scanner-outage": scanner_outage,
+            "scanner-restored": scanner_restored,
+        }[phase]()
+    except Exception as error:
+        from docker.c03_storage_errors import error_category
+
+        with Path(".runtime/c03-triage/probe.jsonl").open("a") as stream:
+            stream.write(
+                json.dumps(
+                    {
+                        "event": "real_worker_probe_failure",
+                        "stage": phase,
+                        "exception": error_category(error),
+                        "frames": [
+                            {
+                                "file": Path(f.filename).name,
+                                "function": f.name,
+                                "line": f.lineno,
+                            }
+                            for f in traceback.extract_tb(error.__traceback__)
+                        ],
+                    }
+                )
+                + "\n"
+            )
+        raise SystemExit(1) from None

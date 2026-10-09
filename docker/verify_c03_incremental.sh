@@ -76,6 +76,7 @@ uv run --frozen python manage.py sqlmigrate professionals 0014 --settings=config
 uv run --frozen python manage.py sqlmigrate professionals 0015 --settings=config.settings.test
 uv run --frozen python manage.py sqlmigrate assets 0007 --settings=config.settings.test
 uv run --frozen python manage.py sqlmigrate assets 0008 --settings=config.settings.test
+uv run --frozen python manage.py sqlmigrate assets 0009 --settings=config.settings.test
 uv run --frozen python manage.py sqlmigrate professionals 0016 --settings=config.settings.test
 uv run --frozen python manage.py sqlmigrate athletes 0009 --settings=config.settings.test
 uv run --frozen python manage.py sqlmigrate athletes 0010 --settings=config.settings.test

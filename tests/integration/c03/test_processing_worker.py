@@ -118,3 +118,12 @@ def test_processing_records_algorithm_version(monkeypatch):
     s = prepared(monkeypatch)
     attempt = claimed(s)
     assert attempt.algorithm_version == "jpeg-png-pixels-v1"
+
+
+def test_disabled_runtime_does_not_claim_pending_work(monkeypatch, settings):
+    s = prepared(monkeypatch)
+    p = api()
+    p.request_processing(s.event, timezone.now())
+    settings.ASSET_PROCESSING_ENABLED = False
+    assert p.scan_due_assets(timezone.now(), 1) == 0
+    assert AssetProcessingAttempt.objects.get(asset=s.asset).state == "pending"

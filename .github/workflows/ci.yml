@@ -227,6 +227,8 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: c03-processing-diagnostics
-          path: .runtime/c03-diagnostics/*.jsonl
+          path: |
+            .runtime/c03-diagnostics/*.jsonl
+            .runtime/c03-triage/*.jsonl
           include-hidden-files: true
           if-no-files-found: error

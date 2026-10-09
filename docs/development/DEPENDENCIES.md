@@ -97,3 +97,22 @@ Checkout does not retain credentials; workflow grants contents:read only and run
 only on foundation/c01-cloud pushes. No deployment, packages or release steps.
 Celery has no typing marker; its single import has a specific import-untyped
 suppression. Django model managers use explicit User generic; no blanket ignores.
+
+## C03 Task 5 private raster processing (reviewed 2026-10-09)
+
+Pillow 12.3.0 is pinned exactly with official PyPI wheel/source SHA256 hashes in
+uv.lock. It is MIT-CMU licensed and used only for isolated JPEG/PNG decoding and
+metadata-free PNG reconstruction. The official release and security policy were
+reviewed before addition; its PDF parser fix is not permission to enable PDFs.
+
+ClamAV 1.5.4 runs as a separate GPLv2 private daemon, without libclamav linking.
+Official immutable image:
+`clamav/clamav@sha256:7769870154c74ce31b0047dd8771e81f7c4269278bc005782e9e419e4922c73d`.
+The official August 2026 release fixes native parser/scanner vulnerabilities.
+Signatures must be fresh, not merely present. Exact source/license/maintenance,
+network, resource bounds and production closure are recorded in
+[the C03 setup record](../implementation/C03_SETUP.md).
+No version pin or passing unit test certifies native parsing as risk-free.
+Production processing remains disabled until isolated sanitized delivery and the
+operational release prerequisites are installed and reviewed. Named maintenance
+ownership is a release dependency, not an invented assignment.

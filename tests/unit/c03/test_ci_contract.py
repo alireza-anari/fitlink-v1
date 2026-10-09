@@ -78,6 +78,9 @@ STORAGE_ARTIFACT = DIAGNOSTIC_ARTIFACT.format(phase="storage").replace(
     "            .runtime/c03-diagnostics/*.jsonl\n"
     "            .runtime/c03-triage/*.jsonl",
 )
+PROCESSING_ARTIFACT = STORAGE_ARTIFACT.replace(
+    "c03-storage-diagnostics", "c03-processing-diagnostics"
+)
 C03_PROCESSING_JOB = """  c03-processing:
     if: github.ref == 'refs/heads/profiles/c03-cloud'
     runs-on: ubuntu-24.04
@@ -114,7 +117,7 @@ def inherited_workflow_is_intact(source):
     inherited = inherited.replace(C03_STEP, "")
     inherited = inherited.replace(C03_STORAGE_JOB, "")
     inherited = inherited.replace(C03_PROCESSING_JOB, "")
-    inherited = inherited.replace(DIAGNOSTIC_ARTIFACT.format(phase="processing"), "")
+    inherited = inherited.replace(PROCESSING_ARTIFACT, "")
     data = inherited.encode()
     digest = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data)
     return digest.hexdigest() == C02_WORKFLOW_BLOB

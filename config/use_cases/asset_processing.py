@@ -3,6 +3,7 @@
 import hashlib
 import json
 
+from django.conf import settings
 from django.db.models import Q
 
 from apps.assets import processing
@@ -127,6 +128,8 @@ def request_processing(event, at):
 
 
 def scan_due_assets(at, batch_size=100, *, enqueue=None):
+    if enqueue is None and not settings.ASSET_PROCESSING_ENABLED:
+        return 0
     return processing.scan_due_assets(
         at, batch_size, enqueue=enqueue, authority=authority
     )

@@ -14,7 +14,11 @@ def process_private_asset(asset_uuid, processing_version, lease_uuid):
         asset_id, lease_id = UUID(asset_uuid), UUID(lease_uuid)
     except (ValueError, TypeError, AttributeError):
         return "invalid"
-    return process_asset(asset_id, processing_version, lease_id, timezone.now())
+    try:
+        return process_asset(asset_id, processing_version, lease_id, timezone.now())
+    except Exception:
+        # Durable expired lease recovers; broker logs receive no private exception.
+        return "unavailable"
 
 
 @shared_task(ignore_result=True)

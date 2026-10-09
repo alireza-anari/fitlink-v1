@@ -81,3 +81,35 @@ def test_scanner_actual_timeout_and_response_cap():
 def test_scanner_over_limit_before_socket():
     result = api().ClamScanner("127.0.0.1", 1).scan(b"x" * 10000001, datetime.now(UTC))
     assert result.status == "limit"
+
+
+def test_worker_drops_unexpected_private_exception(monkeypatch, caplog):
+    from uuid import uuid4
+
+    from apps.assets import tasks
+
+    def unavailable(*args):
+        raise RuntimeError("PRIVATE_SENTINEL https://private.invalid/source")
+
+    monkeypatch.setattr(tasks, "process_asset", unavailable)
+    assert (
+        tasks.process_private_asset.run(str(uuid4()), 1, str(uuid4())) == "unavailable"
+    )
+    assert "PRIVATE_SENTINEL" not in caplog.text
+
+
+def test_disabled_reconciler_never_enters_claim_boundary(monkeypatch, settings):
+    from django.utils import timezone
+
+    from config.use_cases import asset_processing
+
+    settings.ASSET_PROCESSING_ENABLED = False
+    calls = []
+
+    def claim(*args, **kwargs):
+        calls.append(True)
+        return 1
+
+    monkeypatch.setattr(asset_processing.processing, "scan_due_assets", claim)
+    assert asset_processing.scan_due_assets(timezone.now()) == 0
+    assert calls == []
