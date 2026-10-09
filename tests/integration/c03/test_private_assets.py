@@ -38,14 +38,15 @@ def test_real_minio_bounded_private_roundtrip_and_anonymous_denial():
                 ).status_code
                 == 403
             )
-            preflight = client.options(
-                url,
-                headers={
-                    "Origin": "https://foreign.invalid",
-                    "Access-Control-Request-Method": "PUT",
-                },
-            )
-            assert "access-control-allow-origin" not in preflight.headers
+            for origin in ("https://foreign.invalid", "http://localhost:8000", "null"):
+                preflight = client.options(
+                    url,
+                    headers={
+                        "Origin": origin,
+                        "Access-Control-Request-Method": "PUT",
+                    },
+                )
+                assert "access-control-allow-origin" not in preflight.headers
         assert store.backend.default_acl is None
         assert store.read_limited(key, 10_000_000) == PNG
     finally:
