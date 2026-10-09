@@ -87,3 +87,34 @@ def test_worker_task_is_non_eager_uuid_only(settings):
     assert not settings.CELERY_TASK_ALWAYS_EAGER
     assert task.acks_late and task.reject_on_worker_lost
     assert task.run("PRIVATE_SENTINEL", 1, str(uuid4())) != "ready"
+
+
+def test_broker_outage_is_bounded_and_never_ready(monkeypatch):
+    s = prepared(monkeypatch)
+    p = api()
+    p.request_processing(s.event, timezone.now())
+
+    def outage(*args):
+        raise ConnectionError("PRIVATE_SENTINEL")
+
+    at = timezone.now()
+    for _ in range(9):
+        p.scan_due_assets(at, 1, enqueue=outage)
+        attempt = (
+            AssetProcessingAttempt.objects.filter(asset=s.asset)
+            .order_by("-attempt")
+            .first()
+        )
+        at = (attempt.lease_until or at) + timedelta(seconds=301)
+    s.asset.refresh_from_db()
+    assert s.asset.state == "rejected" and s.asset.rejection_code == "exhausted"
+    assert not s.asset.derivatives.exists()
+    assert not AssetProcessingAttempt.objects.filter(
+        asset=s.asset, state__in=["pending", "running"]
+    ).exists()
+
+
+def test_processing_records_algorithm_version(monkeypatch):
+    s = prepared(monkeypatch)
+    attempt = claimed(s)
+    assert attempt.algorithm_version == "jpeg-png-pixels-v1"

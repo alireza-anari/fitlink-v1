@@ -115,3 +115,16 @@ def test_decoder_absence_fails_closed(monkeypatch):
     )
     result = images.sanitize(raster(), "image/png", "avatar")
     assert result.status == "unavailable" and result.data == b""
+
+
+def test_parent_wait_timeout_is_fail_closed(monkeypatch):
+    import subprocess
+
+    images = api()
+
+    def stalled(*args):
+        raise subprocess.TimeoutExpired("private-decoder", 30)
+
+    monkeypatch.setattr(images, "_run", stalled)
+    result = images.sanitize(raster(), "image/png", "avatar")
+    assert result.status == "timeout" and result.data == b""

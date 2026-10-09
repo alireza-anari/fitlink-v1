@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development")
 django.setup()
 from django.conf import settings  # noqa: E402
+from django.db import transaction  # noqa: E402
 from django.utils import timezone  # noqa: E402
 from PIL import Image  # noqa: E402
 from redis import Redis  # noqa: E402
@@ -83,13 +84,14 @@ def prepare():
     S3PrivateStore().put_stream(
         asset.source_key, BytesIO(data), "image/png", 10_000_000
     )
-    event_id = append_outbox(
-        "asset.processing_requested",
-        asset.id,
-        1,
-        {"asset_uuid": str(asset.id), "user_uuid": str(user.public_id)},
-        f"asset.processing_requested:{asset.id}:1",
-    )
+    with transaction.atomic():
+        event_id = append_outbox(
+            "asset.processing_requested",
+            asset.id,
+            1,
+            {"asset_uuid": str(asset.id), "user_uuid": str(user.public_id)},
+            f"asset.processing_requested:{asset.id}:1",
+        )
     event = OutboxEvent.objects.get(pk=event_id)
     lease = uuid4()
     event.state, event.lease_uuid, event.lease_until = (

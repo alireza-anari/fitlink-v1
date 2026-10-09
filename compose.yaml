@@ -146,6 +146,13 @@ services:
       interval: 5s
       timeout: 6s
       retries: 30
+  asset-beat:
+    <<: *app
+    networks: [default, scan-private]
+    ports: []
+    volumes: [".:/app", "beat-data:/var/lib/celery"]
+    command: ["uv", "run", "--frozen", "celery", "--quiet", "-A", "config.c03_celery:app", "beat", "--loglevel=WARNING", "--schedule=/var/lib/celery/c03-assets-schedule"]
+    healthcheck: {disable: true}
   checks:
     <<: *app
     networks: [default, scan-private]

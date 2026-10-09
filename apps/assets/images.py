@@ -51,7 +51,7 @@ def sanitize(data: bytes, mime_type: str, purpose: str) -> SanitizedImage:
         return SanitizedImage(
             "clean", body, "image/png", result["width"], result["height"]
         )
-    except TimeoutError:
+    except (TimeoutError, subprocess.TimeoutExpired):
         return SanitizedImage("timeout")
     except (OSError, ValueError, KeyError, TypeError):
         return SanitizedImage("unavailable")
@@ -60,7 +60,7 @@ def sanitize(data: bytes, mime_type: str, purpose: str) -> SanitizedImage:
 def isolation_probe() -> dict[str, bool]:
     try:
         return json.loads(_run(b"", ["probe"]))
-    except (OSError, ValueError, TimeoutError):
+    except (OSError, ValueError, TimeoutError, subprocess.TimeoutExpired):
         return {}
 
 

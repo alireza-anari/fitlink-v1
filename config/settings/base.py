@@ -124,10 +124,6 @@ CELERY_BEAT_SCHEDULE: dict[str, Any] = {
     "c02-outbox-scan": {"task": "apps.governance.tasks.scan_pending", "schedule": 30.0},
 }
 CELERY_IMPORTS = ("config.tasks", "apps.governance.tasks", "apps.assets.tasks")
-CELERY_BEAT_SCHEDULE["private-assets"] = {
-    "task": "apps.assets.tasks.reconcile_private_assets",
-    "schedule": 30.0,
-}
 ASSET_PROCESSING_ENABLED = env.bool_value("ASSET_PROCESSING_ENABLED", False)
 ASSET_SCANNER_HOST = env.str_value("ASSET_SCANNER_HOST")
 ASSET_SCANNER_PORT = env.bounded_int("ASSET_SCANNER_PORT", 3310, 65535)

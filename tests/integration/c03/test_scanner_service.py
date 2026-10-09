@@ -66,3 +66,25 @@ def test_real_private_minio_scanner_and_sanitizer(monkeypatch):
         store.delete(s.asset.source_key)
         for child in s.asset.derivatives.all():
             store.delete(child.key)
+
+
+def test_real_daemon_stream_limit_and_incomplete_stream_timeout():
+    import socket
+    import struct
+
+    s = scanner()
+    assert s.scan(b"synthetic", timezone.now()).status == "clean"
+    # Bypass the client's admission cap only in this synthetic service test:
+    # the actual daemon must reject an announced oversized INSTREAM chunk.
+    with socket.create_connection((s.host, s.port), timeout=2) as conn:
+        conn.settimeout(2)
+        conn.sendall(b"zINSTREAM\0" + struct.pack(">I", 10_000_001))
+        response = conn.recv(512)
+        assert b"size limit exceeded" in response.lower()
+    # Real incomplete daemon stream, bounded caller timeout; no fake server.
+    with socket.create_connection((s.host, s.port), timeout=2) as conn:
+        conn.settimeout(0.1)
+        conn.sendall(b"zINSTREAM\0" + struct.pack(">I", 8) + b"x")
+        with pytest.raises(TimeoutError):
+            conn.recv(512)
+    assert s.scan(b"synthetic", timezone.now()).status == "clean"

@@ -328,3 +328,23 @@ def test_real_worker_crash_and_broker_restart_probe_is_mandatory():
     assert "kill -s SIGKILL worker" in gate
     assert "restart redis" in gate
     assert "--force-recreate worker" in gate
+
+
+def test_private_reconciler_does_not_replace_inherited_beat():
+    from config.c03_celery import app as private
+    from config.celery import app as inherited
+
+    assert inherited.conf.beat_schedule == {
+        "c02-outbox-scan": {
+            "task": "apps.governance.tasks.scan_pending",
+            "schedule": 30.0,
+        }
+    }
+    assert private.conf.beat_schedule == {
+        "private-assets": {
+            "task": "apps.assets.tasks.reconcile_private_assets",
+            "schedule": 30.0,
+        }
+    }
+    assert private.conf.task_always_eager is False
+    assert '"config.c03_celery:app"' in (ROOT / "compose.yaml").read_text()
