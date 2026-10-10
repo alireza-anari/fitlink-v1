@@ -2303,3 +2303,83 @@ Task9 IN_PROGRESS/PENDING_HOSTED_RED; no Task10 work.
   1,402 passed/1 failed/0 skipped; the sole failure was the corrected synthetic
   duplicate-policy fixture. This is supporting recovery evidence, not final
   acceptance. Final exact implementation GREEN/review remain pending.
+
+### Task 9 final source review and acceptance blocker (2026-10-10)
+
+**Authoritative current status: IN PROGRESS / BLOCKED_CI, not COMPLETE.**
+Tasks 1–8 remain COMPLETE. Task 9 remains the first incomplete task.
+Task 10/C04 have not begun.
+
+Final implementation source:
+- Commit `23a4d65a2353f39263cbc73186c6c4255b27d465`
+- Tree `55421900ffdf783543e17a7115113e440fbc49ce`
+- Exact-source Actions run [38049057652](https://github.com/alireza-anari/fitlink-v1/actions/runs/38049057652),
+  attempts 1–3. All three attempts FAILED at aggregate diagnostic observation
+  deadlines. They are supporting partial evidence, never authoritative GREEN.
+
+| Attempt | PostgreSQL job | Observed result | Foundation job | Observed result |
+| --- | --- | --- | --- | --- |
+| 1 | 114204330820 | 240.3s deadline; Task 8 100 passed/0 failed/0 skipped; Task 9 not reached | 114204330661 | 900.7s deadline; 1,417 passed/0 failed/0 skipped; backend pytest exit 0, complete rehearsal unfinished |
+| 2 | 114207095197 | 240.2s deadline; Task 8 99 passed/0 failed/0 skipped; Task 9 not reached | 114207095343 | 901.8s deadline; 1,415 passed/0 failed/0 skipped; backend pytest exit 0, complete rehearsal unfinished |
+| 3 | 114210539180 | 240.3s deadline; Task 8 96 passed/0 failed/0 skipped; Task 9 not reached | 114210539219 | 902.0s deadline; 1,455 passed/0 failed/0 skipped; three pytest exits 0 (316.161s, 201.237s, 2.110s), complete rehearsal unfinished |
+
+The complete Foundation backend selection includes all four installed Task 9
+files against actual PostgreSQL/private MinIO. Its passing backend execution
+does not replace the missing final full rehearsal or PostgreSQL cumulative
+completion. Counts include whole observed call journals and may differ between
+attempts because later rehearsal phases reach different stopping points.
+
+Latest successful same-source service jobs: real scanner/non-eager processing
+114210539810; actual Compose timeout/ownership probe 114210540156; private
+MinIO/upload/storage 114210540259. All three SUCCESS. No required gate was
+skipped, allowed to fail, narrowed or represented as a complete run.
+
+Final read-only independent boundary review found no remaining Critical,
+Important or Minor source finding; acceptance is conditional on full exact-head
+GREEN. Local pre-disconnection focused checks: 73 passed; Ruff/format, expanded
+mypy (187 source files), Django test/production checks and diff checks passed.
+These checks are supporting evidence, not substitutes for hosted service gates.
+
+Task 8 authoritative implementation/tree/run remain
+`1349e484d3c29b1ad7767fd0840466d9d0bee558` /
+`b4f944dce4df19d7a8a069e330397d8c91795307` /
+38026094064 attempt 2 GREEN. The later documentation-triggered failed
+38028083736 is not implementation evidence. No Task 8 reopening.
+The authoritative Task 8 Foundation completion was already 885.3s inside the
+900s observer window; Task 9 adds 89 mandatory lifetime/hold/cleanup cases.
+
+**Concrete proposed recovery, NOT implemented or authorized by this entry:**
+`docker/c03_gate_diagnostics.py` line 51 currently hard-caps observer windows:
+`WINDOWS = {"postgresql": 240, "storage": 600, "foundation": 900}`.
+A narrowly scoped exception would change only those aggregate limits to:
+`WINDOWS = {"postgresql": 330, "storage": 600, "foundation": 1200}`.
+The existing environment override cannot exceed these caps. This file is outside
+the approved Task 9 file list; no override, cap change or indirect bypass has
+been made. Approval is required before modifying it. Preserve per-suite 180s
+guards, incremental child 300s limit, PostgreSQL job 15min/Foundation job 60min,
+timeout probe, all Tasks 1–8 assertions/selections/services and literal triggers.
+After any approved configuration change, review the bound/negative contracts,
+execute all exact-head jobs, and record implementation/tree/actual GREEN before
+changing Task 9 status. No production retention period has been seeded.
+
+Final GitHub comparison from starting head `8ce1076` to the implementation
+shows only the 17 approved Task 9 source/test/CI-support files and this ledger.
+No workflow, migration, dependency, approved plan or other domain file changed.
+All eight protected/unrelated branch refs verified unchanged immediately before
+this documentation checkpoint:
+- `main`: `8ede9a451db6103f4e3ebf65784ee9f16b96feb2`
+- `foundation/c01-cloud`: `75c551e5b9bbbfb7777ee52b09a1993b681e921a`
+- `accounts/c02-cloud`: `0905be6c6ca608d469fe33e87f514b22591132d1`
+- `profiles/c03-plan`: `79fd62e583cbe81f335bb08fce0eb43ff36b0167`
+- `diagnostics/c03-task4-foundation-triage`: `5f53cfda706a8bccbe3fad7ca569e9dd607751da`
+- `diagnostics/c03-task4-postgresql-slice-a`: `e034e9d2501b2d1e6f4a0689af923e900596bd3b`
+- `diagnostics/c03-task4-postgresql-triage`: `977383c4bb4e1b8ec0a79b9749ea0efd8a91375d`
+- `diagnostics/c03-task4-storage-slice-b`: `7361d9c8fd6e9db057f3e68988474e2258ee6838`
+
+The execution server disconnected after source publication; GitHub exact-source
+readback and branch verification remain available. Last successful local index
+was clean at the published implementation; there is no known unpublished Task 9
+work to overwrite. This documentation-only checkpoint preserves all final
+implementation source blobs. Any workflow triggered by this ledger update is
+documentation evidence and cannot substitute for final implementation GREEN.
+No reset/clean/stash, merge, deployment, force push or protected-ref modification.
