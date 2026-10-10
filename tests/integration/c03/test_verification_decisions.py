@@ -613,3 +613,32 @@ def test_maximum_credential_expiry_returns_coherent_binding(settings):
     assert result.eligible and result.verified_roles == ("coach", "nutritionist")
     bound = next(r for r in result.evidence_binding.roles if r.kind == "nutritionist")
     assert bound.next_expiry_boundary is None
+
+
+def test_assigned_derivative_read_survives_approval_counter_change(
+    settings, monkeypatch
+):
+    from hashlib import sha256
+
+    from apps.assets import delivery
+    from apps.assets.storage import FakePrivateStore
+
+    s = approved(settings)
+    asset = s.assets["coach"][0]
+    derivative = asset.derivatives.get()
+    clean = b"synthetic sanitized derivative"
+    derivative.sha256 = sha256(clean).hexdigest()
+    derivative.save(update_fields=["sha256"])
+    store = FakePrivateStore()
+    store.put(derivative.key, clean, derivative.mime_type)
+    monkeypatch.setattr(delivery, "get_private_store", lambda: store)
+    result = selectors().assigned_verification_evidence(
+        s.staff.actor,
+        s.case.id,
+        asset.id,
+        s.staff.step,
+        "verification_review",
+        timezone.now(),
+    )
+    assert result.content == clean and result.derivative_uuid == derivative.id
+    assert "source/" not in repr(result)
