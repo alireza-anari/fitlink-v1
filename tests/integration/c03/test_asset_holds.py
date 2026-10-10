@@ -385,3 +385,178 @@ def test_inventory_forged_asset_binding_fails_closed():
         api("inventory_c03_owner", s.user.public_id, timezone.now())
     assert AssetDerivative.objects.filter(asset=asset).count() == 1
     assert PrivacyRequest.objects.count() == 0
+
+
+def test_verification_hold_pins_all_case_sources_not_owner_branding(settings):
+    from .verification_helpers import assign, reviewer, submitted
+
+    s = submitted()
+    staff = reviewer(settings, s.case.id)
+    s.case = assign(s, staff)
+    case = s.profile.verifications.get(pk=s.case.id)
+    record = retention.ValidatedRecordSubject(
+        "professional_verification", case.id, s.user.public_id, case.version
+    )
+    hold(settings, s, record, case.id, staff)
+    store = private_store()
+    for asset, _ in s.assets.values():
+        for key in (asset.source_key, asset.derivatives.get().key):
+            store.put_stream(key, BytesIO(b"case evidence"), "image/png", 100)
+        revoke(asset)
+        assert cleanup(asset, policy(s, asset), store) == "held"
+    branding, _ = media(s, "cover", store)
+    revoke(branding)
+    assert cleanup(branding, policy(s, branding), store) == "deleted"
+
+
+def test_baseline_hold_is_one_record_and_not_owner_assets(settings):
+    from apps.athletes.baseline_models import BaselineAssessment
+    from apps.athletes.models import AthleteProfile
+
+    s = owner()
+    athlete = AthleteProfile.objects.create(user=s.user)
+    row = BaselineAssessment.objects.create(
+        athlete=athlete, sequence=1, observed_at=timezone.now()
+    )
+    record = retention.ValidatedRecordSubject(
+        "athlete_baseline", row.id, s.user.public_id, row.version
+    )
+    hold(settings, s, record)
+    assert retention.is_record_held(
+        record, timezone.now(), subject_validator=commands.validate_c03_hold_subject
+    )
+    asset, store = media(s)
+    revoke(asset)
+    assert cleanup(asset, policy(s, asset), store) == "deleted"
+
+
+def test_inventory_overflow_fails_closed_without_partial_owner_result():
+    s = owner()
+    Asset.objects.bulk_create(
+        [
+            Asset(
+                owner=s.user,
+                subject_kind="professional_profile",
+                subject_uuid=s.profile.id,
+                purpose="avatar",
+                upload_expires_at=timezone.now() + timedelta(hours=1),
+            )
+            for _ in range(1001)
+        ]
+    )
+    with pytest.raises(PermissionError):
+        api("inventory_c03_owner", s.user.public_id, timezone.now())
+
+
+def test_record_specific_holds_and_release_survive_large_owner_history(settings):
+    s = owner()
+    asset, _ = media(s)
+    Asset.objects.bulk_create(
+        [
+            Asset(
+                owner=s.user,
+                subject_kind="professional_profile",
+                subject_uuid=s.profile.id,
+                purpose="avatar",
+                state="deleted",
+                revoked_at=timezone.now(),
+                upload_expires_at=timezone.now(),
+            )
+            for _ in range(1001)
+        ]
+    )
+    identifier, staff, step, _ = hold(settings, s, subject(asset))
+    api(
+        "release_c03_hold",
+        staff.actor,
+        identifier,
+        1,
+        "hold_released",
+        step,
+        timezone.now(),
+    )
+    assert RecordHold.objects.get(pk=identifier).released_at is not None
+
+
+def test_inventory_exact_retained_classes_and_asset_policy_reference():
+    from .verification_helpers import submitted
+
+    s = submitted()
+    asset, _ = s.assets["coach"]
+    rule = policy(s, asset)
+    inventory = api("inventory_c03_owner", s.user.public_id, timezone.now())
+    records = {r.kind: r for r in inventory.records}
+    assert records["credential_revision"].data_class == "credential_revision"
+    assert records["verification_evidence"].data_class == "verification_evidence"
+    assert records["verification_history"].data_class == "verification_history"
+    assert records["professional_profile"].data_class == "professional_profile"
+    source = next(r for r in inventory.records if r.record_uuid == asset.id)
+    assert source.policy_uuid == rule.id and source.classification == "private_source"
+    assert source.deletion_behavior == "policy_cleanup"
+    assert records["verification_evidence"].deletion_behavior == "retain_only"
+
+
+def test_assigned_case_hold_requires_current_verifier_capability(settings):
+    from .verification_helpers import assign, reviewer, submitted
+
+    s = submitted()
+    staff = reviewer(settings, s.case.id)
+    s.case = assign(s, staff)
+    case = s.profile.verifications.get(pk=s.case.id)
+    staff.grant.revoked_at = timezone.now()
+    staff.grant.save()
+    record = retention.ValidatedRecordSubject(
+        "professional_verification", case.id, s.user.public_id, case.version
+    )
+    with pytest.raises((PermissionError, PermissionDenied)):
+        hold(settings, s, record, case.id, staff)
+    assert not RecordHold.objects.exists()
+
+
+def test_c03_callbacks_cannot_bypass_composition_lock_reservation(settings):
+    s = owner()
+    asset, _ = media(s)
+    case = privacy_case(s)
+    staff, step = authority(settings, case)
+    at = timezone.now()
+    with pytest.raises((PermissionError, PermissionDenied)):
+        retention.apply_hold(
+            staff.actor,
+            subject(asset),
+            case,
+            "security",
+            "hold_applied",
+            at + timedelta(seconds=10),
+            at + timedelta(minutes=2),
+            step,
+            at,
+            subject_validator=commands.validate_c03_hold_subject,
+            case_validator=commands.validate_c03_hold_case,
+        )
+    assert not RecordHold.objects.exists()
+
+
+def test_c02_intake_hold_does_not_become_blanket_c03_owner_hold(settings):
+    s = owner()
+    asset, store = media(s)
+    revoke(asset)
+    case = privacy_case(s)
+    staff, step = authority(settings, case)
+    row = PrivacyRequest.objects.get(pk=case)
+    record = retention.ValidatedRecordSubject(
+        "privacy_request", row.id, s.user.public_id, row.version
+    )
+    at = timezone.now()
+    retention.apply_hold(
+        staff.actor,
+        record,
+        case,
+        "security",
+        "hold_applied",
+        at + timedelta(seconds=10),
+        at + timedelta(minutes=2),
+        step,
+        at,
+    )
+    assert retention.is_record_held(record, at)
+    assert cleanup(asset, policy(s, asset), store) == "deleted"

@@ -9,6 +9,7 @@ from apps.governance.flag_models import FeatureFlag
 from apps.governance.privacy_models import PrivacyRequest
 from config.c03_event_handlers import (
     athlete_baseline_metadata,
+    cleanup_metadata,
     professional_profile_metadata,
     request_processing,
     verification_metadata,
@@ -22,6 +23,9 @@ def account_security(event, at):
     AccountSessionControl.objects.filter(
         user=user, auth_version__lt=user.auth_version, revoked_at__isnull=True
     ).update(revoked_at=at)
+    from config.use_cases.c03_privacy import revoke_owner_lifetime
+
+    revoke_owner_lifetime(user, at)
     return "applied"
 
 
@@ -35,6 +39,9 @@ def consent_metadata(event, at):
         row.revoked_at is not None
     ):
         return "skipped"
+    from config.use_cases.c03_privacy import apply_c03_consent_effect
+
+    apply_c03_consent_effect(row, at)
     return "applied"
 
 
@@ -67,6 +74,7 @@ HANDLERS = MappingProxyType(
         "professional.profile_changed": professional_profile_metadata,
         "athlete.baseline_changed": athlete_baseline_metadata,
         "asset.processing_requested": request_processing,
+        "asset.cleanup_requested": cleanup_metadata,
         "verification.changed": verification_metadata,
     }
 )

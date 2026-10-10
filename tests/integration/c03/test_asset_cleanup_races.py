@@ -247,3 +247,60 @@ def test_bounded_reconciler_recovers_expired_upload_without_policy(
     asset.refresh_from_db()
     assert asset.state == "abandoned" and asset.revoked_at is not None
     assert asset.state != "deleted"
+
+
+def test_orphan_late_derivative_write_is_reconciled(monkeypatch, settings):
+    from apps.assets.models import AssetProcessingAttempt
+    from apps.assets.processing_worker import scan_cleanup_assets
+
+    from .processing_helpers import Scanner, prepared
+    from .processing_helpers import api as processing
+    from .test_asset_holds import private_store
+
+    store = private_store()
+    s = prepared(monkeypatch, store=store)
+    worker = processing()
+    worker.request_processing(s.event, timezone.now())
+    assert worker.scan_due_assets(timezone.now(), 1, enqueue=lambda *args: None) == 1
+    attempt = AssetProcessingAttempt.objects.get(asset=s.asset, state="running")
+    entered, resume = Event(), Event()
+
+    class LateDerivative:
+        def read_limited(self, *args):
+            return store.read_limited(*args)
+
+        def head(self, key):
+            return store.head(key)
+
+        def put_stream(self, *args):
+            assert not connection.in_atomic_block
+            entered.set()
+            assert resume.wait(timeout=15)
+            return store.put_stream(*args)
+
+    with ThreadPoolExecutor(2) as pool:
+        future = pool.submit(
+            in_connection,
+            lambda: worker.process_asset(
+                s.asset.id,
+                1,
+                attempt.lease_uuid,
+                timezone.now(),
+                store=LateDerivative(),
+                scanner=Scanner(),
+            ),
+        )
+        try:
+            assert entered.wait(timeout=35)
+            s.asset.refresh_from_db()
+            revoke(s.asset, timezone.now() - timedelta(seconds=2))
+            assert cleanup(s.asset, policy(s, s.asset), store) == "deleted"
+        finally:
+            resume.set()
+        assert future.result(timeout=35) != "ready"
+    child = s.asset.derivatives.get()
+    assert child.state == "deleted" and store.head(child.key).size > 0
+    settings.ASSET_CLEANUP_ENABLED = True
+    assert scan_cleanup_assets(timezone.now(), 1, store=store) == 1
+    absent(store, child.key)
+    absent(store, s.asset.source_key)

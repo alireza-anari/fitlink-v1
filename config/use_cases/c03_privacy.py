@@ -1,7 +1,7 @@
 """Server-only bridge for one self-storage subject; no registry or sharing API."""
 
 from datetime import datetime, timedelta
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from django.conf import settings
 from django.db import DatabaseError, transaction
@@ -240,6 +240,7 @@ def revoke_baseline_storage(
 
 
 # Task 9: a closed, server-only composition of installed C03 lifetime subjects.
+from contextvars import ContextVar  # noqa: E402
 from functools import partial  # noqa: E402
 
 from django.core.exceptions import PermissionDenied  # noqa: E402
@@ -271,7 +272,14 @@ from apps.professionals.models import (  # noqa: E402
     VerificationEvidence,
     VerificationTarget,
 )
-from apps.professionals.privacy import enumerate_professional_inventory  # noqa: E402
+from apps.professionals.privacy import (  # noqa: E402
+    case_asset_inventory,
+    enumerate_professional_inventory,
+)
+
+_hold_owner_context: ContextVar[UUID | None] = ContextVar(
+    "c03_hold_owner", default=None
+)
 
 HOLD_KINDS = frozenset(
     {
@@ -286,6 +294,7 @@ HOLD_KINDS = frozenset(
 def _valid_reference(subject):
     return (
         isinstance(subject, retention.ValidatedRecordSubject)
+        and isinstance(subject.kind, str)
         and subject.kind in HOLD_KINDS
         and isinstance(subject.record_uuid, UUID)
         and isinstance(subject.owner_uuid, UUID)
@@ -315,6 +324,8 @@ def _subject_row(subject):
 
 
 def _asset_binding_valid(asset):
+    if asset.classification != "private_source":
+        return False
     if asset.subject_kind == "professional_profile":
         return ProfessionalProfile.objects.filter(
             pk=asset.subject_uuid, user_id=asset.owner_id
@@ -330,6 +341,17 @@ def validate_c03_hold_subject(subject):
     if not _valid_reference(subject):
         return False
     row = _subject_row(subject)
+    if isinstance(row, Credential):
+        if (
+            row.role_id is not None
+            and row.role.profile_id != row.profile_id
+            or row.current_revision_id is not None
+            and row.current_revision.credential_id != row.id
+        ):
+            return False
+    if isinstance(row, BaselineAssessment) and row.parent_id is not None:
+        if row.parent.athlete_id != row.athlete_id:
+            return False
     return bool(
         row
         and row.version == subject.version
@@ -338,18 +360,7 @@ def validate_c03_hold_subject(subject):
 
 
 def _case_assets(case_uuid, owner_uuid, credential_uuid=None):
-    evidence = VerificationEvidence.objects.filter(
-        target__verification_id=case_uuid,
-        target__verification__profile__user__public_id=owner_uuid,
-        credential_revision__credential__profile__user__public_id=owner_uuid,
-        credential_revision__source_asset__owner__public_id=owner_uuid,
-    )
-    if credential_uuid is not None:
-        evidence = evidence.filter(credential_revision__credential_id=credential_uuid)
-    return tuple(
-        row.credential_revision.source_asset_id
-        for row in bounded_rows(evidence.select_related("credential_revision"))
-    )
+    return case_asset_inventory(case_uuid, owner_uuid, credential_uuid)
 
 
 def _subject_assets(subject, case_uuid):
@@ -364,6 +375,8 @@ def _subject_assets(subject, case_uuid):
 
 def validate_c03_hold_case(subject, case_uuid, acting_user, *, at=None):
     at = at or timezone.now()
+    if _hold_owner_context.get() != getattr(subject, "owner_uuid", None):
+        return False
     if (
         not validate_c03_hold_subject(subject)
         or not isinstance(case_uuid, UUID)
@@ -393,8 +406,20 @@ def validate_c03_hold_case(subject, case_uuid, acting_user, *, at=None):
                 assignee=acting_user,
                 ended_at__isnull=True,
                 assigned_at__lte=at,
+            ).exists()
+        ):
+            return False
+        from apps.governance.staff_models import StaffCapabilityGrant
+
+        if (
+            not StaffCapabilityGrant.objects.filter(
+                user=acting_user,
+                capability="professional_verification",
+                revoked_at__isnull=True,
+                valid_from__lte=at,
+                valid_until__gt=at,
             )
-            .exclude(assigned_by=acting_user)
+            .exclude(granted_by=acting_user)
             .exists()
         ):
             return False
@@ -445,6 +470,72 @@ def _lock_owner_records(owner):
         bounded_rows(query.select_for_update())
 
 
+def _lock_subject_anchors(owner, subject, case_uuid=None):
+    # A lifetime command for one record must not lock all accumulated history.
+    bounded_rows(AthleteProfile.objects.filter(user=owner).select_for_update())
+    bounded_rows(ProfessionalProfile.objects.filter(user=owner).select_for_update())
+    if subject.kind == "athlete_baseline":
+        bounded_rows(
+            BaselineAssessment.objects.filter(
+                pk=subject.record_uuid, athlete__user=owner
+            ).select_for_update()
+        )
+    if subject.kind == "professional_verification":
+        case_uuid = subject.record_uuid
+    credential_ids = (
+        {subject.record_uuid} if subject.kind == "professional_credential" else set()
+    )
+    if subject.kind == "profile_asset":
+        binding = Asset.objects.filter(
+            pk=subject.record_uuid, owner=owner, subject_kind="professional_credential"
+        ).first()
+        if binding is not None:
+            credential_ids.add(binding.subject_uuid)
+    if case_uuid is not None:
+        for evidence in bounded_rows(
+            VerificationEvidence.objects.filter(
+                target__verification_id=case_uuid,
+                target__verification__profile__user=owner,
+            )
+        ):
+            credential_ids.add(evidence.credential_revision.credential_id)
+    roles = Credential.objects.filter(
+        pk__in=credential_ids, profile__user=owner
+    ).values_list("role_id", flat=True)
+    bounded_rows(ProfessionalRole.objects.filter(pk__in=roles).select_for_update())
+    bounded_rows(
+        Credential.objects.filter(
+            pk__in=credential_ids, profile__user=owner
+        ).select_for_update()
+    )
+    if case_uuid is not None:
+        bounded_rows(
+            Verification.objects.filter(
+                pk=case_uuid, profile__user=owner
+            ).select_for_update()
+        )
+        bounded_rows(
+            VerificationTarget.objects.filter(
+                verification_id=case_uuid, verification__profile__user=owner
+            ).select_for_update()
+        )
+        bounded_rows(
+            VerificationAssignment.objects.filter(
+                verification_id=case_uuid, verification__profile__user=owner
+            ).select_for_update()
+        )
+        bounded_rows(
+            VerificationEvidence.objects.filter(
+                target__verification_id=case_uuid,
+                target__verification__profile__user=owner,
+            ).select_for_update()
+        )
+    asset_ids = _subject_assets(subject, case_uuid)
+    bounded_rows(
+        Asset.objects.filter(pk__in=asset_ids, owner=owner).select_for_update()
+    )
+
+
 def inventory_c03_owner(owner_uuid, at):
     retention._time(at)
     if not isinstance(owner_uuid, UUID):
@@ -460,7 +551,7 @@ def inventory_c03_owner(owner_uuid, at):
         records = (
             enumerate_athlete_inventory(owner_uuid)
             + enumerate_professional_inventory(owner_uuid)
-            + enumerate_asset_inventory(owner_uuid)
+            + enumerate_asset_inventory(owner_uuid, at)
         )
         if len(records) > MAX_INVENTORY:
             raise PermissionError("Inventory bound exceeded")
@@ -493,20 +584,24 @@ def apply_c03_hold(
             u.public_id == actor.user_uuid for u in participants
         ):
             raise PermissionDenied("Hold subject denied")
-        _lock_owner_records(owner)
-        return retention.apply_hold(
-            actor,
-            subject,
-            case_uuid,
-            purpose,
-            reason_code,
-            review_at,
-            expires_at,
-            step_up_id,
-            at,
-            subject_validator=validate_c03_hold_subject,
-            case_validator=partial(validate_c03_hold_case, at=at),
-        )
+        _lock_subject_anchors(owner, subject, case_uuid)
+        token = _hold_owner_context.set(owner.public_id)
+        try:
+            return retention.apply_hold(
+                actor,
+                subject,
+                case_uuid,
+                purpose,
+                reason_code,
+                review_at,
+                expires_at,
+                step_up_id,
+                at,
+                subject_validator=validate_c03_hold_subject,
+                case_validator=partial(validate_c03_hold_case, at=at),
+            )
+        finally:
+            _hold_owner_context.reset(token)
 
 
 def release_c03_hold(actor, hold_uuid, expected_version, reason_code, step_up_id, at):
@@ -524,7 +619,16 @@ def release_c03_hold(actor, hold_uuid, expected_version, reason_code, step_up_id
         )
         if owner is None or actor.user_uuid == owner.public_id:
             raise PermissionDenied("Hold action denied")
-        _lock_owner_records(owner)
+        _lock_subject_anchors(
+            owner,
+            retention.ValidatedRecordSubject(
+                candidate.subject_kind,
+                candidate.subject_uuid,
+                candidate.owner_uuid,
+                candidate.subject_version,
+            ),
+            candidate.case_uuid,
+        )
 
         def validate_stored(subject):
             row = _subject_row(subject) if _valid_reference(subject) else None
@@ -573,14 +677,166 @@ def _asset_in_use(asset):
     )
 
 
+def _cleanup_subject(asset):
+    if not _asset_binding_valid(asset):
+        return False
+    subject = retention.ValidatedRecordSubject(
+        "profile_asset", asset.id, asset.owner.public_id, asset.version
+    )
+    _lock_subject_anchors(asset.owner, subject)
+    return _asset_binding_valid(asset)
+
+
 def cleanup_asset(asset_uuid, expected_version, policy_uuid, at, *, store=None):
     return asset_cleanup.cleanup_asset(
         asset_uuid,
         expected_version,
         policy_uuid,
         at,
-        subject_validator=lambda asset: _asset_binding_valid(asset),
+        subject_validator=_cleanup_subject,
         hold_validator=_asset_held,
         in_use_validator=_asset_in_use,
         store=store,
     )
+
+
+def revoke_owner_lifetime(owner, at, *, asset_ids=None):
+    """Current-state metadata only. Retention never re-enables a read or a job."""
+    from django.db.models import F
+
+    from apps.accounts.contracts import SecurityOutcome
+    from apps.governance.audit import append_event
+    from apps.governance.outbox import append_outbox
+    from apps.professionals.models import AssistantMembership
+
+    if not transaction.get_connection().in_atomic_block:
+        raise RuntimeError("Lifetime effects require the domain transaction")
+    if owner.is_active and owner.state == "active":
+        return
+    bounded_rows(ProfessionalProfile.objects.filter(user=owner).select_for_update())
+    query = Asset.objects.select_for_update().filter(owner=owner)
+    if asset_ids is not None:
+        query = query.filter(pk__in=asset_ids)
+    assets = list(
+        query.filter(owner=owner)
+        .exclude(state__in=["revoked", "abandoned", "deletion_pending", "deleted"])
+        .order_by("pk")[:100]
+    )
+    for asset in assets:
+        asset.state = "abandoned" if asset.accepted_at is None else "revoked"
+        asset.revoked_at = at
+        asset.version += 1
+        asset.save(update_fields=["state", "revoked_at", "version", "updated_at"])
+    AssetProcessingAttempt.objects.filter(
+        asset_id__in=[a.id for a in assets], state__in=["pending", "running"]
+    ).update(
+        state="failed",
+        lease_uuid=None,
+        lease_until=None,
+        failure_code="owner_unavailable",
+        updated_at=at,
+    )
+    AssetDerivative.objects.filter(
+        asset_id__in=[a.id for a in assets], state__in=["pending", "ready"]
+    ).update(state="revoked", version=F("version") + 1, updated_at=at)
+    AssistantMembership.objects.filter(profile__user=owner).exclude(
+        state="revoked"
+    ).update(state="revoked", revoked_at=at, version=F("version") + 1, updated_at=at)
+
+    for asset in assets:
+        append_event(
+            SecurityOutcome(
+                "asset.revoked",
+                "succeeded",
+                asset.id,
+                uuid4(),
+                ("state", "version", "revoked_at"),
+                "security_restriction",
+            ),
+            subject_type="asset",
+        )
+        append_outbox(
+            "asset.cleanup_requested",
+            asset.id,
+            asset.version,
+            {"asset_uuid": str(asset.id), "user_uuid": str(owner.public_id)},
+            f"asset.cleanup_requested:{asset.id}:{asset.version}",
+        )
+
+
+def apply_c03_consent_effect(consent, at):
+    """Only installed self-baseline consent; no invented media consent scope."""
+    if consent.purpose != STORAGE_PURPOSE or consent.grantee_id != consent.subject_id:
+        return
+    for row in bounded_rows(consent.scopes.filter(kind=STORAGE_KIND)):
+        scope = consents.ValidatedConsentScope(
+            consent.subject.public_id,
+            consent.grantee.public_id,
+            consent.purpose,
+            row.kind,
+            row.object_uuid,
+            row.object_version,
+            consent.expires_at,
+        )
+        if not validate_baseline_scope(scope, consent.subject):
+            raise PermissionDenied("Consent lifetime subject denied")
+
+
+def is_c03_record_held(subject, at):
+    return retention.is_record_held(
+        subject, at, subject_validator=validate_c03_hold_subject
+    )
+
+
+def reconcile_asset_lifetime(asset_uuid, at):
+    from django.db.models import F
+
+    from apps.accounts.contracts import SecurityOutcome
+    from apps.governance.audit import append_event
+    from apps.governance.outbox import append_outbox
+
+    locator = Asset.objects.filter(pk=asset_uuid).values("owner_id").first()
+    if locator is None:
+        return
+    with transaction.atomic():
+        owner = User.objects.select_for_update().get(pk=locator["owner_id"])
+        if not owner.is_active or owner.state != "active":
+            revoke_owner_lifetime(owner, at, asset_ids=[asset_uuid])
+        candidate = Asset.objects.get(pk=asset_uuid)
+        candidate.owner = owner
+        if not _cleanup_subject(candidate):
+            return
+        row = Asset.objects.select_for_update().get(pk=asset_uuid)
+        if row.state in {"pending_upload", "receiving"} and row.upload_expires_at <= at:
+            row.state, row.revoked_at, row.version = "abandoned", at, row.version + 1
+            row.save(update_fields=["state", "revoked_at", "version", "updated_at"])
+            AssetProcessingAttempt.objects.filter(
+                asset=row, state__in=["pending", "running"]
+            ).update(
+                state="failed",
+                lease_uuid=None,
+                lease_until=None,
+                failure_code="retention_due",
+                updated_at=at,
+            )
+            AssetDerivative.objects.filter(
+                asset=row, state__in=["pending", "ready"]
+            ).update(state="revoked", version=F("version") + 1, updated_at=at)
+            append_event(
+                SecurityOutcome(
+                    "asset.revoked",
+                    "succeeded",
+                    row.id,
+                    uuid4(),
+                    ("state", "version", "revoked_at"),
+                    "retention_due",
+                ),
+                subject_type="asset",
+            )
+            append_outbox(
+                "asset.cleanup_requested",
+                row.id,
+                row.version,
+                {"asset_uuid": str(row.id), "user_uuid": str(owner.public_id)},
+                f"asset.cleanup_requested:{row.id}:{row.version}",
+            )

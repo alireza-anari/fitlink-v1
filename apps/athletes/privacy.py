@@ -17,6 +17,11 @@ def enumerate_athlete_inventory(owner_uuid):
 
     records = []
     for row in bounded_rows(AthleteProfile.objects.filter(user__public_id=owner_uuid)):
+        if (
+            row.current_baseline_id is not None
+            and row.current_baseline.athlete_id != row.id
+        ):
+            raise PermissionError("Inventory subject denied")
         records.append(
             InventoryRecord(
                 "athlete_profile",
@@ -30,6 +35,8 @@ def enumerate_athlete_inventory(owner_uuid):
     for row in bounded_rows(
         BaselineAssessment.objects.filter(athlete__user__public_id=owner_uuid)
     ):
+        if row.parent_id is not None and row.parent.athlete_id != row.athlete_id:
+            raise PermissionError("Inventory subject denied")
         records.append(
             InventoryRecord(
                 "athlete_baseline",

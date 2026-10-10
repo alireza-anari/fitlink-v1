@@ -249,3 +249,133 @@ def test_cleanup_outbox_receipt_never_performs_storage_io(monkeypatch):
         assert HANDLERS["asset.cleanup_requested"](event, timezone.now()) == "applied"
     asset.refresh_from_db()
     assert asset.state == "revoked"
+
+
+def test_forged_storage_inventory_cannot_erase_another_asset():
+    from apps.assets.models import Asset
+
+    s, other = owner(), owner("+989123456789")
+    foreign, store = media(other)
+    at = timezone.now()
+    forged = Asset.objects.create(
+        owner=s.user,
+        subject_kind="professional_profile",
+        subject_uuid=s.profile.id,
+        purpose="avatar",
+        source_key=foreign.source_key,
+        state="abandoned",
+        revoked_at=at - timedelta(minutes=5),
+        upload_expires_at=at,
+    )
+    rule = policy(s, forged)
+    rule.data_class = "asset_quarantine"
+    rule.save()
+    assert cleanup(forged, rule, store) == "denied"
+    assert store.head(foreign.source_key).size > 0
+
+
+def test_security_effect_failure_rolls_back_asset_and_metadata_receipt(monkeypatch):
+    import apps.governance.outbox as outbox
+
+    s = owner()
+    asset, _ = media(s)
+    request_privacy(s.actor, "delete", uuid4(), timezone.now(), confirmed=True)
+    s.user.refresh_from_db()
+
+    def fail(*args, **kwargs):
+        raise RuntimeError("outbox unavailable")
+
+    monkeypatch.setattr(outbox, "append_outbox", fail)
+    event = SimpleNamespace(
+        aggregate_uuid=s.user.public_id,
+        aggregate_version=s.user.auth_version,
+        payload={"user_uuid": str(s.user.public_id)},
+        event_type="account.security_changed",
+    )
+    with pytest.raises(RuntimeError), transaction.atomic():
+        HANDLERS[event.event_type](event, timezone.now())
+    asset.refresh_from_db()
+    assert asset.state == "ready"
+    assert not AuditEvent.objects.filter(
+        action="asset.revoked", subject_uuid=asset.id
+    ).exists()
+
+
+def test_held_case_evidence_never_restores_assigned_staff_access(settings):
+    from .verification_helpers import assign, reviewer, selectors, submitted
+
+    s = submitted()
+    staff = reviewer(settings, s.case.id)
+    s.case = assign(s, staff)
+    asset, credential = s.assets["coach"]
+    from apps.governance.retention import ValidatedRecordSubject
+
+    row = s.profile.credentials.get(pk=credential.id)
+    hold(
+        settings,
+        s,
+        ValidatedRecordSubject(
+            "professional_credential", row.id, s.user.public_id, row.version
+        ),
+        s.case.id,
+        staff,
+    )
+    request_privacy(s.actor, "delete", uuid4(), timezone.now(), confirmed=True)
+    with pytest.raises((PermissionError, LookupError)):
+        selectors().assigned_verification_detail(
+            staff.actor, s.case.id, staff.step, "verification_review", timezone.now()
+        )
+    assert AssetProcessingAttempt.objects.filter(asset=asset).exists()
+
+
+def test_security_reconciliation_survives_accumulated_asset_tombstones():
+    from apps.assets.models import Asset
+
+    s = owner()
+    asset, _ = media(s)
+    Asset.objects.bulk_create(
+        [
+            Asset(
+                owner=s.user,
+                subject_kind="professional_profile",
+                subject_uuid=s.profile.id,
+                purpose="avatar",
+                state="deleted",
+                revoked_at=timezone.now(),
+                upload_expires_at=timezone.now(),
+            )
+            for _ in range(1001)
+        ]
+    )
+    request_privacy(s.actor, "delete", uuid4(), timezone.now(), confirmed=True)
+    s.user.refresh_from_db()
+    event = SimpleNamespace(
+        aggregate_uuid=s.user.public_id,
+        aggregate_version=s.user.auth_version,
+        payload={"user_uuid": str(s.user.public_id)},
+        event_type="account.security_changed",
+    )
+    with transaction.atomic():
+        assert HANDLERS[event.event_type](event, timezone.now()) == "applied"
+    asset.refresh_from_db()
+    assert asset.state == "revoked"
+
+
+def test_storage_delete_acknowledgement_without_erasure_stays_pending():
+    s = owner()
+    asset, store = media(s)
+    revoke(asset)
+
+    class NoEffect:
+        def delete(self, key):
+            return None
+
+        def head(self, key):
+            return store.head(key)
+
+    assert cleanup(asset, policy(s, asset), NoEffect()) == "retry"
+    asset.refresh_from_db()
+    assert asset.state == "deletion_pending"
+    assert not AuditEvent.objects.filter(
+        action="asset.deleted", subject_uuid=asset.id
+    ).exists()

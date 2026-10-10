@@ -7,6 +7,8 @@ from django.utils import timezone
 
 from config.use_cases.asset_processing import process_asset, scan_due_assets
 
+from .processing_worker import scan_cleanup_assets
+
 
 @shared_task(acks_late=True, reject_on_worker_lost=True, ignore_result=True)
 def process_private_asset(asset_uuid, processing_version, lease_uuid):
@@ -23,4 +25,7 @@ def process_private_asset(asset_uuid, processing_version, lease_uuid):
 
 @shared_task(ignore_result=True)
 def reconcile_private_assets():
-    return scan_due_assets(timezone.now(), 100)
+    at = timezone.now()
+    processing = scan_due_assets(at, 100)
+    scan_cleanup_assets(at, 100)
+    return processing

@@ -42,3 +42,18 @@ def verification_metadata(event, at):
         ).exists()
         else "skipped"
     )
+
+
+def cleanup_metadata(event, at):
+    from apps.assets.models import Asset
+
+    return (
+        "applied"
+        if Asset.objects.filter(
+            pk=event.aggregate_uuid,
+            version=event.aggregate_version,
+            owner__public_id=event.payload["user_uuid"],
+            state__in=["abandoned", "revoked", "deletion_pending", "deleted"],
+        ).exists()
+        else "skipped"
+    )

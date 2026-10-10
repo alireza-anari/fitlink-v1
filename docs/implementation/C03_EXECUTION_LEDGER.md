@@ -2166,3 +2166,61 @@ Task9 IN_PROGRESS/PENDING_HOSTED_RED; no Task10 work.
   remains exact. Credential holds pin immutable evidence in their assigned case,
   so future credential revisions do not acquire a blanket hold. Existing holds
   remain effective after revocation advances a retained asset's version.
+
+### Task 9 behavioral service RED and implementation candidate
+
+- Boundary checkpoint `6438c670fcdb6babb019c5b74c4a4fe7d76857dd`, tree
+  `70a8d045d2633159cae1cd68d8a9c7363363bc12`, run `38046255502`:
+  Foundation quality/unit checks pass; its actual PostgreSQL/MinIO complete
+  regression reaches Task 9 hold/cleanup race, committed-reservation denial,
+  storage failure, policy replacement and late Task 4 upload tests. Behavioral
+  RED: 1,335 passed/15 failed/0 skipped. PostgreSQL: Task 8 108/0/0,
+  Task 9 48 passed/15 failed/0 skipped. Missing APIs/fixture failures are not
+  claimed as cleanup RED. Storage, processing and timeout-probe jobs remain GREEN.
+- A closed typed inventory now maps the installed retained classes, classification,
+  source/derivative links, explicit policy reference and deletion disposition.
+  Immutable non-asset domain records are `retain_only`; C03 does not implement
+  their erasure. Inventory overflow denies an incomplete snapshot. It does not
+  prevent a record-specific hold or release after 1,001 historical tombstones.
+- Independent Superpowers boundary review identified the whole-owner mutation
+  cutoff and incomplete inventory mapping. Both were corrected with regressions.
+  Hold/release lock only the owner/acting staff and relevant subject/case anchors.
+  Case callbacks require the composition's locked-owner context; invoking the
+  plain validators through governance cannot bypass the reservation lock protocol.
+- Assigned verification-case holds require a live assignment, current named
+  `professional_verification` grant, non-self owner/staff, and current
+  `privacy_operations` authority with its exact-case recent step-up. Self-assignment
+  by an otherwise authorized verifier remains the existing Task 7 behavior; it
+  is not a self-review of the owner's records. Credential coverage pins immutable
+  case revisions, not later uploads; case holds cover only their linked evidence.
+- Cleanup reserves `deletion_pending` under sorted identity/domain/asset locks.
+  Effective policy class/purpose, approved positive numeric duration, backup
+  approval, asset version, subject binding, active holds, mutable use and the
+  complete bounded key inventory are rechecked before each physical deletion
+  and completion. Delete/head I/O occurs after commit, outside all transactions.
+  Wrong or colliding source/derivative keys deny deletion. Partial storage or
+  audit failure leaves a durable reservation and bounded retry; successful
+  completion has one transactional `asset.deleted` audit.
+- Deleted metadata retains its known source and all processing-generation keys.
+  Repeated cleanup and the fair bounded scan remove late stale upload/derivative
+  writes without bucket listing or renewed owner/staff access. New holds deny an
+  already committed reservation; prior holds prevent it. Expired uploads become
+  abandoned without implying a retention duration or immediate erasure.
+- Engineering ruling: reuse the installed separate private reconciler's 30-second
+  tick with an independently opt-in `ASSET_CLEANUP_ENABLED` (default false) and
+  maximum 100 scanned assets. The plan's 300-second cleanup interval is an
+  engineering default; adding a second schedule or changing inherited C02 Beat
+  contracts is unnecessary. Fair rotation includes held/missing-policy/tombstone
+  rows. Actual effective policy durations remain mandatory and unseeded.
+- Current account-security effects invalidate up to 100 live assets per event;
+  the durable scan reconciles remaining current-state rows after missed delivery.
+  Installed self-baseline consent is validated without inventing media consent
+  or new C02 events. Retention adds no ordinary read, signing or processing grant.
+  Outbox cleanup receipts perform metadata checks only. A new in-memory fake store
+  is never treated as a persistent erasure backend; explicit injected stores or
+  the installed private S3 adapter provide cleanup I/O authority.
+- Focused candidate collection: 77 cases. Local lifetime/CI/C02 privacy/outbox
+  contracts: 73 passed. Ruff, formatting, inherited mypy targets and expanded
+  domain targets pass; Django test and production checks pass. The 11 existing
+  native-image sandbox cases remain host-limited locally and are mandatory hosted
+  gates. Task 9 remains **IN PROGRESS / PENDING_CI**, not COMPLETE.
