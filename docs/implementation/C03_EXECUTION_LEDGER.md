@@ -2546,3 +2546,27 @@ Task10 IN_PROGRESS/PENDING_HOSTED_RED. No Task11 implementation.
   it by renaming only that generated cache, then reran checks successfully.
   No source/dependency/lock workaround. Full local units and exact-source hosted
   gates remain required; Task10 IN_PROGRESS/PENDING_CI, never COMPLETE.
+
+### Task 10 independent review and architectural guard correction
+
+- Candidate remote3a911735168a0d9f9455572ffbb9e71e546c0fc8/tree4888b2c
+  is running exact-source Actions38061574735 attempt1. Local47a31325503b96ca369f8574eff33854bd89ebc2
+  has the identical tree; no synthetic local ancestry is published.
+- Whole local unit run actually completed:602passed/11failed,26.14s. All11
+  are existing test_image_sanitization clean-pixel PNG/JPEG cases (five purposes)
+  and test_isolation_denies_network_disk_write_and_privilege, whose native sandbox
+  cannot initialize on this restricted host. No gate relaxed or local full GREEN
+  claimed. Hosted units and real scanner/worker remain mandatory.82focused Task10
+  cases collect without error. Model-state drift reports none; local PostgreSQL
+  connection unavailable, so no local SQL/concurrency acceptance claim.
+- Separate read-only requesting-code-review found no Critical issue or observed
+  runtime permission leak; one Important architectural guard gap: relative
+  ImportFrom nodes were ignored by the new Task10 parser. Verified directly,
+  then added four failing behavioral AST mutation cases (4failed/35passed).
+  Resolve relative imports using each scanned file's exact package, including
+  sibling/deeper/from-parent-import forms, retaining legitimate same-domain
+  imports. Focused scope/CI now68passed, Ruff/diff checks pass. Production and all
+  earlier task tests/gates remain unchanged. No deferred Minor findings.
+- Final review correction remains within approved Task10 test files. All final
+  required hosted gates must pass at the corrected implementation head before
+  Task10 completion; earlier candidate evidence cannot substitute for that head.

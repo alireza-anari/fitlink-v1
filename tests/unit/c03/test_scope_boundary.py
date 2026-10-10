@@ -33,21 +33,24 @@ FUTURE = {
 }
 
 
-def imported_modules(source):
+def imported_modules(source, package="apps"):
     result = []
     for node in ast.walk(ast.parse(source)):
         if isinstance(node, ast.Import):
             result.extend(item.name for item in node.names)
-        if isinstance(node, ast.ImportFrom) and not node.level:
-            result.append(node.module or "")
-            result.extend((node.module or "") + "." + item.name for item in node.names)
+        if isinstance(node, ast.ImportFrom):
+            module = node.module or ""
+            if node.level:
+                module = importlib.util.resolve_name("." * node.level + module, package)
+            result.append(module)
+            result.extend(module + "." + item.name for item in node.names)
     return result
 
 
-def future_imports(source):
+def future_imports(source, package="apps"):
     return [
         name
-        for name in imported_modules(source)
+        for name in imported_modules(source, package)
         if any(
             name == f"apps.{domain}" or name.startswith(f"apps.{domain}.")
             for domain in FUTURE
@@ -78,7 +81,8 @@ def test_no_c04_route_index_projection_or_c09_fields():
     assert not (forbidden_models & {model.__name__ for model in apps.get_models()})
     for name in ("athletes", "professionals", "assets"):
         for path in (ROOT / "apps" / name).rglob("*.py"):
-            assert not future_imports(path.read_text()), path.relative_to(ROOT)
+            package = ".".join(path.parent.relative_to(ROOT).parts)
+            assert not future_imports(path.read_text(), package), path.relative_to(ROOT)
     for label in ("athletes", "professionals"):
         for model in apps.get_app_config(label).get_models():
             assert not (
@@ -165,3 +169,38 @@ def test_private_boundaries_exist_without_public_routes(module, commands):
     assert importlib.util.find_spec(module), f"Missing private boundary: {module}"
     loaded = importlib.import_module(module)
     assert all(callable(getattr(loaded, name, None)) for name in commands)
+
+
+@pytest.mark.parametrize(
+    "source,package",
+    [
+        ("from ..marketplace import services", "apps.professionals"),
+        ("from ...health import models", "apps.professionals.nested"),
+        ("from .publication import selectors", "apps"),
+    ],
+)
+def test_relative_future_dependency_negative_mutations(source, package):
+    assert future_imports(source, package)
+
+
+@pytest.mark.parametrize(
+    "source", ["from . import preview", "from .models import Credential"]
+)
+def test_relative_same_domain_imports_are_allowed(source):
+    assert not future_imports(source, "apps.professionals")
+
+
+def test_relative_upstream_direction_negative_mutations():
+    for source, package in (
+        ("from ..professionals import selectors", "apps.assets"),
+        ("from ...athletes import models", "apps.governance.nested"),
+        ("from .professionals import models", "apps"),
+        ("from .. import professionals", "apps.accounts"),
+    ):
+        names = imported_modules(source, package)
+        assert any(
+            name == "apps.professionals"
+            or name == "apps.athletes"
+            or name.startswith(("apps.professionals.", "apps.athletes."))
+            for name in names
+        )
