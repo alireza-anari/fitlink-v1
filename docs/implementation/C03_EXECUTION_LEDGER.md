@@ -2032,3 +2032,80 @@ selections95 and89sources passed; Django check and diff check passed; drift none
 (local service warning means no SQL verification claim). Focused Task8 collection
 108 cases. Independent review Important findings await corrected-head hosted
 GREEN; Task8 IN_PROGRESS/PENDING_CI, Tasks1–7 COMPLETE, STOP before Task9/C04.
+
+### Task 8 COMPLETE — exact corrected source acceptance (2026-10-10)
+
+Validated implementation local606b1d4ac575bd1eaf8928cc776e8c3599f2450e ->
+remote1349e484d3c29b1ad7767fd0840466d9d0bee558; exact shared tree
+b4f944dce4df19d7a8a069e330397d8c91795307. Actual remote parent56057f088f22ebb2f41978962931c2b7f98d85d2;
+guarded fast-forward publication, force=false. No runtime or private data export.
+
+Run38026094064 attempt2 at this exact SHA is completed/success. Latest job set:
+
+| Gate | Job | Result |
+| --- | --- | --- |
+| foundation | 114140047055 | SUCCESS, naturally exited0 |
+| c02-migrations | 114140048152 | SUCCESS, retained passed same-head execution |
+| c03-storage | 114140071494 | SUCCESS, retained passed same-head execution |
+| c03-processing | 114140067086 | SUCCESS, retained passed same-head execution |
+| c03-timeout-probe | 114140047998 | SUCCESS, retained passed same-head execution |
+
+Only Foundation was rerun. Attempt1 Foundation114137133000 hit the unchanged900s
+observer deadline during final MinIO restart/init, after1370 observed passes/
+0failures/0skips. Full source unit/integration and C02 browser pytest exits were0,
+but final storage/smoke coverage was unfinished, so attempt1 was FAILED and is
+preserved as such. Its artifact11660311852 digest
+sha256:99bc0e4c8f8ce678ab272e38bc62b625dd7ca953dcf4bbb56422e5fd6e642d57.
+The one same-source retry114140047055 naturally exited0 at885.2s and completed
+cleanup885.3s, inside the unchanged900s window. Actual Foundation journal1373
+passed/0failed/0skipped, all six pytest exits0, no internal error. Complete immutable
+C01 rehearsal, exact additive C01→current upgrade, whole unit/integration,
+browser sizes, Redis/outbox/worker/channel and MinIO restart/final smoke gates
+finished. Host quality556unit tests passed22.35s, frozen JS/CSS/static builds,
+required Ruff/format/mypy/Django/production checks passed. Local sanitizer sandbox
+limitations remain; exact-source hosted passes supply the required acceptance.
+
+Task8 PostgreSQL114137133005 (retained as114140048152 in attempt2): actual focused
+108passed/0failed/0skipped, pytest exit0 at57.139s. Entire cumulative gate natural
+exit0 at158.2s, cleanup158.3s; inherited269C02 passed53.79s, actual durable Redis
+restart prepare/verify and installed Tasks1–7/SQL/drift/type/race gates passed.
+Storage natural exit0 at179.0s/cleanup179.1s;91 selected calls passed, no failures
+or skips, actual private MinIO. Processing62passed/0failed/0skipped, pytest exit0
+26.644s, natural gate exit0 at313.0s/cleanup313.1s; real scanner and non-eager
+durable worker. Ownership probe first reproduces live container after GNU timeout,
+then owned container entered running and was removed, detached host child
+terminated, supervisor_contract_satisfied=true, cleanup complete. No source,
+fixture, assertion, selection, timeout, supervisor or failure verdict changed
+between the failed first Foundation attempt and successful retry.
+
+Accepted evidence artifacts (all run38026094064, exact source SHA above):
+
+| Evidence | Artifact | SHA-256 |
+| --- | --- | --- |
+| Foundation retry | 11660293482 | a23c7c62f1db95e884295a9f901d11a2392e296e556b5bbdd03b32d843ad76d5 |
+| PostgreSQL | 11660325718 | 6029f2d1b8d3e8986bed81e3ba5b7a5c533a707226f32c1d041be4ccc1113d19 |
+| Storage | 11660830233 | c3033fb64b1070d95a51a171356045fe3c5a3ebb8551b807c8917885d9387e78 |
+| Processing | 11660610646 | eb7668cd6c4c0ff49569c02a594489df3ef9e402a557110a1145230c929d2747 |
+| Ownership | 11659193977 | a54f0a521f3abecb8ca2dc5ce780616c4ddf833306b4bb7b4883b2beb94a4d73 |
+
+Independent read-only follow-up at corrected local606b1d4 found no remaining
+Critical/Important issue in target-local malformed revision denial, media locks/
+readiness/binding, UTC expiry/date.max and terminal assigned evidence reads.
+Each reproduced review defect now passes in the108-case hosted matrix. Fresh
+reapproval after immutable revoke and historical revoke fencing newer pending
+reviews are covered. No unresolved Critical/Important finding. Typed eligibility
+facts remain internal, retain independent approval history and current role
+predicates, and grant no publication/relationship/assistant authority.
+
+Protected refs rechecked after acceptance and remain unchanged:
+main8ede9a451db6103f4e3ebf65784ee9f16b96feb2;
+foundation/c01-cloud75c551e5b9bbbfb7777ee52b09a1993b681e921a;
+accounts/c02-cloud0905be6c6ca608d469fe33e87f514b22591132d1;
+profiles/c03-plan79fd62e583cbe81f335bb08fce0eb43ff36b0167.
+Exact immutable C01 tree4dff1ebd5a32ed0359552bf29012d9d1ecf09b24 retained.
+
+Tasks1–7 remain COMPLETE. Task8 is COMPLETE. STOP: Task9/C04 not started;
+no merge, deployment, force push or protected-ref mutation. This completion
+checkpoint modifies only the ledger; acceptance above belongs to the exact
+validated implementation SHA, with no claim of re-executing source checks on
+this documentation-only descendant.
