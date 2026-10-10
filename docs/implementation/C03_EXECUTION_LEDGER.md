@@ -2242,3 +2242,33 @@ Task9 IN_PROGRESS/PENDING_HOSTED_RED; no Task10 work.
   no Task 5 processing behavior, admission deadline or production retention
   duration is changed. Accepted retryable quarantine must remain retryable.
 - Review findings remain open. Task 9 is **IN PROGRESS**, not COMPLETE.
+
+### Task 9 reviewed fixes and second implementation candidate
+
+- Candidate `cf07b6abd3d94f09cddea1de79ff94f7577a46e4`, tree
+  `eb95533ef0db7af19c6ff3a19fd4c74acaa7cb76`, run `38047601785`:
+  PostgreSQL Task 9 75 passed/2 failed/0 skipped; Task 8 108/0/0.
+  One Task 9 failure is a duplicate effective-policy test fixture (not behavioral
+  RED); the other is a real hold/cleanup race. The caller's timestamp could
+  precede a hold committed while cleanup waited on the owner lock.
+- Review regression checkpoint `3cebf07aca7fdd0e14bccb2d7c55f5a5827cd934`, tree
+  `7a9c4022f1d12f3773bf2948c0cc50fa23698784`, run `38048067364`:
+  PostgreSQL Task 9 76 passed/10 failed/0 skipped; Task 8 108/0/0. Nine
+  concrete behavioral failures confirm the lifetime gaps/races; the separate
+  duplicate-policy fixture failure is excluded from behavioral RED claims.
+  Unfinalized quarantine is missed, while accepted quarantine preservation
+  already passes. Scanner rejection/exhaustion are real processing outcomes.
+  Concurrent verifier-grant revocation exposes an unlocked snapshot read.
+- Corrected cleanup evaluates current time after identity/domain/asset locks at
+  every destructive check. Exact source/case/credential evidence predicates
+  filter relevant holds before the inventory bound; 1,001 unrelated active
+  privacy-request/baseline holds do not become blanket owner retention.
+- The assigned verifier's current grant row is now locked. Expired unaccepted
+  quarantine becomes abandoned; accepted retryable quarantine remains intact.
+  Terminal rejected sources become revoked first with a conservative retention
+  anchor, preserving existing holds and requiring the same effective policy.
+  The synthetic policy helper reuses the unique exact effective class/purpose.
+- Added a deterministic post-call-timestamp hold regression (87 Task 9 cases).
+  Local focused contracts: 73 passed; Ruff/format, expanded mypy (187 source
+  files), Django checks pass. Hosted acceptance and repeat review remain pending.
+  Task 9 is **IN PROGRESS / PENDING_CI**; no Task 10 work.

@@ -127,21 +127,23 @@ def hold(settings, s, record, case=None, staff=None, seconds=120):
 
 def policy(s, asset, duration=1):
     at = timezone.now() - timedelta(hours=1)
-    return RetentionPolicy.objects.create(
+    return RetentionPolicy.objects.get_or_create(
         data_class="credential_source"
         if asset.purpose.endswith("evidence")
         else "profile_media",
         purpose=asset.purpose,
         status="effective",
-        version=3,
-        duration_seconds=duration,
-        backup_reference="synthetic-backup-v1",
-        approved_by=s.user,
-        created_at=at,
-        updated_at=at,
-        approved_at=at,
-        effective_at=at,
-    )
+        defaults=dict(
+            version=3,
+            duration_seconds=duration,
+            backup_reference="synthetic-backup-v1",
+            approved_by=s.user,
+            created_at=at,
+            updated_at=at,
+            approved_at=at,
+            effective_at=at,
+        ),
+    )[0]
 
 
 def cleanup(asset, rule, store, at=None):
@@ -602,3 +604,14 @@ def test_many_unrelated_active_holds_do_not_block_source_cleanup(settings, kind)
     assert cleanup(asset, policy(s, asset), store) == "deleted"
     absent(store, asset.source_key)
     assert RecordHold.objects.filter(released_at__isnull=True).count() == 1001
+
+
+def test_cleanup_rechecks_hold_committed_after_callers_timestamp(settings):
+    s = owner()
+    asset, store = media(s)
+    revoke(asset)
+    rule = policy(s, asset)
+    started = timezone.now()
+    hold(settings, s, subject(asset))
+    assert cleanup(asset, rule, store, started) == "held"
+    assert store.head(asset.source_key).size > 0

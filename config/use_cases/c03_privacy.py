@@ -412,7 +412,8 @@ def validate_c03_hold_case(subject, case_uuid, acting_user, *, at=None):
         from apps.governance.staff_models import StaffCapabilityGrant
 
         if (
-            not StaffCapabilityGrant.objects.filter(
+            not StaffCapabilityGrant.objects.select_for_update()
+            .filter(
                 user=acting_user,
                 capability="professional_verification",
                 revoked_at__isnull=True,
@@ -420,7 +421,7 @@ def validate_c03_hold_case(subject, case_uuid, acting_user, *, at=None):
                 valid_until__gt=at,
             )
             .exclude(granted_by=acting_user)
-            .exists()
+            .first()
         ):
             return False
         if (
@@ -648,12 +649,33 @@ def release_c03_hold(actor, hold_uuid, expected_version, reason_code, step_up_id
 
 
 def _asset_held(asset, at):
+    from django.db.models import Exists, OuterRef, Q
+
+    # Filter by this source's immutable case links before bounding any rows.
+    # An owner's unrelated C02/baseline holds never pin its private media.
+    evidence = VerificationEvidence.objects.filter(
+        credential_revision__source_asset_id=asset.id,
+        target__verification__profile__user_id=asset.owner_id,
+    )
+    credential_evidence = evidence.filter(
+        credential_revision__credential_id=OuterRef("subject_uuid"),
+        target__verification_id=OuterRef("case_uuid"),
+    )
     for hold in bounded_rows(
         RecordHold.objects.filter(
             owner_uuid=asset.owner.public_id,
             released_at__isnull=True,
             created_at__lte=at,
             expires_at__gt=at,
+        )
+        .annotate(pins_credential=Exists(credential_evidence))
+        .filter(
+            Q(subject_kind="profile_asset", subject_uuid=asset.id)
+            | Q(
+                subject_kind="professional_verification",
+                subject_uuid__in=evidence.values("target__verification_id"),
+            )
+            | Q(subject_kind="professional_credential", pins_credential=True)
         )
     ):
         subject = retention.ValidatedRecordSubject(
@@ -807,8 +829,18 @@ def reconcile_asset_lifetime(asset_uuid, at):
         if not _cleanup_subject(candidate):
             return
         row = Asset.objects.select_for_update().get(pk=asset_uuid)
-        if row.state in {"pending_upload", "receiving"} and row.upload_expires_at <= at:
-            row.state, row.revoked_at, row.version = "abandoned", at, row.version + 1
+        expired_admission = (
+            row.accepted_at is None
+            and row.state in {"pending_upload", "receiving", "quarantined"}
+            and row.upload_expires_at <= at
+        )
+        if expired_admission or row.state == "rejected":
+            # Accepted retryable quarantine is not abandoned on admission expiry.
+            # Rejected sources retire here, without changing Task 5 processing;
+            # the effective policy duration starts conservatively at retirement.
+            row.state = "abandoned" if row.accepted_at is None else "revoked"
+            row.revoked_at = row.revoked_at or at
+            row.version += 1
             row.save(update_fields=["state", "revoked_at", "version", "updated_at"])
             AssetProcessingAttempt.objects.filter(
                 asset=row, state__in=["pending", "running"]

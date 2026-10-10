@@ -81,6 +81,9 @@ def _current(
         return "denied", None, None, ()
     asset = Asset.objects.select_for_update().get(pk=asset_uuid)
     asset.owner = owner
+    # The caller's tick can predate time spent waiting on a hold's owner lock.
+    # Every destructive recheck must see holds committed during that wait.
+    at = max(at, timezone.now())
     if asset.owner_id != owner.pk or asset.version != expected_version:
         return "conflict", None, None, ()
     if asset.state not in {"abandoned", "revoked", "deletion_pending", "deleted"}:

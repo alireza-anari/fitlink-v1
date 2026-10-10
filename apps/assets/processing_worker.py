@@ -26,8 +26,12 @@ def scan_cleanup_assets(at, batch_size=100, *, store=None):
         return 0
     # Installed current-state predicates remain authoritative after missed events.
     query = Asset.objects.filter(
-        Q(state__in=["abandoned", "revoked", "deletion_pending", "deleted"])
-        | Q(state__in=["pending_upload", "receiving"], upload_expires_at__lte=at)
+        Q(state__in=["rejected", "abandoned", "revoked", "deletion_pending", "deleted"])
+        | Q(
+            state__in=["pending_upload", "receiving", "quarantined"],
+            accepted_at__isnull=True,
+            upload_expires_at__lte=at,
+        )
         | (Q(owner__is_active=False) | ~Q(owner__state="active"))
     ).order_by("updated_at", "pk")
     identifiers = list(query.values_list("id", flat=True)[:batch_size])
