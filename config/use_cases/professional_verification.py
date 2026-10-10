@@ -128,3 +128,141 @@ def start_verification_review(
         record=record,
         emit=emit,
     )
+
+
+def decide_verification_target(
+    actor,
+    verification_uuid,
+    target_uuid,
+    decision,
+    expected_case_version,
+    expected_target_version,
+    expected_binding,
+    step_up_id,
+    reason_code,
+    explanation,
+    operation_id,
+    at,
+):
+    from apps.professionals import verification
+
+    from .professional_profile import _safe_asset
+
+    record, emit = binding_hooks(actor)
+    return verification.decide_verification_target(
+        actor,
+        verification_uuid,
+        target_uuid,
+        decision,
+        expected_case_version,
+        expected_target_version,
+        expected_binding,
+        step_up_id,
+        reason_code,
+        explanation,
+        operation_id,
+        at,
+        record=record,
+        emit=emit,
+        asset_validator=_safe_asset,
+    )
+
+
+def revoke_verification_target(
+    actor,
+    verification_uuid,
+    target_uuid,
+    effective_approval_uuid,
+    expected_case_version,
+    expected_target_version,
+    expected_binding,
+    step_up_id,
+    reason_code,
+    explanation,
+    operation_id,
+    at,
+):
+    from apps.professionals import verification
+
+    from .professional_profile import _safe_asset
+
+    record, emit = binding_hooks(actor)
+    return verification.revoke_verification_target(
+        actor,
+        verification_uuid,
+        target_uuid,
+        effective_approval_uuid,
+        expected_case_version,
+        expected_target_version,
+        expected_binding,
+        step_up_id,
+        reason_code,
+        explanation,
+        operation_id,
+        at,
+        record=record,
+        emit=emit,
+        asset_validator=_safe_asset,
+    )
+
+
+def restrict_professional_role(
+    actor,
+    verification_uuid,
+    role_uuid,
+    expected_case_version,
+    expected_role_version,
+    expected_restriction_token,
+    step_up_id,
+    reason_code,
+    operation_id,
+    at,
+):
+    from apps.professionals import restrictions
+
+    record, emit = binding_hooks(actor)
+    return restrictions.restrict_professional_role(
+        actor,
+        verification_uuid,
+        role_uuid,
+        expected_case_version,
+        expected_role_version,
+        expected_restriction_token,
+        step_up_id,
+        reason_code,
+        operation_id,
+        at,
+        record=record,
+        emit=emit,
+    )
+
+
+def release_professional_role_restriction(
+    actor,
+    verification_uuid,
+    role_uuid,
+    expected_case_version,
+    expected_role_version,
+    expected_restriction_token,
+    step_up_id,
+    reason_code,
+    operation_id,
+    at,
+):
+    from apps.professionals import restrictions
+
+    record, emit = binding_hooks(actor)
+    return restrictions.release_professional_role_restriction(
+        actor,
+        verification_uuid,
+        role_uuid,
+        expected_case_version,
+        expected_role_version,
+        expected_restriction_token,
+        step_up_id,
+        reason_code,
+        operation_id,
+        at,
+        record=record,
+        emit=emit,
+    )

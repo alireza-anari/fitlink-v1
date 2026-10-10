@@ -1,4 +1,4 @@
-"""Independent binding changes and Task 7 intake; no staff decisions."""
+"""Independent evidence bindings, intake and case-authorized terminal decisions."""
 
 from collections.abc import Callable
 from datetime import datetime
@@ -169,7 +169,7 @@ def target_declaration_changed(
     _stale_pending(profile, role.role, user, operation_id, at, record, emit)
 
 
-# Task 7 intake commands. Evidentiary approve/reject/revoke are not installed.
+# Intake commands share the target anchors with terminal decisions.
 def _context(actor, version, operation, at, record, emit):
     from .policies import validate_context
 
@@ -776,6 +776,13 @@ def _staff_anchors(
         .filter(verification=case, ended_at__isnull=True)
         .order_by("id")
     )
+    from .models import ProfessionalRoleRestriction
+
+    list(
+        ProfessionalRoleRestriction.objects.select_for_update()
+        .filter(role__in=roles)
+        .order_by("id")
+    )
     # Evidence and assets precede governance authority locks. Source rows are
     # locked for binding checks, but their bytes are never read here.
     from .models import VerificationEvidence
@@ -997,3 +1004,240 @@ def start_verification_review(
         )
         emit(case)
         return _staff_dto(case, targets, assignments)
+
+
+def effective_decision(profile, kind):
+    return (
+        VerificationDecision.objects.filter(
+            profile=profile,
+            target_kind=kind,
+            decision__in=["approve", "reject", "revoke"],
+        )
+        .order_by("-decision_sequence")
+        .first()
+    )
+
+
+def _terminal_command(
+    actor,
+    verification_uuid,
+    target_uuid,
+    value,
+    expected_case_version,
+    expected_target_version,
+    expected_binding,
+    step_up_id,
+    reason_code,
+    explanation,
+    operation_id,
+    at,
+    *,
+    record,
+    emit,
+    asset_validator,
+    approval_uuid=None,
+):
+    from dataclasses import asdict
+
+    from django.db import transaction
+
+    from .contracts import ProfileConflict, ProfileNotFound
+    from .setup import receipt, remember, request_hash
+    from .verification_selectors import TargetReviewBinding, target_review_binding
+
+    _context(actor, expected_case_version, operation_id, at, record, emit)
+    if (
+        type(expected_target_version) is not int
+        or expected_target_version < 1
+        or not isinstance(expected_binding, TargetReviewBinding)
+        or value not in {"approve", "reject", "revoke"}
+        or reason_code
+        not in {
+            "identity_verified",
+            "credentials_approved",
+            "evidence_incomplete",
+            "credentials_invalid",
+            "evidence_expired",
+            "evidence_revoked",
+        }
+        or type(explanation) is not str
+        or len(explanation) > 1000
+        or any(ord(c) < 32 and c not in "\n\t" for c in explanation)
+        or (value == "revoke" and not isinstance(approval_uuid, UUID))
+    ):
+        raise ValueError("Invalid verification decision")
+    command = (
+        "verification.revoke_target"
+        if value == "revoke"
+        else "verification.decide_target"
+    )
+    with transaction.atomic():
+        user, owner, profile, roles, credentials, case, targets, assignments, _ = (
+            _staff_anchors(actor, verification_uuid, step_up_id, reason_code, at)
+        )
+        target = next((t for t in targets if t.id == target_uuid), None)
+        if target is None:
+            raise ProfileNotFound("Verification unavailable")
+        role = next((r for r in roles if r.id == target.role_id), None)
+        digest = request_hash(
+            command,
+            {
+                "case": case.id,
+                "target": target.id,
+                "decision": value,
+                "case_version": expected_case_version,
+                "target_version": expected_target_version,
+                "binding": asdict(expected_binding),
+                "reason": reason_code,
+                "explanation": explanation,
+                "approval": approval_uuid,
+            },
+        )
+        if receipt(user, operation_id, command, digest, case.id):
+            return _staff_dto(case, targets, assignments)
+        binding = target_review_binding(profile, role, target)
+        if (
+            case.version != expected_case_version
+            or target.version != expected_target_version
+            or binding != expected_binding
+        ):
+            raise ProfileConflict("Verification version conflict")
+        previous = effective_decision(profile, target.target)
+        if value == "revoke":
+            if (
+                target.state != "approved"
+                or previous is None
+                or previous.decision != "approve"
+                or previous.id != approval_uuid
+                or previous.target_id != target.id
+            ):
+                raise ProfileConflict("Approval unavailable")
+        else:
+            if (
+                case.state != "under_review"
+                or target.state != "under_review"
+                or target.bound_evidence_revision != binding.evidence_revision
+                or target.bound_decision_version != binding.decision_version
+                or target.bound_declaration_version != binding.declaration_version
+                or (role is not None and not role.declared_active)
+            ):
+                raise ProfileConflict("Verification binding conflict")
+            revisions = _current_revisions(credentials, target.target)
+            if _hash_target(
+                profile, role, revisions
+            ) != target.target_snapshot_hash or set(
+                target.evidence.values_list("credential_revision_id", flat=True)
+            ) != {r.id for r in revisions}:
+                raise ProfileConflict("Verification evidence conflict")
+            try:
+                _validate_revisions(owner, profile, revisions, at, asset_validator)
+            except (ValueError, LookupError):
+                raise ProfileConflict("Verification evidence unavailable") from None
+        sequence = (
+            VerificationDecision.objects.filter(
+                profile=profile, target_kind=target.target
+            ).aggregate(value=Max("decision_sequence"))["value"]
+            or 0
+        ) + 1
+        VerificationDecision.objects.create(
+            target=target,
+            profile=profile,
+            target_kind=target.target,
+            actor=user,
+            decision=value,
+            reason_code=reason_code,
+            explanation=explanation,
+            target_snapshot_hash=target.target_snapshot_hash,
+            bound_evidence_revision=target.bound_evidence_revision,
+            decision_sequence=sequence,
+            supersedes_decision=previous,
+            revoked_approval=previous if value == "revoke" else None,
+            decided_at=at,
+            created_at=at,
+            updated_at=at,
+        )
+        prior = target.version
+        target.version += 1
+        if value != "revoke":
+            target.state = "approved" if value == "approve" else "rejected"
+        target.save(update_fields=["state", "version", "updated_at"])
+        if role is None:
+            profile.identity_decision_version += 1
+            profile.save(update_fields=["identity_decision_version", "updated_at"])
+        else:
+            role.decision_version += 1
+            role.version += 1
+            role.save(update_fields=["decision_version", "version", "updated_at"])
+        _history(case, user, "decision", reason_code, prior, at, target)
+        case.version += 1
+        if case.state in {"submitted", "under_review"} and all(
+            t.state in {"approved", "rejected", "stale", "withdrawn"} for t in targets
+        ):
+            case.state, case.decided_at = "decided", at
+        case.save(update_fields=["state", "version", "decided_at", "updated_at"])
+        # A historical approval can be revoked while a new review is pending.
+        # Close only older pending targets for this kind, preserving all others.
+        _stale_pending(profile, target.target, user, operation_id, at, record, emit)
+        remember(
+            user, operation_id, command, digest, case.id, target.id, case.version, at
+        )
+        record(
+            SecurityOutcome(
+                {
+                    "approve": "verification.approved",
+                    "reject": "verification.rejected",
+                    "revoke": "verification.revoked",
+                }[value],
+                "succeeded",
+                target.id,
+                operation_id,
+                ("state", "version", "decision_version"),
+                reason_code,
+            )
+        )
+        emit(case)
+        return _staff_dto(case, targets, assignments)
+
+
+def decide_verification_target(*args, record, emit, asset_validator):
+    return _terminal_command(
+        *args, record=record, emit=emit, asset_validator=asset_validator
+    )
+
+
+def revoke_verification_target(
+    actor,
+    verification_uuid,
+    target_uuid,
+    effective_approval_uuid,
+    expected_case_version,
+    expected_target_version,
+    expected_binding,
+    step_up_id,
+    reason_code,
+    explanation,
+    operation_id,
+    at,
+    *,
+    record,
+    emit,
+    asset_validator,
+):
+    return _terminal_command(
+        actor,
+        verification_uuid,
+        target_uuid,
+        "revoke",
+        expected_case_version,
+        expected_target_version,
+        expected_binding,
+        step_up_id,
+        reason_code,
+        explanation,
+        operation_id,
+        at,
+        record=record,
+        emit=emit,
+        asset_validator=asset_validator,
+        approval_uuid=effective_approval_uuid,
+    )

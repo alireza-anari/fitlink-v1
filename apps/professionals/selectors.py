@@ -1,7 +1,8 @@
 """Coherent current-session own projection; no publication authority."""
 
 from copy import deepcopy
-from datetime import datetime
+from dataclasses import dataclass, field
+from datetime import UTC, date, datetime
 from uuid import UUID
 
 from django.db import transaction
@@ -17,6 +18,7 @@ from .contracts import (
 )
 from .models import Credential, ProfessionalProfile
 from .policies import owned_profile, validate_context
+from .restrictions import RestrictionToken
 from .validation import PROFILE_FIELDS
 
 
@@ -141,3 +143,214 @@ def own_verification(actor: AccountActor, verification_uuid: UUID, at: datetime)
             subject_type="verification",
         )
         return _owner_dto(case)
+
+
+@dataclass(frozen=True)
+class BlockedRole:
+    role: str
+    reason_codes: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class TargetEvidenceBinding:
+    kind: str
+    declaration_version: int | None
+    evidence_revision: int
+    decision_version: int
+    effective_decision_uuid: UUID | None
+    snapshot_hash: str | None = field(repr=False)
+    evidence_revision_ids: tuple[UUID, ...]
+    restriction_token: RestrictionToken | None
+    next_expiry_boundary: datetime | None
+
+
+@dataclass(frozen=True)
+class EligibilityEvidenceBinding:
+    user_auth_version: int
+    user_state_version: int
+    profile_version: int
+    profile_state: str
+    identity: TargetEvidenceBinding
+    roles: tuple[TargetEvidenceBinding, ...]
+
+
+@dataclass(frozen=True)
+class PublicationEligibility:
+    identity_verified: bool
+    verified_roles: tuple[str, ...]
+    eligible: bool
+    reason_codes: tuple[str, ...]
+    blocked_roles: tuple[BlockedRole, ...]
+    evaluated_at: datetime
+    evidence_binding: EligibilityEvidenceBinding = field(repr=False)
+
+
+def _approval_facts(owner, profile, credentials, kind, role, at):
+    from datetime import time, timedelta
+
+    from .policies import ready_asset
+    from .restrictions import restriction_token
+    from .verification import (
+        _current_revisions,
+        _validate_revisions,
+        effective_decision,
+    )
+
+    latest = effective_decision(profile, kind)
+    revisions = _current_revisions(credentials, kind)
+    token = restriction_token(role)
+    expiries: list[date] = [r.expires_on for r in revisions if r.expires_on is not None]
+    binding = TargetEvidenceBinding(
+        kind,
+        role.declaration_version if role else None,
+        role.evidence_revision if role else profile.identity_evidence_revision,
+        role.decision_version if role else profile.identity_decision_version,
+        latest.id if latest else None,
+        latest.target_snapshot_hash if latest else None,
+        tuple(r.id for r in revisions),
+        token,
+        datetime.combine(min(expiries) + timedelta(days=1), time.min, UTC)
+        if expiries
+        else None,
+    )
+    reasons = []
+    if latest is None or latest.decision != "approve":
+        reasons.append(
+            "approval_missing" if latest is None else "approval_" + latest.decision
+        )
+    else:
+        target = latest.target
+        if (
+            latest.bound_evidence_revision != binding.evidence_revision
+            or target.target_snapshot_hash != latest.target_snapshot_hash
+            or target.state != "approved"
+            or (role is None and target.identity_name != profile.identity_name)
+            or set(target.evidence.values_list("credential_revision_id", flat=True))
+            != {r.id for r in revisions}
+            or latest.revocations.exists()
+        ):
+            reasons.append("evidence_changed")
+        else:
+            try:
+                _validate_revisions(owner, profile, revisions, at, ready_asset)
+            except (ValueError, LookupError):
+                reasons.append("evidence_unavailable")
+    if role is not None:
+        if not role.declared_active:
+            reasons.append("declaration_inactive")
+        if token and any(not released for _, _, released in token.episodes):
+            reasons.append("role_restricted")
+    return not reasons, tuple(reasons), binding
+
+
+def publication_eligibility(profile_uuid: UUID, at: datetime) -> PublicationEligibility:
+    """Internal coherent evidence facts; callers must recheck at consumption."""
+    from django.utils import timezone
+
+    from apps.accounts.dates import require_adult
+    from apps.accounts.models import User
+    from apps.assets.models import Asset
+
+    from .models import Verification, VerificationEvidence, VerificationTarget
+    from .restrictions import ProfessionalRoleRestriction
+    from .setup import locked_roles
+
+    if (
+        not isinstance(profile_uuid, UUID)
+        or not isinstance(at, datetime)
+        or not timezone.is_aware(at)
+    ):
+        raise ValueError("Invalid eligibility context")
+    with transaction.atomic():
+        owner_id = (
+            ProfessionalProfile.objects.filter(pk=profile_uuid)
+            .values_list("user_id", flat=True)
+            .first()
+        )
+        if owner_id is None:
+            raise ProfileNotFound("Profile unavailable")
+        owner = User.objects.select_for_update().get(pk=owner_id)
+        profile = ProfessionalProfile.objects.select_for_update().get(
+            pk=profile_uuid, user=owner
+        )
+        roles = locked_roles(profile)
+        credentials = list(
+            Credential.objects.select_for_update()
+            .filter(profile=profile)
+            .order_by("id")
+        )
+        cases = list(
+            Verification.objects.select_for_update()
+            .filter(profile=profile)
+            .order_by("id")
+        )
+        targets = list(
+            VerificationTarget.objects.select_for_update()
+            .filter(verification__in=cases)
+            .order_by("id")
+        )
+        list(
+            ProfessionalRoleRestriction.objects.select_for_update()
+            .filter(role__in=roles)
+            .order_by("id")
+        )
+        list(
+            VerificationEvidence.objects.select_for_update()
+            .filter(target__in=targets)
+            .order_by("id")
+        )
+        list(
+            Asset.objects.select_for_update()
+            .filter(credential_revisions__credential__in=credentials)
+            .order_by("id")
+        )
+        identity, identity_reasons, identity_binding = _approval_facts(
+            owner, profile, credentials, "identity", None, at
+        )
+        verified, blocked, bindings = [], [], []
+        for role in sorted(roles, key=lambda r: r.role):
+            ok, reasons, binding = _approval_facts(
+                owner, profile, credentials, role.role, role, at
+            )
+            bindings.append(binding)
+            if ok:
+                verified.append(role.role)
+            else:
+                blocked.append(BlockedRole(role.role, reasons))
+        reasons = list(identity_reasons)
+        account_ok = (
+            owner.is_active
+            and owner.state == "active"
+            and bool(owner.adult_attested_at and owner.adult_attestation_version)
+        )
+        try:
+            if owner.birth_date is None:
+                raise ValueError("Adult declaration required")
+            require_adult(owner.birth_date, True, at)
+        except ValueError:
+            account_ok = False
+        if not account_ok:
+            reasons.append("account_unavailable")
+        if profile.state != "private_ready":
+            reasons.append("profile_incomplete")
+        if not verified:
+            reasons.append("verified_role_required")
+        return PublicationEligibility(
+            identity,
+            tuple(verified),
+            identity
+            and account_ok
+            and profile.state == "private_ready"
+            and bool(verified),
+            tuple(reasons),
+            tuple(blocked),
+            at,
+            EligibilityEvidenceBinding(
+                owner.auth_version,
+                owner.state_version,
+                profile.version,
+                profile.state,
+                identity_binding,
+                tuple(bindings),
+            ),
+        )

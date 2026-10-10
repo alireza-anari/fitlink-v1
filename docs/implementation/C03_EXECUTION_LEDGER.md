@@ -1922,3 +1922,45 @@ The permitted minimal workflow adaptation adds an always-run metadata-only
 journal report using the incremental script, outside the supervisor. It neither
 changes pytest selection nor masks the cumulative gate exit, and adds a bounded
 30-second reporting command. Production Task 8 code is still absent.
+
+### Task 8 resumed RED and candidate implementation (2026-10-10)
+
+Fresh checkout inspected clean at published b4f5e6c8f9438ebcfeb0ec40dc693a4f2968e1b6,
+exact tree dd679175be3dc05473c02dc90c27ee0d4f265daa. No previous unpublished
+implementation is available in this workspace; no claim of local-state recovery.
+Protected four refs match the immutable baselines above. Tasks1–7 stay COMPLETE;
+Task8 ONLY, no Task9/C04/merge/deploy/force/protected-ref mutation.
+
+Actual run37987556299 attempt1 PostgreSQL114013212963 log inspected. Metadata-only
+journal contains86 focused call failures/0passed/0skipped, pytest exit1 at48.837s;
+new C02 authority/reassignment interleavings explain the increase from71.
+All are AssertionError at missing Task8 commands or assigned binding reader,
+after actual submitted/assigned fixtures. Inherited269C02, Redis durable restart,
+installed Task1–7 gates passed; storage114013213186, processing114013213041 and
+ownership114013212607 succeeded. Foundation114013213115 failed on missing unit
+contracts before its regression gate. These are RED evidence, not acceptance.
+
+Installed per-target approve/reject, exact approval-linked revoke, independent
+restriction episodes/history, assigned audited review-binding reader and internal
+coherent eligibility DTO. Current authority precedes receipt replay; decision
+fences include evidence/declaration/decision counters and full restriction history
+token, including released episodes. Completed approval evaluation deliberately
+does not require old declaration/decision counters to equal current counters.
+Only the affected evidence or revoke chain invalidates its approval; current
+restriction/declaration predicates separately exclude the role. No public route,
+projection, source download, migration or dependency change.
+
+Ruling: extend the current-source Task6 stage guard to permit exactly the now
+approved decide_verification_target command, retaining binding helper checks and
+generic approve/publication_eligibility absence in the mutation module. Cost if
+wrong: explicit Task8 command tests and scope gates still reject generic or public
+authority. Original immutable sources remain untouched.
+
+Local Python3.13.15/frozen dev environment, exact C01 fixture, npm frozen install
+and CSS build recovered. Focused eligibility/CI/binding35passed. Ruff386 files,
+mypy183source files, Django check and diff check passed; migration drift none
+(local PostgreSQL unavailable, so not SQL evidence). Complete units545passed/
+11failed: ten existing clean-pixel PNG/JPEG cases plus existing process isolation
+network/disk/fork/nonroot case cannot run on this restricted host. No relaxation;
+exact-head hosted unit/scanner/worker/service acceptance remains mandatory.
+Candidate checkpoint is IN_PROGRESS/PENDING_CI, never Task8 COMPLETE.

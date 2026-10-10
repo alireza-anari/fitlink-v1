@@ -1,5 +1,6 @@
 """Current assigned, reasoned and case-step-up audited private reads."""
 
+from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID, uuid4
 
@@ -21,6 +22,7 @@ from .contracts import (
 )
 from .models import Verification
 from .policies import validate_context
+from .restrictions import RestrictionToken, restriction_token
 from .verification import (
     _current_revisions,
     _hash_target,
@@ -148,3 +150,43 @@ def submitted_verification_queue(actor, step_up_id, reason_code, cursor, at):
         )
         next_cursor = (page[-1].submitted_at, page[-1].id) if len(rows) > 25 else None
         return VerificationQueueDTO(items, next_cursor)
+
+
+@dataclass(frozen=True)
+class TargetReviewBinding:
+    evidence_revision: int
+    decision_version: int
+    declaration_version: int | None
+    snapshot_hash: str = field(repr=False)
+    restriction_token: RestrictionToken | None
+
+
+def target_review_binding(profile, role, target):
+    return TargetReviewBinding(
+        role.evidence_revision if role else profile.identity_evidence_revision,
+        role.decision_version if role else profile.identity_decision_version,
+        role.declaration_version if role else None,
+        target.target_snapshot_hash,
+        restriction_token(role),
+    )
+
+
+def assigned_target_review_binding(
+    actor, verification_uuid, target_uuid, step_up_id, reason_code, at
+):
+    with transaction.atomic():
+        _, _, profile, roles, _, case, targets, _, _ = _staff_anchors(
+            actor, verification_uuid, step_up_id, reason_code, at
+        )
+        target = next((t for t in targets if t.id == target_uuid), None)
+        if target is None:
+            raise ProfileNotFound("Verification unavailable")
+        role = next((r for r in roles if r.id == target.role_id), None)
+        audit.append_event(
+            SecurityOutcome(
+                "verification.read", "succeeded", case.id, uuid4(), (), reason_code
+            ),
+            actor_uuid=actor.user_uuid,
+            subject_type="verification",
+        )
+        return target_review_binding(profile, role, target)
