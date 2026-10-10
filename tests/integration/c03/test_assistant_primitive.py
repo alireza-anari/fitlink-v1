@@ -65,7 +65,13 @@ def test_assistant_fixed_role_never_grants_access():
 
     with pytest.raises(LookupError):
         begin_profile_upload(
-            assistant.actor, "avatar", s.profile.id, uuid4(), timezone.now()
+            assistant.actor,
+            "avatar",
+            s.profile.id,
+            uuid4(),
+            timezone.now(),
+            declared_size=128,
+            declared_type="image/png",
         )
     assert not assistant.user.is_staff
 

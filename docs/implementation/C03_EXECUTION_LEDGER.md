@@ -2570,3 +2570,59 @@ Task10 IN_PROGRESS/PENDING_HOSTED_RED. No Task11 implementation.
 - Final review correction remains within approved Task10 test files. All final
   required hosted gates must pass at the corrected implementation head before
   Task10 completion; earlier candidate evidence cannot substitute for that head.
+
+### Task 10 corrected-source hosted verification and bounded cutoff
+
+- Corrected published source `4eed73200670ae5a00829ed6cdc798b8f637db55`, tree
+  `62063a2009dd8e504afb768cf0394385d8cfd4b5`, Actions
+  [38061860980](https://github.com/alireza-anari/fitlink-v1/actions/runs/38061860980)
+  attempt1. Local HEAD/remote/index/worktree matched that exact source before
+  this documentation-only evidence append. Alternate local author commits were
+  retained under refs/codex-checkpoints/c03-task10-local, never force-published.
+- Final local full units completed608passed/11failed,25s; the same11 restricted
+  host native sandbox cases recorded above, no new failure or weakened gate.
+  Exact final focused selection collects88cases without error; collection is
+  supporting evidence only. Hosted Foundation quality step passed, including
+  full units, frozen dependencies, static build, Ruff/format/mypy and production.
+- Corrected-source storage job114241579460 GREEN:91passed/0failed/0skipped,
+  pytest_exit0, natural command exit0 at184.0s, complete host/container cleanup.
+  Observed healthy real PostgreSQL/Redis/MinIO with MinIO readiness200.
+  Processing114241579477 GREEN:62passed/0failed/0skipped, pytest_exit0,
+  natural command exit0 at241.8s and complete cleanup. Actual non-eager worker
+  scan/SIGKILL, broker-restart lease recovery exactly once, injected real scanner
+  outage denial/post-fault health, separate Beat missed-prompt recovery and
+  sandboxed decoder parent-SIGKILL death all emitted successful stage evidence.
+  Timeout ownership114241579402 GREEN: actual owned Compose container started
+  then removed, detached child terminated, supervisor_contract_satisfied=true.
+- PostgreSQL114241579083 did NOT pass: unchanged incremental child300s limit
+  exited124 at301.1s; supervisor observed natural timeout return and complete
+  cleanup at301.3s. Task8 completed108/0/0 with pytest_exit0 at94.060s; Task9
+  completed89/0/0 with pytest_exit0 at26.958s. Task10 interrupted after26passed,
+  0failed/0skipped, with no pytest_exit. Exact downloaded diagnostic ZIP
+  artifact11673148382 digest
+  da8fa14bb8c90b9422cbad9a7112c1eedd373cc03c2c76e472320caa070402d8
+  verified byte-for-byte. Its Task10 journal ends at13.654s in private-media
+  preview positives, with no failed report, internal error or case-cutoff frame.
+  Prior candidate38061574735 also reached the same child ceiling with21Task10
+  passes; neither partial count is GREEN. All gate bounds/selections/assertions
+  remain unchanged. A same-source failed-job retry must wait for the active
+  Foundation run to finish; GitHub rejected the premature request as still running.
+- All eight protected/unrelated refs freshly reverified unchanged. Task9 remains
+  COMPLETE on its authoritative earlier source; Task10 remains PENDING_CI.
+  No Task11/C04 implementation, migration, merge, deployment or protected write.
+
+### Task 10 Foundation test-call correction
+
+- Corrected-source Foundation114241579401 naturally exited1 at842.8s with
+  complete cleanup, not an aggregate timeout. Hosted quality units619passed,
+  28.97s. Full rehearsal journal1503passed/1failed/0skipped, pytest_exit1 at432.597s.
+  The only failure is test_assistant_fixed_role_never_grants_access at line67:
+  begin_profile_upload requires keyword-only declared_size/declared_type, omitted
+  by this new Task10 test. This TypeError is a test-call defect, not a behavior
+  RED or permission-denial result; all other Task10 cases completed in Foundation.
+- Minimal correction supplies valid bounded128-byte image/png upload metadata
+  so the unchanged LookupError assertion exercises real exact-owner policy.
+  No production change or assertion weakening. Ruff/format/diff checks passed.
+  Corrected test requires new exact-source hosted verification. Earlier failed
+  jobs remain preserved; retry of the superseded source is no longer useful.
+  Task10 PENDING_CI; no timeout bound extension is authorized or implemented.
