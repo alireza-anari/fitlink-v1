@@ -1,6 +1,7 @@
 """Record-specific holds and approved policy metadata; never erasure or access."""
 
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID, uuid4
@@ -10,6 +11,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.accounts.contracts import SecurityOutcome
+from apps.accounts.models import User
 from apps.accounts.sessions import AccountActor, locked_actor
 
 from .audit import append_event
@@ -25,7 +27,14 @@ class ValidatedRecordSubject:
     version: int
 
 
-def _validate_subject(subject: ValidatedRecordSubject) -> PrivacyRequest:
+def _validate_subject(
+    subject: ValidatedRecordSubject,
+    subject_validator: Callable[[ValidatedRecordSubject], bool] | None = None,
+) -> PrivacyRequest | None:
+    if subject_validator is not None:
+        if subject_validator(subject) is not True:
+            raise PermissionError("Record subject denied")
+        return None
     if (
         not isinstance(subject, ValidatedRecordSubject)
         or subject.kind != "privacy_request"
@@ -50,9 +59,14 @@ def _time(at: datetime) -> None:
         raise ValueError("Invalid metadata time")
 
 
-def is_record_held(subject: ValidatedRecordSubject, at: datetime) -> bool:
+def is_record_held(
+    subject: ValidatedRecordSubject,
+    at: datetime,
+    *,
+    subject_validator: Callable[[ValidatedRecordSubject], bool] | None = None,
+) -> bool:
     _time(at)
-    _validate_subject(subject)
+    _validate_subject(subject, subject_validator)
     return RecordHold.objects.filter(
         subject_kind=subject.kind,
         subject_uuid=subject.record_uuid,
@@ -82,6 +96,9 @@ def apply_hold(
     expires_at: datetime,
     step_up_id: UUID,
     at: datetime,
+    *,
+    subject_validator: Callable[[ValidatedRecordSubject], bool] | None = None,
+    case_validator: Callable[[ValidatedRecordSubject, UUID, User], bool] | None = None,
 ) -> UUID:
     for value in (at, review_at, expires_at):
         _time(value)
@@ -96,9 +113,14 @@ def apply_hold(
         require_staff(
             user, "privacy_operations", case_uuid, step_up_id, reason_code, at
         )
-        row = _validate_subject(subject)
-        # C02's only installed case is a privacy intake, never an entire account.
-        if case_uuid != row.id:
+        row = _validate_subject(subject, subject_validator)
+        # Default C02 behavior remains an exact privacy intake.
+        valid_case = (
+            case_validator(subject, case_uuid, user) is True
+            if case_validator is not None
+            else row is not None and case_uuid == row.id
+        )
+        if not valid_case:
             raise PermissionDenied("Hold case denied")
         hold = RecordHold.objects.create(
             subject_kind=subject.kind,
@@ -125,6 +147,8 @@ def release_hold(
     reason_code: str,
     step_up_id: UUID,
     at: datetime,
+    *,
+    subject_validator: Callable[[ValidatedRecordSubject], bool] | None = None,
 ) -> None:
     _time(at)
     with transaction.atomic():
@@ -135,6 +159,16 @@ def release_hold(
         require_staff(
             user, "privacy_operations", candidate.case_uuid, step_up_id, reason_code, at
         )
+        if subject_validator is not None:
+            _validate_subject(
+                ValidatedRecordSubject(
+                    candidate.subject_kind,
+                    candidate.subject_uuid,
+                    candidate.owner_uuid,
+                    candidate.subject_version,
+                ),
+                subject_validator,
+            )
         hold = RecordHold.objects.select_for_update().get(pk=hold_uuid)
         if (
             type(expected_version) is not int

@@ -2144,3 +2144,25 @@ registry, account erasure pipeline, seeded retention period or schema change.
 Cost if wrong: policy/hold review must retain denied/in-progress inventory until
 an explicit authorized recovery; no access is granted by retention.
 Task9 IN_PROGRESS/PENDING_HOSTED_RED; no Task10 work.
+
+### Task 9 boundary checkpoint and observed RED
+
+- Test checkpoint `e37900f1e6971654ac50cbdbb8407320e47cb70d`, tree
+  `f2a3aa93c643d15da92b723bbfbf11fbe38d1eb6`, hosted run `38045752487`:
+  PostgreSQL Task 8 remains 108 passed/0 failed/0 skipped. Task 9 reports
+  35 failed/2 passed/0 skipped. Missing APIs are contract RED only; the actual
+  existing account-security handler fails the deletion/asset/membership state
+  assertions. Storage, processing and timeout-probe jobs pass unchanged.
+- Local complete unit baseline with the specification checkpoint: 546 passed,
+  33 failed; 22 are new missing lifetime interfaces and 11 are the previously
+  documented host native-sandbox limitation. No old gate was weakened.
+- Closed boundary checkpoint installs typed metadata inventories and trusted
+  C03 hold validators/optional governance callbacks. Cleanup deliberately returns
+  `denied` until hosted behavioral cleanup evidence is inspected. These are not
+  Task 9 completion claims. Local new lifetime+CI contracts: 50 passed; Ruff and
+  existing mypy target set pass (95 source files).
+- Hold commands lock sorted participants, installed domain anchors, assets, then
+  current staff authority and hold rows. C02 default privacy-request validation
+  remains exact. Credential holds pin immutable evidence in their assigned case,
+  so future credential revisions do not acquire a blanket hold. Existing holds
+  remain effective after revocation advances a retained asset's version.

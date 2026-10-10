@@ -237,3 +237,350 @@ def revoke_baseline_storage(
             at,
             target.id,
         )
+
+
+# Task 9: a closed, server-only composition of installed C03 lifetime subjects.
+from functools import partial  # noqa: E402
+
+from django.core.exceptions import PermissionDenied  # noqa: E402
+from django.utils import timezone  # noqa: E402
+
+from apps.assets import cleanup as asset_cleanup  # noqa: E402
+from apps.assets.models import (  # noqa: E402
+    Asset,
+    AssetDerivative,
+    AssetProcessingAttempt,
+)
+from apps.assets.privacy import (  # noqa: E402
+    MAX_INVENTORY,
+    OwnerInventory,
+    bounded_rows,
+    enumerate_asset_inventory,
+)
+from apps.athletes.models import AthleteProfile  # noqa: E402
+from apps.athletes.privacy import enumerate_athlete_inventory  # noqa: E402
+from apps.governance import retention  # noqa: E402
+from apps.governance.privacy_models import PrivacyRequest, RecordHold  # noqa: E402
+from apps.professionals.models import (  # noqa: E402
+    Credential,
+    CredentialRevision,
+    ProfessionalProfile,
+    ProfessionalRole,
+    Verification,
+    VerificationAssignment,
+    VerificationEvidence,
+    VerificationTarget,
+)
+from apps.professionals.privacy import enumerate_professional_inventory  # noqa: E402
+
+HOLD_KINDS = frozenset(
+    {
+        "athlete_baseline",
+        "professional_credential",
+        "professional_verification",
+        "profile_asset",
+    }
+)
+
+
+def _valid_reference(subject):
+    return (
+        isinstance(subject, retention.ValidatedRecordSubject)
+        and subject.kind in HOLD_KINDS
+        and isinstance(subject.record_uuid, UUID)
+        and isinstance(subject.owner_uuid, UUID)
+        and type(subject.version) is int
+        and subject.version > 0
+    )
+
+
+def _subject_row(subject):
+    if subject.kind == "athlete_baseline":
+        return BaselineAssessment.objects.filter(
+            pk=subject.record_uuid, athlete__user__public_id=subject.owner_uuid
+        ).first()
+    if subject.kind == "professional_credential":
+        return Credential.objects.filter(
+            pk=subject.record_uuid, profile__user__public_id=subject.owner_uuid
+        ).first()
+    if subject.kind == "professional_verification":
+        return Verification.objects.filter(
+            pk=subject.record_uuid, profile__user__public_id=subject.owner_uuid
+        ).first()
+    if subject.kind == "profile_asset":
+        return Asset.objects.filter(
+            pk=subject.record_uuid, owner__public_id=subject.owner_uuid
+        ).first()
+    return None
+
+
+def _asset_binding_valid(asset):
+    if asset.subject_kind == "professional_profile":
+        return ProfessionalProfile.objects.filter(
+            pk=asset.subject_uuid, user_id=asset.owner_id
+        ).exists()
+    if asset.subject_kind == "professional_credential":
+        return Credential.objects.filter(
+            pk=asset.subject_uuid, profile__user_id=asset.owner_id
+        ).exists()
+    return False
+
+
+def validate_c03_hold_subject(subject):
+    if not _valid_reference(subject):
+        return False
+    row = _subject_row(subject)
+    return bool(
+        row
+        and row.version == subject.version
+        and (not isinstance(row, Asset) or _asset_binding_valid(row))
+    )
+
+
+def _case_assets(case_uuid, owner_uuid, credential_uuid=None):
+    evidence = VerificationEvidence.objects.filter(
+        target__verification_id=case_uuid,
+        target__verification__profile__user__public_id=owner_uuid,
+        credential_revision__credential__profile__user__public_id=owner_uuid,
+        credential_revision__source_asset__owner__public_id=owner_uuid,
+    )
+    if credential_uuid is not None:
+        evidence = evidence.filter(credential_revision__credential_id=credential_uuid)
+    return tuple(
+        row.credential_revision.source_asset_id
+        for row in bounded_rows(evidence.select_related("credential_revision"))
+    )
+
+
+def _subject_assets(subject, case_uuid):
+    if subject.kind == "profile_asset":
+        return (subject.record_uuid,)
+    if subject.kind == "professional_verification":
+        return _case_assets(subject.record_uuid, subject.owner_uuid)
+    if subject.kind == "professional_credential":
+        return _case_assets(case_uuid, subject.owner_uuid, subject.record_uuid)
+    return ()
+
+
+def validate_c03_hold_case(subject, case_uuid, acting_user, *, at=None):
+    at = at or timezone.now()
+    if (
+        not validate_c03_hold_subject(subject)
+        or not isinstance(case_uuid, UUID)
+        or acting_user.public_id == subject.owner_uuid
+        or not acting_user.is_active
+        or acting_user.state != "active"
+    ):
+        return False
+    intake = PrivacyRequest.objects.filter(
+        pk=case_uuid, user__public_id=subject.owner_uuid, created_at__lte=at
+    ).exists()
+    if intake:
+        # A credential hold must pin submitted case evidence, never later uploads.
+        if subject.kind not in {"profile_asset", "athlete_baseline"}:
+            return False
+    else:
+        case = Verification.objects.filter(
+            pk=case_uuid,
+            profile__user__public_id=subject.owner_uuid,
+            submitted_at__isnull=False,
+            submitted_at__lte=at,
+        ).first()
+        if (
+            not case
+            or not VerificationAssignment.objects.filter(
+                verification=case,
+                assignee=acting_user,
+                ended_at__isnull=True,
+                assigned_at__lte=at,
+            )
+            .exclude(assigned_by=acting_user)
+            .exists()
+        ):
+            return False
+        if (
+            subject.kind == "professional_verification"
+            and subject.record_uuid != case_uuid
+        ):
+            return False
+        if subject.kind == "athlete_baseline":
+            return False
+        case_assets = _case_assets(
+            case_uuid,
+            subject.owner_uuid,
+            subject.record_uuid if subject.kind == "professional_credential" else None,
+        )
+        if (
+            subject.kind == "professional_credential"
+            and not case_assets
+            or subject.kind == "profile_asset"
+            and subject.record_uuid not in case_assets
+        ):
+            return False
+    asset_ids = _subject_assets(subject, case_uuid)
+    return (
+        not Asset.objects.filter(pk__in=asset_ids)
+        .filter(state__in=["deletion_pending", "deleted"])
+        .exists()
+    )
+
+
+def _lock_owner_records(owner):
+    """Identity is already locked; take installed domain anchors before assets."""
+    for query in (
+        AthleteProfile.objects.filter(user=owner),
+        BaselineAssessment.objects.filter(athlete__user=owner),
+        ProfessionalProfile.objects.filter(user=owner),
+        ProfessionalRole.objects.filter(profile__user=owner),
+        Credential.objects.filter(profile__user=owner),
+        CredentialRevision.objects.filter(credential__profile__user=owner),
+        Verification.objects.filter(profile__user=owner),
+        VerificationTarget.objects.filter(verification__profile__user=owner),
+        VerificationAssignment.objects.filter(verification__profile__user=owner),
+        VerificationEvidence.objects.filter(target__verification__profile__user=owner),
+        Asset.objects.filter(owner=owner),
+        AssetProcessingAttempt.objects.filter(asset__owner=owner),
+        AssetDerivative.objects.filter(asset__owner=owner),
+    ):
+        bounded_rows(query.select_for_update())
+
+
+def inventory_c03_owner(owner_uuid, at):
+    retention._time(at)
+    if not isinstance(owner_uuid, UUID):
+        raise PermissionError("Inventory owner denied")
+    with transaction.atomic():
+        owner = User.objects.select_for_update().filter(public_id=owner_uuid).first()
+        if owner is None:
+            raise PermissionError("Inventory owner denied")
+        _lock_owner_records(owner)
+        for asset in bounded_rows(Asset.objects.filter(owner=owner)):
+            if not _asset_binding_valid(asset):
+                raise PermissionError("Inventory subject denied")
+        records = (
+            enumerate_athlete_inventory(owner_uuid)
+            + enumerate_professional_inventory(owner_uuid)
+            + enumerate_asset_inventory(owner_uuid)
+        )
+        if len(records) > MAX_INVENTORY:
+            raise PermissionError("Inventory bound exceeded")
+        return OwnerInventory(owner_uuid, records)
+
+
+def apply_c03_hold(
+    actor,
+    subject,
+    case_uuid,
+    purpose,
+    reason_code,
+    review_at,
+    expires_at,
+    step_up_id,
+    at,
+):
+    if not _valid_reference(subject):
+        raise PermissionDenied("Hold subject denied")
+    with transaction.atomic():
+        participants = list(
+            User.objects.select_for_update()
+            .filter(public_id__in=[subject.owner_uuid, actor.user_uuid])
+            .order_by("pk")
+        )
+        owner = next(
+            (u for u in participants if u.public_id == subject.owner_uuid), None
+        )
+        if owner is None or not any(
+            u.public_id == actor.user_uuid for u in participants
+        ):
+            raise PermissionDenied("Hold subject denied")
+        _lock_owner_records(owner)
+        return retention.apply_hold(
+            actor,
+            subject,
+            case_uuid,
+            purpose,
+            reason_code,
+            review_at,
+            expires_at,
+            step_up_id,
+            at,
+            subject_validator=validate_c03_hold_subject,
+            case_validator=partial(validate_c03_hold_case, at=at),
+        )
+
+
+def release_c03_hold(actor, hold_uuid, expected_version, reason_code, step_up_id, at):
+    with transaction.atomic():
+        candidate = RecordHold.objects.filter(pk=hold_uuid).first()
+        if candidate is None or candidate.subject_kind not in HOLD_KINDS:
+            raise PermissionDenied("Hold action denied")
+        participants = list(
+            User.objects.select_for_update()
+            .filter(public_id__in=[candidate.owner_uuid, actor.user_uuid])
+            .order_by("pk")
+        )
+        owner = next(
+            (u for u in participants if u.public_id == candidate.owner_uuid), None
+        )
+        if owner is None or actor.user_uuid == owner.public_id:
+            raise PermissionDenied("Hold action denied")
+        _lock_owner_records(owner)
+
+        def validate_stored(subject):
+            row = _subject_row(subject) if _valid_reference(subject) else None
+            # The stored hold is authoritative for its original version. Revocation
+            # can advance the retained record without preventing authorized release.
+            return bool(row and row.version >= subject.version)
+
+        return retention.release_hold(
+            actor,
+            hold_uuid,
+            expected_version,
+            reason_code,
+            step_up_id,
+            at,
+            subject_validator=validate_stored,
+        )
+
+
+def _asset_held(asset, at):
+    for hold in bounded_rows(
+        RecordHold.objects.filter(
+            owner_uuid=asset.owner.public_id,
+            released_at__isnull=True,
+            created_at__lte=at,
+            expires_at__gt=at,
+        )
+    ):
+        subject = retention.ValidatedRecordSubject(
+            hold.subject_kind, hold.subject_uuid, hold.owner_uuid, hold.subject_version
+        )
+        if hold.subject_kind in HOLD_KINDS and asset.id in _subject_assets(
+            subject, hold.case_uuid
+        ):
+            # Never reinterpret a pre-revocation version as an absent hold.
+            return True
+    return False
+
+
+def _asset_in_use(asset):
+    profile = ProfessionalProfile.objects.filter(user_id=asset.owner_id).first()
+    return bool(
+        profile
+        and asset.id in {profile.avatar_id, profile.cover_id, profile.logo_id}
+        and asset.owner.state == "active"
+        and asset.owner.is_active
+    )
+
+
+def cleanup_asset(asset_uuid, expected_version, policy_uuid, at, *, store=None):
+    return asset_cleanup.cleanup_asset(
+        asset_uuid,
+        expected_version,
+        policy_uuid,
+        at,
+        subject_validator=lambda asset: _asset_binding_valid(asset),
+        hold_validator=_asset_held,
+        in_use_validator=_asset_in_use,
+        store=store,
+    )
