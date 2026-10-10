@@ -2224,3 +2224,21 @@ Task9 IN_PROGRESS/PENDING_HOSTED_RED; no Task10 work.
   domain targets pass; Django test and production checks pass. The 11 existing
   native-image sandbox cases remain host-limited locally and are mandatory hosted
   gates. Task 9 remains **IN PROGRESS / PENDING_CI**, not COMPLETE.
+
+### Task 9 complete-candidate review regressions
+
+- Read-only independent review of candidate `cf07b6a` identified three important
+  lifetime gaps: received/unfinalized quarantine after admission expiry,
+  terminal rejected processing sources, and an unrelated active-hold inventory
+  cutoff. It also requested serialization of the current assigned-verifier grant.
+- Test-only checkpoint adds nine cases (86 total Task 9 cases): actual stored
+  received/finalized sources, actual scanner rejection/lease exhaustion with and
+  without an existing record hold, 1,001 unrelated C02/baseline holds, and an
+  independent PostgreSQL grant revocation participant. Candidate production code
+  is unchanged in this checkpoint; hosted behavioral RED is pending inspection.
+- Ruling for the rejected-source gap: the cleanup reconciler will revoke terminal
+  rejected metadata first and begin retention at that transition. Erasure still
+  accepts only eligible abandoned/revoked/reserved/tombstoned private inventory;
+  no Task 5 processing behavior, admission deadline or production retention
+  duration is changed. Accepted retryable quarantine must remain retryable.
+- Review findings remain open. Task 9 is **IN PROGRESS**, not COMPLETE.

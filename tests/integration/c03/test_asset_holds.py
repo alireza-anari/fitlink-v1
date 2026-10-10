@@ -560,3 +560,45 @@ def test_c02_intake_hold_does_not_become_blanket_c03_owner_hold(settings):
     )
     assert retention.is_record_held(record, at)
     assert cleanup(asset, policy(s, asset), store) == "deleted"
+
+
+@pytest.mark.parametrize("kind", ["privacy_request", "athlete_baseline"])
+def test_many_unrelated_active_holds_do_not_block_source_cleanup(settings, kind):
+    from apps.athletes.baseline_models import BaselineAssessment
+    from apps.athletes.models import AthleteProfile
+
+    s = owner()
+    asset, store = media(s)
+    revoke(asset)
+    case = privacy_case(s)
+    staff, _ = authority(settings, case)
+    at = timezone.now()
+    if kind == "athlete_baseline":
+        athlete = AthleteProfile.objects.create(user=s.user)
+        row = BaselineAssessment.objects.create(
+            athlete=athlete, sequence=1, observed_at=at
+        )
+    else:
+        row = PrivacyRequest.objects.get(pk=case)
+    RecordHold.objects.bulk_create(
+        [
+            RecordHold(
+                subject_kind=kind,
+                subject_uuid=row.id,
+                subject_version=row.version,
+                owner_uuid=s.user.public_id,
+                case_uuid=case,
+                purpose="security",
+                reason_code="hold_applied",
+                authorized_by=staff.user,
+                created_at=at,
+                updated_at=at,
+                review_at=at + timedelta(seconds=10),
+                expires_at=at + timedelta(minutes=2),
+            )
+            for _ in range(1001)
+        ]
+    )
+    assert cleanup(asset, policy(s, asset), store) == "deleted"
+    absent(store, asset.source_key)
+    assert RecordHold.objects.filter(released_at__isnull=True).count() == 1001
