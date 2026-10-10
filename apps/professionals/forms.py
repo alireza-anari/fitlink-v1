@@ -198,6 +198,9 @@ class UploadForm(CommandForm):
 
 
 class VerificationForm(CommandForm):
+    expected_profile_version = forms.IntegerField(
+        min_value=1, required=False, widget=forms.HiddenInput
+    )
     requested_targets = forms.MultipleChoiceField(
         label="هدف‌های بررسی",
         choices=[

@@ -7,7 +7,7 @@
 {% for target in case.targets %}<p>{% if target.target == 'identity' %}هویت{% elif target.target == 'coach' %}مربی{% else %}متخصص تغذیه{% endif %}: {% if target.state == 'approved' %}تأیید شده{% elif target.state == 'rejected' %}تأیید نشده{% elif target.state == 'withdrawn' %}انصراف داده شده{% else %}در انتظار بررسی{% endif %} — <bdi>{{ target.id }}</bdi></p>{% endfor %}
 {% timezone 'Asia/Tehran' %}{% for event,target,at in case.history %}<p class="c02-help">به‌روزرسانی درخواست: {{ at|date:'Y-m-d H:i' }}</p>{% endfor %}{% endtimezone %}{% endif %}
 <form method="post">{% csrf_token %}{% include 'accounts/form.html' %}
-{% if not case %}<button class="c02-button" name="action" value="prepare" type="submit">آماده‌سازی درخواست بررسی</button>
-{% else %}<button class="c02-button" name="action" value="submit" type="submit">ارسال درخواست بررسی</button><button class="c02-secondary" name="action" value="withdraw" type="submit">انصراف از هدف انتخاب‌شده</button>{% endif %}</form>
+{% if not case or case.state == "draft" or case.state == "decided" or case.state == "withdrawn" %}<button class="c02-button" name="action" value="prepare" type="submit">آماده‌سازی درخواست بررسی</button>
+{% endif %}{% if case %}<button class="c02-button" name="action" value="submit" type="submit">ارسال درخواست بررسی</button><button class="c02-secondary" name="action" value="withdraw" type="submit">انصراف از هدف انتخاب‌شده</button>{% endif %}</form>
 <a href="/professional/setup/?step=credentials">مدارک خصوصی</a>
 {% endblock %}

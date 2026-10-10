@@ -275,7 +275,10 @@ def verification_page(request, actor):
         values = form.command()
         action = request.POST.get("action")
         if action == "prepare":
-            values["expected_profile_version"] = values.pop("expected_version")
+            values.pop("expected_version", None)
+            if data["expected_profile_version"] is None:
+                raise ValueError("Invalid profile version")
+            values["expected_profile_version"] = data["expected_profile_version"]
             result = verification.prepare_verification(
                 actor, tuple(data["requested_targets"]), at=timezone.now(), **values
             )
@@ -301,6 +304,7 @@ def verification_page(request, actor):
             "form": VerificationForm(
                 initial={
                     "expected_version": case.version if case else profile.version,
+                    "expected_profile_version": profile.version,
                     "verification_uuid": case.id if case else None,
                 }
             ),
