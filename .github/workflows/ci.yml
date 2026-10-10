@@ -94,6 +94,9 @@ jobs:
         run: |
           python docker/c03_gate_diagnostics.py --acceptance storage \
             sh docker/verify_c03_incremental.sh --task11-owner
+      - name: Task 11 metadata-only behavioral verdict
+        if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
+        run: sh docker/verify_c03_incremental.sh --task11-evidence
       - name: C03 owner metadata-only diagnostics
         if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

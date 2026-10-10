@@ -245,7 +245,7 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 8
+    assert source.count("        if:") == 9
     assert source.count(TASK8_REPORT) == 1
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)

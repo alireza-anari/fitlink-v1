@@ -12,7 +12,8 @@ if [ "${1:-}" = --task11-owner ]; then
   env_file=.env.c03-owner
   [ -z "$(docker volume ls --filter label=com.docker.compose.project="$project" -q)" ] || exit 1
   python docker/generate_env.py "$env_file"
-  mkdir -p .runtime
+  mkdir -p .runtime/c03-diagnostics
+  chmod 777 .runtime/c03-diagnostics
   cat > .runtime/c03-owner-compose.yml <<'OWNER_COMPOSE'
 services:
   browser:
@@ -29,22 +30,30 @@ OWNER_COMPOSE
   dc up -d --wait web worker
   dc exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
   backend_exit=0
-  dc run --rm --no-deps checks timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_api_schema.py tests/unit/c03/test_forms.py tests/unit/c03/test_native_adapters.py tests/integration/c03/test_owner_api.py -q --strict-markers || backend_exit=$?
+  dc run --rm --no-deps -e C03_FOUNDATION_TRIAGE=1 -e C03_FOUNDATION_EVIDENCE_DIRECTORY=/app/.runtime/c03-diagnostics checks timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_api_schema.py tests/unit/c03/test_forms.py tests/unit/c03/test_native_adapters.py tests/integration/c03/test_owner_api.py -q --strict-markers || backend_exit=$?
   browser_exit=0
-  dc run --rm --no-deps browser timeout -k 10s 240s uv run --frozen pytest tests/e2e/c03/test_owner_setup.py tests/e2e/c03/test_private_uploads.py -q --strict-markers --tracing=off --screenshot=off --video=off || browser_exit=$?
-  dc run --rm --no-deps browser timeout -k 10s 300s uv run --frozen pytest tests/e2e/c02 -q --strict-markers --tracing=off --screenshot=off --video=off
+  dc run --rm --no-deps -e C03_FOUNDATION_TRIAGE=1 -e C03_FOUNDATION_EVIDENCE_DIRECTORY=/app/.runtime/c03-diagnostics browser timeout -k 10s 240s uv run --frozen pytest tests/e2e/c03/test_owner_setup.py tests/e2e/c03/test_private_uploads.py -q --strict-markers --tracing=off --screenshot=off --video=off || browser_exit=$?
+  dc run --rm --no-deps -e C03_FOUNDATION_TRIAGE=1 -e C03_FOUNDATION_EVIDENCE_DIRECTORY=/app/.runtime/c03-diagnostics browser timeout -k 10s 300s uv run --frozen pytest tests/e2e/c02 -q --strict-markers --tracing=off --screenshot=off --video=off
   [ "$backend_exit" -eq 0 ] && [ "$browser_exit" -eq 0 ]
   exit $?
 fi
 
 # Read the existing redacted observer journal outside the stdout supervisor.
 # This reporting mode never executes or changes an acceptance gate.
-if [ "${1:-}" = --task8-evidence ]; then
+if [ "${1:-}" = --task8-evidence ] || [ "${1:-}" = --task11-evidence ]; then
   timeout -k 10s 30s uv run --frozen python - <<'REPORT'
 import json
 from pathlib import Path
 
 selections = {
+    11: (
+        "tests/unit/c03/test_api_schema.py::",
+        "tests/unit/c03/test_forms.py::",
+        "tests/unit/c03/test_native_adapters.py::",
+        "tests/integration/c03/test_owner_api.py::",
+        "tests/e2e/c03/test_owner_setup.py::",
+        "tests/e2e/c03/test_private_uploads.py::",
+    ),
     8: (
         "tests/unit/c03/test_publication_eligibility.py::",
         "tests/integration/c03/test_verification_decisions.py::",

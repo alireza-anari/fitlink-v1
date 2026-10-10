@@ -54,6 +54,8 @@ async def test_owner_dual_context_resume_optional_consent(
 async def test_js_disabled_setup(browser, live_server, auth_runtime, viewport):
     context = await browser.new_context(java_script_enabled=False, viewport=viewport)
     page = await context.new_page()
+    page.set_default_timeout(5000)
+    page.set_default_navigation_timeout(15000)
     errors = []
     page.on("pageerror", lambda error: errors.append(type(error).__name__))
     page.on(

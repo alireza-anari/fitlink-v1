@@ -2768,3 +2768,9 @@ CI contract 30 passed; new omission/condition/trigger negatives retain inherited
 workflow hash binding. Supporting local HTTP RED is separate from required hosted
 RED; missing form modules are not counted as behavioral RED. Hosted test-spec
 checkpoint pending. All later completion gates remain pending.
+
+### Task 11 RED gate evidence visibility correction
+
+Test-spec head 0597ffc3c9cd428bbcffcd12880367d4cdd0bf8f, tree b735126bef70ace22897e992b8af24f67732b073: Actions 38068682504 attempt 1 failed. Foundation observed 8 behavioral missing-route assertions and 3 missing-form failures (618 passed); missing modules are not behavioral acceptance RED. Owner job 114261457994 ran real services and separate browser processes, exited 1 at 496s with complete host/container cleanup. Its stdout supervisor intentionally suppressed raw private test output; AssertionError metadata alone does not prove specific PostgreSQL/browser RED. Storage, processing, migrations/cumulative and timeout-probe jobs succeeded.
+
+Ruling: enable the existing opt-in metadata-only pytest reporter in the approved owner gate, and report its journals outside the private stdout supervisor using the approved incremental script/workflow surfaces. No observer implementation or inherited service gate changes. This enables exact case/phase/assertion evidence without private bodies, tokens or storage keys. Fix relative static URL resolution in browser quality helper and explicitly bound JS-disabled test waits. Re-run specifications before service implementation. Task 11 remains IN_PROGRESS; no GREEN/completion claim.

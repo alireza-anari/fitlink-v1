@@ -1,5 +1,7 @@
 """No private page body, screenshot, trace or token diagnostic artifacts."""
 
+from urllib.parse import urljoin
+
 from playwright.async_api import expect
 
 from tests.e2e.c02.helpers import VIEWPORTS, database, entry, verify  # noqa: F401
@@ -24,7 +26,7 @@ async def quality(page, response):
         ("script[src$='profiles.js']", "src"),
     ):
         url = await page.locator(tag).get_attribute(attr)
-        assert (await page.request.get(url)).status == 200
+        assert (await page.request.get(urljoin(page.url, url))).status == 200
 
 
 async def login(page, base, provider):
