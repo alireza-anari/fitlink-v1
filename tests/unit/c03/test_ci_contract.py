@@ -67,6 +67,19 @@ def test_task8_mandatory_selections_cannot_be_omitted():
         assert not all(item in source.replace(name, "omitted") for item in required)
 
 
+def test_task9_lifetime_holds_cleanup_and_races_are_mandatory():
+    source = ENTRY.read_text()
+    required = (
+        "tests/unit/c03/test_privacy_inventory.py",
+        "tests/integration/c03/test_asset_holds.py",
+        "tests/integration/c03/test_c03_deletion_effects.py",
+        "tests/integration/c03/test_asset_cleanup_races.py",
+    )
+    assert all(name in source for name in required), "Task 9 selection missing"
+    for name in required:
+        assert not all(item in source.replace(name, "omitted") for item in required)
+
+
 TRIGGER = "    branches: [accounts/c02-cloud, profiles/c03-cloud]"
 C03_STEP = r"""      - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'

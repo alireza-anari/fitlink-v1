@@ -2109,3 +2109,38 @@ no merge, deployment, force push or protected-ref mutation. This completion
 checkpoint modifies only the ledger; acceptance above belongs to the exact
 validated implementation SHA, with no claim of re-executing source checks on
 this documentation-only descendant.
+
+
+## Task 9 recovery and lifetime specification (2026-10-10)
+
+Authorization: C03 Task 9 ONLY. Tasks 1–8 remain COMPLETE; Task 10/C04,
+merge/deploy/force/protected-ref changes are forbidden. Starting workspace
+had no usable Git checkout or unpublished Task 9 work. Fresh isolated clone
+at exact 8ce107614ebe78ec7eb183f4874811ffe1e86aca/tree
+9f389be42b10b84f4e94fa307330293ea3260593; status/index/diffs/untracked empty.
+Remote connector and ls-remote agree. Complete approved plan and ledger read;
+existing C02 privacy/hold/outbox and C03 asset/processing/profile evidence inspected.
+Task 8 authoritative run38026094064 attempt2 verified SUCCESS at exact1349e484/
+b4f944dc. Later documentation run38028083736 is not a reopening criterion.
+All protected/unrelated refs match published starting checkpoints; none mutated.
+
+Python3.13.15/frozen dev environment recovered inside scratch; baseline CI/C02
+privacy units36passed. Local Docker/PostgreSQL/Redis absent, hosted real services
+remain mandatory. New Task9 specification63cases collects without errors.
+Initial local unit/CI RED24failed/26passed: missing lifetime APIs/callbacks and
+omitted selection; missing interfaces are not misrepresented as behavioral races.
+Minimal cumulative selection added; existing report invocation also emits exact
+Task9 redacted verdict/counts. Workflow/triggers/services/timeouts unchanged.
+Same installed cleanup tests use real private MinIO in the full inherited
+Foundation (STORAGE_BACKEND=s3) and deterministic store in PostgreSQL-only CI;
+no unavailable-service skip or fake-only overall acceptance is authorized.
+
+Ruling: a committed deletion_pending reservation linearizes cleanup against new
+holds, which must deny that already-reserved inventory; long storage I/O remains
+outside transactions. Existing valid holds win before reservation. Known source
+and derivative tombstones remain discoverable, so a late immutable upload/write
+is denied release and erased on subsequent bounded reconciliation. No generic
+registry, account erasure pipeline, seeded retention period or schema change.
+Cost if wrong: policy/hold review must retain denied/in-progress inventory until
+an explicit authorized recovery; no access is granted by retention.
+Task9 IN_PROGRESS/PENDING_HOSTED_RED; no Task10 work.

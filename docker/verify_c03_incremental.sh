@@ -9,27 +9,36 @@ if [ "${1:-}" = --task8-evidence ]; then
 import json
 from pathlib import Path
 
-selected = (
-    "tests/unit/c03/test_publication_eligibility.py::",
-    "tests/integration/c03/test_verification_decisions.py::",
-    "tests/integration/c03/test_verification_decision_races.py::",
-    "tests/integration/c03/test_verification_revocation.py::",
-)
-counts = {"passed": 0, "failed": 0, "skipped": 0}
-for path in sorted(Path(".runtime/c03-diagnostics").glob("foundation-*.jsonl")):
-    events = [json.loads(line) for line in path.read_text().splitlines()]
-    if not any(event.get("node", "").startswith(selected) for event in events):
-        continue
-    for event in events:
-        chosen = event.get("node", "").startswith(selected)
-        if event.get("event") == "test_report" and chosen:
-            if event.get("phase") == "call" and event.get("outcome") in counts:
-                counts[event["outcome"]] += 1
-            if event.get("outcome") != "passed":
-                print("C03_TASK8 " + json.dumps(event, sort_keys=True), flush=True)
-        if event.get("event") in {"pytest_exit", "pytest_internalerror"}:
-            print("C03_TASK8 " + json.dumps(event, sort_keys=True), flush=True)
-print("C03_TASK8_COUNTS " + json.dumps(counts, sort_keys=True), flush=True)
+selections = {
+    8: (
+        "tests/unit/c03/test_publication_eligibility.py::",
+        "tests/integration/c03/test_verification_decisions.py::",
+        "tests/integration/c03/test_verification_decision_races.py::",
+        "tests/integration/c03/test_verification_revocation.py::",
+    ),
+    9: (
+        "tests/unit/c03/test_privacy_inventory.py::",
+        "tests/integration/c03/test_asset_holds.py::",
+        "tests/integration/c03/test_c03_deletion_effects.py::",
+        "tests/integration/c03/test_asset_cleanup_races.py::",
+    ),
+}
+for task, selected in selections.items():
+    counts = {"passed": 0, "failed": 0, "skipped": 0}
+    for path in sorted(Path(".runtime/c03-diagnostics").glob("foundation-*.jsonl")):
+        events = [json.loads(line) for line in path.read_text().splitlines()]
+        if not any(event.get("node", "").startswith(selected) for event in events):
+            continue
+        for event in events:
+            chosen = event.get("node", "").startswith(selected)
+            if event.get("event") == "test_report" and chosen:
+                if event.get("phase") == "call" and event.get("outcome") in counts:
+                    counts[event["outcome"]] += 1
+                if event.get("outcome") != "passed":
+                    print(f"C03_TASK{task} " + json.dumps(event, sort_keys=True), flush=True)
+            if event.get("event") in {"pytest_exit", "pytest_internalerror"}:
+                print(f"C03_TASK{task} " + json.dumps(event, sort_keys=True), flush=True)
+    print(f"C03_TASK{task}_COUNTS " + json.dumps(counts, sort_keys=True), flush=True)
 REPORT
   exit 0
 fi
@@ -190,3 +199,7 @@ PY
 
 # Task 8 independent outcomes and current eligibility; PostgreSQL races mandatory.
 C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnostics timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_publication_eligibility.py tests/integration/c03/test_verification_decisions.py tests/integration/c03/test_verification_decision_races.py tests/integration/c03/test_verification_revocation.py -q --strict-markers -o faulthandler_timeout=30
+
+# Task 9 exact inventory, record-specific holds and bounded cleanup races.
+# Same cases also execute against private MinIO in the inherited full Foundation.
+C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnostics timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_privacy_inventory.py tests/integration/c03/test_asset_holds.py tests/integration/c03/test_c03_deletion_effects.py tests/integration/c03/test_asset_cleanup_races.py -q --strict-markers -o faulthandler_timeout=30
