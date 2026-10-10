@@ -22,6 +22,21 @@ async def test_owner_dual_context_resume_optional_consent(
 
     baseline = await database(lambda: BaselineAssessment.objects.get())
     assert baseline.height_cm is None and baseline.weight_kg is None
+    await page.get_by_role("button", name="ایجاد اصلاحیهٔ ارزیابی", exact=True).click()
+    correction_url = page.url.split("?")[0]
+    await page.get_by_label(
+        "با نگهداری خصوصی داده‌های اختیاری این ارزیابی برای خودم موافقم."
+    ).check()
+    await page.get_by_role("button", name="تأیید نگهداری خصوصی", exact=True).click()
+    await page.goto(correction_url + "?step=basics")
+    await page.get_by_label("قد (سانتی‌متر)", exact=True).fill("۱۷۰.۰")
+    await page.get_by_role("button", name="ذخیرهٔ مرحله", exact=True).click()
+    correction = await database(
+        lambda: BaselineAssessment.objects.exclude(pk=baseline.id).get()
+    )
+    assert str(correction.height_cm) == "170.0" and correction.parent_id == baseline.id
+    await page.get_by_role("button", name="پس‌گرفتن اجازهٔ نگهداری", exact=True).click()
+    await expect(page.get_by_label("قد (سانتی‌متر)", exact=True)).to_have_value("")
     from apps.governance.flag_models import FeatureFlag
 
     await database(
@@ -92,6 +107,21 @@ async def test_logout_or_switch_account_denied(
     ).status == 403
     response = await page.goto(private_url)
     assert response.url.endswith("/accounts/entry/")
+    from tests.e2e.c02.helpers import entry, verify
+
+    await verify(page, await entry(page, base, auth_runtime, phone="۰۹۱۲۳۴۵۶۷۸۰"))
+    # Request API denial without creating an expected-error browser console event.
+    old_identifier = private_url.split("/baseline/")[1].split("/")[0]
+    foreign = await page.request.get(
+        base + f"/api/v1/athlete/baseline/{old_identifier}/"
+    )
+    missing = await page.request.get(
+        base + f"/api/v1/athlete/baseline/{__import__('uuid').uuid4()}/"
+    )
+    assert (
+        foreign.status == missing.status == 404
+        and await foreign.body() == await missing.body()
+    )
 
 
 @pytest.mark.parametrize("viewport", VIEWPORTS)
@@ -102,3 +132,8 @@ async def test_private_data_not_browser_cached(
     await login(page, live_server.url, auth_runtime)
     await baseline_core(page, live_server.url)
     await quality(page, await page.reload())
+    response = await page.request.post(
+        live_server.url + "/api/v1/athlete/profile/",
+        data={"operation_id": str(__import__("uuid").uuid4())},
+    )
+    assert response.status == 403 and "no-store" in response.headers["cache-control"]

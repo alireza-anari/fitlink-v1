@@ -1,0 +1,19 @@
+{% extends 'accounts/base.html' %}{% load static tz %}
+{% block extra_scripts %}<script type="module" src="{% static 'src/profiles.js' %}"></script>{% endblock %}
+{% block account_content %}
+<h1>ارزیابی خصوصی ورزشکار</h1><p class="c02-help">اطلاعات خوداظهاری هستند؛ این فرم توصیهٔ پزشکی نیست.</p>
+<p class="c02-notice" role="status">{% if baseline.state == 'submitted' %}ثبت شده{% else %}پیش‌نویس{% endif %}</p>
+{% timezone 'Asia/Tehran' %}<p class="c02-help">زمان ارزیابی (تهران): {{ baseline.observed_at|date:'Y-m-d H:i' }}</p>{% endtimezone %}
+<nav class="my-4 flex flex-wrap gap-4" aria-label="مرحله‌های ارزیابی">{% for name,label in steps %}<a href="?step={{ name }}">{{ label }}</a>{% endfor %}<a href="/athlete/setup/">نمایهٔ ورزشکار</a></nav>
+{% if baseline.state == 'draft' %}
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="save">{% include 'accounts/form.html' %}<button class="c02-button" type="submit">ذخیرهٔ مرحله</button></form>
+<form method="post" class="my-4">{% csrf_token %}<input type="hidden" name="action" value="submit">{% include 'accounts/form.html' with form=command_form %}<button class="c02-button" type="submit">ثبت ارزیابی</button></form>
+{% else %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="correct">{% include 'accounts/form.html' with form=command_form %}<button class="c02-button" type="submit">ایجاد اصلاحیهٔ ارزیابی</button></form>{% endif %}
+<section class="my-6" aria-labelledby="storage-title"><h2 id="storage-title">نگهداری خصوصی اطلاعات اختیاری</h2>
+<p class="c02-help">بدون تأیید صریح، اطلاعات اختیاری ذخیره نمی‌شوند. این اجازه فقط برای نگهداری همین ارزیابی برای خود شماست. با پس‌گرفتن اجازه، داده‌های اختیاری دیگر در خواندن عادی نمایش داده نمی‌شوند.</p>
+{% if storage_seconds and baseline.state == 'draft' %}<p class="c02-help">اعتبار اجازه: {{ storage_seconds }} ثانیه. امکان پس‌گرفتن اجازه وجود دارد.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="grant">{% include 'accounts/form.html' with form=consent_form %}<button class="c02-secondary" type="submit">تأیید نگهداری خصوصی</button></form>
+{% elif not storage_seconds %}<p class="c02-notice">نگهداری اطلاعات اختیاری در حال حاضر در دسترس نیست. می‌توانید مراحل اصلی را ادامه دهید.</p>{% endif %}
+{% if can_revoke %}<form method="post" class="my-4">{% csrf_token %}<input type="hidden" name="action" value="revoke">{{ consent_form.operation_id }}{{ consent_form.consent_uuid }}{{ consent_form.expected_consent_version }}<button class="c02-secondary" type="submit">پس‌گرفتن اجازهٔ نگهداری</button></form>{% endif %}
+<form method="post" class="my-4">{% csrf_token %}<input type="hidden" name="action" value="clear">{% include 'accounts/form.html' with form=command_form %}<button class="c02-secondary" type="submit">پاک کردن اطلاعات اختیاری</button></form>
+</section>{% endblock %}

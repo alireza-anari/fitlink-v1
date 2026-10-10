@@ -289,6 +289,18 @@ def test_csrf_before_profile_and_upload_side_effect():
         f"/api/v1/profile-assets/{uuid4()}/body/",
         f"/api/v1/profile-assets/{uuid4()}/finalize/",
         f"/api/v1/profile-assets/{uuid4()}/abandon/",
+        f"/api/v1/athlete/baseline/{uuid4()}/steps/goals/",
+        f"/api/v1/athlete/baseline/{uuid4()}/submit/",
+        f"/api/v1/athlete/baseline/{uuid4()}/correct/",
+        f"/api/v1/athlete/baseline/{uuid4()}/clear-optional/",
+        f"/api/v1/athlete/baseline/{uuid4()}/storage-consent/",
+        f"/api/v1/athlete/baseline/{uuid4()}/storage-consent/revoke/",
+        f"/athlete/baseline/{uuid4()}/",
+        f"/api/v1/professional/credentials/{uuid4()}/revise/",
+        f"/api/v1/professional/credentials/{uuid4()}/withdraw/",
+        f"/api/v1/professional/verification/{uuid4()}/submit/",
+        f"/api/v1/professional/verification/{uuid4()}/withdraw/",
+        f"/api/v1/profile-assets/{uuid4()}/abandon/",
         "/api/v1/professional/verification/draft/",
         "/athlete/setup/",
         "/professional/setup/",
@@ -368,8 +380,6 @@ def test_api_no_store_uniform_403_404_409_503(monkeypatch):
     "fault", ["foreign", "guessed", "anonymous", "stale", "binding"]
 )
 def test_upload_status_requires_exact_current_owner_and_binding(fault, monkeypatch):
-    from apps.assets.models import Asset
-
     s = ready_media(monkeypatch)
     identifier = s.asset.id
     if fault == "foreign":
@@ -386,7 +396,7 @@ def test_upload_status_requires_exact_current_owner_and_binding(fault, monkeypat
             s.user.auth_version += 1
             s.user.save(update_fields=["auth_version"])
         else:
-            Asset.objects.filter(pk=s.asset.id).update(subject_uuid=uuid4())
+            ProfessionalProfile.objects.filter(pk=s.profile.id).update(state="archived")
     response = client.get(f"/api/v1/profile-assets/{identifier}/status/")
     assert response.status_code == (403 if fault in {"anonymous", "stale"} else 404)
     assert "no-store" in response["Cache-Control"]
@@ -425,7 +435,7 @@ def test_owner_derivative_metadata_denial_never_reads_storage(fault, monkeypatch
     from django.utils import timezone
 
     from apps.assets.contracts import AssetNotFound
-    from apps.assets.models import Asset, AssetDerivative, AssetProcessingAttempt
+    from apps.assets.models import AssetDerivative, AssetProcessingAttempt
     from config.use_cases import profile_assets
 
     s = ready_media(monkeypatch)
@@ -439,7 +449,7 @@ def test_owner_derivative_metadata_denial_never_reads_storage(fault, monkeypatch
     elif fault == "missing_attempt":
         AssetProcessingAttempt.objects.filter(asset=s.asset).update(state="failed")
     else:
-        Asset.objects.filter(pk=s.asset.id).update(subject_uuid=uuid4())
+        ProfessionalProfile.objects.filter(pk=s.profile.id).update(state="archived")
     reads = []
     original = s.store.read_limited
 
@@ -469,9 +479,7 @@ def test_baseline_api_replay_cas_and_foreign_uuid():
     replay = post(
         client, "/api/v1/athlete/profile/", {"operation_id": operation}, token
     )
-    assert (
-        replay.status_code == 200 and replay.json()["id"] == created.json()["id"]
-    )
+    assert replay.status_code == 200 and replay.json()["id"] == created.json()["id"]
     assert AthleteProfile.objects.filter(user=s.user).count() == 1
     draft = post(
         client,

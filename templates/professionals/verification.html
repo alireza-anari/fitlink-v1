@@ -1,0 +1,13 @@
+{% extends 'accounts/base.html' %}{% load static tz %}
+{% block extra_scripts %}<script type="module" src="{% static 'src/profiles.js' %}"></script>{% endblock %}
+{% block account_content %}
+<h1>بررسی خصوصی هویت و صلاحیت</h1><p class="c02-help">ثبت درخواست به معنی تأیید نیست. فقط وضعیت کلی و تاریخچهٔ درخواست خودتان نمایش داده می‌شود.</p>
+{% if case %}<p>شناسهٔ درخواست: <bdi>{{ case.id }}</bdi></p>
+<p>{% if case.state == 'draft' %}پیش‌نویس{% elif case.state == 'submitted' %}ارسال شده{% elif case.state == 'under_review' %}در حال بررسی{% else %}بررسی به‌روز شده{% endif %}</p>
+{% for target in case.targets %}<p>{% if target.target == 'identity' %}هویت{% elif target.target == 'coach' %}مربی{% else %}متخصص تغذیه{% endif %}: {% if target.state == 'approved' %}تأیید شده{% elif target.state == 'rejected' %}تأیید نشده{% elif target.state == 'withdrawn' %}انصراف داده شده{% else %}در انتظار بررسی{% endif %} — <bdi>{{ target.id }}</bdi></p>{% endfor %}
+{% timezone 'Asia/Tehran' %}{% for event,target,at in case.history %}<p class="c02-help">به‌روزرسانی درخواست: {{ at|date:'Y-m-d H:i' }}</p>{% endfor %}{% endtimezone %}{% endif %}
+<form method="post">{% csrf_token %}{% include 'accounts/form.html' %}
+{% if not case %}<button class="c02-button" name="action" value="prepare" type="submit">آماده‌سازی درخواست بررسی</button>
+{% else %}<button class="c02-button" name="action" value="submit" type="submit">ارسال درخواست بررسی</button><button class="c02-secondary" name="action" value="withdraw" type="submit">انصراف از هدف انتخاب‌شده</button>{% endif %}</form>
+<a href="/professional/setup/?step=credentials">مدارک خصوصی</a>
+{% endblock %}

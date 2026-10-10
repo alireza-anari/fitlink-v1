@@ -30,6 +30,20 @@ def dto(row):
     return UploadDTO(row.id, row.version, row.state, row.purpose, row.upload_expires_at)
 
 
+def own_profile_upload_status(actor, asset_uuid, at, *, subject):
+    """Read one exact owned reservation after current subject authority."""
+    from .contracts import AssetNotFound
+
+    validate_context(actor, at)
+    with transaction.atomic():
+        user = locked_actor(actor, "asset.owner_read", max(at, timezone.now()))
+        try:
+            row = owned_asset(user, asset_uuid, subject)
+        except (ValueError, LookupError):
+            raise AssetNotFound("Asset unavailable") from None
+        return dto(row)
+
+
 def binding(row):
     return (
         row.id,

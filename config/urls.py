@@ -2,7 +2,9 @@ from django.urls import path
 
 from apps.accounts.urls import urlpatterns as account_routes
 from apps.assets.urls import urlpatterns as asset_routes
+from apps.athletes.urls import urlpatterns as athlete_routes
 from apps.governance.views import privacy_page
+from apps.professionals.urls import urlpatterns as professional_routes
 
 from .api import StatusView
 from .health import liveness, readiness
@@ -18,4 +20,6 @@ urlpatterns = [
 ]
 urlpatterns += account_routes
 urlpatterns += asset_routes
+urlpatterns += athlete_routes
+urlpatterns += professional_routes
 urlpatterns += [path("privacy/requests/", privacy_page)]

@@ -12,6 +12,7 @@
 <nav class="my-6 flex flex-wrap gap-4" aria-label="اقدام‌های حساب">
   <a href="/privacy/requests/">درخواست‌های حریم خصوصی</a>
   {% if not control_only %}<a href="/accounts/phone-change/">تغییر شمارهٔ همراه</a>{% endif %}
+  {% if not control_only %}<a href="/athlete/setup/">نمایهٔ ورزشکار من</a><a href="/professional/setup/">نمایهٔ حرفه‌ای من</a>{% endif %}
 </nav>
 <div class="flex flex-wrap gap-3">
   <form method="post" action="/accounts/me/">{% csrf_token %}<input type="hidden" name="action" value="logout"><button class="c02-secondary" type="submit">خروج از این نشست</button></form>

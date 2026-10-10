@@ -40,3 +40,42 @@ def test_persian_digits_and_explicit_clear():
     )
     assert form.is_valid()
     assert form.payload() == {"height_cm": "170.0", "weight_kg": None}
+
+
+def test_native_locations_use_bounded_human_lines():
+    from apps.professionals.forms import ProfessionalStepForm
+
+    form = ProfessionalStepForm(
+        "locations",
+        data={
+            "operation_id": str(uuid4()),
+            "expected_version": "1",
+            "service_modes": ["in_person"],
+            "languages": "fa",
+            "locations": "IR | تهران | تهران | حضوری",
+        },
+    )
+    assert form.is_valid()
+    assert form.payload()["locations"] == [
+        {
+            "country_code": "IR",
+            "region": "تهران",
+            "city": "تهران",
+            "modes": ["in_person"],
+        }
+    ]
+
+
+def test_native_approximate_records_use_bounded_human_lines():
+    from apps.athletes.forms import BaselineStepForm
+
+    form = BaselineStepForm(
+        "measures",
+        data={
+            "operation_id": str(uuid4()),
+            "expected_version": "1",
+            "approximate_records": "دویدن | ۱۰۰ | metres | 2026-01-01T10:00:00+03:30",
+        },
+    )
+    assert form.is_valid()
+    assert form.payload()["approximate_records"][0]["provenance"] == "self_reported"

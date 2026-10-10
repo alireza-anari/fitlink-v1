@@ -1,0 +1,21 @@
+{% extends 'accounts/base.html' %}{% load static %}
+{% block extra_scripts %}<script type="module" src="{% static 'src/profiles.js' %}"></script>{% endblock %}
+{% block account_content %}
+<h1>تنظیم نمایهٔ خصوصی حرفه‌ای</h1><p class="c02-intro">نام نمایشی و نقش‌ها خوداظهاری‌اند؛ اعلام نقش به معنی تأیید صلاحیت نیست.</p>
+<nav class="my-4 flex flex-wrap gap-4" aria-label="نمایه‌های من"><a href="/athlete/setup/">نمایهٔ ورزشکار من</a>{% if profile %}<a href="/professional/preview/">پیش‌نمایش خصوصی</a><a href="/professional/verification/">بررسی هویت و صلاحیت</a>{% endif %}</nav>
+{% if not profile %}{% if can_create %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="create">{% include 'accounts/form.html' with form=create_form %}<button class="c02-button" type="submit">ایجاد نمایهٔ حرفه‌ای</button></form>{% else %}<p class="c02-notice">ثبت‌نام حرفه‌ای در حال حاضر در دسترس نیست.</p>{% endif %}
+{% else %}
+<nav class="my-4 flex flex-wrap gap-4" aria-label="مرحله‌های تنظیم">{% for name,label in steps %}<a href="?step={{ name }}">{{ label }}</a>{% endfor %}</nav>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="save">{% include 'accounts/form.html' %}<button class="c02-button" type="submit">ذخیرهٔ مرحله</button></form>
+{% if step == 'credentials' %}<section class="my-6"><h2>مدرک خصوصی</h2><p class="c02-help">ابتدا مشخصات مدرک را ثبت کنید؛ سپس شواهد آن را خصوصی بارگذاری و پس از آماده شدن به اصلاحیهٔ مدرک پیوند دهید.</p>
+<form method="post">{% csrf_token %}{% include 'accounts/form.html' with form=credential_form %}<button class="c02-button" name="action" value="credential_create" type="submit">ثبت مدرک</button>{% if credential %}<button class="c02-secondary" name="action" value="credential_revise" type="submit">ثبت اصلاحیهٔ مدرک</button>{% endif %}</form>
+{% if credential %}<p class="c02-help">شناسهٔ مدرک: <bdi>{{ credential.id }}</bdi></p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="credential_withdraw">{% include 'accounts/form.html' with form=credential_command %}<button class="c02-secondary" type="submit">انصراف از مدرک</button></form>{% endif %}</section>{% endif %}
+<section class="my-6" aria-labelledby="upload-title"><h2 id="upload-title">پروندهٔ خصوصی</h2><p class="c02-help">فقط PNG یا JPEG، حداکثر ده میلیون بایت. پرونده ابتدا در قرنطینه بررسی می‌شود. فایل خام قابل دریافت نیست.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="upload_begin">{% include 'accounts/form.html' with form=upload_form %}<button class="c02-button" type="submit">شروع بارگذاری خصوصی</button></form>
+{% if asset %}<p class="c02-notice" role="status">{{ asset_state }}</p>
+{% if asset.state == 'begun' %}<form method="post" enctype="multipart/form-data" action="/api/v1/profile-assets/{{ asset.id }}/body/">{% csrf_token %}<input type="hidden" name="expected_version" value="{{ asset.version }}"><div class="c02-field"><label for="private-file">پروندهٔ خصوصی PNG یا JPEG</label><input id="private-file" name="file" type="file" accept="image/png,image/jpeg" required></div><button class="c02-button" type="submit">دریافت پرونده</button></form>{% endif %}
+{% if asset.state == 'uploaded' %}<form method="post" action="/api/v1/profile-assets/{{ asset.id }}/finalize/">{% csrf_token %}<input type="hidden" name="expected_version" value="{{ asset.version }}"><input type="hidden" name="operation_id" value="{{ asset_operation }}"><button class="c02-button" type="submit">ارسال برای پردازش</button></form>{% endif %}
+{% if asset.state == 'ready' and asset.purpose == 'avatar' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="attach_avatar">{% include 'accounts/form.html' with form=command_form %}<button class="c02-button" type="submit">استفاده به‌عنوان تصویر نمایه</button></form>{% endif %}
+{% if asset.state == 'begun' or asset.state == 'uploaded' %}<form method="post" action="/api/v1/profile-assets/{{ asset.id }}/abandon/">{% csrf_token %}<input type="hidden" name="expected_version" value="{{ asset.version }}"><input type="hidden" name="operation_id" value="{{ asset_operation }}"><button class="c02-secondary" type="submit">رها کردن بارگذاری</button></form>{% endif %}
+<a href="/professional/setup/?step={{ step }}">بررسی دوبارهٔ وضعیت</a>{% endif %}</section>{% endif %}
+{% endblock %}

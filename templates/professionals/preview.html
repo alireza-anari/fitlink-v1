@@ -1,0 +1,12 @@
+{% extends 'accounts/base.html' %}{% load static %}
+{% block extra_scripts %}<script type="module" src="{% static 'src/profiles.js' %}"></script>{% endblock %}
+{% block account_content %}
+<h1>پیش‌نمایش خصوصی</h1><p class="c02-notice">فقط برای صاحب نمایه؛ این صفحه عمومی نیست.</p>
+<h2>{{ preview.display_name }}</h2><p class="whitespace-pre-line break-words">{{ preview.biography }}</p>
+<p>وضعیت هویت: {% if preview.identity_verified %}تأیید شده{% else %}تأیید نشده{% endif %}</p>
+{% for role in preview.roles %}<p>{% if role.role == 'coach' %}مربی{% else %}متخصص تغذیه{% endif %}: {% if role.verified %}تأیید شده{% else %}تأیید نشده{% endif %}</p>{% endfor %}
+{% for specialty in preview.specialties %}<p>{{ specialty }}</p>{% endfor %}
+{% for location in preview.locations %}<p>{{ location.region }}، {{ location.city }}</p>{% endfor %}
+{% for media in preview.media %}<img class="my-4 max-w-full rounded-xl" src="/api/v1/profile-assets/{{ media.asset_uuid }}/content/" alt="تصویر خصوصی نمایه">{% endfor %}
+<p class="break-words">{{ preview.welcome_message }}</p><a href="/professional/setup/">ادامهٔ تنظیم نمایه</a>
+{% endblock %}

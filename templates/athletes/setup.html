@@ -1,0 +1,9 @@
+{% extends 'accounts/base.html' %}{% load static %}
+{% block extra_scripts %}<script type="module" src="{% static 'src/profiles.js' %}"></script>{% endblock %}
+{% block account_content %}
+<h1>نمایهٔ خصوصی ورزشکار</h1><p class="c02-intro">این ارزیابی برای ثبت وضعیت خوداظهاری شماست. داده‌های اختیاری را می‌توانید خالی بگذارید.</p>
+<nav class="my-4 flex flex-wrap gap-4" aria-label="نمایه‌های من"><a href="/professional/setup/">نمایهٔ حرفه‌ای من</a></nav>
+<form method="post">{% csrf_token %}{% include 'accounts/form.html' %}
+{% if profile %}<input type="hidden" name="action" value="begin"><button class="c02-button" type="submit">شروع یا ادامهٔ ارزیابی</button>
+{% else %}<input type="hidden" name="action" value="create"><button class="c02-button" type="submit">ایجاد نمایهٔ ورزشکار</button>{% endif %}</form>
+{% endblock %}

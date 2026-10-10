@@ -9,7 +9,7 @@
   "scripts": {
     "build:css": "tailwindcss -i static/src/styles.css -o static/dist/app.css --minify",
     "watch:css": "tailwindcss -i static/src/styles.css -o static/dist/app.css --watch",
-    "check:js": "node --check static/src/app.js && node --check static/src/accounts.js"
+    "check:js": "node --check static/src/app.js && node --check static/src/accounts.js && node --check static/src/profiles.js"
   },
   "devDependencies": {
     "@tailwindcss/cli": "4.3.0",

@@ -118,4 +118,22 @@ def abandon_profile_upload(actor, asset_uuid, expected_version, operation_id, at
 
 
 def authorized_profile_download(actor, asset_uuid, purpose, at, staff_context=None):
-    return delivery.authorized_profile_download(actor, asset_uuid, purpose, at)
+    record, _ = hooks(actor)
+    return delivery.authorized_profile_download(
+        actor,
+        asset_uuid,
+        purpose,
+        at,
+        subject=owned_asset_subject,
+        record=record,
+        store=get_private_store,
+    )
+
+
+def own_profile_upload_status(actor, asset_uuid, at):
+    return uploads.own_profile_upload_status(
+        actor,
+        asset_uuid,
+        at,
+        subject=owned_asset_subject,
+    )
