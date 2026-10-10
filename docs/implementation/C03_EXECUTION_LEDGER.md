@@ -2279,3 +2279,27 @@ Task9 IN_PROGRESS/PENDING_HOSTED_RED; no Task10 work.
   terminal-source tick and a delayed current-owner effect (89 Task 9 cases).
   This test-only checkpoint does not change production code; its hosted results
   must establish the timestamp behavior before the precision fix. No Task 10.
+
+### Task 9 retirement clock RED and final implementation candidate
+
+- Second implementation `cd7d57d29fa8caa5634f454259dfd19f8985d8f7`, tree
+  `eedc8130b1a0fb0e02f3f463aff57d098712c0df`, run `38048451978`:
+  storage/processing/timeout jobs pass. The PostgreSQL observer reaches its
+  unchanged 240-second deadline before completing the Task 8 selection (96
+  calls passed, zero failed calls; no Task 9 cases executed). This incomplete
+  attempt is neither Task 9 behavioral RED nor a reason to reopen authoritative
+  Task 8. No gate/timeout/assertion was weakened to obtain an acceptance result.
+- Timestamp regression checkpoint `e3235a85c4c265692b17174cc981f8799358652e`,
+  tree `fdb6ebeb47989e70de4bf55cf16a33fbd5fb0400`, run `38048589560`:
+  PostgreSQL Task 8 108/0/0; Task 9 87 passed/2 failed/0 skipped, both new
+  delayed-retirement behavior assertions. Earlier reviewed fixes pass unchanged.
+- New retirement timestamps are now `max(requested tick, current time)` after
+  the affected asset locks, for both terminal/admission reconciliation and
+  bounded current-owner effects. The policy duration begins at actual retirement;
+  existing earlier revocation anchors remain intact. Terminal-source tests use
+  the resulting retirement anchor for due time, rather than assuming no lock
+  wait. No duration, schema, Task 5 processing, workflow or old gate change.
+- Earlier first-candidate actual private MinIO/complete Foundation backend:
+  1,402 passed/1 failed/0 skipped; the sole failure was the corrected synthetic
+  duplicate-policy fixture. This is supporting recovery evidence, not final
+  acceptance. Final exact implementation GREEN/review remain pending.

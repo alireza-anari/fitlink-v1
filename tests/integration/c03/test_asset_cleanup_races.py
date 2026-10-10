@@ -407,9 +407,12 @@ def test_terminal_processing_source_retires_under_policy(
     assert scan_cleanup_assets(at, 1, store=s.store) == 1
     s.asset.refresh_from_db()
     # Terminal rejection is revoked metadata first; policy time starts here.
-    assert s.asset.state == "revoked" and s.asset.revoked_at == at
+    assert s.asset.state == "revoked" and s.asset.revoked_at >= at
     assert s.store.head(s.asset.source_key).size == len(s.data)
-    assert scan_cleanup_assets(at + timedelta(seconds=2), 1, store=s.store) == 1
+    assert (
+        scan_cleanup_assets(s.asset.revoked_at + timedelta(seconds=2), 1, store=s.store)
+        == 1
+    )
     s.asset.refresh_from_db()
     if held:
         assert s.asset.state == "revoked"

@@ -744,6 +744,7 @@ def revoke_owner_lifetime(owner, at, *, asset_ids=None):
         .exclude(state__in=["revoked", "abandoned", "deletion_pending", "deleted"])
         .order_by("pk")[:100]
     )
+    at = max(at, timezone.now())
     for asset in assets:
         asset.state = "abandoned" if asset.accepted_at is None else "revoked"
         asset.revoked_at = at
@@ -829,6 +830,7 @@ def reconcile_asset_lifetime(asset_uuid, at):
         if not _cleanup_subject(candidate):
             return
         row = Asset.objects.select_for_update().get(pk=asset_uuid)
+        at = max(at, timezone.now())
         expired_admission = (
             row.accepted_at is None
             and row.state in {"pending_upload", "receiving", "quarantined"}
