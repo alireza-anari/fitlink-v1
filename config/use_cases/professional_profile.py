@@ -122,13 +122,30 @@ def _registration_enabled() -> bool:
 def define_assistant_role(actor, assistant_uuid, operation_id, at):
     from apps.professionals.assistants import define_assistant_role as define
 
-    return define(actor, assistant_uuid, operation_id, at)
+    record, emit = _assistant_hooks(actor)
+    return define(actor, assistant_uuid, operation_id, at, record=record, emit=emit)
 
 
 def revoke_assistant_role(actor, membership_uuid, expected_version, operation_id, at):
     from apps.professionals.assistants import revoke_assistant_role as revoke
 
-    return revoke(actor, membership_uuid, expected_version, operation_id, at)
+    record, emit = _assistant_hooks(actor)
+    return revoke(
+        actor,
+        membership_uuid,
+        expected_version,
+        operation_id,
+        at,
+        record=record,
+        emit=emit,
+    )
+
+
+def _assistant_hooks(actor):
+    def record(outcome):
+        append_event(outcome, actor_uuid=actor.user_uuid, subject_type="assistant")
+
+    return record, _hooks(actor)["emit"]
 
 
 def create_professional_profile(

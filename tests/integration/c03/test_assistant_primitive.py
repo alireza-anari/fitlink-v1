@@ -114,6 +114,37 @@ def test_definition_is_nonself_and_current(fault):
     assert AssistantMembership.objects.count() == 0
 
 
+def test_definitions_have_no_activation_or_catalog_limit():
+    s = owner()
+    for phone in ("+989123456789", "+989123456788", "+989123456787"):
+        assert define(s, make_actor(phone)).state == "defined"
+    assert (
+        AssistantMembership.objects.filter(profile=s.profile, state="defined").count()
+        == 3
+    )
+
+
+@pytest.mark.parametrize(
+    "fault", ["anonymous", "auth_version", "restricted", "archived"]
+)
+def test_definition_replay_revalidates_owner(fault):
+    s, assistant, operation = owner(), make_actor("+989123456789"), uuid4()
+    define(s, assistant, operation)
+    if fault == "anonymous":
+        s.actor = None
+    elif fault == "auth_version":
+        s.user.auth_version += 1
+        s.user.save(update_fields=["auth_version"])
+    elif fault == "restricted":
+        s.user.state = "restricted"
+        s.user.save(update_fields=["state"])
+    else:
+        s.profile.state = "archived"
+        s.profile.save(update_fields=["state"])
+    with pytest.raises((PermissionError, ProfileNotFound)):
+        define(s, assistant, operation)
+
+
 def test_foreign_uuid_and_stale_owner_deny_before_conflicts():
     s, assistant = owner(), make_actor("+989123456789")
     row = define(s, assistant)

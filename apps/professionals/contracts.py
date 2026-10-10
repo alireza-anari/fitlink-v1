@@ -14,6 +14,57 @@ class ProfileConflict(ValueError):
 
 
 @dataclass(frozen=True)
+class PreviewRoleDTO:
+    role: str
+    declared_active: bool
+    verified: bool
+    status: str
+
+
+@dataclass(frozen=True)
+class PreviewMediaDTO:
+    asset_uuid: UUID
+    derivative_uuid: UUID
+    purpose: str
+    content_type: str
+
+
+@dataclass(frozen=True)
+class OwnerPreviewDTO:
+    id: UUID
+    version: int
+    state: str
+    display_name: str
+    biography: str
+    specialties: tuple[str, ...]
+    experience_years: int | None
+    service_modes: tuple[str, ...]
+    languages: tuple[str, ...]
+    locations: tuple["ProfessionalLocationDTO", ...]
+    accent_color: str
+    welcome_message: str
+    identity_verified: bool
+    identity_status: str
+    roles: tuple[PreviewRoleDTO, ...]
+    verified_roles: tuple[str, ...]
+    media: tuple[PreviewMediaDTO, ...]
+    cache_control: str = "private, no-store"
+    robots: str = "noindex, nofollow"
+
+
+@dataclass(frozen=True)
+class AssistantMembershipDTO:
+    id: UUID
+    profile_uuid: UUID
+    assistant_uuid: UUID
+    role: str
+    state: str
+    version: int
+    defined_at: datetime
+    revoked_at: datetime | None
+
+
+@dataclass(frozen=True)
 class ProfessionalProfileDTO:
     id: UUID
     version: int

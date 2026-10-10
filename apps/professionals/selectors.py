@@ -11,6 +11,7 @@ from apps.accounts.sessions import AccountActor, locked_actor
 
 from .contracts import (
     CredentialDTO,
+    OwnerPreviewDTO,
     ProfessionalLocationDTO,
     ProfessionalProfileDTO,
     ProfessionalRoleDTO,
@@ -120,7 +121,7 @@ def own_professional_profile(
         )
 
 
-def owner_preview(actor: AccountActor, at: datetime):
+def owner_preview(actor: AccountActor, at: datetime) -> OwnerPreviewDTO:
     from .preview import owner_preview as preview
 
     return preview(actor, at)

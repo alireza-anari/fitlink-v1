@@ -2506,3 +2506,43 @@ Task10 DTO carries private,no-store and noindex,nofollow directives; scope tests
 require no preview/public/assistant/future route now. All established service,
 workflow, assertions, inherited gates and observer/per-suite/child bounds unchanged.
 Task10 IN_PROGRESS/PENDING_HOSTED_RED. No Task11 implementation.
+
+### Task 10 continuation, observed PostgreSQL RED and implementation candidate
+
+- Recovery preserved exact local/remote `c7a0b349f16b2a06340ef4a0aa4ef0db896c472f`,
+  tree `9b9a82a354808c77dce6f07e409099597e4dbcde`, and both unpublished
+  owner-media/assistant replay test refinements. No reset/clean/stash/overwrite.
+  All eight protected/unrelated refs still match the baselines above. Task 9
+  authoritative run38053735759 attempt1 reverified SUCCESS at27d7916/tree571e42c.
+- Actual test checkpoint run38058891938 attempt1: PostgreSQL114232907724
+  naturally exited1 at286.3s with complete cleanup. Task10 **23failed/51passed/
+  0skipped**, all failed call frames inspected: owner preview fails at its closed
+  ProfileNotFound boundary, assistant positives fail at its closed PermissionError
+  boundary, and the missing explicit DTO contract fails. No collection/fixture
+  errors counted as behavioral RED. Task8 108/0/0 and Task9 89/0/0 remain GREEN;
+  inherited269C02 and real Redis durable quota restart passed. Storage/processing/
+  timeout jobs succeeded. Foundation fails on the expected missing DTO unit;
+  later skipped rehearsal is not acceptance.
+- Implemented explicit frozen private preview/role/media/membership DTOs. Owner
+  actor/state/session/auth_version/exact profile are revalidated under locks;
+  verification never gates own preview or publishes anything. Query-time identity
+  and capability facts reuse Task8 coherent eligibility/binding; preview excludes
+  internal binding, identity name, credentials, evidence, keys/hashes and staff
+  explanations. Sanitized current private avatar/cover/logo derivative references
+  carry only UUIDs/purpose/MIME, no URL or source delivery. HTTP/native adapters
+  remain Task11; DTO private/no-store and noindex/nofollow directives are retained.
+- Internal define/revoke commands derive owner from current AccountActor, lock
+  definition participants in stable User PK order, reject self/unavailable target,
+  retain fixed client_support/defined/revoked state, receipts and optimistic CAS.
+  Duplicate definitions return current row; old operation replay returns current
+  authorized membership including revocation. Audit/outbox/receipt effects are
+  transactional; no invitation/activation/operational/client/entitlement behavior
+  or fabricated max-two rule. The previously recorded installed metadata-event
+  ruling stands; no registry/handler, future-domain, schema or migration change.
+- Local supporting checks:62scope/CI cases passed; whole-repo Ruff passed and
+  format400files passed; professional mypy41sources and inherited/composition
+  mypy95sources passed; Django test/production and diff/shell checks passed.
+  Recovery found a truncated ignored Python logging bytecode cache; preserved
+  it by renaming only that generated cache, then reran checks successfully.
+  No source/dependency/lock workaround. Full local units and exact-source hosted
+  gates remain required; Task10 IN_PROGRESS/PENDING_CI, never COMPLETE.

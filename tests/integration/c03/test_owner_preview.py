@@ -216,6 +216,34 @@ def test_preview_cosmetic_fields_and_private_media_allowlist():
     assert dto.specialties == ("قدرت",) and dto.media == ()
 
 
+@pytest.mark.parametrize("purpose", ["avatar", "cover", "logo"])
+def test_preview_references_only_current_private_sanitized_media(purpose):
+    from .test_credential_revisions import ready
+
+    s = owner()
+    asset = ready(s, purpose)
+    save(s, "branding", {purpose: asset.id})
+    dto = preview(s.actor)
+    derivative = asset.derivatives.get(purpose="owner_preview")
+    assert len(dto.media) == 1
+    media = dto.media[0]
+    assert media.asset_uuid == asset.id and media.derivative_uuid == derivative.id
+    assert media.purpose == purpose and media.content_type == "image/png"
+    assert set(asdict(media)) == {
+        "asset_uuid",
+        "derivative_uuid",
+        "purpose",
+        "content_type",
+    }
+    assert asset.source_key not in str(asdict(dto)) and derivative.key not in str(
+        asdict(dto)
+    )
+    asset.state = "revoked"
+    asset.revoked_at = timezone.now()
+    asset.save(update_fields=["state", "revoked_at"])
+    assert preview(s.actor).media == ()
+
+
 def test_domain_preview_and_selector_are_the_same_private_contract():
     assert importlib.util.find_spec("apps.professionals.preview"), (
         "Missing preview boundary"
