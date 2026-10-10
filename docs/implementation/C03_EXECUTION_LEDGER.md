@@ -2626,3 +2626,67 @@ Task10 IN_PROGRESS/PENDING_HOSTED_RED. No Task11 implementation.
   Corrected test requires new exact-source hosted verification. Earlier failed
   jobs remain preserved; retry of the superseded source is no longer useful.
   Task10 PENDING_CI; no timeout bound extension is authorized or implemented.
+
+### Task 10 final exact-source GREEN and completion (2026-10-10)
+
+Validated implementation `c6b06df579c30f9a4b95f04eda2a4d3a40949e37`, tree
+`3f646d0e75d617f2b2daf1e22cef624cad8c8b50`. Authoritative Actions
+[38062981527](https://github.com/alireza-anari/fitlink-v1/actions/runs/38062981527),
+attempt1, completed SUCCESS with that exact head/tree. All five jobs completed
+SUCCESS; no partial/cutoff result or earlier candidate substitutes for this source.
+
+| Required job | Exact job ID | Actual final evidence |
+| --- | --- | --- |
+| PostgreSQL cumulative/account upgrade | 114244843894 | inherited269passed; Redis durable quota prepare/restart/verify passed; Task6 67/0/0, Task7 49/0/0, Task8 108/0/0, Task9 89/0/0, Task10 88/0/0; every journal pytest_exit0; command exit0 at183.1s, complete cleanup183.3s |
+| Foundation/upgrade/full regression | 114244843584 | quality619unit passes30.02s; unchanged immutable C01/exact upgrade/full current rehearsal; journal1552passed/0failed/0skipped; current full suite1504passes453.768s including all88Task10, separate browser38passes217.632s plus inherited C01 probes; every pytest_exit0; command exit0 at1148.4s, complete cleanup1148.5s |
+| Real private storage | 114244843825 | 91passed/0failed/0skipped, pytest_exit0 at22.428s; command exit0 at265.8s, complete cleanup265.9s |
+| Real scanner/non-eager processing | 114244843943 | 62passed/0failed/0skipped, pytest_exit0 at25.769s; all real worker/scanner/Beat/parent-death recovery stages passed; command exit0 at301.8s, complete cleanup301.9s |
+| Actual Compose timeout ownership | 114244843906 | owned container started/removed, detached host child terminated, supervisor_contract_satisfied=true |
+
+- PostgreSQL Task10 journal completes all four approved selected suites with88
+  passes and pytest_exit0 at11.491s. Assistant upload-denial test now reaches
+  exact-owner policy with valid metadata and passes in both PostgreSQL and full
+  Foundation. The prior TypeError/cutoff evidence remains historical FAILED.
+  No repeated failed-job run, bound extension or gate weakening was needed.
+- Downloaded all five exact-run diagnostic ZIPs, verified their bytes against
+  GitHub digests, inspected journals and preserved them under ignored private
+  .runtime/task10-evidence. Artifact bindings all identify the exact source above:
+  Foundation11674455791/a9b39d7df03b5b3b98cb8aaa1c6ed0fb437133f95694ad1e0f1f33811dc4f18e;
+  PostgreSQL11673214476/31d9a211aebebac217a89f915710b7cf297408e51dded308e0d233566e4f0f89;
+  storage11673339270/e9fb0bc2acf784e221a17a8aa177ecb1d65125be7c97212830c752681dfbae69;
+  processing11673009789/ea0786376ebb43d9f34f022ba9d8448d9c8cca1ad9860ced911dc56696f8fd39;
+  ownership11673363709/137b8fd3aeea35f6af69069115762d6a7d5c2612d1574a22af5cb26b805016e6.
+- Service identities/readiness are recorded in exact-job snapshots: PostgreSQL
+  4cb999819db36d0e12d7a424c08741f678bff749b929cdd3edf43d24db7dd0ba healthy;
+  fitlink-c03-private-storage PostgreSQL5532518, Redis69efa00, MinIOf04d7bc
+  healthy and MinIO200; fitlink-c03-private-processing PostgreSQL98c7d1d,
+  Redisfc7d8da, MinIOa1a2b77 with readiness200 and later healthy worker/scanner.
+  Injected real scanner outage denies, restoration is healthy; real worker
+  SIGKILL/broker restart recovers exactly once, separate Beat recovers missed
+  prompt, installed sandbox decoder dies on parent SIGKILL. These are actual
+  service evidence, not mocked-unit acceptance or source inspection claims.
+- Final security/scope review: current exact AccountActor ownership revalidated
+  for preview/mutations/replay; private preview for all verification states with
+  separate identity and role statuses; private sanitized derivative references
+  only; no evidence/keys/URLs/hash/identity-name/staff explanation/internal binding
+  disclosure. Membership never grants authority. Fixed inert client_support,
+  current target/non-self validation, stable locks, receipts/CAS, transactional
+  audit/outbox and current revoked replay verified. Installed metadata-event
+  ruling and its future explicit-handler cost remain as recorded above.
+- Independent review's Important relative-import guard gap has observed
+  mutation RED and corrected-source full GREEN. No unresolved Critical/Important
+  or deferred Minor finding. HTTP/native headers/adapters remain Task11; C04
+  public publication/search/index and C06 operational/entitlement behavior remain
+  absent. Migration impact NONE, real hosted migration drift check passed.
+- Final diff from Task9 baseline contains only the12 approved Task10 source,
+  tests, incremental selection and ledger paths. All eight protected/unrelated
+  refs reverified unchanged after final GREEN. Local/remote/index/worktree were
+  exact c6b06df and clean before this final documentation-only append; guarded
+  non-force publication must preserve all validated implementation blobs.
+
+**Task10 COMPLETE. STOP at Task10.** Task9 remains COMPLETE on its own recorded
+authoritative source. No Task11/C04 work, merge, deployment or protected-ref write.
+This ledger-only completion checkpoint preserves the linked validated source;
+any documentation-triggered workflow is not a substitute or reopening of source
+acceptance. Per-suite180s, cumulative child300s, observer330/600/1200s and inherited
+job limits/selections/assertions/services/triggers remain unchanged.
