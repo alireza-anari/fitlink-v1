@@ -2416,3 +2416,56 @@ No reset/clean/stash, merge, deployment, force push or protected-ref modificatio
   Publish only a guarded non-forced fast-forward on profiles/c03-cloud, then
   require a new exact-implementation hosted run with all five jobs GREEN.
   Task 9 remains IN PROGRESS / PENDING_CI; Tasks 1–8 COMPLETE; no Task 10/C04.
+
+### Task 9 authoritative hosted completion (2026-10-10)
+
+**Current authoritative status: TASK_9_COMPLETE.** Tasks 1–9 COMPLETE;
+Task 10/C04 have not started. C03 overall remains IN PROGRESS.
+
+- Final implementation SHA: `27d7916432c26effa9fdf735fd1dffc0ff5a8ec5`.
+- Final implementation tree: `571e42ca20df1991dbf4dc93b3b1337a18359003`.
+- Parent: `e2458ca4522c7e11ec134cb07caabcec18f3c36a`; guarded
+  expected-head update, force=false. Local staged tree and API-created tree
+  matched exactly; published readback and clean local index/worktree verified.
+- NEW exact-source [Actions run 38053735759](https://github.com/alireza-anari/fitlink-v1/actions/runs/38053735759),
+  attempt 1, completed SUCCESS. API run head/tree match the final implementation
+  above. All five jobs and every listed step completed SUCCESS, zero mandatory
+  step skips. Actual complete job logs and redacted test journals inspected.
+
+| Required job | Exact job evidence | Verified result |
+| --- | --- | --- |
+| Foundation | [114217876813](https://github.com/alireza-anari/fitlink-v1/actions/runs/38053735759/job/114217876813) | GREEN; 579 current units before rehearsal; complete inherited exact C01 upgrade/current regression command naturally exited 0 in 1021.9s, both host/container cleanup complete |
+| c02-migrations / PostgreSQL | [114217876832](https://github.com/alireza-anari/fitlink-v1/actions/runs/38053735759/job/114217876832) | GREEN; 269 inherited cases; real Redis restart/quota gate; cumulative C03 command exited 0 in 219.6s, cleanup complete |
+| c03-storage | [114217876999](https://github.com/alireza-anari/fitlink-v1/actions/runs/38053735759/job/114217876999) | GREEN; actual private MinIO/upload slice 91 passed / 0 failed / 0 skipped, complete=true; natural exit 0 in 174.6s, cleanup complete |
+| c03-processing | [114217876789](https://github.com/alireza-anari/fitlink-v1/actions/runs/38053735759/job/114217876789) | GREEN; 62 passed / 0 failed / 0 skipped, pytest exit 0; real scanner/non-eager worker/restart/Beat/decoder-parent-death probes; natural exit 0 in 236.8s, cleanup complete |
+| c03-timeout-probe | [114217876663](https://github.com/alireza-anari/fitlink-v1/actions/runs/38053735759/job/114217876663) | GREEN; actual Compose timeout probe, owned container removed, detached child terminated, supervisor_contract_satisfied=true |
+
+- Foundation journal totals: 1463 passed / 0 failed / 0 skipped; six pytest
+  sessions exit 0. Full current backend 1415; all 38 C02 browser cases; two
+  viewport smoke cases before and after service restart; five Redis/Celery/
+  Channels recovery cases and one private MinIO recovery case. Backend includes
+  all four installed Task 9 files, 89 cases, against PostgreSQL/private MinIO.
+  Exact immutable C01 fixture verification, its unchanged full rehearsal and
+  populated same-database C01 upgrade remain inside the successful inherited
+  command. Unit/quality/static/production steps also SUCCESS.
+- PostgreSQL journals: Task 6 67/0/0; Task 7 49/0/0; Task 8 108/0/0;
+  Task 9 89/0/0, every selected session exit 0. Task 9 breakdown: inventory
+  22, holds 30, deletion effects 23, cleanup races 14. All setup/call/teardown
+  reports passed. Full cumulative command completed inside unchanged 300s
+  child bound; per-suite 180s guards remain unchanged.
+- Foundation artifact 11670379358 SHA256
+  `8898d480d9bbb0f1866c9550b3c7592242213d02f7d7c815d4b0fffe72914eb0`;
+  PostgreSQL artifact 11670343117 SHA256
+  `c178c23b2e55efd1d24f2975c40028cac45f1fad1a22f7eb7ce96a96484b535f`.
+  Downloaded ZIP digests and every recorded pytest outcome verified. All five
+  artifact metadata records bind to run 38053735759 and implementation SHA.
+- Final scope review: only the authorized aggregate observer-cap line and Task 9
+  ledger additions differ from preserved candidate `23a4d65`. No behavioral
+  failure appeared; no further timeout, assertion, selection, service, workflow,
+  migration, dependency or production retention change. Gates remain mandatory.
+- Protected main, foundation/c01-cloud, accounts/c02-cloud and profiles/c03-plan
+  rechecked unchanged immediately before this documentation checkpoint.
+  This ledger-only completion commit preserves the validated implementation
+  blobs; its triggered run is documentation evidence, not acceptance authority.
+  Prior documentation runs never reopen Tasks 1–8. No merge/deploy/force push.
+  STOP after publishing and verifying this Task 9 completion evidence.
