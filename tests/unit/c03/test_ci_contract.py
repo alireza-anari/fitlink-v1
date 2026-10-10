@@ -488,7 +488,12 @@ def owner_gate_valid(workflow, gate):
         and "pull_request:" not in workflow
         and TRIGGER in workflow
         and all(item in gate for item in required)
-        and "--ignore" not in gate
+        and not any(
+            re.search(r"(?:--ignore|--deselect|(?:^|\s)-(?:k|m)\s)", line)
+            for line in gate.splitlines()
+            if "pytest " in line
+            for line in [line.split("pytest ", 1)[1]]
+        )
     )
 
 
@@ -512,3 +517,29 @@ def test_owner_browser_gate_installed_by_task11():
         assert not owner_gate_valid(workflow.replace(old, new), gate)
     assert not owner_gate_valid(workflow + "continue-on-error: true", gate)
     assert not owner_gate_valid(workflow + "pull_request:\n", gate)
+
+
+@pytest.mark.parametrize(
+    "option", ["-k fake", "--deselect=mandatory", "-m unit", "--ignore=tests/e2e/c03"]
+)
+def test_owner_gate_cannot_narrow_mandatory_selection(option):
+    gate = ENTRY.read_text().replace(
+        "tests/e2e/c03/test_owner_setup.py",
+        "tests/e2e/c03/test_owner_setup.py " + option,
+    )
+    assert not owner_gate_valid(WORKFLOW.read_text(), gate)
+
+
+def test_owner_job_wrong_branch_and_fake_only_rejected():
+    workflow = WORKFLOW.read_text()
+    job = re.search(
+        r"^  c03-owner:\n.*?(?=^  [a-z][a-z0-9-]*:\n|\Z)", workflow, flags=re.M | re.S
+    ).group()
+    wrong = job.replace("refs/heads/profiles/c03-cloud", "refs/heads/main")
+    assert not owner_gate_valid(workflow.replace(job, wrong), ENTRY.read_text())
+    assert not owner_gate_valid(
+        workflow,
+        ENTRY.read_text().replace(
+            "dc up -d --wait db redis minio scanner", "true # db redis minio scanner"
+        ),
+    )

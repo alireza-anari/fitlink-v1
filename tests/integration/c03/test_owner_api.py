@@ -362,3 +362,165 @@ def test_api_no_store_uniform_403_404_409_503(monkeypatch):
     for response in (anonymous, missing, conflict, unavailable):
         assert "no-store" in response["Cache-Control"]
         assert "PRIVATE_INTERNAL_SENTINEL" not in response.content.decode()
+
+
+@pytest.mark.parametrize(
+    "fault", ["foreign", "guessed", "anonymous", "stale", "binding"]
+)
+def test_upload_status_requires_exact_current_owner_and_binding(fault, monkeypatch):
+    from apps.assets.models import Asset
+
+    s = ready_media(monkeypatch)
+    identifier = s.asset.id
+    if fault == "foreign":
+        stranger = make_actor("+989123456789")
+        AssistantMembership.objects.create(profile=s.profile, assistant=stranger.user)
+        client = session_client(stranger)
+    elif fault == "anonymous":
+        client = Client()
+    else:
+        client = session_client(s)
+        if fault == "guessed":
+            identifier = uuid4()
+        elif fault == "stale":
+            s.user.auth_version += 1
+            s.user.save(update_fields=["auth_version"])
+        else:
+            Asset.objects.filter(pk=s.asset.id).update(subject_uuid=uuid4())
+    response = client.get(f"/api/v1/profile-assets/{identifier}/status/")
+    assert response.status_code == (403 if fault in {"anonymous", "stale"} else 404)
+    assert "no-store" in response["Cache-Control"]
+    for private_value in (s.asset.source_key, s.asset.sha256, s.derivative.key):
+        assert private_value not in response.content.decode()
+    if fault in {"foreign", "guessed", "binding"}:
+        missing = client.get(f"/api/v1/profile-assets/{uuid4()}/status/")
+        assert response.content == missing.content
+
+
+def test_owner_derivative_audit_failure_prevents_storage_release(monkeypatch):
+    from django.db import DatabaseError
+    from django.utils import timezone
+
+    from config.use_cases import profile_assets
+
+    s = ready_media(monkeypatch)
+    reads = []
+    monkeypatch.setattr(s.store, "read_limited", lambda *args: reads.append(args))
+
+    def denied(*args, **kwargs):
+        raise DatabaseError("PRIVATE_INTERNAL_SENTINEL")
+
+    monkeypatch.setattr(profile_assets, "append_event", denied)
+    with pytest.raises(DatabaseError):
+        profile_assets.authorized_profile_download(
+            s.actor, s.asset.id, "owner_preview", timezone.now()
+        )
+    assert reads == []
+
+
+@pytest.mark.parametrize(
+    "fault", ["mime", "derivative_pending", "missing_attempt", "binding"]
+)
+def test_owner_derivative_metadata_denial_never_reads_storage(fault, monkeypatch):
+    from django.utils import timezone
+
+    from apps.assets.contracts import AssetNotFound
+    from apps.assets.models import Asset, AssetDerivative, AssetProcessingAttempt
+    from config.use_cases import profile_assets
+
+    s = ready_media(monkeypatch)
+    if fault == "mime":
+        AssetDerivative.objects.filter(pk=s.derivative.id).update(
+            mime_type="image/jpeg"
+        )
+        # Valid MIME alone cannot make a different content type match its bytes.
+    elif fault == "derivative_pending":
+        AssetDerivative.objects.filter(pk=s.derivative.id).update(state="pending")
+    elif fault == "missing_attempt":
+        AssetProcessingAttempt.objects.filter(asset=s.asset).update(state="failed")
+    else:
+        Asset.objects.filter(pk=s.asset.id).update(subject_uuid=uuid4())
+    reads = []
+    original = s.store.read_limited
+
+    def counted(*args):
+        reads.append(args[0])
+        return original(*args)
+
+    monkeypatch.setattr(s.store, "read_limited", counted)
+    with pytest.raises(AssetNotFound):
+        profile_assets.authorized_profile_download(
+            s.actor, s.asset.id, "owner_preview", timezone.now()
+        )
+    assert reads == ([s.derivative.key] if fault == "mime" else [])
+
+
+def test_baseline_api_replay_cas_and_foreign_uuid():
+    from apps.athletes.models import AthleteProfile
+
+    s = owner()
+    client = session_client(s)
+    token = token_for(client)
+    operation = str(uuid4())
+    created = post(
+        client, "/api/v1/athlete/profile/", {"operation_id": operation}, token
+    )
+    assert created.status_code == 201
+    replay = post(
+        client, "/api/v1/athlete/profile/", {"operation_id": operation}, token
+    )
+    assert (
+        replay.status_code == 200 and replay.json()["id"] == created.json()["id"]
+    )
+    assert AthleteProfile.objects.filter(user=s.user).count() == 1
+    draft = post(
+        client,
+        "/api/v1/athlete/baseline/draft/",
+        {
+            "operation_id": str(uuid4()),
+            "expected_profile_version": created.json()["version"],
+        },
+        token,
+    )
+    assert draft.status_code in {200, 201}
+    url = f"/api/v1/athlete/baseline/{draft.json()['id']}/"
+    saved = post(
+        client,
+        url + "steps/goals/",
+        {
+            "operation_id": str(uuid4()),
+            "expected_version": draft.json()["version"],
+            "values": {"goals": ["general_fitness"]},
+        },
+        token,
+    )
+    assert saved.status_code == 200 and saved.json()["answers"]["goals"] == [
+        "general_fitness"
+    ]
+    stale = post(
+        client,
+        url + "steps/goals/",
+        {
+            "operation_id": str(uuid4()),
+            "expected_version": draft.json()["version"],
+            "values": {"goals": ["strength"]},
+        },
+        token,
+    )
+    assert stale.status_code == 409
+    stranger = session_client(make_actor("+989123456789"))
+    missing = stranger.get(f"/api/v1/athlete/baseline/{uuid4()}/")
+    foreign = stranger.get(url)
+    assert foreign.status_code == missing.status_code == 404
+    assert foreign.content == missing.content
+
+
+def test_professional_native_flag_is_creation_only(settings):
+    from apps.governance.flag_models import FeatureFlag
+
+    s = owner()
+    FeatureFlag.objects.filter(key="professional_registration").update(enabled=False)
+    response = session_client(s).get("/professional/setup/")
+    assert response.status_code == 200
+    assert "نام نمایشی" in response.content.decode()
+    assert "no-store" in response["Cache-Control"]
