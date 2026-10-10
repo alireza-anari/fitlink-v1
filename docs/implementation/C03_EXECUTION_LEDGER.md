@@ -2690,3 +2690,81 @@ This ledger-only completion checkpoint preserves the linked validated source;
 any documentation-triggered workflow is not a substitute or reopening of source
 acceptance. Per-suite180s, cumulative child300s, observer330/600/1200s and inherited
 job limits/selections/assertions/services/triggers remain unchanged.
+
+## Task 11 authorized route-scope correction and remaining service gap (2026-10-10)
+
+Authorization: Task 11 ONLY, plus the user's explicit two-route correction to
+tests/unit/c03/test_scope_boundary.py. Starting local/remote head
+173014407fd488911a6ec4279b293f3f9748687b, tree
+0b8563b0b4d946825ec918a9285ff4126e5b4d58. Recovered isolated checkout was clean;
+the earlier blocked attempt made no repository changes. Task 10 exact-source
+Actions 38062981527 attempt 1 remains SUCCESS; no reopening of Tasks 1–10.
+
+- Removed ONLY /professional/preview/ and /api/v1/professional/preview/ from
+  the current-source route-absence parametrization. All ten remaining public,
+  assistant and future-domain route absences and every other scope assertion
+  remain unchanged. No immutable C02 fixture expectation was edited.
+- Added replacement anonymous-session/no-store/noindex HTTP tests in
+  tests/unit/c03/test_api_schema.py and 18 real-session integration specifications
+  in tests/integration/c03/test_owner_api.py covering all five verification
+  states, private DTO fields, exact owner/cross-owner/assistant isolation and
+  current account/auth_version. Integration collection succeeds; collection is
+  not execution or acceptance evidence.
+- Preliminary local HTTP run: 2 expected assertion failures / 37 passed, 0.47s.
+  Both required preview routes return 404 because their adapters are absent.
+  These are supporting local RED observations, NOT the required complete Task 11
+  behavioral RED, hosted browser/API RED or any GREEN claim. Same-task hosted
+  gate installation and the other mandatory RED cases remain unfinished.
+- Changed tests pass Ruff/format. No production adapter, service, dependency,
+  migration, CI gate, commit, push, merge or deployment was performed.
+
+BLOCKED_TASK_11: the installed config/use_cases/profile_assets.py
+authorized_profile_download delegates to apps/assets/delivery.py's unconditional
+AssetNotFound boundary. It denies owner_preview and evidence_preview as well as
+raw source purposes before any authorization or storage read. Task 10 owner_preview
+returns safe derivative references, not content. The only installed actual byte
+reader is read_evidence_derivative, explicitly internal to an already-authorized
+assigned staff transaction; using it directly for owners would bypass its contract.
+There is also no installed owner upload-status selector/composition read command.
+
+The required status/content owner routes and truthful ready-derivative UI cannot
+be completed solely by calling installed services/selectors. Adding actor/owner,
+binding, transaction, audit or storage-release logic to an API/native adapter
+would violate Task 11's explicit authority boundary. The service files needing
+the narrowly additive read completion (apps/assets/delivery.py,
+apps/assets/uploads.py and config/use_cases/profile_assets.py) are outside the
+latest approved Task 11 edit surface; the latest additional authorization covers
+only the two-route scope test.
+
+Required user action: authorize a narrow additive owner sanitized-derivative read
+and owner upload-status selector/composition completion in those three files,
+preserving every raw-source denial, current ownership/account/auth_version,
+purpose/binding/READY checks, audit failure denial, no public release and no schema
+change. Pending approval, preserve this local test/ledger checkpoint; do not
+implement business authority in adapters or advance to Task 12/13/C04.
+
+Task 11 remains IN_PROGRESS / BLOCKED_CONTRACT. Full preflight reads, mandatory
+backend/browser RED, adapters, focused/cumulative GREEN, exact-head hosted GREEN
+and final security review remain unfinished. Tasks 1–10 COMPLETE. No Task 12,
+Task 13 or C04 work. Protected refs retain their recorded baseline SHAs.
+
+### Task 11 authorized service-surface correction and hosted RED specification
+
+The user explicitly authorized additive owner status and sanitized owner_preview
+read completion in apps/assets/uploads.py, apps/assets/delivery.py and
+config/use_cases/profile_assets.py. Both recorded scope blockers are resolved;
+all raw-source/staff-evidence boundaries remain mandatory. Existing local work
+preserved. No schema/migration or Task12/13/C04 authority was added.
+
+Installed separate exact-C03 owner Actions job and --task11-owner entry point:
+real PostgreSQL/Redis/private MinIO/scanner/non-eager worker, live Django and real
+Chromium, focused backend and separately selected C03/C02 async browser processes.
+Existing C01 smoke/rehearsal and all five inherited C03 jobs remain unchanged.
+The owner browser joins the existing private scanner network only in an ignored
+runtime Compose override; production Compose, isolation and scanner unchanged.
+Private screenshot/trace/video off; finite child/observer/test limits and exact
+Compose project cleanup. Failure is propagated even when both RED suites run.
+CI contract 30 passed; new omission/condition/trigger negatives retain inherited
+workflow hash binding. Supporting local HTTP RED is separate from required hosted
+RED; missing form modules are not counted as behavioral RED. Hosted test-spec
+checkpoint pending. All later completion gates remain pending.

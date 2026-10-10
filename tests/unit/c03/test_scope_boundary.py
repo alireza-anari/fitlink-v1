@@ -103,8 +103,6 @@ def test_no_c04_route_index_projection_or_c09_fields():
 @pytest.mark.parametrize(
     "path",
     [
-        "/professional/preview/",
-        "/api/v1/professional/preview/",
         "/professionals/example/",
         "/api/v1/professionals/",
         "/marketplace/",

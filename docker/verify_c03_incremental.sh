@@ -2,6 +2,41 @@
 # Explicit cumulative C03 selections. Extend in each owning task, never skip.
 set -eu
 
+# Task 11 uses the established supervised private-storage project on its own
+# runner. Existing cumulative child/gate bounds and every inherited selection stay.
+if [ "${1:-}" = --task11-owner ]; then
+  if [ "${C03_OWNER_CHILD:-}" != 1 ]; then
+    exec env C03_OWNER_CHILD=1 timeout -k 10s 900s sh "$0" --task11-owner
+  fi
+  project=fitlink-c03-private-storage
+  env_file=.env.c03-owner
+  [ -z "$(docker volume ls --filter label=com.docker.compose.project="$project" -q)" ] || exit 1
+  python docker/generate_env.py "$env_file"
+  mkdir -p .runtime
+  cat > .runtime/c03-owner-compose.yml <<'OWNER_COMPOSE'
+services:
+  browser:
+    network_mode: !reset null
+    networks: [default, scan-private]
+OWNER_COMPOSE
+  dc() { docker compose -f compose.yaml -f .runtime/c03-owner-compose.yml -p "$project" --env-file "$env_file" --profile test "$@"; }
+  cleanup() { dc down --remove-orphans >/dev/null 2>&1 || true; }
+  trap cleanup EXIT
+  dc build scanner scanner-signatures minio minio-init checks web browser worker
+  dc up -d --wait db redis minio scanner
+  dc run --rm minio-init
+  dc run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
+  dc up -d --wait web worker
+  dc exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
+  backend_exit=0
+  dc run --rm --no-deps checks timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_api_schema.py tests/unit/c03/test_forms.py tests/unit/c03/test_native_adapters.py tests/integration/c03/test_owner_api.py -q --strict-markers || backend_exit=$?
+  browser_exit=0
+  dc run --rm --no-deps browser timeout -k 10s 240s uv run --frozen pytest tests/e2e/c03/test_owner_setup.py tests/e2e/c03/test_private_uploads.py -q --strict-markers --tracing=off --screenshot=off --video=off || browser_exit=$?
+  dc run --rm --no-deps browser timeout -k 10s 300s uv run --frozen pytest tests/e2e/c02 -q --strict-markers --tracing=off --screenshot=off --video=off
+  [ "$backend_exit" -eq 0 ] && [ "$browser_exit" -eq 0 ]
+  exit $?
+fi
+
 # Read the existing redacted observer journal outside the stdout supervisor.
 # This reporting mode never executes or changes an acceptance gate.
 if [ "${1:-}" = --task8-evidence ]; then

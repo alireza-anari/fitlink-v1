@@ -68,6 +68,40 @@ jobs:
             .runtime/c03-foundation-evidence/*.jsonl
           include-hidden-files: true
           if-no-files-found: error
+  c03-owner:
+    if: github.ref == 'refs/heads/profiles/c03-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Frozen owner gate and static assets
+        run: |
+          uv sync --frozen --group dev
+          npm ci
+          npm run build:css
+          npm run check:js
+      - name: Real owner API and private browser gates
+        run: |
+          python docker/c03_gate_diagnostics.py --acceptance storage \
+            sh docker/verify_c03_incremental.sh --task11-owner
+      - name: C03 owner metadata-only diagnostics
+        if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-owner-diagnostics
+          path: .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
   c02-migrations:
     runs-on: ubuntu-24.04
     timeout-minutes: 15

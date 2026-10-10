@@ -193,6 +193,12 @@ C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
 
 def inherited_workflow_is_intact(source):
     inherited = source.replace(TRIGGER, "    branches: [accounts/c02-cloud]")
+    inherited = re.sub(
+        r"^  c03-owner:\n.*?(?=^  [a-z][a-z0-9-]*:\n|\Z)",
+        "",
+        inherited,
+        flags=re.M | re.S,
+    )
     inherited = inherited.replace(
         DIAGNOSTIC_FOUNDATION, "        run: sh docker/verify_c02.sh\n"
     )
@@ -239,7 +245,7 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 7
+    assert source.count("        if:") == 8
     assert source.count(TASK8_REPORT) == 1
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)
@@ -449,3 +455,60 @@ def test_private_reconciler_does_not_replace_inherited_beat():
     }
     assert private.conf.task_always_eager is False
     assert '"config.c03_celery:app"' in (ROOT / "compose.yaml").read_text()
+
+
+def owner_gate_valid(workflow, gate):
+    match = re.search(
+        r"^  c03-owner:\n.*?(?=^  [a-z][a-z0-9-]*:\n|\Z)", workflow, flags=re.M | re.S
+    )
+    if match is None:
+        return False
+    job = match.group()
+    required = (
+        "tests/unit/c03/test_api_schema.py",
+        "tests/unit/c03/test_forms.py",
+        "tests/unit/c03/test_native_adapters.py",
+        "tests/integration/c03/test_owner_api.py",
+        "tests/e2e/c03/test_owner_setup.py",
+        "tests/e2e/c03/test_private_uploads.py",
+        "tests/e2e/c02",
+        "--strict-markers",
+        "--tracing=off",
+        "--screenshot=off",
+        "--video=off",
+        "dc up -d --wait db redis minio scanner",
+        "dc up -d --wait web worker",
+        "trap cleanup EXIT",
+    )
+    return (
+        "    if: github.ref == 'refs/heads/profiles/c03-cloud'\n" in job
+        and "sh docker/verify_c03_incremental.sh --task11-owner" in job
+        and "--acceptance storage" in job
+        and "continue-on-error" not in workflow
+        and "pull_request:" not in workflow
+        and TRIGGER in workflow
+        and all(item in gate for item in required)
+        and "--ignore" not in gate
+    )
+
+
+def test_owner_browser_gate_installed_by_task11():
+    workflow, gate = WORKFLOW.read_text(), ENTRY.read_text()
+    assert owner_gate_valid(workflow, gate)
+    for required in (
+        "tests/integration/c03/test_owner_api.py",
+        "tests/e2e/c03/test_owner_setup.py",
+        "tests/e2e/c03/test_private_uploads.py",
+        "tests/e2e/c02",
+        "dc up -d --wait db redis minio scanner",
+        "trap cleanup EXIT",
+    ):
+        assert not owner_gate_valid(workflow, gate.replace(required, "omitted"))
+    for old, new in (
+        ("  c03-owner:", "  other:"),
+        ("sh docker/verify_c03_incremental.sh --task11-owner", "true"),
+        (TRIGGER, "    branches: [main, '*']"),
+    ):
+        assert not owner_gate_valid(workflow.replace(old, new), gate)
+    assert not owner_gate_valid(workflow + "continue-on-error: true", gate)
+    assert not owner_gate_valid(workflow + "pull_request:\n", gate)
