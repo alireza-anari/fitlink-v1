@@ -81,6 +81,21 @@ def test_task9_lifetime_holds_cleanup_and_races_are_mandatory():
 
 
 TRIGGER = "    branches: [accounts/c02-cloud, profiles/c03-cloud]"
+
+
+def test_task10_private_preview_assistant_scope_dependency_gates_mandatory():
+    source = ENTRY.read_text()
+    required = (
+        "tests/unit/c03/test_scope_boundary.py",
+        "tests/integration/c03/test_owner_preview.py",
+        "tests/integration/c03/test_assistant_primitive.py",
+        "tests/integration/c03/test_c03_dependency_direction.py",
+    )
+    assert all(name in source for name in required), "Task 10 selection missing"
+    for name in required:
+        assert not all(item in source.replace(name, "omitted") for item in required)
+
+
 C03_STEP = r"""      - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'
         run: |

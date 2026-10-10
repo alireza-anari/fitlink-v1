@@ -16,6 +16,12 @@ selections = {
         "tests/integration/c03/test_verification_decision_races.py::",
         "tests/integration/c03/test_verification_revocation.py::",
     ),
+    10: (
+        "tests/unit/c03/test_scope_boundary.py::",
+        "tests/integration/c03/test_owner_preview.py::",
+        "tests/integration/c03/test_assistant_primitive.py::",
+        "tests/integration/c03/test_c03_dependency_direction.py::",
+    ),
     9: (
         "tests/unit/c03/test_privacy_inventory.py::",
         "tests/integration/c03/test_asset_holds.py::",
@@ -203,3 +209,6 @@ C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnosti
 # Task 9 exact inventory, record-specific holds and bounded cleanup races.
 # Same cases also execute against private MinIO in the inherited full Foundation.
 C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnostics timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_privacy_inventory.py tests/integration/c03/test_asset_holds.py tests/integration/c03/test_c03_deletion_effects.py tests/integration/c03/test_asset_cleanup_races.py -q --strict-markers -o faulthandler_timeout=30
+
+# Task 10 owner-only preview, inert metadata and scope/dependency guard.
+C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnostics timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_scope_boundary.py tests/integration/c03/test_owner_preview.py tests/integration/c03/test_assistant_primitive.py tests/integration/c03/test_c03_dependency_direction.py -q --strict-markers -o faulthandler_timeout=30

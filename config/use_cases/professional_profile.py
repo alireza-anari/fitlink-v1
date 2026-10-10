@@ -119,6 +119,18 @@ def _registration_enabled() -> bool:
         return False
 
 
+def define_assistant_role(actor, assistant_uuid, operation_id, at):
+    from apps.professionals.assistants import define_assistant_role as define
+
+    return define(actor, assistant_uuid, operation_id, at)
+
+
+def revoke_assistant_role(actor, membership_uuid, expected_version, operation_id, at):
+    from apps.professionals.assistants import revoke_assistant_role as revoke
+
+    return revoke(actor, membership_uuid, expected_version, operation_id, at)
+
+
 def create_professional_profile(
     actor: AccountActor, operation_id: UUID, at: datetime
 ) -> ProfessionalProfileDTO:

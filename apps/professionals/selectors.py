@@ -120,6 +120,12 @@ def own_professional_profile(
         )
 
 
+def owner_preview(actor: AccountActor, at: datetime):
+    from .preview import owner_preview as preview
+
+    return preview(actor, at)
+
+
 def own_verification(actor: AccountActor, verification_uuid: UUID, at: datetime):
     """Coarse immutable target/history view with no staff-private explanation."""
     from uuid import uuid4

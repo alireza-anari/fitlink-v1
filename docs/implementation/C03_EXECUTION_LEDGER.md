@@ -2469,3 +2469,40 @@ Task 10/C04 have not started. C03 overall remains IN PROGRESS.
   blobs; its triggered run is documentation evidence, not acceptance authority.
   Prior documentation runs never reopen Tasks 1–8. No merge/deploy/force push.
   STOP after publishing and verifying this Task 9 completion evidence.
+
+
+## Task 10 recovery and closed-boundary specification (2026-10-10)
+
+Authorization: Task 10 ONLY. Tasks 1–9 remain COMPLETE; no Task 11/C04,
+merge/deploy/force or protected-ref changes. Fresh isolated Git clone at exact
+b6b07f950a82860fc920a6a1b982fffe19fd526b/tree180a913d43dc0b4ed94d20d814f9cb8b678c5edc.
+Initial status/index/staged/unstaged/untracked inspected empty. Remote exact
+execution head and all eight protected/unrelated refs verified unchanged.
+Approved plan, Task 10/C03-C04 boundary and published ledger inspected. Task 9
+run38053735759 attempt1 verified SUCCESS at27d7916432c26effa9fdf735fd1dffc0ff5a8ec5/
+571e42ca20df1991dbf4dc93b3b1337a18359003; all five job inventories and actual
+complete logs fetched and inspected. Documentation CI is not a reopening criterion.
+
+Frozen Python3.13.15 dev environment recovered; no dependency/lock change.
+Local specification RED5failed/57passed (3.60s): missing DTO/private boundaries
+and omitted mandatory selections. After minimal same-task cumulative selection
+and closed callable boundaries:1failed/61passed (2.06s), missing DTO. Focused
+74 cases collect without errors. Real PostgreSQL behavioral RED is still pending;
+missing contracts/collection are not race or authorization evidence. Preview
+boundary performs existing current actor/owned-profile locks then denies; inert
+commands deny until observed hosted positive-command RED. No usable data released.
+
+Ruling: within the explicitly approved Task 10 file surface, assistant changes
+use installed professional.profile_changed metadata receipts, advancing only
+the ordinary profile version, plus assistant.defined/assistant.revoked audit.
+The plan inventories assistant.membership_changed, but its handler is not
+installed and handler registry files are outside this task's approved surface.
+Do not emit an unhandled event or mutate the registry indirectly. Cost if wrong:
+a future approved membership-specific consumer must add explicit handler wiring;
+these inert primitives provide no operational/notification/lifecycle effect.
+
+HTTP/native preview adapters and their actual response headers belong to Task11.
+Task10 DTO carries private,no-store and noindex,nofollow directives; scope tests
+require no preview/public/assistant/future route now. All established service,
+workflow, assertions, inherited gates and observer/per-suite/child bounds unchanged.
+Task10 IN_PROGRESS/PENDING_HOSTED_RED. No Task11 implementation.
