@@ -218,3 +218,94 @@ def test_direct_sql_restriction_history_immutable(settings):
             connection.cursor() as cursor,
         ):
             cursor.execute(sql, [row.id])
+
+
+def rereview(s, kind):
+    from apps.governance.staff import MockStepUpProvider, issue_mock_step_up
+
+    from .verification_helpers import assign
+
+    s.profile.refresh_from_db()
+    s.case = command(
+        "prepare_verification",
+        s.actor,
+        (kind,),
+        s.profile.version,
+        uuid4(),
+        timezone.now(),
+    )
+    s.case = command(
+        "submit_verification",
+        s.actor,
+        s.case.id,
+        s.case.version,
+        uuid4(),
+        timezone.now(),
+    )
+    at = timezone.now()
+    provider = MockStepUpProvider()
+    assertion = provider.prepare(
+        s.staff.user.public_id, "professional_verification", s.case.id, at
+    )
+    with transaction.atomic():
+        s.staff.step = issue_mock_step_up(
+            s.staff.user,
+            "professional_verification",
+            s.case.id,
+            assertion.raw_assertion,
+            s.user,
+            at,
+            provider,
+        )
+    s.case = assign(s, s.staff)
+    s.case = command(
+        "start_verification_review",
+        s.staff.actor,
+        s.case.id,
+        s.case.version,
+        s.staff.step,
+        "verification_review",
+        timezone.now(),
+    )
+
+
+def test_new_authorized_reapproval_supersedes_revoke_and_preserves_history(settings):
+    from .test_verification_decisions import decision
+
+    s = approved(settings)
+    revoke(s, "coach")
+    old = VerificationDecision.objects.get(
+        profile=s.profile, target_kind="coach", decision="revoke"
+    )
+    rereview(s, "coach")
+    decision(s, "coach")
+    result = eligibility(s)
+    assert result.verified_roles == ("coach", "nutritionist") and result.eligible
+    latest = (
+        VerificationDecision.objects.filter(profile=s.profile, target_kind="coach")
+        .order_by("-decision_sequence")
+        .first()
+    )
+    assert latest.supersedes_decision_id == old.id
+    old.refresh_from_db()
+    assert old.decision == "revoke" and old.revoked_approval.decision == "approve"
+
+
+def test_revoke_fences_older_pending_review_only_for_that_role(settings):
+    from apps.professionals.models import VerificationTarget
+
+    from .test_verification_decisions import decision
+
+    s = approved(settings)
+    old_case, old_step = s.case, s.staff.step
+    old_facts = facts(s, "coach")
+    rereview(s, "coach")
+    pending_case, pending_step = s.case, s.staff.step
+    pending = facts(s, "coach")
+    s.case, s.staff.step = old_case, old_step
+    revoke(s, captured=old_facts)
+    s.case, s.staff.step = pending_case, pending_step
+    with pytest.raises(ProfileConflict):
+        decision(s, "coach", captured=pending)
+    assert VerificationTarget.objects.get(pk=pending[1].id).state == "stale"
+    assert eligibility(s).verified_roles == ("nutritionist",)

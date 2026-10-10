@@ -26,7 +26,9 @@ from .verification_helpers import assign, command, prepared, reviewer, selectors
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
 
 
-def review(settings, targets=("identity", "coach", "nutritionist")):
+def review(
+    settings, targets=("identity", "coach", "nutritionist"), *, nutritionist_expiry=None
+):
     s = prepared(targets)
     asset, dto = s.assets["nutritionist"]
     s.assets["nutritionist"] = (
@@ -38,7 +40,8 @@ def review(settings, targets=("identity", "coach", "nutritionist")):
                 category="qualification",
                 role="nutritionist",
                 source_asset=asset.id,
-                expires_on=timezone.now().date() + timedelta(days=1),
+                expires_on=nutritionist_expiry
+                or timezone.now().date() + timedelta(days=1),
             ),
             dto.version,
             uuid4(),
@@ -474,3 +477,139 @@ def test_direct_sql_immutable_decision_guards(settings):
             connection.cursor() as cursor,
         ):
             cursor.execute(sql, [row.id])
+
+
+@pytest.mark.parametrize("kind", ["identity", "nutritionist"])
+@pytest.mark.parametrize("fault", ["metadata", "missing_revision"])
+def test_inconsistent_current_credential_denies_only_affected_role(
+    settings, kind, fault
+):
+    s = approved(settings)
+    from apps.professionals.models import Credential
+
+    _, dto = s.assets[kind]
+    # Current metadata can be inconsistent with its immutable revision; the
+    # reader must close only this role rather than lose the coherent result.
+    if fault == "metadata":
+        Credential.objects.filter(pk=dto.id).update(title="Inconsistent metadata")
+    else:
+        Credential.objects.filter(pk=dto.id).update(current_revision=None)
+    result = eligibility(s)
+    assert result.verified_roles == (
+        ("coach",) if kind == "nutritionist" else ("coach", "nutritionist")
+    )
+    assert result.identity_verified == (kind != "identity")
+    assert result.eligible == (kind != "identity")
+
+
+def test_shared_identity_rejection_and_expiry_preserve_role_facts(settings):
+    s = review(settings)
+    decision(s, "identity", "reject")
+    decision(s, "coach")
+    decision(s, "nutritionist")
+    result = eligibility(s)
+    assert not result.identity_verified and not result.eligible
+    assert result.verified_roles == ("coach", "nutritionist")
+
+
+def test_expiry_after_review_binding_prevents_terminal_decision(settings):
+    from apps.accounts.sessions import issue_session, resolve_session
+    from apps.governance.audit import append_event
+    from apps.governance.staff import MockStepUpProvider, issue_mock_step_up
+
+    s = review(settings)
+    captured = facts(s, "nutritionist")
+    future = timezone.now() + timedelta(days=2)
+    s.staff.grant.valid_until = future + timedelta(hours=1)
+    s.staff.grant.save(update_fields=["valid_until"])
+    with transaction.atomic():
+        issue_session(s.staff.request, s.staff.user, "normal", future, append_event)
+    s.staff.actor = resolve_session(s.staff.request, future)
+    assert s.staff.actor is not None
+    provider = MockStepUpProvider()
+    assertion = provider.prepare(
+        s.staff.user.public_id, "professional_verification", s.case.id, future
+    )
+    with transaction.atomic():
+        s.staff.step = issue_mock_step_up(
+            s.staff.user,
+            "professional_verification",
+            s.case.id,
+            assertion.raw_assertion,
+            s.user,
+            future,
+            provider,
+        )
+    # Prove current authority before testing expired bound evidence.
+    fresh = selectors().assigned_target_review_binding(
+        s.staff.actor,
+        s.case.id,
+        captured[1].id,
+        s.staff.step,
+        "verification_review",
+        future,
+    )
+    assert fresh == captured[2]
+    with pytest.raises(ProfileConflict):
+        decision(s, "nutritionist", captured=captured, at=future)
+    assert not VerificationDecision.objects.exists()
+
+
+@pytest.mark.parametrize("purpose", ["avatar", "cover", "logo"])
+@pytest.mark.parametrize("fault", ["revoked", "quarantined", "derivative_unready"])
+def test_selected_media_safety_is_current_without_erasing_approvals(
+    settings, purpose, fault
+):
+    from .test_credential_revisions import ready
+
+    s = approved(settings)
+    media = ready(s, purpose)
+    save(s, "branding", {purpose: media.id})
+    before = eligibility(s)
+    assert before.eligible
+    if fault == "revoked":
+        media.revoked_at = timezone.now()
+        media.save(update_fields=["revoked_at"])
+    elif fault == "quarantined":
+        media.state = "quarantined"
+        media.save(update_fields=["state"])
+    else:
+        media.derivatives.update(state="pending")
+    after = eligibility(s)
+    assert after.identity_verified and after.verified_roles == ("coach", "nutritionist")
+    assert not after.eligible
+    assert "media_unavailable" in after.reason_codes
+    assert after.evidence_binding != before.evidence_binding
+    assert VerificationDecision.objects.count() == 3
+
+
+@pytest.mark.parametrize("offset", [-7, 0, 4])
+def test_expiry_binding_and_evaluation_use_same_instant(settings, offset):
+    from datetime import timezone as dt_timezone
+
+    s = approved(settings)
+    before = eligibility(s)
+    bound = next(r for r in before.evidence_binding.roles if r.kind == "nutritionist")
+    instant = bound.next_expiry_boundary + timedelta(seconds=1)
+    shifted = instant.astimezone(dt_timezone(timedelta(hours=offset)))
+    after = eligibility(s, shifted)
+    assert after.verified_roles == ("coach",)
+    assert after.identity_verified and after.eligible
+    assert (
+        next(
+            r for r in after.evidence_binding.roles if r.kind == "nutritionist"
+        ).next_expiry_boundary
+        == bound.next_expiry_boundary
+    )
+
+
+def test_maximum_credential_expiry_returns_coherent_binding(settings):
+    from datetime import date
+
+    s = review(settings, nutritionist_expiry=date.max)
+    for kind in ("identity", "coach", "nutritionist"):
+        decision(s, kind)
+    result = eligibility(s)
+    assert result.eligible and result.verified_roles == ("coach", "nutritionist")
+    bound = next(r for r in result.evidence_binding.roles if r.kind == "nutritionist")
+    assert bound.next_expiry_boundary is None

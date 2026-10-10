@@ -1964,3 +1964,25 @@ mypy183source files, Django check and diff check passed; migration drift none
 network/disk/fork/nonroot case cannot run on this restricted host. No relaxation;
 exact-head hosted unit/scanner/worker/service acceptance remains mandatory.
 Candidate checkpoint is IN_PROGRESS/PENDING_CI, never Task8 COMPLETE.
+
+### Task 8 candidate publication and review regression specification
+
+Candidate local84a1b69503c52a5338d63c2a6d7f3cd8dfb943a6 -> remote
+8546825b5e21edb5f5908370cc216082f2f1822d, exact shared tree
+26006ad2a3058012b1972b8160c0bad47409d25b, parent b4f5e6c, force=false.
+Hosted run38025165827 attempt1 pending. Automatic approval rejected shell push
+as unverified/private export; read-only checks proved origin matches public
+alireza-anari/fitlink-v1 (private=false), exact execution ref and approved §18
+checkpoint synchronization. Limited reviewed source/test/ledger API publication
+then succeeded; no runtime fixture, secrets or private user data exported.
+
+Independent read-only review via requesting-code-review identified role-local
+malformed current credential propagation as Important and current selected
+media safety as a further §7 eligibility gap. New test specifications pin
+inconsistent metadata, selected avatar/cover/logo revoke/quarantine/unready
+preview, fresh authorized reapproval after revoke and revoke fencing an older
+pending review. Expired-evidence decision test renews actual actor/grant/step-up
+at the future time and first proves authority so its failure cannot be a stale
+session fixture. Shared identity rejection preserves approved role facts.
+Production corrections wait for review-specific hosted RED. All prior tests,
+CI limits/selections and installed SQL guards remain intact. No COMPLETE claim.

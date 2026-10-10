@@ -50,9 +50,9 @@ def ready(s, category="identity", subject=None):
         owner=s.user,
         subject_kind="professional_credential" if subject else "professional_profile",
         subject_uuid=subject or s.profile.id,
-        purpose="identity_evidence"
-        if category == "identity"
-        else "credential_evidence",
+        purpose=category
+        if category in {"avatar", "cover", "logo"}
+        else ("identity_evidence" if category == "identity" else "credential_evidence"),
         state="ready",
         source_key=f"source/{uuid4()}",
         declared_size=100,
@@ -78,7 +78,9 @@ def ready(s, category="identity", subject=None):
     AssetDerivative.objects.create(
         asset=asset,
         processing_version=1,
-        purpose="evidence_preview",
+        purpose="owner_preview"
+        if category in {"avatar", "cover", "logo"}
+        else "evidence_preview",
         key=f"derivative/{uuid4()}",
         sha256="b" * 64,
         width=64,
