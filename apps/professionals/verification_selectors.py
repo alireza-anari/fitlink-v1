@@ -80,7 +80,20 @@ def assigned_verification_evidence(
             raise ProfileNotFound("Evidence unavailable")
         role = next((r for r in roles if r.id == target.role_id), None)
         revisions = _current_revisions(credentials, target.target)
-        if _hash_target(profile, role, revisions) != target.target_snapshot_hash:
+        evidence_revision = (
+            role.evidence_revision if role else profile.identity_evidence_revision
+        )
+        # Terminal decisions advance counters without changing submitted evidence.
+        # Reconstruct their immutable hash with the submitted counters; current
+        # evidence, identity name, source readiness and authority remain required.
+        bound_target = (
+            target if target.state in {"approved", "rejected", "revoked"} else None
+        )
+        if (
+            evidence_revision != target.bound_evidence_revision
+            or _hash_target(profile, role, revisions, bound_target=bound_target)
+            != target.target_snapshot_hash
+        ):
             raise ProfileNotFound("Evidence unavailable")
         if set(target.evidence.values_list("credential_revision_id", flat=True)) != {
             r.id for r in revisions

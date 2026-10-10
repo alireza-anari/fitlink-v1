@@ -165,6 +165,15 @@ class TargetEvidenceBinding:
 
 
 @dataclass(frozen=True)
+class SelectedMediaBinding:
+    purpose: str
+    asset_uuid: UUID
+    asset_version: int | None
+    processing_version: int | None
+    ready: bool
+
+
+@dataclass(frozen=True)
 class EligibilityEvidenceBinding:
     user_auth_version: int
     user_state_version: int
@@ -172,6 +181,7 @@ class EligibilityEvidenceBinding:
     profile_state: str
     identity: TargetEvidenceBinding
     roles: tuple[TargetEvidenceBinding, ...]
+    selected_media: tuple[SelectedMediaBinding, ...]
 
 
 @dataclass(frozen=True)
@@ -188,6 +198,8 @@ class PublicationEligibility:
 def _approval_facts(owner, profile, credentials, kind, role, at):
     from datetime import time, timedelta
 
+    from django.core.exceptions import ObjectDoesNotExist
+
     from .policies import ready_asset
     from .restrictions import restriction_token
     from .verification import (
@@ -197,7 +209,12 @@ def _approval_facts(owner, profile, credentials, kind, role, at):
     )
 
     latest = effective_decision(profile, kind)
-    revisions = _current_revisions(credentials, kind)
+    reasons = []
+    try:
+        revisions = _current_revisions(credentials, kind)
+    except (ValueError, LookupError, ObjectDoesNotExist):
+        revisions = []
+        reasons.append("evidence_unavailable")
     token = restriction_token(role)
     expiries: list[date] = [r.expires_on for r in revisions if r.expires_on is not None]
     binding = TargetEvidenceBinding(
@@ -210,10 +227,9 @@ def _approval_facts(owner, profile, credentials, kind, role, at):
         tuple(r.id for r in revisions),
         token,
         datetime.combine(min(expiries) + timedelta(days=1), time.min, UTC)
-        if expiries
+        if expiries and min(expiries) < date.max
         else None,
     )
-    reasons = []
     if latest is None or latest.decision != "approve":
         reasons.append(
             "approval_missing" if latest is None else "approval_" + latest.decision
@@ -245,13 +261,20 @@ def _approval_facts(owner, profile, credentials, kind, role, at):
 
 def publication_eligibility(profile_uuid: UUID, at: datetime) -> PublicationEligibility:
     """Internal coherent evidence facts; callers must recheck at consumption."""
+    from django.db.models import Q
     from django.utils import timezone
 
     from apps.accounts.dates import require_adult
     from apps.accounts.models import User
     from apps.assets.models import Asset
 
-    from .models import Verification, VerificationEvidence, VerificationTarget
+    from .models import (
+        CredentialRevision,
+        Verification,
+        VerificationEvidence,
+        VerificationTarget,
+    )
+    from .policies import ready_asset
     from .restrictions import ProfessionalRoleRestriction
     from .setup import locked_roles
 
@@ -301,9 +324,37 @@ def publication_eligibility(profile_uuid: UUID, at: datetime) -> PublicationElig
         )
         list(
             Asset.objects.select_for_update()
-            .filter(credential_revisions__credential__in=credentials)
+            .filter(
+                Q(
+                    pk__in=CredentialRevision.objects.filter(
+                        credential__in=credentials
+                    ).values("source_asset_id")
+                )
+                | Q(pk__in=[profile.avatar_id, profile.cover_id, profile.logo_id])
+            )
             .order_by("id")
         )
+        media_bindings = []
+        for purpose in ("avatar", "cover", "logo"):
+            identifier = getattr(profile, purpose + "_id")
+            if identifier is None:
+                continue
+            asset = Asset.objects.filter(pk=identifier).first()
+            try:
+                ready_asset(owner, profile, identifier, purpose, None)
+                media_ready = True
+            except (ValueError, LookupError):
+                media_ready = False
+            media_bindings.append(
+                SelectedMediaBinding(
+                    purpose,
+                    identifier,
+                    asset.version if asset else None,
+                    asset.processing_version if asset else None,
+                    media_ready,
+                )
+            )
+        media_ok = all(binding.ready for binding in media_bindings)
         identity, identity_reasons, identity_binding = _approval_facts(
             owner, profile, credentials, "identity", None, at
         )
@@ -335,12 +386,15 @@ def publication_eligibility(profile_uuid: UUID, at: datetime) -> PublicationElig
             reasons.append("profile_incomplete")
         if not verified:
             reasons.append("verified_role_required")
+        if not media_ok:
+            reasons.append("media_unavailable")
         return PublicationEligibility(
             identity,
             tuple(verified),
             identity
             and account_ok
             and profile.state == "private_ready"
+            and media_ok
             and bool(verified),
             tuple(reasons),
             tuple(blocked),
@@ -352,5 +406,6 @@ def publication_eligibility(profile_uuid: UUID, at: datetime) -> PublicationElig
                 profile.state,
                 identity_binding,
                 tuple(bindings),
+                tuple(media_bindings),
             ),
         )

@@ -259,7 +259,7 @@ def _current_revisions(credentials, kind):
     return sorted(rows, key=lambda row: row.id)
 
 
-def _hash_target(profile, role, revisions):
+def _hash_target(profile, role, revisions, *, bound_target=None):
     from .setup import request_hash
 
     return request_hash(
@@ -268,13 +268,17 @@ def _hash_target(profile, role, revisions):
             "target": role.role if role else "identity",
             "role": role.id if role else None,
             "identity_name": "" if role else profile.identity_name,
-            "evidence_revision": role.evidence_revision
-            if role
-            else profile.identity_evidence_revision,
-            "decision_version": role.decision_version
-            if role
-            else profile.identity_decision_version,
-            "declaration_version": role.declaration_version if role else None,
+            "evidence_revision": bound_target.bound_evidence_revision
+            if bound_target is not None
+            else (
+                role.evidence_revision if role else profile.identity_evidence_revision
+            ),
+            "decision_version": bound_target.bound_decision_version
+            if bound_target is not None
+            else (role.decision_version if role else profile.identity_decision_version),
+            "declaration_version": bound_target.bound_declaration_version
+            if bound_target is not None
+            else (role.declaration_version if role else None),
             "revisions": [
                 (row.id, row.revision_hash, row.source_asset_id, row.source_sha256)
                 for row in revisions
@@ -284,12 +288,15 @@ def _hash_target(profile, role, revisions):
 
 
 def _validate_revisions(user, profile, revisions, at, asset_validator):
+    from datetime import UTC
+
     if not revisions:
         raise ValueError("Verification evidence incomplete")
+    day = at.astimezone(UTC).date()
     for revision in sorted(revisions, key=lambda row: row.source_asset_id):
-        if revision.expires_on is not None and revision.expires_on < at.date():
+        if revision.expires_on is not None and revision.expires_on < day:
             raise ValueError("Verification evidence expired")
-        if revision.issued_on is not None and revision.issued_on > at.date():
+        if revision.issued_on is not None and revision.issued_on > day:
             raise ValueError("Verification evidence not current")
         asset = asset_validator(
             user,

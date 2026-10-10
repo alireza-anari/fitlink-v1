@@ -1986,3 +1986,49 @@ at the future time and first proves authority so its failure cannot be a stale
 session fixture. Shared identity rejection preserves approved role facts.
 Production corrections wait for review-specific hosted RED. All prior tests,
 CI limits/selections and installed SQL guards remain intact. No COMPLETE claim.
+
+### Task 8 review RED and corrections (2026-10-10)
+
+Candidate remote8546825 exact tree26006ad2 hosted38025165827 attempt1:
+PostgreSQL114134360830 naturally exited0 at228.1s, cleanup completed228.3s.
+Original Task8 matrix86passed/0failed/0skipped, pytest exit0 at70.626s.
+Inherited269C02, Redis durable restart and cumulative Tasks1–7 passed.
+Storage114134360918, processing114134361046 and ownership114134360953 succeeded;
+foundation114134360971 remains pending at this checkpoint. Not completion.
+
+Review specs local726ab05 -> remote467aa137e7e738806c369190d8af03423823896e,
+shared tree0c2ccf6061838a25efb813330d323a4b988db6ca. Actual run38025376489
+PostgreSQL114135000215 journal: 15 behavioral call failures (4 malformed
+credential cases, 9 selected media safety cases, UTC offset expiry, date.max
+OverflowError), 77 observed passes/0skips. The observer ended at240.3s without
+natural command exit; incomplete run, not acceptance. Ownership114135000190
+failed because owned container never entered running state within probe window;
+cleanup and detached-child termination succeeded. No bound or assertion change.
+
+Additional read regression local6b7f3a3 -> remote56057f088f22ebb2f41978962931c2b7f98d85d2,
+shared tree54bd706b0cb3eefb95a34a24ccacde212c3fc740. Run38025657690 attempt1
+PostgreSQL114135842784 journal observes post-approval assigned derivative read
+ProfileNotFound at verification_selectors.py:84 after real authority checks;
+16failures/73observed passes/0skips, observer deadline240.3s and no natural exit.
+This is actual behavioral RED, not a successful complete test run. Storage,
+processing and ownership succeeded; foundation pending.
+
+Corrections isolate malformed current revisions (including missing ORM objects)
+to the affected target, retain unrelated immutable approval facts, and revalidate
+chosen avatar/cover/logo readiness under the same locked asset set. Typed binding
+includes chosen asset identity/version/processing version/current readiness.
+UTC date is now used consistently for credential issue/expiry evaluation and
+next-expiry boundaries; date.max has no representable later boundary. Ruling:
+UTC midnight is the expiry boundary for date-only credentials; cost if wrong is
+an explicit policy migration and re-evaluation, never offset-dependent authority.
+Terminal assigned evidence reads reconstruct submitted hash counters while still
+checking current evidence revision/set/name/source readiness plus fresh case
+assignment, capability and step-up. Pending reviews retain current-counter fences.
+No source delivery, public route, authority relaxation, migration, dependency,
+CI selection, timeout or supervisor change.
+
+Local corrected source: focused35passed; Ruff/format386files; required mypy
+selections95 and89sources passed; Django check and diff check passed; drift none
+(local service warning means no SQL verification claim). Focused Task8 collection
+108 cases. Independent review Important findings await corrected-head hosted
+GREEN; Task8 IN_PROGRESS/PENDING_CI, Tasks1–7 COMPLETE, STOP before Task9/C04.
