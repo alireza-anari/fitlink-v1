@@ -8,6 +8,7 @@ import pytest
 from django.db import transaction
 from django.utils import timezone
 
+from apps.accounts.models import User
 from apps.assets.models import AssetProcessingAttempt
 from apps.governance.audit_models import AuditEvent
 from apps.governance.outbox import dispatch_event
@@ -33,6 +34,22 @@ from .test_asset_holds import (
 from .test_professional_setup import owner
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
+
+
+def test_delayed_owner_effect_starts_retention_at_actual_revocation():
+    from config.use_cases.c03_privacy import revoke_owner_lifetime
+
+    s = owner()
+    asset, store = media(s)
+    stale_tick = timezone.now() - timedelta(minutes=2)
+    request_privacy(s.actor, "delete", uuid4(), timezone.now(), confirmed=True)
+    started = timezone.now()
+    with transaction.atomic():
+        current = User.objects.select_for_update().get(pk=s.user.pk)
+        revoke_owner_lifetime(current, stale_tick)
+    asset.refresh_from_db()
+    assert asset.state == "revoked" and asset.revoked_at >= started
+    assert store.head(asset.source_key).size > 0
 
 
 @pytest.mark.parametrize(

@@ -2272,3 +2272,10 @@ Task9 IN_PROGRESS/PENDING_HOSTED_RED; no Task10 work.
   Local focused contracts: 73 passed; Ruff/format, expanded mypy (187 source
   files), Django checks pass. Hosted acceptance and repeat review remain pending.
   Task 9 is **IN PROGRESS / PENDING_CI**; no Task 10 work.
+
+- Repeat read-only review of the second implementation candidate identifies no
+  remaining Critical/Important finding. It recommends a precise post-lock
+  retirement timestamp. Two additional behavioral regressions cover a delayed
+  terminal-source tick and a delayed current-owner effect (89 Task 9 cases).
+  This test-only checkpoint does not change production code; its hosted results
+  must establish the timestamp behavior before the precision fix. No Task 10.

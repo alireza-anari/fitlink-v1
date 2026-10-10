@@ -487,3 +487,27 @@ def test_assigned_case_hold_serializes_current_verifier_grant(settings, monkeypa
         revocation.result(timeout=15)
         assert applying.result(timeout=15) == "denied"
     assert not RecordHold.objects.exists()
+
+
+def test_delayed_tick_starts_retention_at_actual_terminal_retirement(settings):
+    from apps.assets.processing_worker import scan_cleanup_assets
+
+    s = owner()
+    asset, store = media(s)
+    asset.state, asset.rejection_code = "rejected", "exhausted"
+    asset.version += 1
+    asset.save()
+    policy(s, asset)
+    settings.ASSET_CLEANUP_ENABLED = True
+    started = timezone.now()
+    assert scan_cleanup_assets(started - timedelta(minutes=2), 1, store=store) == 1
+    asset.refresh_from_db()
+    assert asset.state == "revoked" and asset.revoked_at >= started
+    assert store.head(asset.source_key).size > 0
+    assert (
+        scan_cleanup_assets(asset.revoked_at + timedelta(seconds=2), 1, store=store)
+        == 1
+    )
+    asset.refresh_from_db()
+    assert asset.state == "deleted"
+    absent(store, asset.source_key)
