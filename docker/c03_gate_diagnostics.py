@@ -48,7 +48,7 @@ PROJECTS = {
 }
 PHASES = {"postgresql", "storage", "foundation"}
 QUERY_FAILURES = deque(maxlen=8)
-WINDOWS = {"postgresql": 240, "storage": 600, "foundation": 900}
+WINDOWS = {"postgresql": 330, "storage": 600, "foundation": 1200}
 OWNED_PROJECTS = {
     "postgresql": set(),
     "storage": {"fitlink-c03-private-storage", "fitlink-c03-private-processing"},

@@ -2383,3 +2383,36 @@ work to overwrite. This documentation-only checkpoint preserves all final
 implementation source blobs. Any workflow triggered by this ledger update is
 documentation evidence and cannot substitute for final implementation GREEN.
 No reset/clean/stash, merge, deployment, force push or protected-ref modification.
+
+### Task 9 authorized aggregate observer-cap recovery (2026-10-10)
+
+- User explicitly authorized only `docker/c03_gate_diagnostics.py` aggregate
+  `WINDOWS`: PostgreSQL 240 -> 330 seconds; Foundation 900 -> 1200 seconds;
+  storage remains 600 seconds. This supersedes the approval-pending proposal
+  above, without extending authorization to any other timeout or gate change.
+- Fresh isolated checkout recovered exact published head
+  `e2458ca4522c7e11ec134cb07caabcec18f3c36a`, tree
+  `f41072b1dc533d8d6a08094d23c4c296412e7612`. Comparison to final candidate
+  `23a4d65` confirms the intervening checkpoint changes only this ledger.
+  No unpublished work reconstructed; all published implementation preserved.
+- Source diff verified as the exact one-line authorized replacement. Per-suite
+  180s guards, incremental child 300s, PostgreSQL job 15min/Foundation 60min,
+  timeout probe, all inherited selections/assertions, storage/scanner/worker
+  gates, retention durations, triggers, migrations and dependencies unchanged.
+- Focused local command: `uv run --frozen pytest
+  tests/unit/c03/test_gate_diagnostics.py tests/unit/c03/test_ci_contract.py
+  tests/unit/c03/test_privacy_inventory.py tests/unit/test_c03_acceptance.py
+  tests/unit/test_c03_foundation_evidence.py
+  tests/unit/test_c03_storage_slice.py -q --strict-markers`: exit 0,
+  85 passed in 8.36s, zero skipped. Existing deadline/owned-child cleanup,
+  natural-success acceptance, unknown-cleanup denial, selection and workflow
+  negative contracts retained unchanged.
+- One-off local boundary verification: exact new cap map/source replacement
+  and 24 invalid/nonfinite/over-cap observations rejected before child launch.
+  Ruff check/format for changed source, incremental shell syntax and
+  `git diff --check`: exit 0. Frozen Python 3.13.15 environment recovered;
+  no lock/dependency edit. Local checks are supporting evidence only.
+- Protected main/foundation/accounts/planning refs rechecked unchanged.
+  Publish only a guarded non-forced fast-forward on profiles/c03-cloud, then
+  require a new exact-implementation hosted run with all five jobs GREEN.
+  Task 9 remains IN PROGRESS / PENDING_CI; Tasks 1–8 COMPLETE; no Task 10/C04.
