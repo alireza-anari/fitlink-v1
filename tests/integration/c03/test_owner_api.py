@@ -53,6 +53,7 @@ def test_preview_owner_only_private_in_all_verification_states(settings, route, 
         if state == "partial":
             decision(s, "identity")
             decision(s, "coach")
+    s.profile.refresh_from_db()
     response = session_client(s).get(route)
     assert response.status_code == 200
     private(response)
@@ -86,6 +87,7 @@ def test_preview_cross_owner_and_assistant_cannot_select_owner(route):
         },
     )
     stranger = make_actor("+989123456789")
+    s.profile.refresh_from_db()
     AssistantMembership.objects.create(profile=s.profile, assistant=stranger.user)
     foreign_client = session_client(stranger)
     denied = foreign_client.get(route)

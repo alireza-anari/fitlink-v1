@@ -10,7 +10,7 @@ from apps.assets.views import CommandForm, private_page, valid
 from config.use_cases import athlete_profile as commands
 
 from .contracts import BaselineStepInput, ProfileConflict, ProfileNotFound
-from .forms import BaselineStepForm, ConsentForm
+from .forms import BaselineStepForm, ConsentForm, RevokeConsentForm
 from .selectors import own_athlete_profile
 from .validation import STEP_FIELDS
 
@@ -58,6 +58,9 @@ def baseline_page(request, actor, baseline_uuid):
     if step not in STEP_FIELDS:
         raise ValueError("Invalid step")
     consent_key = f"c03_consent:{actor.user_uuid}:{baseline_uuid}"
+    receipts = request.session.get(consent_key, [])
+    if isinstance(receipts, str):
+        receipts = [receipts]
     if request.method == "POST":
         action = request.POST.get("action")
         if action == "save":
@@ -90,9 +93,9 @@ def baseline_page(request, actor, baseline_uuid):
                 at=timezone.now(),
                 **form.command(),
             )
-            request.session[consent_key] = str(identifier)
+            request.session[consent_key] = [*receipts, str(identifier)]
         elif action == "revoke":
-            form = ConsentForm(request.POST)
+            form = RevokeConsentForm(request.POST)
             data = valid(form)
             commands.revoke_baseline_storage(
                 actor,
@@ -102,7 +105,9 @@ def baseline_page(request, actor, baseline_uuid):
                 data["operation_id"],
                 timezone.now(),
             )
-            request.session.pop(consent_key, None)
+            request.session[consent_key] = [
+                r for r in receipts if r != str(data["consent_uuid"])
+            ]
         else:
             raise ValueError("Invalid action")
         return redirect(f"/athlete/baseline/{baseline_uuid}/?step={step}")
@@ -112,7 +117,7 @@ def baseline_page(request, actor, baseline_uuid):
         for r in initial.get("approximate_records", [])
     )
     initial["expected_version"] = row.version
-    stored = request.session.get(consent_key)
+    stored = receipts[-1] if receipts else None
     consent = ConsentForm(
         initial={
             "expected_version": row.version,
@@ -145,6 +150,13 @@ def baseline_page(request, actor, baseline_uuid):
             "form": BaselineStepForm(step, initial=initial),
             "command_form": CommandForm(initial={"expected_version": row.version}),
             "consent_form": consent,
+            "receipts": receipts,
+            "revoke_form": RevokeConsentForm(
+                initial={
+                    "consent_uuid": UUID(stored) if stored else None,
+                    "expected_consent_version": 1,
+                }
+            ),
             "can_revoke": bool(stored),
             "storage_seconds": getattr(
                 settings, "BASELINE_STORAGE_CONSENT_SECONDS", None

@@ -42,6 +42,13 @@ def test_persian_digits_and_explicit_clear():
     assert form.payload() == {"height_cm": "170.0", "weight_kg": None}
 
 
+def test_native_measurement_label_has_exact_accessible_name():
+    from apps.athletes.forms import BaselineStepForm
+
+    label = BaselineStepForm("basics")["height_cm"].label_tag()
+    assert ">قد (سانتی‌متر)</label>" in label
+
+
 def test_native_locations_use_bounded_human_lines():
     from apps.professionals.forms import ProfessionalStepForm
 

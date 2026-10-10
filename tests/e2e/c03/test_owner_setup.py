@@ -35,7 +35,7 @@ async def test_owner_dual_context_resume_optional_consent(
         lambda: BaselineAssessment.objects.exclude(pk=baseline.id).get()
     )
     assert str(correction.height_cm) == "170.0" and correction.parent_id == baseline.id
-    await page.get_by_role("button", name="پس‌گرفتن اجازهٔ نگهداری", exact=True).click()
+    await page.get_by_role("button", name="پس‌گرفتن این اجازه", exact=True).click()
     await expect(page.get_by_label("قد (سانتی‌متر)", exact=True)).to_have_value("")
     from apps.governance.flag_models import FeatureFlag
 

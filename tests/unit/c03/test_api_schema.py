@@ -6,6 +6,12 @@ from django.test import Client
 pytestmark = pytest.mark.unit
 
 
+def test_task4_ingress_cache_header_remains_exact():
+    response = Client().get("/api/v1/profile-assets/begin/")
+    assert response.status_code == 403
+    assert response["Cache-Control"] == "no-store"
+
+
 @pytest.mark.parametrize(
     "route", ["/professional/preview/", "/api/v1/professional/preview/"]
 )

@@ -37,6 +37,7 @@ class BoundedMultipartParser(parsers.MultiPartParser):
 
 class UploadView(PrivateView):
     account_action = "asset.owner_write"
+    cache_control = "no-store"
 
     def native(self, request):
         return "text/html" in request.META.get("HTTP_ACCEPT", "")
@@ -60,7 +61,7 @@ class UploadView(PrivateView):
 
     def finalize_response(self, request, response, *args, **kwargs):
         response = super().finalize_response(request, response, *args, **kwargs)
-        response["Cache-Control"] = "private, no-store"
+        response["Cache-Control"] = self.cache_control
         response["X-Robots-Tag"] = "noindex, nofollow"
         response["X-Content-Type-Options"] = "nosniff"
         return response
@@ -147,6 +148,10 @@ class FinalizeUploadView(UploadView):
         result = profile_assets.finalize_profile_upload(
             self.actor(request), asset_uuid, at=timezone.now(), **data
         )
+        if self.native(request):
+            request._request.session[
+                f"c03_finalized:{self.actor(request).user_uuid}:{asset_uuid}"
+            ] = result.version
         return (
             redirect("/professional/setup/")
             if self.native(request)
@@ -169,6 +174,7 @@ class AbandonUploadView(UploadView):
 
 class UploadStatusView(UploadView):
     account_action = "asset.owner_read"
+    cache_control = "private, no-store"
 
     def get(self, request, asset_uuid):
         return Response(
@@ -182,6 +188,7 @@ class UploadStatusView(UploadView):
 
 class OwnerContentView(UploadView):
     account_action = "asset.owner_read"
+    cache_control = "private, no-store"
 
     def get(self, request, asset_uuid):
         result = profile_assets.authorized_profile_download(

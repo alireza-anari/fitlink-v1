@@ -125,6 +125,9 @@ class ProfessionalStepForm(CommandForm):
 
 
 class CredentialForm(CommandForm):
+    expected_profile_version = forms.IntegerField(
+        min_value=1, required=False, widget=forms.HiddenInput
+    )
     credential_uuid = forms.UUIDField(
         label="شناسهٔ مدرک برای اصلاح یا انصراف", required=False
     )
@@ -206,3 +209,7 @@ class VerificationForm(CommandForm):
     )
     verification_uuid = forms.UUIDField(label="شناسهٔ درخواست", required=False)
     target_uuid = forms.UUIDField(label="شناسهٔ هدف برای انصراف", required=False)
+
+
+class WithdrawCredentialForm(CommandForm):
+    credential_uuid = forms.UUIDField(widget=forms.HiddenInput)

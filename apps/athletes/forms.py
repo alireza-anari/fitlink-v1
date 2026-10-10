@@ -154,7 +154,10 @@ class ConsentForm(CommandForm):
         label="با نگهداری خصوصی داده‌های اختیاری این ارزیابی برای خودم موافقم.",
         required=False,
     )
-    consent_uuid = forms.UUIDField(required=False, widget=forms.HiddenInput)
+
+
+class RevokeConsentForm(CommandForm):
+    consent_uuid = forms.UUIDField(label="شناسهٔ رسید اجازهٔ نگهداری")
     expected_consent_version = forms.IntegerField(
-        min_value=1, required=False, widget=forms.HiddenInput
+        label="نسخهٔ رسید اجازه", min_value=1, initial=1
     )

@@ -55,6 +55,7 @@ def credential_values(values):
 
 class ProfessionalView(UploadView):
     account_action = "professional.profile_read"
+    cache_control = "private, no-store"
 
     def handle_exception(self, error):
         if isinstance(error, ProfileConflict):

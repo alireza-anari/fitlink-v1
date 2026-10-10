@@ -10,10 +10,13 @@
 <form method="post" class="my-4">{% csrf_token %}<input type="hidden" name="action" value="submit">{% include 'accounts/form.html' with form=command_form %}<button class="c02-button" type="submit">ثبت ارزیابی</button></form>
 {% else %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="correct">{% include 'accounts/form.html' with form=command_form %}<button class="c02-button" type="submit">ایجاد اصلاحیهٔ ارزیابی</button></form>{% endif %}
 <section class="my-6" aria-labelledby="storage-title"><h2 id="storage-title">نگهداری خصوصی اطلاعات اختیاری</h2>
-<p class="c02-help">بدون تأیید صریح، اطلاعات اختیاری ذخیره نمی‌شوند. این اجازه فقط برای نگهداری همین ارزیابی برای خود شماست. با پس‌گرفتن اجازه، داده‌های اختیاری دیگر در خواندن عادی نمایش داده نمی‌شوند.</p>
-{% if storage_seconds and baseline.state == 'draft' %}<p class="c02-help">اعتبار اجازه: {{ storage_seconds }} ثانیه. امکان پس‌گرفتن اجازه وجود دارد.</p>
+<p class="c02-help">بدون تأیید صریح، اطلاعات اختیاری ذخیره نمی‌شوند. این اجازه فقط برای نگهداری همین ارزیابی برای خود شماست. پس‌گرفتن هر رسید، همان اجازه را لغو می‌کند؛ تا وقتی اجازهٔ معتبر دیگری وجود داشته باشد، دسترسی به داده‌های اختیاری برقرار می‌ماند.</p>
+{% if baseline.optional_access %}<p class="c02-notice">اجازهٔ نگهداری اطلاعات اختیاری در حال حاضر معتبر است.</p>{% endif %}
+{% if storage_seconds and baseline.state == 'draft' and not baseline.optional_access %}<p class="c02-help">اعتبار اجازه: {{ storage_seconds }} ثانیه. امکان پس‌گرفتن اجازه وجود دارد.</p>
 <form method="post">{% csrf_token %}<input type="hidden" name="action" value="grant">{% include 'accounts/form.html' with form=consent_form %}<button class="c02-secondary" type="submit">تأیید نگهداری خصوصی</button></form>
 {% elif not storage_seconds %}<p class="c02-notice">نگهداری اطلاعات اختیاری در حال حاضر در دسترس نیست. می‌توانید مراحل اصلی را ادامه دهید.</p>{% endif %}
-{% if can_revoke %}<form method="post" class="my-4">{% csrf_token %}<input type="hidden" name="action" value="revoke">{{ consent_form.operation_id }}{{ consent_form.consent_uuid }}{{ consent_form.expected_consent_version }}<button class="c02-secondary" type="submit">پس‌گرفتن اجازهٔ نگهداری</button></form>{% endif %}
+<p class="c02-help">رسید اجازه را برای پس‌گرفتن آن پس از ورود دوباره نگه دارید. نسخهٔ رسید تازه ۱ است. با پس‌گرفتن همهٔ اجازه‌های معتبر، داده‌های اختیاری در خواندن عادی نمایش داده نمی‌شوند.</p>
+{% for receipt in receipts %}<p class="c02-help break-all">رسید صادرشده در این نشست: <bdi>{{ receipt }}</bdi></p>{% endfor %}
+<form method="post" class="my-4">{% csrf_token %}<input type="hidden" name="action" value="revoke">{% include 'accounts/form.html' with form=revoke_form %}<button class="c02-secondary" type="submit">پس‌گرفتن این اجازه</button></form>
 <form method="post" class="my-4">{% csrf_token %}<input type="hidden" name="action" value="clear">{% include 'accounts/form.html' with form=command_form %}<button class="c02-secondary" type="submit">پاک کردن اطلاعات اختیاری</button></form>
 </section>{% endblock %}

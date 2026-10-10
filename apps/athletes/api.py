@@ -15,6 +15,7 @@ from .selectors import own_athlete_profile
 
 class AthleteView(UploadView):
     account_action = "athlete.profile_read"
+    cache_control = "private, no-store"
 
     def handle_exception(self, error):
         if isinstance(error, ProfileConflict):

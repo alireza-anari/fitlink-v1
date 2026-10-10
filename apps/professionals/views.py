@@ -18,7 +18,13 @@ from config.use_cases import (
 )
 
 from .contracts import ProfessionalStepInput, ProfileConflict, ProfileNotFound
-from .forms import CredentialForm, ProfessionalStepForm, UploadForm, VerificationForm
+from .forms import (
+    CredentialForm,
+    ProfessionalStepForm,
+    UploadForm,
+    VerificationForm,
+    WithdrawCredentialForm,
+)
 from .selectors import (
     own_credential,
     own_professional_profile,
@@ -36,8 +42,8 @@ STEP_LABELS = {
     "preview": "پیش‌نمایش",
 }
 STATE_LABELS = {
-    "begun": "منتظر دریافت پرونده",
-    "uploaded": "دریافت شده",
+    "pending_upload": "منتظر دریافت پرونده",
+    "receiving": "در حال دریافت پرونده",
     "quarantined": "در قرنطینه",
     "processing": "در حال پردازش",
     "ready": "آماده",
@@ -81,7 +87,10 @@ def setup(request, actor):
             data = valid(form)
             values = form.command()
             if action == "credential_create":
-                values["expected_profile_version"] = values.pop("expected_version")
+                values.pop("expected_version", None)
+                if data["expected_profile_version"] is None:
+                    raise ValueError("Invalid profile version")
+                values["expected_profile_version"] = data["expected_profile_version"]
                 result = commands.create_credential(
                     actor, form.payload(), at=timezone.now(), **values
                 )
@@ -95,13 +104,10 @@ def setup(request, actor):
                 )
             request.session[session_key(actor, "credential")] = str(result.id)
         elif action == "credential_withdraw":
-            form = CommandForm(request.POST)
+            form = WithdrawCredentialForm(request.POST)
             values = form.command()
-            identifier = request.session.get(session_key(actor, "credential"))
-            if not identifier:
-                raise ProfileNotFound("Credential unavailable")
             commands.withdraw_credential(
-                actor, UUID(identifier), at=timezone.now(), **values
+                actor, form.cleaned_data["credential_uuid"], at=timezone.now(), **values
             )
         elif action == "upload_begin":
             form = UploadForm(request.POST)
@@ -185,7 +191,10 @@ def setup(request, actor):
     )
     if identifier:
         credential = own_credential(actor, UUID(identifier), timezone.now())
-    credential_initial = {"expected_version": profile.version if profile else None}
+    credential_initial = {
+        "expected_version": profile.version if profile else None,
+        "expected_profile_version": profile.version if profile else None,
+    }
     if credential:
         credential_initial.update(
             {
@@ -218,13 +227,22 @@ def setup(request, actor):
             "asset": asset,
             "asset_state": STATE_LABELS.get(asset.state, "نامشخص") if asset else "",
             "asset_operation": uuid4(),
+            "can_finalize": bool(
+                asset
+                and asset.state == "quarantined"
+                and request.session.get(f"c03_finalized:{actor.user_uuid}:{asset.id}")
+                != asset.version
+            ),
             "command_form": CommandForm(
                 initial={"expected_version": profile.version if profile else None}
             ),
             "credential": credential,
             "credential_form": CredentialForm(initial=credential_initial),
-            "credential_command": CommandForm(
-                initial={"expected_version": credential.version if credential else None}
+            "credential_command": WithdrawCredentialForm(
+                initial={
+                    "expected_version": credential.version if credential else None,
+                    "credential_uuid": credential.id if credential else None,
+                }
             ),
         },
     )

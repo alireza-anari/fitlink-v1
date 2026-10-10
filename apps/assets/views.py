@@ -68,6 +68,7 @@ class CommandForm(forms.Form):
     )
 
     def __init__(self, data=None, **kwargs):
+        kwargs.setdefault("label_suffix", "")
         if data is not None:
             data = data.copy()
             for name in data:
