@@ -672,7 +672,8 @@ def test_task12_gate_cannot_hide_missing_execution_in_owner_block(defect):
     assert not staff_gate_valid(workflow, gate[:start] + block + gate[end:])
 
 
-TASK13_BLOCK_SHA256 = "1c1a9206d597f84dc62d905c4db05aff423bb693e1ed4fb452f986cd8f18dc68"
+TASK13_BLOCK_SHA256 = "e6182e62f7b8a90c4121df3d2a2368c80ef3951b8b6ef2d75c291c53937c208d"
+TASK13_ENTRY_SHA256 = "e12dc145dd8e18f21e7d3f1d6481a317631aad07964df21f9fc4dd17f2738d06"
 TASK13_JOB_SHA256 = {
     "c03-restart": "b27ceac7eb05ed777be063d4e4cebb29733ae9f95f70886afb0bfb9f292c6e22",
     "c03-evidence-audit": (
@@ -688,6 +689,20 @@ def task13_installed(workflow, entry):
         "# Task 11 uses", 1
     )[0]
     if hashlib.sha256(block.encode()).hexdigest() != TASK13_BLOCK_SHA256:
+        return False
+    from tests.unit.test_c03_foundation_evidence import (
+        INHERITED_FOUNDATION_LENGTH,
+        TASK13_SUFFIX,
+        foundation_extension_valid,
+    )
+
+    body = (ROOT / "docker/verify_foundation.sh").read_bytes()
+    if (
+        not foundation_extension_valid(body)
+        or body[INHERITED_FOUNDATION_LENGTH:] != TASK13_SUFFIX
+    ):
+        return False
+    if hashlib.sha256(entry.encode()).hexdigest() != TASK13_ENTRY_SHA256:
         return False
     required_jobs = {
         "c03-restart": "python docker/c03_asset_restart_probe.py run",
@@ -776,12 +791,45 @@ def test_completed_task_has_authoritative_service_evidence():
             for i, name in enumerate(["foundation", "c02-migrations", "c03-processing"])
         ],
     }
+    record.update(
+        expected_spec_sha="c" * 40,
+        expected_spec_tree="d" * 40,
+        expected_spec_run=2,
+        specification={
+            "sha": "c" * 40,
+            "tree": "d" * 40,
+            "run_id": 2,
+            "head_sha": "c" * 40,
+            "status": "completed",
+            "event": "push",
+            "head_branch": "profiles/c03-cloud",
+            "jobs": [2],
+        },
+    )
     assert completed_evidence_valid(record)
     import copy
 
-    for defect in ("head", "tree", "absent", "skipped", "fake", "selection"):
+    for defect in (
+        "head",
+        "tree",
+        "absent",
+        "skipped",
+        "fake",
+        "selection",
+        "spec_absent",
+        "spec_head",
+        "spec_tree",
+        "spec_run",
+    ):
         bad = copy.deepcopy(record)
-        if defect == "head":
+        if defect == "spec_absent":
+            bad.pop("specification")
+        elif defect.startswith("spec_"):
+            key = {"spec_head": "sha", "spec_tree": "tree", "spec_run": "run_id"}[
+                defect
+            ]
+            bad["specification"][key] = 3 if key == "run_id" else "f" * 40
+        elif defect == "head":
             bad["head_sha"] = "c" * 40
         elif defect == "tree":
             bad["tree"] = "c" * 40
@@ -827,3 +875,95 @@ def test_task13_worker_barriers_keep_canonical_broker_names():
         "run: uv run --frozen python docker/c03_asset_restart_probe.py run"
         in WORKFLOW.read_text()
     )
+
+
+@pytest.mark.parametrize(
+    "name,log",
+    [
+        ("c03-storage", 'C03_X {"event":"pytest_exit","exitstatus":0}\n91 passed\n'),
+        (
+            "c03-owner",
+            'C03_X {"event":"pytest_exit","exitstatus":0}\n' * 2 + "75 passed\n",
+        ),
+        ("foundation", "c02_baseline.py\n311 passed\n710 passed\n38 passed\n"),
+        ("c02-migrations", "269 passed\ndurable redis-cli\n"),
+    ],
+)
+def test_task13_count_only_fake_execution_is_rejected(name, log):
+    from docker.c03_asset_restart_probe import log_evidence
+
+    with pytest.raises(AssertionError):
+        log_evidence(name, log)
+
+
+def test_task13_early_success_cannot_bypass_protected_modes():
+    entry = ENTRY.read_text().replace(
+        "set -eu\n", 'set -eu\nif [ "${1:-}" = --task13-restart ]; then exit 0; fi\n', 1
+    )
+    assert not task13_installed(WORKFLOW.read_text(), entry)
+
+
+def test_task13_installed_contract_requires_foundation_suffix(monkeypatch):
+    from tests.unit.test_c03_foundation_evidence import INHERITED_FOUNDATION_LENGTH
+
+    path = ROOT / "docker/verify_foundation.sh"
+    prefix = path.read_bytes()[:INHERITED_FOUNDATION_LENGTH]
+    original = Path.read_bytes
+    monkeypatch.setattr(
+        Path, "read_bytes", lambda p: prefix if p == path else original(p)
+    )
+    assert not task13_installed(WORKFLOW.read_text(), ENTRY.read_text())
+
+
+def restart_specimen():
+    functions = [
+        ("test_processor_crash_before_after_derivative_write_before_commit", 2),
+        ("test_scanner_storage_broker_failure_recovered", 3),
+        ("test_current_state_consent_hold_during_job", 4),
+        ("test_bounded_exhaustion_never_ready", 1),
+    ]
+    events = [
+        {
+            "event": "test_report",
+            "phase": "call",
+            "outcome": "passed",
+            "node": "tests/integration/c03/test_c03_failure_recovery.py::" + name,
+        }
+        for name, count in functions
+        for _ in range(count)
+    ]
+    for stage in ("before", "after", "scanner", "storage", "broker"):
+        for suffix in (
+            "_durable_receipt_without_prompt",
+            "_real_worker_blocked_before_commit"
+            if stage in ("before", "after")
+            else "_actual_outage_denied",
+            "_recovered_one_effect_stale_delivery_denied",
+        ):
+            events.append({"event": "task13_restart", "stage": stage + suffix})
+    return events + [{"event": "pytest_exit", "exitstatus": 0}]
+
+
+def test_task13_restart_acceptance_requires_actual_selected_cases_and_all_stages():
+    import copy
+
+    from docker.c03_asset_restart_probe import current_restart_evidence_valid
+
+    good = restart_specimen()
+    assert current_restart_evidence_valid(good)
+    for defect in ("empty", "missing_stage", "skipped", "wrong_file", "setup_failed"):
+        bad = copy.deepcopy(good)
+        if defect == "empty":
+            bad = []
+        elif defect == "missing_stage":
+            bad.pop(10)
+        elif defect == "skipped":
+            bad[0]["outcome"] = "skipped"
+        elif defect == "wrong_file":
+            for event in bad[:10]:
+                event["node"] = event["node"].replace(
+                    "test_c03_failure_recovery.py", "test_other.py"
+                )
+        else:
+            bad.append({"event": "test_report", "phase": "setup", "outcome": "failed"})
+        assert not current_restart_evidence_valid(bad), defect

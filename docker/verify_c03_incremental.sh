@@ -45,7 +45,7 @@ if [ "${1:-}" = --task13-restart ]; then
   dc run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
   dc up -d --wait worker
   dc exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
-  dc run --rm --no-deps checks timeout -k 10s 180s uv run --frozen pytest tests/integration/c03/test_c03_failure_recovery.py -q --strict-markers
+  dc run --rm --no-deps checks timeout -k 10s 180s uv run --frozen python -m pytest tests/integration/c03/test_c03_failure_recovery.py -q --strict-markers
   probe() { dc run --rm --no-deps checks timeout -k 5s 45s uv run --frozen python docker/c03_asset_restart_probe.py "$@"; }
   for stage in before after; do
     probe prepare "$stage"

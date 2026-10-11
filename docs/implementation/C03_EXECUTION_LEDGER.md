@@ -3306,3 +3306,56 @@ parameterized `test_clean_pixels_strip_all_metadata` cases and
 `test_isolation_denies_network_disk_write_and_privilege`, all in
 `tests/unit/c03/test_image_sanitization.py`; they require the real native/container
 sandbox acceptance gate. None is waived or counted as a local full GREEN.
+
+### Task 13 independent-review fix pass (new recovery-workspace evidence)
+
+Independent whole-branch reviewer found three Important contract gaps: missing
+initial test-spec source/run/job provenance; count-only logs accepted without
+actual selected-test evidence; and early successful script exit / missing
+Foundation suffix bypass. No Critical production finding. Fresh reproductions
+in `.runtime/task13-review-red.log`: 7failed/52passed in1.04s. Added mandatory
+restart journal boundary reproduction: wrong test file accepted; fresh
+`.runtime/task13-review-stage-red.log`: 1failed/59passed in1.09s. These are newly
+observed outputs, never reconstructed unpublished evidence.
+
+Fix pass: pin/verify all12 original published specification SHAs/trees/runs and
+job IDs, verify ancestry to each completed implementation; read actual bounded
+Actions artifact ZIPs without filesystem extraction, require SHA256 digest and
+run/head binding, and record passed selected-node journals. Legacy Tasks1–3 have
+no artifacts: require their exact newly observed phase-count vectors, successful
+actual Actions steps, literal execution entry point, exact-source test paths and
+existing service/restart markers. Count-only standalone logs fail. No job-name
+substitution. Preserve all immutable Foundation/C02 hashes and exact full Task13
+entry script/suffix integrity. Require all15 real restart stages, exactly10
+passed calls from the authorized recovery file, zero skips/failures and natural
+pytest exit0. Fresh focused GREEN: 70passed in2.42s before final formatting;
+subsequent full verification recorded below. One review fix pass; no re-review.
+
+Current published implementation e5a0cf6760a75ccb9b838fb27efac8a536b7a067,
+tree30280f485156c2e837bd0b0dce7536e98011bd06, run38171891118:
+processing114566033503, owner114566033526, storage114566033532,
+timeout114566033540, staff114566033567 allSUCCESS. Restart114566033591 failed
+before behavioral execution because console pytest cannot bootstrap plugin
+`docker.c03_pytest_triage` (`No module named 'docker'`). Fresh local collect-only
+reproduction preserved `.runtime/task13-plugin-console.log`. Correct newly
+installed restart invocation to frozen `python -m pytest`, matching existing
+processing probe behavior; no selection/process-bound changes. PostgreSQL job
+114566033424 exited124 at301.1s: inherited300s child deadline reached during
+Task9 suite. No timeout weakening or skipped suite. Foundation still running at
+this observation; no authoritative Task13 hosted GREEN claimed.
+
+Post-fix focused verification:70passed in2.45s (zero skips); full local units
+676passed/11failed in27.17s, same11 native sandbox failures listed above.
+Ruff all checks PASS;427 files format-check PASS; shell syntax and diff-check
+PASS. Hosted container acceptance remains required; no local failure waived.
+
+New hosted Foundation RED from first implementation5abac48bc82d9f78d1f8db74937f5b8bbaa89789:
+job114565468610 run38171697121, naturalexit1 at868.1s, complete owned cleanup,
+1644passed/1failed/0skips. Exact failed current-state recovery case atline177.
+Source diagnosis: an account eligibility PermissionError is deliberately handled
+as bounded `release_denied` failure/retry, whereas changed hold/hash or revoked
+asset returns `denied`. The new test incorrectly required the same result code
+for all three. Correct only the account expected code to exact `release_denied`;
+retain no ready derivative and retained source assertions. No production change.
+This is fresh hosted behavioral evidence, not scope correction RED or old lost
+output. New exact-source hosted GREEN still required.

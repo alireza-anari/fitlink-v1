@@ -43,6 +43,30 @@ def completed_evidence_valid(record):
         for k in ("expected_sha", "expected_tree")
     ) or not record.get("id"):
         return False
+    if (
+        not isinstance(record.get("expected_spec_run"), int)
+        or record["expected_spec_run"] < 1
+    ):
+        return False
+    specification = record.get("specification", {})
+    if not all(
+        specification.get(key) == value
+        for key, value in {
+            "sha": record.get("expected_spec_sha"),
+            "head_sha": record.get("expected_spec_sha"),
+            "tree": record.get("expected_spec_tree"),
+            "run_id": record.get("expected_spec_run"),
+            "status": "completed",
+            "event": "push",
+            "head_branch": "profiles/c03-cloud",
+        }.items()
+    ) or not specification.get("jobs"):
+        return False
+    if not all(
+        re.fullmatch(r"[0-9a-f]{40}", record.get(k, ""))
+        for k in ("expected_spec_sha", "expected_spec_tree")
+    ):
+        return False
     jobs = record.get("jobs", [])
     names = {j.get("name") for j in jobs}
     required = record.get("required_jobs", [])
@@ -266,6 +290,56 @@ def verify(stage):
     )
 
 
+def current_restart_evidence_valid(events):
+    required = {
+        stage + suffix
+        for stage in ("before", "after")
+        for suffix in (
+            "_durable_receipt_without_prompt",
+            "_real_worker_blocked_before_commit",
+            "_recovered_one_effect_stale_delivery_denied",
+        )
+    }
+    required |= {
+        stage + suffix
+        for stage in ("scanner", "storage", "broker")
+        for suffix in (
+            "_durable_receipt_without_prompt",
+            "_actual_outage_denied",
+            "_recovered_one_effect_stale_delivery_denied",
+        )
+    }
+    stages = [e.get("stage") for e in events if e.get("event") == "task13_restart"]
+    calls = [
+        e
+        for e in events
+        if e.get("event") == "test_report" and e.get("phase") == "call"
+    ]
+    exits = [e.get("exitstatus") for e in events if e.get("event") == "pytest_exit"]
+    expected_functions = {
+        "test_processor_crash_before_after_derivative_write_before_commit",
+        "test_scanner_storage_broker_failure_recovered",
+        "test_current_state_consent_hold_during_job",
+        "test_bounded_exhaustion_never_ready",
+    }
+    found = {e.get("node", "").split("::")[-1].split("[")[0] for e in calls}
+    return (
+        set(stages) == required
+        and len(stages) == len(required)
+        and exits == [0]
+        and len(calls) == 10
+        and found == expected_functions
+        and all(e.get("outcome") == "passed" for e in calls)
+        and all(
+            e.get("node", "").startswith(
+                "tests/integration/c03/test_c03_failure_recovery.py::"
+            )
+            for e in calls
+        )
+        and not any(e.get("outcome") in {"skipped", "failed"} for e in events)
+    )
+
+
 def run():
     from docker.c03_gate_diagnostics import watch
 
@@ -298,6 +372,14 @@ def run():
             print(
                 "C03_TASK13 " + json.dumps(json.loads(line), sort_keys=True), flush=True
             )
+    if result == 0:
+        journal = [
+            json.loads(line)
+            for path in folder.glob("*.jsonl")
+            for line in path.read_text().splitlines()
+        ]
+        if not current_restart_evidence_valid(journal):
+            return 1
     return result
 
 
@@ -454,7 +536,71 @@ AUTHORITY = [
 ]
 
 
-def log_evidence(name, log):
+SPECIFICATION_AUTHORITY = [
+    {
+        "sha": "7a18a32c7706dcd11329f8aa778c4d8076311ffd",
+        "run": 37571066990,
+        "tree": "c1612b6a910dd100c9559a24e653de7e013f77b3",
+    },
+    {
+        "sha": "fa636833df15fbbec1ed9f6d19dd121fcabc3df7",
+        "run": 37721913275,
+        "tree": "67bd30c20f3a49b285dacfdefb97a701d7ed5489",
+    },
+    {
+        "sha": "9424a32173c6d8be7dc60730f9c2d0ee2430510e",
+        "run": 37725704752,
+        "tree": "d1124179622fa5404327f12332e53537830502c5",
+    },
+    {
+        "sha": "759f1531c9d1a008818546ec61c5112aec32494c",
+        "run": 37745213821,
+        "tree": "576abcb70305d19a06d6c2374c11691a0195d96f",
+    },
+    {
+        "sha": "c0f5d420ba99e5c21411570459758f7ec56c3d95",
+        "run": 37926898643,
+        "tree": "6cf6e118409b97d996ea28ea229a78a3f6bd7f72",
+    },
+    {
+        "sha": "701078b3fb308dae929dbed4fb876f2c14b3fa7f",
+        "run": 37949114753,
+        "tree": "b4af0969846ac4f897dbcc68800649a30da92968",
+    },
+    {
+        "sha": "302062fa13dbe88e20d6848fc196508201bba2a7",
+        "run": 37975683660,
+        "tree": "4563ebdc64d1b158cb86e45f88cace87003f1c2b",
+    },
+    {
+        "sha": "fa3d0c9c42e4c987549b7ac7399a38bba5455dd4",
+        "run": 37985939065,
+        "tree": "4f612a25ddddeb5062e82cfe8d45340d90b3832b",
+    },
+    {
+        "sha": "e37900f1e6971654ac50cbdbb8407320e47cb70d",
+        "run": 38045752487,
+        "tree": "f2a3aa93c643d15da92b723bbfbf11fbe38d1eb6",
+    },
+    {
+        "sha": "c7a0b349f16b2a06340ef4a0aa4ef0db896c472f",
+        "run": 38058891938,
+        "tree": "9b9a82a354808c77dce6f07e409099597e4dbcde",
+    },
+    {
+        "sha": "0597ffc3c9cd428bbcffcd12880367d4cdd0bf8f",
+        "run": 38068682504,
+        "tree": "b735126bef70ace22897e992b8af24f67732b073",
+    },
+    {
+        "sha": "ce244b043940d06091e64bffa45da00a40f527fe",
+        "run": 38117010549,
+        "tree": "56b50c8b2aa8203f0bfa516054da14beb3b8e72c",
+    },
+]
+
+
+def log_evidence(name, log, selection_proof=None):
     events = []
     for line in log.splitlines():
         if "C03_" in line and "{" in line:
@@ -472,7 +618,24 @@ def log_evidence(name, log):
     counts += [e.get("passed", 0) for e in events]
     counts += [sum(e.get("phase") == "call" for e in calls)]
     selections = sorted({e.get("node", "").split("::")[0] for e in calls})
+    if not selections and name != "c03-timeout-probe":
+        assert selection_proof and selection_proof.get("verified") is True
+        selections = selection_proof["selections"]
+        assert selections and all(s.startswith("tests/") for s in selections)
     stages = {e.get("stage") for e in events}
+    if selection_proof is None and name in {
+        "c03-storage",
+        "c03-owner",
+        "c03-staff",
+        "c03-processing",
+    }:
+        minimum = {
+            "c03-storage": 91,
+            "c03-owner": 75,
+            "c03-staff": 67,
+            "c03-processing": 62,
+        }[name]
+        assert sum(e.get("phase") == "call" for e in calls) >= minimum
     if name == "c03-processing":
         assert {
             "real_worker_scanned_before_sigkill",
@@ -496,7 +659,7 @@ def log_evidence(name, log):
             "passed": 1,
             "skipped": 0,
             "exitstatus": 0,
-            "selections": ["actual_compose_timeout_probe"],
+            "selections": ["docker/c03_timeout_probe.py"],
         }
     elif name == "c02-migrations":
         assert 269 in counts and "durable" in log and "redis-cli" in log
@@ -516,7 +679,7 @@ def log_evidence(name, log):
         "passed": sum(counts),
         "skipped": 0,
         "exitstatus": 0,
-        "selections": selections or [name],
+        "selections": selections,
     }
 
 
@@ -534,7 +697,7 @@ def audit():
     token = os.environ.get("GITHUB_TOKEN")
     assert token, "Read-only Actions token unavailable"
 
-    def get(path, *, raw=False):
+    def get(path, *, raw=False, binary=False):
         url = "https://api.github.com/repos/alireza-anari/fitlink-v1/" + path
         request = Request(
             url,
@@ -547,11 +710,105 @@ def audit():
         with opener.open(request, timeout=20) as response:
             data = response.read(4_000_001)
         assert len(data) <= 4_000_000
+        if binary:
+            return data
         text = data.decode("utf-8")
         return text if raw else json.loads(text)
 
     ledger = (ROOT / "docs/implementation/C03_EXECUTION_LEDGER.md").read_text()
-    for expected in AUTHORITY:
+    import base64
+    import io
+    import zipfile
+
+    def source(path, sha):
+        body = get(f"contents/{path}?ref={sha}")
+        assert body["encoding"] == "base64"
+        return base64.b64decode(body["content"]).decode()
+
+    def artifact_selections(expected):
+        rows = get(f"actions/runs/{expected['run']}/artifacts?per_page=100")[
+            "artifacts"
+        ]
+        selections = set()
+        proofs = []
+        # A failed earlier attempt's artifact cannot replace a successful journal.
+        for row in sorted(rows, key=lambda a: a["created_at"], reverse=True):
+            if row["expired"] or "diagnostics" not in row["name"]:
+                continue
+            binding = row["workflow_run"]
+            assert (
+                binding["id"] == expected["run"]
+                and binding["head_sha"] == expected["sha"]
+            )
+            data = get(f"actions/artifacts/{row['id']}/zip", binary=True)
+            assert "sha256:" + sha256(data).hexdigest() == row["digest"]
+            with zipfile.ZipFile(io.BytesIO(data)) as archive:
+                assert sum(i.file_size for i in archive.infolist()) <= 16_000_000
+                for info in archive.infolist():
+                    if not info.filename.endswith(".jsonl"):
+                        continue
+                    events = [
+                        json.loads(line)
+                        for line in archive.read(info).decode().splitlines()
+                    ]
+                    exits = [
+                        e.get("exitstatus")
+                        for e in events
+                        if e.get("event") == "pytest_exit"
+                    ]
+                    reports = [e for e in events if e.get("event") == "test_report"]
+                    calls = [e for e in reports if e.get("phase") == "call"]
+                    if (
+                        not exits
+                        or any(exits)
+                        or not calls
+                        or any(e.get("outcome") != "passed" for e in reports)
+                    ):
+                        continue
+                    nodes = {e["node"].split("::")[0] for e in calls}
+                    assert all(n.startswith("tests/") for n in nodes)
+                    selections.update(nodes)
+                    proofs.append(
+                        {
+                            "id": row["id"],
+                            "digest": row["digest"],
+                            "journal": info.filename,
+                        }
+                    )
+        return sorted(selections), proofs
+
+    legacy_counts = {
+        1: {
+            "c02-migrations": [269, 135],
+            "foundation": [311, 70, 90, 2, 5, 1, 2, 710, 2, 38, 5, 1, 2],
+        },
+        2: {
+            "c02-migrations": [269, 136, 78],
+            "foundation": [329, 70, 90, 2, 5, 1, 2, 789, 2, 38, 5, 1, 2],
+        },
+        3: {
+            "c02-migrations": [269, 137, 78, 82],
+            "foundation": [382, 70, 90, 2, 5, 1, 2, 872, 2, 38, 5, 1, 2],
+        },
+    }
+    for expected, spec in zip(AUTHORITY, SPECIFICATION_AUTHORITY, strict=True):
+        spec_run = get(f"actions/runs/{spec['run']}")
+        spec_tree = get(f"git/commits/{spec['sha']}")["tree"]["sha"]
+        spec_jobs = get(f"actions/runs/{spec['run']}/jobs?filter=latest&per_page=100")[
+            "jobs"
+        ]
+        assert spec_jobs and all(
+            j["run_id"] == spec["run"]
+            and j["head_sha"] == spec["sha"]
+            and j["status"] == "completed"
+            for j in spec_jobs
+        )
+        comparison = get(f"compare/{spec['sha']}...{expected['sha']}")
+        assert comparison["merge_base_commit"]["sha"] == spec["sha"]
+        # Older published ledger entries use independently verified abbreviations.
+        assert spec["sha"] in ledger or spec["sha"][:8] in ledger
+        assert spec["tree"] in ledger or spec["tree"][:8] in ledger
+        observed_selections, artifact_proofs = artifact_selections(expected)
         assert all(str(expected[k]) in ledger for k in ("run", "sha", "tree"))
         run = get(f"actions/runs/{expected['run']}")
         tree = get(f"git/commits/{expected['sha']}")["tree"]["sha"]
@@ -564,9 +821,52 @@ def audit():
             assert job["status"] == "completed" and all(
                 s["conclusion"] == "success" for s in job["steps"]
             )
-            proof = log_evidence(
-                job["name"], get(f"actions/jobs/{job['id']}/logs", raw=True)
-            )
+            log = get(f"actions/jobs/{job['id']}/logs", raw=True)
+            selection_proof = None
+            if expected["task"] <= 3:
+                assert [
+                    int(x) for x in re.findall(r"(\d+) passed", log)
+                ] == legacy_counts[expected["task"]][job["name"]]
+                entry = (
+                    "docker/verify_c03_incremental.sh"
+                    if job["name"] == "c02-migrations"
+                    else "docker/verify_foundation.sh"
+                )
+                invoked = (
+                    "docker/verify_c03_incremental.sh"
+                    if job["name"] == "c02-migrations"
+                    else "docker/verify_c02.sh"
+                )
+                assert (
+                    invoked in log
+                    and "Durable quota restart probe passed: verify" in log
+                    if job["name"] == "c02-migrations"
+                    else invoked in log
+                )
+                script = source(entry, expected["sha"])
+                selections = sorted(
+                    set(
+                        re.findall(
+                            r"tests/(?:unit|integration|e2e)(?:/[\w./]+)?", script
+                        )
+                    )
+                )
+                assert selections
+                selection_proof = {
+                    "verified": True,
+                    "selections": selections,
+                    "source": expected["sha"],
+                    "counts": legacy_counts[expected["task"]][job["name"]],
+                }
+            elif artifact_proofs:
+                selection_proof = {
+                    "verified": True,
+                    "selections": observed_selections,
+                    "artifacts": artifact_proofs,
+                }
+            proof = log_evidence(job["name"], log, selection_proof)
+            if selection_proof:
+                proof["selection_provenance"] = selection_proof
             checked.append(
                 {
                     "id": job["id"],
@@ -583,6 +883,19 @@ def audit():
             "tree": tree,
             "required_jobs": expected["jobs"],
             "jobs": checked,
+            "expected_spec_sha": spec["sha"],
+            "expected_spec_tree": spec["tree"],
+            "expected_spec_run": spec["run"],
+            "specification": {
+                "sha": spec["sha"],
+                "tree": spec_tree,
+                "run_id": spec_run["id"],
+                "head_sha": spec_run["head_sha"],
+                "status": spec_run["status"],
+                "event": spec_run["event"],
+                "head_branch": spec_run["head_branch"],
+                "jobs": [j["id"] for j in spec_jobs],
+            },
         }
         assert completed_evidence_valid(record)
         evidence(
@@ -602,6 +915,8 @@ def audit():
                     "head": expected["sha"],
                     "tree": tree,
                     "jobs": [j["id"] for j in checked],
+                    "specification": record["specification"],
+                    "executions": [{"job": j["id"], **j["execution"]} for j in checked],
                     "verified": True,
                 }
             ),

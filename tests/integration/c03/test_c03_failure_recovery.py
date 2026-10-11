@@ -174,7 +174,7 @@ def test_current_state_consent_hold_during_job(monkeypatch, settings, change):
         assert read(s, baseline, timezone.now()).answers["height_cm"] is None
         assert not read(s, baseline, timezone.now()).optional_access
     else:
-        assert result == "denied"
+        assert result == ("release_denied" if change == "account" else "denied")
         assert not s.asset.derivatives.filter(state="ready").exists()
     assert s.store.read_limited(s.asset.source_key, 10_000_000) == s.data
     # Installed self-storage consent is baseline_storage, never invented media
