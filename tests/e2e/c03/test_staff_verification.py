@@ -148,7 +148,8 @@ async def test_deny_capability_assignment_expired_stepup_crosscase_self_superuse
             StaffStepUpGrant.objects.filter(pk=s.staff.step).update(case_uuid=uuid4())
         elif fault == "expired_stepup":
             StaffStepUpGrant.objects.filter(pk=s.staff.step).update(
-                expires_at=timezone.now() - timedelta(seconds=1)
+                verified_at=timezone.now() - timedelta(minutes=10),
+                expires_at=timezone.now() - timedelta(seconds=1),
             )
 
     await database(invalidate)

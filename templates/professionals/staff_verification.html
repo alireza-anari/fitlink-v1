@@ -2,5 +2,28 @@
 {% block account_content %}
 <h1>بررسی خصوصی پرونده</h1><p>این بررسی صفحهٔ عمومی ایجاد نمی‌کند.</p>
 <form method="post">{% csrf_token %}{% include 'accounts/form.html' %}<button class="c02-button">باز کردن پرونده</button></form>
-{% if case %}{% for target in case.targets %}<section data-target="{{ target.target }}"><h2>{% if target.target == 'identity' %}هویت{% elif target.target == 'coach' %}مربی{% else %}متخصص تغذیه{% endif %}</h2><p>{{ target.state }}</p></section>{% endfor %}{% endif %}
+{% if case %}
+<p>نام ثبت‌شده برای بررسی هویت: {{ case.identity_name }}</p>
+{% if case.state == 'submitted' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="start">{% include 'accounts/form.html' with form=start_form %}<button class="c02-button">شروع بررسی</button></form>{% endif %}
+{% for row in review_rows %}{% with target=row.target %}
+<section data-target="{{ target.target }}">
+<h2>{% if target.target == 'identity' %}هویت{% elif target.target == 'coach' %}مربی{% else %}متخصص تغذیه{% endif %}</h2>
+<p>{% if target.effective_approval_uuid %}تأیید شده{% elif target.state == 'rejected' %}تأیید نشده{% elif target.state == 'approved' %}تأیید ثبت‌شده اکنون مؤثر نیست{% elif target.state == 'under_review' %}در حال بررسی{% elif target.state == 'stale' %}مدارک تغییر کرده است{% elif target.state == 'withdrawn' %}پس گرفته شده{% else %}در انتظار بررسی{% endif %}</p>
+{% if case.state == 'under_review' and target.state == 'under_review' %}
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="decide">{% include 'accounts/form.html' with form=row.decision_form %}<button class="c02-button">ثبت تصمیم</button></form>
+{% endif %}
+{% if target.effective_approval_uuid %}
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="revoke"><p>ابطال این تأیید مشخص، سابقهٔ تصمیم را حفظ می‌کند.</p>{% include 'accounts/form.html' with form=row.revoke_form %}<button class="c02-button">ابطال تأیید مشخص</button></form>
+{% endif %}
+{% if target.role_uuid %}
+<p>محدودیت موقت نقش از ابطال تأیید جداست. رفع محدودیت، تأیید تازه ایجاد نمی‌کند.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="restrict">{% include 'accounts/form.html' with form=row.restrict_form %}<button class="c02-button">محدود کردن موقت نقش</button></form>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="release">{% include 'accounts/form.html' with form=row.release_form %}<button class="c02-button">رفع محدودیت مشخص</button></form>
+{% endif %}
+</section>{% endwith %}{% endfor %}
+<h2>مدارک ارسال‌شدهٔ همین پرونده</h2>
+{% for item in case.evidence %}<p>{{ item.type_code }} · {{ item.issuer }} · {{ item.title }}</p><p><a href="/api/v1/staff/professional-verification/{{ case.id }}/evidence/{{ item.asset_uuid }}/">مشاهدهٔ تصویر پاک‌سازی‌شدهٔ مدرک</a></p>{% endfor %}
+<h2>سابقهٔ همین پرونده</h2>
+<ol>{% for entry in case.history %}<li><time datetime="{{ entry.at|date:'c' }}">{{ entry.at|date:'Y/m/d H:i' }}</time> · {% if entry.event == 'submit' %}ثبت درخواست{% elif entry.event == 'assign' %}واگذاری{% elif entry.event == 'reassign' %}واگذاری مجدد{% elif entry.event == 'start_review' %}شروع بررسی{% elif entry.event == 'decision' %}ثبت تصمیم هدف{% elif entry.event == 'target_stale' %}تغییر مدارک هدف{% else %}پس گرفتن هدف{% endif %} · نسخه {{ entry.prior_version }} ← {{ entry.new_version }}</li>{% endfor %}</ol>
+{% endif %}
 {% endblock %}

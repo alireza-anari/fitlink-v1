@@ -2,7 +2,11 @@
 
 from dataclasses import dataclass, field
 from datetime import date, datetime
+from typing import TYPE_CHECKING
 from uuid import UUID
+
+if TYPE_CHECKING:
+    from .verification_selectors import TargetReviewBinding
 
 
 class ProfileNotFound(LookupError):
@@ -164,6 +168,34 @@ class VerificationStaffDTO:
     identity_name: str
     evidence: tuple[VerificationEvidenceDTO, ...]
     assignment_uuid: UUID | None
+
+
+@dataclass(frozen=True)
+class StaffReviewTargetDTO:
+    id: UUID
+    target: str
+    state: str
+    version: int
+    role_uuid: UUID | None
+    role_version: int | None
+    effective_approval_uuid: UUID | None
+    binding: "TargetReviewBinding"
+
+
+@dataclass(frozen=True)
+class StaffVerificationHistoryDTO:
+    event: str
+    target_uuid: UUID | None
+    at: datetime
+    reason_code: str
+    prior_version: int
+    new_version: int
+
+
+@dataclass(frozen=True)
+class AssignedVerificationStaffDTO(VerificationStaffDTO):
+    review_targets: tuple[StaffReviewTargetDTO, ...]
+    history: tuple[StaffVerificationHistoryDTO, ...]
 
 
 @dataclass(frozen=True)

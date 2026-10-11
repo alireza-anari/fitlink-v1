@@ -1,6 +1,6 @@
 """Current assigned, reasoned and case-step-up audited private reads."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from datetime import datetime
 from uuid import UUID, uuid4
 
@@ -16,11 +16,14 @@ from apps.governance import audit
 from apps.governance.staff import require_staff
 
 from .contracts import (
+    AssignedVerificationStaffDTO,
     ProfileNotFound,
+    StaffReviewTargetDTO,
+    StaffVerificationHistoryDTO,
     VerificationQueueDTO,
     VerificationQueueItem,
 )
-from .models import Verification
+from .models import Verification, VerificationHistory
 from .policies import validate_context
 from .restrictions import RestrictionToken, restriction_token
 from .verification import (
@@ -33,9 +36,58 @@ from .verification import (
 
 
 def assigned_verification_detail(actor, verification_uuid, step_up_id, reason_code, at):
+    from .selectors import _approval_facts
+    from .verification import effective_decision
+
     with transaction.atomic():
-        *_, case, targets, assignments, receiver = _staff_anchors(
-            actor, verification_uuid, step_up_id, reason_code, at
+        _, owner, profile, roles, credentials, case, targets, assignments, _ = (
+            _staff_anchors(actor, verification_uuid, step_up_id, reason_code, at)
+        )
+        review_targets = []
+        for target in targets:
+            role = next((r for r in roles if r.id == target.role_id), None)
+            latest = effective_decision(profile, target.target)
+            _, reasons, _ = _approval_facts(
+                owner, profile, credentials, target.target, role, at
+            )
+            # Temporary restrictions/declarations do not erase an approval.
+            # Evidence validity and the exact immutable target chain still apply.
+            approval = (
+                latest.id
+                if latest is not None
+                and latest.target_id == target.id
+                and latest.decision == "approve"
+                and not set(reasons) - {"role_restricted", "declaration_inactive"}
+                else None
+            )
+            review_targets.append(
+                StaffReviewTargetDTO(
+                    target.id,
+                    target.target,
+                    target.state,
+                    target.version,
+                    role.id if role else None,
+                    role.version if role else None,
+                    approval,
+                    target_review_binding(profile, role, target),
+                )
+            )
+        history = tuple(
+            StaffVerificationHistoryDTO(
+                row.event,
+                row.target_id,
+                row.at,
+                row.reason_code,
+                row.prior_version,
+                row.new_version,
+            )
+            for row in reversed(
+                list(
+                    VerificationHistory.objects.filter(verification=case).order_by(
+                        "-at", "-id"
+                    )[:25]
+                )
+            )
         )
         audit.append_event(
             SecurityOutcome(
@@ -44,7 +96,12 @@ def assigned_verification_detail(actor, verification_uuid, step_up_id, reason_co
             actor_uuid=actor.user_uuid,
             subject_type="verification",
         )
-        return _staff_dto(case, targets, assignments)
+        base = _staff_dto(case, targets, assignments)
+        return AssignedVerificationStaffDTO(
+            **{f.name: getattr(base, f.name) for f in fields(base)},
+            review_targets=tuple(review_targets),
+            history=history,
+        )
 
 
 def assigned_verification_evidence(
