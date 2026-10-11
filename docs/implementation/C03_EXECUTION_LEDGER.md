@@ -2851,3 +2851,76 @@ run38088833983 is FAILED and cannot serve as final acceptance. Publish only this
 correction and legitimate preserved Task11 evidence by guarded fast-forward;
 Task11 remains IN_PROGRESS pending a NEW all-mandatory exact-source hosted GREEN.
 No Task12/13/C04, merge, deployment, force push or protected-ref change.
+
+### Task 11 COMPLETE — corrected exact-source authoritative hosted GREEN
+
+Latest authority is Task 11 ONLY, including the two-private-preview absence-list
+correction, three-file owner-read service correction and exact additive 26-route
+current-source inventory correction. All are implemented within their stated
+boundaries. Tasks 1–10 remain COMPLETE; Task 11 is now COMPLETE. Tasks 12 and 13
+and C04 are UNSTARTED. STOP; no later task is authorized by this entry.
+
+Authoritative corrected implementation:
+- SHA: 27a6e2f57d48a66c75fd507155c821bf7a1832fa
+- Tree: d6046f576694572b2c1cc52d9179aab10adddce7
+- Parent: 62e0a7a92aa506924487d96043aed9f11bbc0f55
+- Hosted run: [38113535678](https://github.com/alireza-anari/fitlink-v1/actions/runs/38113535678), attempt 2, overall SUCCESS.
+- Run event/head: push, profiles/c03-cloud, exact SHA above. All six mandatory
+  jobs are completed SUCCESS; no mandatory tests skipped or selections weakened.
+- Only corrected-source changes from the parent: authorized route inventory and
+  legitimate preserved Task 11 ledger evidence. Production/backend/browser code
+  is unchanged. The later ledger-only completion checkpoint does not replace
+  this exact implementation acceptance source.
+
+| Mandatory job in final attempt | Verdict and exact execution evidence |
+| --- | --- |
+| [foundation 114396509503](https://github.com/alireza-anari/fitlink-v1/actions/runs/38113535678/job/114396509503) | SUCCESS retained from attempt 1 execution job114393808846. Current full unit suite644passed/0failed/0skipped. Frozen locks/build, Ruff/format, mypy, Django/production checks succeeded. Exact immutable C01 checkout/tree verified; full upgrade and independent C02 rehearsal natural0 in936.4s, cleanup complete. Metadata1621passed/0failed/0skipped across six processes, all exits0;1573 full backend calls,38 C02 browser calls and10 smoke/restart calls. |
+| [c03-owner 114396528290](https://github.com/alireza-anari/fitlink-v1/actions/runs/38113535678/job/114396528290) | SUCCESS retained from attempt 1 execution job114393808835. Real PostgreSQL owner backend65passed; actual Chromium C03 Playwright10passed; inherited C02 browser38passed. All zero failures/skips. Focused exits0 in20.334s/58.086s; supervised natural0 in495.2s, complete cleanup. |
+| [c03-processing 114396526336](https://github.com/alireza-anari/fitlink-v1/actions/runs/38113535678/job/114396526336) | SUCCESS retained from attempt 1 execution job114393808742. Actual scanner/private MinIO/durable non-eager worker, restart/outage/Beat/parent-death contracts.62reported passed calls/0failed/0skipped; pytest exit0; natural0 in298.8s, complete cleanup. |
+| [c03-timeout-probe 114396509081](https://github.com/alireza-anari/fitlink-v1/actions/runs/38113535678/job/114396509081) | SUCCESS retained from attempt 1 execution job114393808942. Unchanged actual bounded process/container ownership probe and expected diagnostic deadline, full cleanup; no acceptance timeout waived. |
+| [c03-storage 114396508300](https://github.com/alireza-anari/fitlink-v1/actions/runs/38113535678/job/114396508300) | SUCCESS in attempt2. Private MinIO/upload91passed/0failed/0skipped; pytest exit0 in18.663s; natural0 in157.4s, complete cleanup. The legacy task4_complete:false slice flag is not a Task11 failure; complete:true and all selected91 cases passed. |
+| [c02-migrations 114396508113](https://github.com/alireza-anari/fitlink-v1/actions/runs/38113535678/job/114396508113) | SUCCESS in attempt2.269 account PostgreSQL tests and durable Redis restart passed. Unchanged cumulative C03 selection natural0 in299.2s within the original300s child bound; cleanup complete. Journal processes49/67/108/89/86passed, each exit0, no failures/skips. Tasks8/9/10 respectively108/89/86passed. Task11 is intentionally selected in the separate mandatory owner gate. |
+
+Final successful metadata-only artifacts (ID/size/digest; same exact source):
+- c03-owner-diagnostics: ID11693360136, 15358bytes, sha256:5d8386520968f817b3c63b1689c9e3b496f1ec909a904345bf5688ec40803120.
+- c03-postgresql-diagnostics: ID11693281650, 28272bytes, sha256:a5d68a6dcae6d32b1812ae22e5deb0eb0f57a85609e63f1d22c9ee5a95084f26.
+- c03-foundation-diagnostics: ID11692807374, 96095bytes, sha256:bb023e421563b9ce62527fe8a64bbcfd2508312ac16369a21150dff195456322.
+- c03-processing-diagnostics: ID11692781648, 13003bytes, sha256:79cc5619153b7fb17181986461f3300cd47d77277cba121cf49f524b6b7e79b7.
+- c03-storage-diagnostics: ID11692423364, 15359bytes, sha256:b03bf517b6d670511d3d07824c39ad33fedabc8100f05fad0e0036dc046cbdd0.
+- c03-timeout-probe-diagnostics: ID11692199189, 902bytes, sha256:1792966973f79a6e9890581a74693db7c23d33df4807457b676deacb8c203039.
+
+Downloaded owner, Foundation and final cumulative ZIP bytes and verified their
+SHA256 against the hosted digests before reading metadata journals. Owner
+journals65/10/38, Foundation1573/38/5/2/2/1 and cumulative49/67/108/89/86 all show
+zero failed/skipped calls and successful process exits. No private screenshots,
+trace/video, page bodies, source/storage keys or credentials were exposed.
+
+Attempt1 remains a genuine FAILED checkpoint on this same corrected source:
+storage execution114393808853 exited1 in180.8s during bounded minio-init before
+any test; storage artifact11692547030 (1837bytes,
+sha256:b9e7ee79a9ef0c5ec503fe14435d1c8f911f3384f3b4e8b70105b10b2b77e07e).
+Cumulative execution114393808899 exited124 in301.1s at the unchanged300s child
+limit after successful calls, with full cleanup; artifact11692317891
+(28365bytes,sha256:8808dcc8d2546e1d752d9f5e8ef9b89cb64fcb0f6688ac546f00a36bbeeebdd8).
+One failed-jobs-only retry on identical source resolved both; no timeout,
+diagnostic, fixture, service, test or workflow correction was made. GitHub
+retained the four successful attempt1 executions in final attempt2.
+Previous run38088833983 remains FAILED and is not final acceptance.
+
+Fresh scope/security verification: removing exactly the26 authorized additions
+and their explanatory comment restores the original current-source inventory
+file byte for byte. Exact equality and every prior route/model/User assertion
+remain intact. All public/future prohibitions, owner/current-account/auth_version,
+session/CSRF/no-store/non-indexable/security assertions are preserved. Owner raw
+source denial, assigned-staff evidence authority and retention separation remain
+as reviewed; no additional adapter authorization, public storage or generic
+asset listing was introduced. No migration/schema changes. No Critical/Important
+review item is deferred; earlier documented receipt recovery constraint remains
+explicit. Local complete-suite633passed/11 inherited sandbox failures was not
+relabeled GREEN; hosted644passed establishes the required full unit verdict.
+
+All eight protected/unrelated refs freshly verified unchanged at their recorded
+baselines; execution branch remains guarded and fast-forward only. This final
+checkpoint modifies only C03_EXECUTION_LEDGER.md and preserves the validated
+implementation files byte for byte. No merge, deployment, force push, protected
+ref mutation or Task12/13/C04 work. TASK_11_COMPLETE; STOP.
