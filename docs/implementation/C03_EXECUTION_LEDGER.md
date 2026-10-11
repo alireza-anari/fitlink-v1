@@ -3359,3 +3359,24 @@ for all three. Correct only the account expected code to exact `release_denied`;
 retain no ready derivative and retained source assertions. No production change.
 This is fresh hosted behavioral evidence, not scope correction RED or old lost
 output. New exact-source hosted GREEN still required.
+
+Implementation dd6952132e0176196c026f58f00e30415821d404 /tree
+e844ac97d4e2568d4762923dc875c74adf5c5e65 /run38173116775: original specification
+and implementation audit114569733862 SUCCESS, all12 exact source/ancestry/run/job
+records verified against live read-only API plus digest-bound actual artifacts.
+Final fix-pass attribution refinement: each job records only its own artifacts;
+PostgreSQL gates without per-case journals prove explicit exact-source default
+script selections plus actual supervised natural exit0 and owned cleanup, never
+borrow Foundation/browser selections as that job's own execution.
+
+New real restart job114569734086: all10 recovery tests passed, pytestexit0 in
+12.196s, actual worker killed/restarted both before and after derivative write;
+both recovered with one effect, stale delivery denied, ClamAV1.5.4/signature28150,
+retry2 and exact source/derivative digests. Scanner outage then failed the new
+probe's expected result-code assertion; childexit1 with owned cleanup at227.1s.
+Existing ClamScanner converts connection refusal to ScanResult(error), and the
+processor deliberately emits exact `scan_error`; it does not throw
+`scanner_unavailable`. Correct only this newly added probe expectation to
+`scan_error`; retain stopped real scanner, never-ready assertions and required
+restoration/recovery. Storage remains exactly `storage_unavailable`. No
+production code changed. This partial probe is not acceptance GREEN.

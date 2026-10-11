@@ -224,7 +224,9 @@ def fault(stage):
         assert scan_due_assets(p.timezone.now(), 1, enqueue=lambda *a: None) == 1
         attempt = p.AssetProcessingAttempt.objects.get(asset=asset, state="running")
         result = process_asset(asset.id, 1, attempt.lease_uuid, p.timezone.now())
-        assert result == stage + "_unavailable"
+        assert (
+            result == {"scanner": "scan_error", "storage": "storage_unavailable"}[stage]
+        )
     asset.refresh_from_db()
     assert (
         asset.state != "ready" and not asset.derivatives.filter(state="ready").exists()
@@ -618,6 +620,13 @@ def log_evidence(name, log, selection_proof=None):
     counts += [e.get("passed", 0) for e in events]
     counts += [sum(e.get("phase") == "call" for e in calls)]
     selections = sorted({e.get("node", "").split("::")[0] for e in calls})
+    selections = sorted(
+        set(selections)
+        | set(re.findall(r"(tests/[\w./]+\.py)::[\w\[\]-]+[^\n]*? PASSED", log))
+    )
+    if selection_proof:
+        assert selection_proof.get("verified") is True
+        selections = sorted(set(selections) | set(selection_proof["selections"]))
     if not selections and name != "c03-timeout-probe":
         assert selection_proof and selection_proof.get("verified") is True
         selections = selection_proof["selections"]
@@ -729,11 +738,18 @@ def audit():
         rows = get(f"actions/runs/{expected['run']}/artifacts?per_page=100")[
             "artifacts"
         ]
-        selections = set()
-        proofs = []
+        selections = {name: set() for name in expected["jobs"]}
+        proofs = {name: [] for name in expected["jobs"]}
         # A failed earlier attempt's artifact cannot replace a successful journal.
         for row in sorted(rows, key=lambda a: a["created_at"], reverse=True):
             if row["expired"] or "diagnostics" not in row["name"]:
+                continue
+            name = row["name"].removesuffix("-diagnostics")
+            name = {
+                "c03-foundation": "foundation",
+                "c03-postgresql": "c02-migrations",
+            }.get(name, name)
+            if name not in selections:
                 continue
             binding = row["workflow_run"]
             assert (
@@ -767,15 +783,15 @@ def audit():
                         continue
                     nodes = {e["node"].split("::")[0] for e in calls}
                     assert all(n.startswith("tests/") for n in nodes)
-                    selections.update(nodes)
-                    proofs.append(
+                    selections[name].update(nodes)
+                    proofs[name].append(
                         {
                             "id": row["id"],
                             "digest": row["digest"],
                             "journal": info.filename,
                         }
                     )
-        return sorted(selections), proofs
+        return {name: sorted(paths) for name, paths in selections.items()}, proofs
 
     legacy_counts = {
         1: {
@@ -858,11 +874,52 @@ def audit():
                     "source": expected["sha"],
                     "counts": legacy_counts[expected["task"]][job["name"]],
                 }
-            elif artifact_proofs:
+            elif artifact_proofs[job["name"]]:
                 selection_proof = {
                     "verified": True,
-                    "selections": observed_selections,
-                    "artifacts": artifact_proofs,
+                    "selections": observed_selections[job["name"]],
+                    "artifacts": artifact_proofs[job["name"]],
+                }
+            if expected["task"] >= 4 and job["name"] == "c02-migrations":
+                observations = []
+                for line in log.splitlines():
+                    if "C03_DIAGNOSTIC" in line and "{" in line:
+                        observations.append(json.loads(line[line.index("{") :]))
+                assert any(
+                    e.get("event") == "started"
+                    and e.get("command") == ["sh", "docker/verify_c03_incremental.sh"]
+                    for e in observations
+                )
+                assert any(
+                    e.get("event") == "diagnostic_finished"
+                    and e.get("phase") == "postgresql"
+                    and e.get("observed_returncode") == 0
+                    and e.get("host_cleanup_complete") is True
+                    for e in observations
+                )
+                script = source("docker/verify_c03_incremental.sh", expected["sha"])
+                default = script.split(
+                    "# Bound the entire C03 gate, including readiness/SQL/"
+                    "type checking and cleanup.",
+                    1,
+                )
+                assert len(default) == 2
+                selected = sorted(
+                    set(
+                        re.findall(
+                            r"tests/(?:unit|integration)/c03/[\w./]+\.py", default[1]
+                        )
+                    )
+                )
+                assert selected
+                selection_proof = {
+                    "verified": True,
+                    "selections": selected,
+                    "source": expected["sha"],
+                    "entry": "docker/verify_c03_incremental.sh",
+                    "natural_exit": 0,
+                    "owned_cleanup": True,
+                    "artifacts": artifact_proofs[job["name"]],
                 }
             proof = log_evidence(job["name"], log, selection_proof)
             if selection_proof:
