@@ -3121,3 +3121,94 @@ protected ref, future task or public surface change.
 - Private storage `114407980563` exited1 before any test, at146.2seconds with complete cleanup and no safe test progress. Artifact11694717529 digest4c4f4e6002e9d307a80fbbcc4a094f75ec92a8a27fc4021b74723964164f5a0e downloaded and verified; no cause or GREEN inferred. Foundation is still running at this checkpoint. Preserve failures; superseding harness-corrected source needs all seven mandatory jobs GREEN.
 - Downloaded same-source PostgreSQL11694687995/5095a2733f15d24edff6f00ffd20c5d0dc97dc66f722ec2ccb76eeb22d4d56ff, owner11694663019/50f501be1110771e7779b2568f1a33d72bec8bdbad393d8a9d50bd20960de9ee and processing11694662764/d34e26bc544c3fb4a219eb73b70e7ab6d170ec7bd3f759eb593a9ff40060fa2c ZIP bytes; SHA256 and complete metadata-only journals verified. These remain supporting evidence, never substitutes for final source acceptance.
 - Full approved plan and ledger reads are now complete; the earlier preflight explicitly recorded unfinished complete-source reading. No retroactive claim that this reading preceded the earlier changes. No approved-contract contradiction was found in the completed reads. Tasks1–11 remain COMPLETE; Task12 INCOMPLETE. No Task13/14/C04, migration, merge, deployment, force push or protected-ref write.
+
+### Task 12 final staff source GREEN; cumulative acceptance pending
+
+- Corrected final candidate `b93c198ff58638123edd6bb13e20998e4d2bf762`, tree `7179e46f2dee23d4d4c1825fa875d030260af816`, published by guarded expected-head fast-forward from7a15dcc, force=false. Local API-created tree, staged tree and fetched remote tree matched exactly; clean worktree before this append. New exact-source run `38119065811`, attempt1.
+- Staff job `114409853609` SUCCESS: mandatory real PostgreSQL/API command39passed/0failed/0skipped, pytest_exit0 at25.460seconds; mandatory actual Chromium command28passed/0failed/0skipped at92.374seconds, both1280x900 and390x844. Separate full C02 browser38passed/0failed/0skipped at210.911seconds. Supervisor natural0, complete host/container cleanup at530.2seconds.
+- Every named browser scenario passed: approve/reject/resubmit/linked revoke; six capability/assignment/expired-step-up/cross-case/self/bare-superuser denials at both viewports; reload single effect; mixed independent Coach/Nutritionist outcomes; restriction/release preserving approval and not undoing revoke; stale binding; audited actual private MinIO sanitized evidence/no source URL; public/search/profile/sitemap absence; real successful POST302 followed by assignment invalidation and actual browser GET403. Backend also covers reassigned old reviewer, stale auth, no assistant authority, exact-target/bundle approvals, null identity role, bounded allowlisted case history, CSRF before effects, replay conflict,25+2 stable queue and audit-failure byte denial. Adapters perform no ORM lookup for role/approval/history/binding/token.
+- Independent follow-up read-only review explicitly approved the redirect harness: real command/302, unchanged actual redirect, invalidation before real GET, explicit403; no fabricated acceptance, weakened assertion or privacy issue. No unresolved Critical/Important finding. Final authorized staff adapter/read-projection boundary remains intact.
+- Downloaded staff artifact11694589657,15414bytes,digest9e12b8406ca1fd35b8b091a254af1601c6ad3f5028203ebcebf3f284a78b1e93; ZIP SHA256 and all setup/call/teardown reports verified. Three39/28/38 journals have successful exits and no skips. Private screenshots/traces/videos are disabled.
+- Other final-candidate successful executions: owner114409853480 (65backend+10owner browser+38C02browser; natural0/cleanup429.6seconds), private storage114409853613 (91passes/zero failures/skips; natural0/cleanup182.3seconds), scanner/non-eager worker114409853589 (62passes; real restart/outage/Beat/decoder-parent-death probes; natural0/cleanup253.4seconds), timeout ownership114409853633 (expected observation deadline, full owned-container/detached-host-child cleanup).
+- Attempt1 PostgreSQL114409853622 remains FAILED: inherited269account cases passed, Redis durable quota restart passed; cumulative49/67/108/89passed with exits0, Task10 interrupted after25passes without exit. Unchanged300second child timeout124, complete cleanup301.3seconds. Downloaded artifact11694629118/7e070762065148507a388a087a0de6163095e94c91d442ff9f164d83c99aa23a proves no failed/skipped reports but no Task10 completion. Not GREEN. Same-source retry requested only for this failed job; GitHub rejected the premature request because Foundation was still running. Wait for complete run before failed-jobs-only retry; no limit/service/selection/assertion change.
+- Downloaded and verified successful final-candidate artifacts: owner11694489435/86f51292cc4e0c0b8e994a42492c8516fdae6ebffb4410b31a606e7c04d692ea; storage11694733466/abe2aa1cd7c0d195ef76f87b5e1f5f98a744aa2148822eab7077c8709b048274; processing11694589177/44644e0a89903bc1d8164ad4eb960653fc3df1ede212f64679376f65b57adedc; timeout11694633340/4f1050a59f7ae3d5f59902a224e8c2231b498add1c4be4ac82daf84f74f2992e. All source bindings identifyb93c198. Metadata journals preserve private-data minimization.
+- Superseded7a15dcc Foundation114407980761 SUCCESS:663currentunits; complete immutable C01/full inherited rehearsal1667passed/0failed/0skipped, all six process exits0; natural0/cleanup1158.0seconds. Earlier53d5f78 Foundation114407002273 SUCCESS:662units/1666regression calls, natural0/cleanup868.8seconds. Both are supporting evidence only; no previous source replaces current final Foundation/overall GREEN.
+- Exact scope recheck: removing only the11 additions restores original foundation inventory byte-for-byte. Command verification.py, all Task7/8 verification tests and migration files unchanged.28mandatory staff browser cases collect, no deselection. Task12 INCOMPLETE pending final Foundation and successful cumulative retry/overall exact-source GREEN. Do not publish this documentation checkpoint ahead of acceptance or reopen completed Tasks1–11.
+
+
+### Task 12 final Foundation verified; identical-source retry (2026-10-11)
+
+- Resumed preserved local candidate `b93c198ff58638123edd6bb13e20998e4d2bf762`,
+  tree `7179e46f2dee23d4d4c1825fa875d030260af816`; only existing append-only
+  ledger evidence was dirty. No legitimate work reset, cleaned or overwritten.
+- Final Foundation job `114409853572` on run `38119065811` attempt1 SUCCESS.
+  Actual hosted quality log:663unit passes in28.22seconds; immutable C01 tree,
+  frozen dependencies/static/JS/Ruff/format/mypy/Django/production checks SUCCESS.
+  Complete rehearsal1667passed/0failed/0skipped:1619current unit/integration,
+  38C02browser,5Redis,1privateMinIO,2+2immutable/current smoke calls. All six
+  metadata journals have pytest_exit0; supervisor command exit0 at1107.5seconds,
+  complete host/container cleanup1107.6seconds. No incomplete observer verdict.
+- Foundation artifact `11694951103`,99441bytes, digest
+  `8d874cacaf9659c5a00135ea9f4f2becc104a8d6b5b64a52bb774a9e48eaafcd`
+  downloaded and ZIP SHA256 verified, every journal inspected. Artifact run/head
+  binding identifies the exact final candidate. This replaces pending Foundation
+  status only; cumulative PostgreSQL remained failed at this checkpoint.
+- GitHub accepted failed-jobs-only retry after the whole attempt1 finished.
+  Run38119065811 attempt2 preserves exact head/tree; only PostgreSQL executes anew
+  as job `114441024634`. GitHub lists carried successful jobs with new attempt2
+  IDs; their actual acceptance executions remain the attempt1 IDs recorded above.
+  No inherited timeout, service, selection or assertion changed. Attempt1 failed
+  cumulative evidence is retained and is not counted as GREEN.
+- Fresh local focused adapter/CI/exact-foundation checks55passed/0skips; diff check
+  clean. All eight protected/unrelated refs match their immutable recorded SHAs,
+  execution ref stillb93c198. Commands/Task7-8 tests/migrations remain unchanged.
+  Task12 INCOMPLETE pending successful cumulative retry and overall hosted GREEN.
+
+
+### TASK_12_COMPLETE — exact implementation-source hosted GREEN (2026-10-11)
+
+Authoritative implementation: `b93c198ff58638123edd6bb13e20998e4d2bf762`, tree
+`7179e46f2dee23d4d4c1825fa875d030260af816`. New exact-source Actions run
+[38119065811](https://github.com/alireza-anari/fitlink-v1/actions/runs/38119065811),
+attempt2, completed SUCCESS. Head SHA/tree and all seven mandatory job verdicts
+freshly inspected. Attempt2 reran only failed cumulative PostgreSQL; the six
+successful attempt1 executions are retained as actual acceptance evidence,
+not claimed to have executed again under their carried attempt2 job IDs.
+
+| Mandatory gate | Actual execution job | Verified result |
+| --- | --- | --- |
+| Staff API/native and actual staff Chromium |114409853609|39backend/API +28desktop/mobile staff browser +38C02browser; zero failures/skips; every pytest_exit0; supervisor0/cleanup530.2s|
+| Owner API/native and actual owner Chromium |114409853480|65backend/API +10owner browser +38C02browser; zero failures/skips; every pytest_exit0; supervisor0/cleanup429.6s|
+| Foundation/immutable upgrade/full rehearsal |114409853572|663quality units;1667rehearsal passes/zero failures/skips; six pytest_exit0; supervisor0/cleanup1107.6s|
+| Cumulative PostgreSQL/account upgrade/Redis restart |114441024634|269account passes; durable quota prepare/restart/verify;49/67/108/89/86cumulative passes, all five pytest_exit0; supervisor0 at254.1s/cleanup254.3s|
+| Real private MinIO storage |114409853613|91passes/zero failures/skips; pytest_exit0; supervisor0/cleanup182.3s|
+| Real scanner/durable non-eager worker/recovery |114409853589|62passes/zero failures/skips; pytest_exit0; actual restart/outage/Beat/decoder parent-death stages; supervisor0/cleanup253.4s|
+| Actual timeout/process ownership |114409853633|Expected deadline probe; owned container removed, detached host child terminated, supervisor contract satisfied, complete cleanup|
+
+- Successful retry PostgreSQL artifact `11699137201`,28129bytes, SHA256
+  `4086be72094a08275fa982500c6404521e941ef18a1c9a7106226625c0b93344`
+  downloaded and digest-verified. Exact-run artifact binding identifiesb93c198.
+  All report phases passed, no mandatory skips and all process exits successful;
+  Task10 completes86cases at16.870s. Prior failed attempt1 artifact and timeout
+  remain preserved above. No timeout extension, changed selection or waiver.
+- All seven final-source diagnostic ZIPs have been downloaded, digest-verified
+  and their metadata-only journals inspected; artifact IDs/digests are recorded
+  in the preceding final-source and Foundation sections. Private screenshot,
+  trace and video recording remained disabled. No private diagnostic export.
+- Final acceptance covers all required current-authority denials, exact-role
+  approvals/revokes/restrictions, bounded allowlisted projection/history, audited
+  sanitized evidence, CSRF, stale binding/replay and real redirect GET recheck.
+  The39backend/28staff browser verdicts and named scenarios are recorded above.
+  Independent review has no unresolved Critical/Important findings. No adapter
+  ORM, business command/authority change, public route, schema or migration.
+- Latest local focused verification55passed/0skips and diff check clean. Only
+  the11authorized inventory strings were added; removing them reproduces the
+  original file byte-for-byte with exact equality and all assertions preserved.
+  All eight protected/unrelated refs freshly match their recorded authority.
+- Completion publication is an append-only documentation descendant of the
+  exact accepted implementation, guarded expected-head fast-forward, force=false.
+  A later ledger-only CI run does not replace this exact implementation GREEN or
+  reopen Task12 solely because of an unrelated inherited failure/slow run.
+- Tasks1–12 COMPLETE. Task13 NOT started; Task14 NOT started; C04 NOT started.
+  No merge, deployment, force push, protected/unrelated ref write or migration.
+  **TASK_12_COMPLETE — STOP.**
