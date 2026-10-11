@@ -46,7 +46,7 @@ def target(page, kind):
 
 async def decide(page, kind, value="approve"):
     area = target(page, kind)
-    await area.get_by_label("تصمیم").select_option(value)
+    await area.get_by_label("تصمیم", exact=True).select_option(value)
     await area.get_by_label("توضیح خصوصی تصمیم").fill("بررسی آزمایشی مدارک")
     await area.get_by_role("button", name="ثبت تصمیم", exact=True).click()
 

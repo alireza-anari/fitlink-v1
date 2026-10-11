@@ -142,3 +142,35 @@ def test_staff_binding_roundtrip_does_not_derive_current_authority():
     assert serializer.is_valid(), serializer.errors
     assert serializer.validated_data.evidence_revision == 3
     assert serializer.validated_data.restriction_token.episodes == ()
+
+
+def test_native_staff_hidden_binding_roundtrip_preserves_typed_command():
+    from types import SimpleNamespace
+
+    from apps.professionals.contracts import StaffReviewTargetDTO
+    from apps.professionals.restrictions import RestrictionToken
+    from apps.professionals.staff_forms import DecisionForm, RoleForm
+    from apps.professionals.staff_views import case_forms
+    from apps.professionals.verification_selectors import TargetReviewBinding
+
+    token = RestrictionToken(((uuid4(), 2, True),))
+    binding = TargetReviewBinding(2, 3, 1, "a" * 64, token)
+    target = StaffReviewTargetDTO(
+        uuid4(), "coach", "under_review", 2, uuid4(), 4, None, binding
+    )
+    row = case_forms(
+        SimpleNamespace(version=3, review_targets=(target,)), {"step_up_id": uuid4()}
+    )["review_rows"][0]
+    for cls, name in ((DecisionForm, "decision_form"), (RoleForm, "restrict_form")):
+        rendered = row[name]
+        submitted = {field.name: field.value() for field in rendered}
+        if cls is DecisionForm:
+            submitted.update(
+                decision="approve", explanation="Synthetic bounded explanation"
+            )
+        parsed = cls(submitted)
+        assert parsed.is_valid(), parsed.errors
+        if cls is DecisionForm:
+            assert parsed.cleaned_data["expected_binding"] == binding
+        else:
+            assert parsed.cleaned_data["expected_restriction_token"] == token

@@ -1,6 +1,5 @@
 """Native command transport; fresh selectors own every assigned case fact."""
 
-import json
 from dataclasses import asdict
 from datetime import datetime
 from uuid import UUID
@@ -143,7 +142,7 @@ def case_forms(result, values):
             "expected_case_version": result.version,
             "target_uuid": target.id,
             "expected_target_version": target.version,
-            "expected_binding": json.dumps(asdict(target.binding), default=str),
+            "expected_binding": asdict(target.binding),
             "reason_code": "credentials_approved",
         }
         role = {
@@ -151,11 +150,9 @@ def case_forms(result, values):
             "expected_case_version": result.version,
             "role_uuid": target.role_uuid,
             "expected_role_version": target.role_version,
-            "expected_restriction_token": json.dumps(
-                asdict(target.binding.restriction_token), default=str
-            )
+            "expected_restriction_token": asdict(target.binding.restriction_token)
             if target.binding.restriction_token
-            else "null",
+            else None,
         }
 
         def form(cls, initial, action, target=target):

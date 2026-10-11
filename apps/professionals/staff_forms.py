@@ -1,6 +1,7 @@
 """Strict command inputs; all state, authority and bindings belong to services."""
 
 from django import forms
+from django.core.serializers.json import DjangoJSONEncoder
 
 from apps.assets.views import CommandForm
 
@@ -54,7 +55,9 @@ class DecisionForm(CommandForm):
     expected_case_version = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
     target_uuid = forms.UUIDField(widget=forms.HiddenInput)
     expected_target_version = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
-    expected_binding = forms.JSONField(widget=forms.HiddenInput)
+    expected_binding = forms.JSONField(
+        widget=forms.HiddenInput, encoder=DjangoJSONEncoder
+    )
     step_up_id = forms.UUIDField(widget=forms.HiddenInput)
     reason_code = forms.ChoiceField(
         label="دلیل تصمیم",
@@ -109,7 +112,9 @@ class RoleForm(CommandForm):
     expected_case_version = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
     role_uuid = forms.UUIDField(widget=forms.HiddenInput)
     expected_role_version = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
-    expected_restriction_token = forms.JSONField(widget=forms.HiddenInput)
+    expected_restriction_token = forms.JSONField(
+        widget=forms.HiddenInput, encoder=DjangoJSONEncoder
+    )
     step_up_id = forms.UUIDField(widget=forms.HiddenInput)
     reason_code = forms.ChoiceField(
         label="دلیل محدودیت",
