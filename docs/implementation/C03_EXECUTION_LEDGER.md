@@ -2802,3 +2802,52 @@ Additional inherited header regression first1failed/2passed then3passed; exact m
 ### Task 11 verification CAS fix and final focused checkpoint
 
 Native verification reprepare must use the current profile version independently of the existing case version. Behavioral reproduction first1failed/11passed, then12passed after separate hidden expected_profile_version and draft/closed reprepare controls. Focused current-source forms/native/API/scope/CI contracts93passed; fresh Ruff,419-file format and diff checks pass. No service authority or scope boundary expanded. Exact current-source inherited route inventory remains preserved pending additive authorization; no full hosted GREEN/completion claim.
+
+### Task 11 exact implementation hosted gates and remaining scope blocker
+
+Implementation head62e0a7a92aa506924487d96043aed9f11bbc0f55, tree60689cec0026ca69117c2c6a29b659c2dbf76138; Actions38088833983 attempt1 completed2026-10-10T21:52:57Z with overall FAILURE. This is not authoritative all-GREEN and Task11 is NOT COMPLETE.
+
+| Exact-source job | Verdict | Evidence |
+| --- | --- | --- |
+| c03-owner114320892091 | SUCCESS | Real PostgreSQL owner backend65calls plus real Chromium C03 browser10calls:75passed/0failed/0skipped. Separate focused pytest exits0 in14.094s and47.438s. Unconditional inherited C02 browser process also succeeded. Supervised command natural0 in432.2s; complete host/container cleanup. |
+| c02-migrations114320892351 | SUCCESS |269account PostgreSQL cases passed; durable Redis restart passed; unchanged cumulative selections including Task6/7 staff evidence authority succeeded. Natural0 in294.2s; complete cleanup. Task8=108passed/0failed/0skipped, Task9=89/0/0, Task10=86/0/0; respective pytest exits0 in90.145s,26.553s,19.523s. Task11 count0 in this job is expected: focused owner suites execute in the separate required owner job. |
+| c03-storage114320892265 | SUCCESS | Real private MinIO/upload contracts; natural0 in177.1s, storage pytest progress success, complete cleanup. |
+| c03-processing114320892327 | SUCCESS | Real scanner, sanitized raster processing, durable non-eager worker, Redis/worker restart recovery, scanner outage/restoration, Beat and parent-death contracts; natural0 in239.5s, complete cleanup. |
+| c03-timeout-probe114320892326 | SUCCESS | Actual bounded process/container ownership probe reached its expected observation deadline in4.3s; expected diagnostic failure and complete host/container cleanup. No acceptance timeout was waived. |
+| foundation114320892226 | FAILURE |643passed/1failed. Sole unit failure is tests/unit/test_foundation_scope.py::test_only_foundation_routes_and_identity_model. Frozen dependencies, build, Ruff/format, mypy95files and Django checks succeeded before unit failure. Production check and immutable C01/full isolated C02 rehearsal remain unexecuted at this source because the inherited job correctly stops on the unit failure. Foundation artifact upload also fails because the stopped rehearsal did not create its evidence files. |
+
+Metadata-only exact-run artifacts (no private page body/screenshot/trace/video):
+- c03-owner-diagnostics11684026704,14706bytes,sha256:1136b1c43facc4210b475f4b1bc9bbb30a805744fef9d0bee749e9685c591021.
+- c03-processing-diagnostics11683880954,13188bytes,sha256:8c400dda8cd87567f0c7420ecd523c18b332838658d919b788e005074eacd6c8.
+- c03-timeout-probe-diagnostics11683431691,898bytes,sha256:a13309c9cc806f6461b8e77a73ee5734f6fd1c3edd7a23de0bb594db75cbe2d3.
+- c03-storage-diagnostics11683256316,14450bytes,sha256:bc23168f13a88ee5e2f445eb668207f84785b8622a114e3d4de31168a0752358.
+- c03-postgresql-diagnostics11682938236,28396bytes,sha256:6aa00e0a75016622bc71a0dff3e5ce21a29191fb6e5858259183f779f6806253.
+
+Preceding review-fix head db1c451e14158fb67ace1194c75347be5579d2a5/tree92ea1f49ed66315d3a57827adbbf324820dc9e70, run38088483071 attempt1 remains a separate failed checkpoint: owner114319876636 SUCCESS (74passed/0failed/0skipped, natural0 in486s, complete cleanup); storage114319876680 and ownership114319876498 SUCCESS; foundation114319876665 failed only exact URL inventory (642passed/1failed). Processing114319876674 stopped before pytest with an exited/unhealthy dependency, natural1 in169.8s and complete cleanup; cumulative114319876633 hit unchanged300s child bound,124 in301.3s, after Task8 and9 successful exits and while Task10 was active, complete cleanup. Neither failed gate is relabeled GREEN; all corresponding real-service gates passed at the newer exact implementation source above without changing inherited limits or selections.
+
+Final diff security check: adapters/forms/templates/JS contain no ORM mutation or storage authorization, raw/storage keys, signed URLs, JWT/bearer, private browser stores or future/public/staff surfaces. Redirect targets use fixed approved paths with declared step values or service-returned UUIDs. The assigned-staff read_evidence_derivative body is byte-identical to authoritative starting head173014407fd488911a6ec4279b293f3f9748687b. All migration files and tests/unit/test_foundation_scope.py remain unchanged. test_scope_boundary.py diff removes exactly the two explicitly authorized private previews, preserving all other absence checks. Review's four Important findings and the verification CAS reproduction have behavioral fixes; no Critical/Important finding is deferred. Owner receipt recovery limitation is explicitly recorded above rather than expanded into unauthorized generic selectors.
+
+Protected main/C01/C02/plan refs were reverified at their exact immutable baselines. No merge/deployment/force push, migration, Task12/13/C04 or unrelated ref edit. Fresh local focused93passed; lint/419-file format, mypy95files, diff checks pass. Concrete ignored patch .runtime/task11-foundation-route-inventory.patch passes git apply --check and proposes ONLY26enumerated private Task11 route additions in the current-source inherited exact route set. It is NOT applied: that file is outside the user's explicitly approved Task11 surface. Immutable C02/C01 fixture expectations remain untouched.
+
+BLOCKED_TASK_11 / pending scope authorization: approve ONLY that additive26-route correction to tests/unit/test_foundation_scope.py, retaining exact set equality, every existing route/model/User-field expectation and every public/future-domain absence. Then run the full mandatory hosted workflow on the corrected implementation SHA, including the previously blocked foundation rehearsal/production checks, before any completion entry. Five exact-source hosted jobs are GREEN; overall hosted GREEN and ledger completion remain pending. This entry records observed evidence, not Task11 completion.
+
+### Task 11 authorized foundation route-inventory correction
+
+User explicitly authorized the exact additive 26-route correction to
+ tests/unit/test_foundation_scope.py on 2026-10-11. Applied the preserved patch:
+only the 26 enumerated private owner route strings and their explanatory comment
+are added. Exact equality, all prior routes, model/User assertions and immutable
+C01/C02 sources remain unchanged. No production code, migration or other test
+was modified. Starting HEAD62e0a7a92aa506924487d96043aed9f11bbc0f55 and all eight
+protected/unrelated refs were freshly verified against the recorded baselines.
+
+Fresh local exact route test:1passed. Complete unit suite:633passed/11failed,
+zero skips; failures are the same ten sanitized image subprocess cases and
+inherited sandbox-isolation case previously observed locally, all outside this
+correction. These are not waived or labeled GREEN: the unchanged full hosted
+unit gate must pass on the corrected source. Ruff/format/diff checks pass.
+Preserved all owner/backend/browser and inherited selections/assertions. Earlier
+run38088833983 is FAILED and cannot serve as final acceptance. Publish only this
+correction and legitimate preserved Task11 evidence by guarded fast-forward;
+Task11 remains IN_PROGRESS pending a NEW all-mandatory exact-source hosted GREEN.
+No Task12/13/C04, merge, deployment, force push or protected-ref change.
