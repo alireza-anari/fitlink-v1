@@ -3396,3 +3396,113 @@ without extraction, metadata-only exported journals, real services and all
 inherited gate bounds/ownership kept. Only profiles/c03-cloud updated by guarded
 true-parent fast-forwards with force=false; no unrelated ref update, merge or
 deployment. Task13 remains incomplete pending exact implementation source GREEN.
+
+### Task 13 final implementation exact-source verification (pending cumulative)
+
+Published implementation80d2ca5bc03530af7447ab0a5827ec4aa0d286b7, tree
+a5d997d180071d73e7661a2cf4056929a036f6da, exact-source run38173680423.
+No later implementation change. Fresh final focused verification70passed/0skips
+in3.28s; all Ruff,427-file formatting and whitespace checks PASS, clean checkout.
+Local independent Git verification of all12 original specification trees and
+specification→completed implementation ancestry PASS, agreeing with hosted API.
+
+Hosted final-source audit114571428101 SUCCESS: all12 original specification and
+completed implementation SHA/tree/run/job bindings, real gate outcomes and exact
+source/journal selections independently verified. Audit artifact11714309625,
+SHA25608f6a42a3eeaafd9920bdd4ddb2b820a20a754ff86c530c4142371d2b92f75ba.
+Actual restart114571427997 SUCCESS:10passed/0failed/0skipped, pytestexit0,
+all15 required actual stages, natural supervisor exit0 at296.1s with complete
+host/container cleanup. Real worker SIGKILL before/after write, real Redis/MinIO/
+ClamAV restarts, actual scanner/storage/broker stop+restore, durable receipts,
+retained sources, one ready derivative/attempt/receipt, stale broker delivery
+denied, exact source/derivative digests. Database-measured ready attempts:2 for
+before/after/scanner/storage;1 for broker (the pending broker-failure claim is
+reclaimed within its first attempt). All five actual ready rows report ClamAV
+1.5.4/signature28150. Restart artifact11714838654,
+SHA25621ab880c724becfa96ba45fc04d2afb69ee2e83dd3e9993a9e21b8fa050a2dd5.
+Processing114571428135, storage114571427970, timeout114571427996 SUCCESS.
+Remaining cumulative Foundation/PostgreSQL/owner/staff gates not yet accepted.
+Task13 remains INCOMPLETE at this observation; no earlier local-only evidence
+or partial hosted run is used as complete acceptance.
+
+Additional final-source cumulative verdicts: PostgreSQL114571428114 naturalexit0
+at272.3s (unchanged300s child bound), owner114571428008 naturalexit0 at492.8s
+(75passed/0failed/0skips), staff114571428164 naturalexit0 at445.3s
+(67passed/0failed/0skips). All complete host/container owned cleanup. Processing
+naturalexit0 at292.3s; private storage naturalexit0 at167.7s. Timeout probe verifies
+actual owned container removal and detached host child termination. Foundation
+quality/static/frozen dependency, exact immutable C01 fixture, Ruff/format/mypy/
+Django/unit/production steps allSUCCESS; complete isolated regression still
+running at observation. No cumulative acceptance until its natural success.
+
+Final source artifacts (API run/head bindings all80d2ca5bc03530af7447ab0a5827ec4aa0d286b7):
+- PostgreSQL11714584305 SHA25642a61b226b0e6ecd9f089436595eed8f72fbe6600ae4159caebef624fced2188.
+- Owner11714499754 SHA2565b96718aa404382bb18e04d303d36df5b2f7106c4f433c22775c2e2fb31715f0.
+- Staff11715207102 SHA2563a7cfdbbf89072d1bf8e1746d1270c4ea590a5f43f34e7804d9dfb4c6c7d774c.
+- Processing11715371287 SHA256f2af97716cdbdbe72af24e232cdca310dc54de7f4ecc5ae70e1431faab1aacbe.
+- Storage11714733442 SHA2562dcb2ef3d4faa052c9e651ac77ac5e3d6d5394327fd40480c0e7905b281e2d12.
+- Timeout11715480176 SHA256bd968cd3043d5ca3dcdf63dd1f2b4bc4a75aa069c7a9345e648f293f52dccc69.
+
+### TASK_13_COMPLETE — new authoritative exact-source hosted GREEN
+
+Acceptance source: implementation80d2ca5bc03530af7447ab0a5827ec4aa0d286b7,
+treea5d997d180071d73e7661a2cf4056929a036f6da, profiles/c03-cloud push run
+38173680423, attempt1, completedSUCCESS. Fresh live API verification confirms
+exact head/tree, all9 required jobs completedSUCCESS, every job stepSUCCESS and
+every job head exactly80d2ca5bc03530af7447ab0a5827ec4aa0d286b7. Run:
+https://github.com/alireza-anari/fitlink-v1/actions/runs/38173680423
+
+| Required gate | Exact job ID | Verdict |
+| --- | --- | --- |
+| Full Foundation / inherited C01-C02 / appended C03 | 114571427818 | SUCCESS |
+| PostgreSQL / existing migrations and installed C03 | 114571428114 | SUCCESS |
+| Private storage | 114571427970 | SUCCESS |
+| Actual worker/scanner/decoder/broker processing | 114571428135 | SUCCESS |
+| Separate owner API/browser process | 114571428008 | SUCCESS |
+| Separate staff API/browser process | 114571428164 | SUCCESS |
+| Actual timeout/process ownership | 114571427996 | SUCCESS |
+| Task13 real prepare/crash/restart/outage/verify | 114571427997 | SUCCESS |
+| Original specification + implementation evidence audit | 114571428101 | SUCCESS |
+
+Final Foundation naturalexit0 at963.3s, full1749passed/0failed/0skipped, nine
+natural pytestexit0 journals, complete host/container cleanup. This includes the
+complete inherited script, C02 browser/service/worker/Redis/MinIO restart checks,
+all installed backend C03 suites, explicit recovery cases, separate C03 owner
+and staff browsers, and the approved additive suffix. Foundation artifact
+11715312488 SHA256c05fe6242748054d35ab5ebb414f918b2ee827fea12843667b409a056de83c99,
+API binding exact implementation head. Current inherited prefix freshly hashes
+344898c20c0d5ede46fe7d5e653df378c267d9b7 over exactly2793bytes; immutable entire
+verify_c02.sh freshly hashesbebab2374dd3daf2d234cf5c0a94300ce3796b8a.
+Hosted quality unit suite687passed in19.40s; zero failed/skipped.
+
+Intermediate dd6952132e0176196c026f58f00e30415821d404 Foundation114569733967
+reached1200s observation deadline (cleanup finished1202.4s),1699passed/0failed/
+0skipped, complete owned cleanup, active inherited final smoke process. This
+was a failed partial run, not acceptance or behavioral RED. Final exact source
+completed all added selections naturally within the unchanged1200s observation
+window; no timeout, selection, process ownership or immutable verification was
+weakened. No failed-job retry was required on final source. Earlier partial
+candidate successes/failures and local sandbox failures are not substituted for
+this complete hosted result.
+
+All three Important review findings fixed with fresh RED→GREEN evidence; mandatory
+restart-file/stage protection also reproduced RED→GREEN. Full hosted cumulative
+suite GREEN after fix pass. No Critical finding, deferred minor or schema blocker.
+Existing20s soft/30s hard Celery task limits verified; no Celery/Compose adjustment
+needed. Lock/security review retained unchanged production commands, authorization
+fences, exact record holds, consent purpose boundaries, lease/processing-version
+fences, immutable derivative inventory and private sources. No migration or
+production implementation was necessary. Only authorized nine files changed.
+
+Ruling cost: the existing installed baseline_storage consent does not grant or
+withdraw professional private-media authority; any contrary product requirement
+would require a separately approved consent contract, rather than inventing a
+new grant in Task13. Baseline withdrawal itself is freshly tested as immediately
+hidden optional projection during the job.
+
+Recovery classification remains UNRECOVERABLE_UNPUBLISHED_STATE. No lost local
+patch, timestamp, RED output or ledger prose was recovered/fabricated/reused.
+Tasks1–12 remain COMPLETE by their published authority and new exact evidence
+audit. Task13 is COMPLETE by the new implementation SHA/run above. This append
+records acceptance only and does not alter its implementation source. No merge,
+deployment, force push, protected/unrelated ref update, Task14 or C04. STOP.
