@@ -3281,3 +3281,28 @@ changes fence release; sources remain retained. No new grant or privacy purpose.
 
 Task13 remains INCOMPLETE pending actual new hosted restart and cumulative GREEN.
 No migration, Task14/C04, merge, deployment or protected/unrelated ref write.
+
+## Task 13 first exact-source hosted candidate and infrastructure correction
+
+New published candidate`5abac48bc82d9f78d1f8db74937f5b8bbaa89789`,
+tree`2edc280c3e488e9b2756d8a49a479dc2af24862b`, true parent4706c4d;
+expected-head fast-forward on profiles/c03-cloud only, force=false. Actions
+run`38171697121` executes this exact source. Historical audit job114565468634
+SUCCESS: live read-only API/tree/job/log verification of all12 recorded sources
+completed with individual task proofs. Actual timeout-ownership job114565468620
+SUCCESS. Other gates still running; no complete Task13 GREEN claim.
+
+New restart job114565468640 failed before behavior execution: host system Python
+could not import celery; missing diagnostic files followed because no probe had
+started. Exact observed`ModuleNotFoundError: No module named 'celery'`. This is
+infrastructure failure, not behavioral RED. Correct only that job invocation to
+`uv run --frozen python docker/c03_asset_restart_probe.py run`, retaining every
+bound/selection/ownership check; update its exact CI contract pin. Barrier tasks
+use explicit canonical broker names so script/module imports agree.
+
+After exact immutable C01 fixture verification and frozen npm/static build,
+fresh full local units668passed/11failed in25.71s. Remaining failures are the ten
+parameterized `test_clean_pixels_strip_all_metadata` cases and
+`test_isolation_denies_network_disk_write_and_privilege`, all in
+`tests/unit/c03/test_image_sanitization.py`; they require the real native/container
+sandbox acceptance gate. None is waived or counted as a local full GREEN.

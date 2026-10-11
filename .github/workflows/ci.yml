@@ -325,7 +325,7 @@ jobs:
       - name: Frozen Task 13 environment
         run: uv sync --frozen --group dev
       - name: Task 13 actual derivative crash and service restarts
-        run: python docker/c03_asset_restart_probe.py run
+        run: uv run --frozen python docker/c03_asset_restart_probe.py run
       - name: Task 13 metadata-only restart evidence
         if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

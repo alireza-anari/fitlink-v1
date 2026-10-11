@@ -674,7 +674,7 @@ def test_task12_gate_cannot_hide_missing_execution_in_owner_block(defect):
 
 TASK13_BLOCK_SHA256 = "1c1a9206d597f84dc62d905c4db05aff423bb693e1ed4fb452f986cd8f18dc68"
 TASK13_JOB_SHA256 = {
-    "c03-restart": "1ef55b0b909b5f5971a078aa3e714ffb436e2a4daff8f05f1e306bd62b153ff2",
+    "c03-restart": "b27ceac7eb05ed777be063d4e4cebb29733ae9f95f70886afb0bfb9f292c6e22",
     "c03-evidence-audit": (
         "f0a08d28c4154064d46e513ab8cd78e52790c6f5b5fcdda37bb4147049954647"
     ),
@@ -816,3 +816,14 @@ def test_task13_exact_owned_processes_and_selections_cannot_be_weakened(old, new
     entry = ENTRY.read_text()
     assert old in entry
     assert not task13_installed(WORKFLOW.read_text(), entry.replace(old, new))
+
+
+def test_task13_worker_barriers_keep_canonical_broker_names():
+    from docker.c03_asset_restart_probe import crash_at_write, stale_delivery
+
+    assert crash_at_write.name == "docker.c03_asset_restart_probe.crash_at_write"
+    assert stale_delivery.name == "docker.c03_asset_restart_probe.stale_delivery"
+    assert (
+        "run: uv run --frozen python docker/c03_asset_restart_probe.py run"
+        in WORKFLOW.read_text()
+    )
