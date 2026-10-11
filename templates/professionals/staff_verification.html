@@ -17,8 +17,12 @@
 {% endif %}
 {% if target.role_uuid %}
 <p>محدودیت موقت نقش از ابطال تأیید جداست. رفع محدودیت، تأیید تازه ایجاد نمی‌کند.</p>
+{% if row.restricted %}<p>محدودیت موقت فعال است.</p>{% else %}<p>محدودیت موقت فعال نیست.</p>{% endif %}
+{% if not row.restricted %}
 <form method="post">{% csrf_token %}<input type="hidden" name="action" value="restrict">{% include 'accounts/form.html' with form=row.restrict_form %}<button class="c02-button">محدود کردن موقت نقش</button></form>
+{% else %}
 <form method="post">{% csrf_token %}<input type="hidden" name="action" value="release">{% include 'accounts/form.html' with form=row.release_form %}<button class="c02-button">رفع محدودیت مشخص</button></form>
+{% endif %}
 {% endif %}
 </section>{% endwith %}{% endfor %}
 <h2>مدارک ارسال‌شدهٔ همین پرونده</h2>

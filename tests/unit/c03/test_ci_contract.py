@@ -552,6 +552,54 @@ def staff_gate_valid(workflow, gate):
     if match is None:
         return False
     job = match.group()
+    marker = 'if [ "${1:-}" = --task12-staff ]; then'
+    if marker not in gate or "\n# Read the existing" not in gate:
+        return False
+    block = gate.split(marker, 1)[1].split("\n# Read the existing", 1)[0]
+    executable = [line.strip() for line in block.splitlines() if "#" not in line]
+    required_commands = (
+        "dc up -d --wait db redis minio scanner",
+        "dc up -d --wait web worker",
+        "dc run --rm minio-init",
+        "dc exec -T scanner clamdscan "
+        "--config-file=/etc/clamav/clamd.c03.conf --ping=1",
+        'exec env C03_STAFF_CHILD=1 timeout -k 10s 900s sh "$0" --task12-staff',
+        "trap cleanup EXIT",
+        '[ "$backend_exit" -eq 0 ] && [ "$browser_exit" -eq 0 ]',
+    )
+    if not all(command in executable for command in required_commands):
+        return False
+    selections = (
+        (
+            "checks",
+            "180",
+            "tests/unit/c03/test_staff_adapters.py "
+            "tests/integration/c03/test_verification_api.py",
+            " || backend_exit=$?",
+        ),
+        (
+            "browser",
+            "240",
+            "tests/e2e/c03/test_staff_verification.py",
+            " --tracing=off --screenshot=off --video=off || browser_exit=$?",
+        ),
+        (
+            "browser",
+            "300",
+            "tests/e2e/c02",
+            " --tracing=off --screenshot=off --video=off",
+        ),
+    )
+    for service, seconds, suites, suffix in selections:
+        tail = (
+            f"{service} timeout -k 10s {seconds}s uv run --frozen pytest "
+            f"{suites} -q --strict-markers{suffix}"
+        )
+        if not any(
+            line.startswith("dc run --rm --no-deps ") and line.endswith(tail)
+            for line in executable
+        ):
+            return False
     return (
         "    if: github.ref == 'refs/heads/profiles/c03-cloud'\n" in job
         and "sh docker/verify_c03_incremental.sh --task12-staff" in job
@@ -591,3 +639,33 @@ def test_task12_staff_api_browser_and_inherited_gates_mandatory():
         "    branches: [main, '*']",
     ):
         assert not staff_gate_valid(workflow.replace(TRIGGER, extra), gate)
+
+
+@pytest.mark.parametrize(
+    "defect", ["services", "api_fake", "browser_fake", "skip", "timeout", "cleanup"]
+)
+def test_task12_gate_cannot_hide_missing_execution_in_owner_block(defect):
+    workflow, gate = WORKFLOW.read_text(), ENTRY.read_text()
+    start = gate.index('if [ "${1:-}" = --task12-staff ]; then')
+    end = gate.index("\n# Read the existing", start)
+    block = gate[start:end]
+    if defect == "services":
+        block = block.replace("dc up -d --wait db redis minio scanner", "true")
+    elif defect == "api_fake":
+        block = block.replace(
+            "checks timeout -k 10s 180s uv run --frozen pytest", "checks true #"
+        )
+    elif defect == "browser_fake":
+        block = block.replace(
+            "browser timeout -k 10s 240s uv run --frozen pytest", "browser true #"
+        )
+    elif defect == "skip":
+        block = block.replace(
+            "--strict-markers || backend_exit=$?",
+            "--strict-markers -m unit || backend_exit=$?",
+        )
+    elif defect == "timeout":
+        block = block.replace("timeout -k 10s 900s", "true #")
+    else:
+        block = block.replace("trap cleanup EXIT", "true")
+    assert not staff_gate_valid(workflow, gate[:start] + block + gate[end:])

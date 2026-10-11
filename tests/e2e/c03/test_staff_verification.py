@@ -212,6 +212,14 @@ async def test_restrict_release_reuses_approval_and_cannot_undo_revoke(
         await (
             target(page, "coach").get_by_role("button", name=label, exact=True).click()
         )
+        await expect(
+            target(page, "coach").get_by_text(
+                "محدودیت موقت فعال است."
+                if label == "محدود کردن موقت نقش"
+                else "محدودیت موقت فعال نیست.",
+                exact=True,
+            )
+        ).to_be_visible()
     assert (
         await database(
             lambda: VerificationDecision.objects.filter(

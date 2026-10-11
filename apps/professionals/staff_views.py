@@ -164,6 +164,13 @@ def case_forms(result, values):
         rows.append(
             {
                 "target": target,
+                "restricted": bool(
+                    target.binding.restriction_token
+                    and any(
+                        not released
+                        for _, _, released in target.binding.restriction_token.episodes
+                    )
+                ),
                 "decision_form": form(DecisionForm, common, "decide"),
                 "revoke_form": form(
                     RevokeForm,

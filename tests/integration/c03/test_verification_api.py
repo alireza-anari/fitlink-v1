@@ -454,3 +454,113 @@ def test_withdrawn_and_other_case_history_stay_case_local(settings):
             "payload",
             "sha256",
         } & {f.name for f in fields(history)}
+
+
+def test_staff_api_role_restrict_release_and_linked_revoke(settings):
+    from .test_owner_api import post, session_client, token_for
+
+    s = review(settings)
+    client = session_client(s.staff)
+    token = token_for(client)
+    assert (
+        post(client, api_path(s, "decide"), normalize(input_for(s)), token).status_code
+        == 200
+    )
+
+    def current():
+        response = client.get(api_path(s), **headers(s))
+        assert response.status_code == 200 and "no-store" in response["Cache-Control"]
+        value = response.json()
+        coach = next(t for t in value["review_targets"] if t["target"] == "coach")
+        return value, coach
+
+    original, coach = current()
+    approval = coach["effective_approval_uuid"]
+    assert approval
+    for action in ("restrict-role", "release-role-restriction", "restrict-role"):
+        case, target = current()
+        payload = {
+            "expected_case_version": case["version"],
+            "role_uuid": target["role_uuid"],
+            "expected_role_version": target["role_version"],
+            "expected_restriction_token": target["binding"]["restriction_token"],
+            "step_up_id": str(s.staff.step),
+            "reason_code": "restriction_removed"
+            if action == "release-role-restriction"
+            else "role_restricted",
+            "operation_id": str(uuid4()),
+        }
+        assert post(client, api_path(s, action), payload, token).status_code == 200
+        assert current()[1]["effective_approval_uuid"] == approval
+    case, target = current()
+    payload = normalize(input_for(s))
+    payload.pop("decision")
+    payload.update(reason_code="evidence_revoked", effective_approval_uuid=approval)
+    assert post(client, api_path(s, "revoke"), payload, token).status_code == 200
+    assert current()[1]["effective_approval_uuid"] is None
+    case, target = current()
+    payload = {
+        "expected_case_version": case["version"],
+        "role_uuid": target["role_uuid"],
+        "expected_role_version": target["role_version"],
+        "expected_restriction_token": target["binding"]["restriction_token"],
+        "step_up_id": str(s.staff.step),
+        "reason_code": "restriction_removed",
+        "operation_id": str(uuid4()),
+    }
+    assert (
+        post(
+            client, api_path(s, "release-role-restriction"), payload, token
+        ).status_code
+        == 200
+    )
+    final, coach = current()
+    assert coach["effective_approval_uuid"] is None
+    before = next(
+        t for t in original["review_targets"] if t["target"] == "nutritionist"
+    )
+    after = next(t for t in final["review_targets"] if t["target"] == "nutritionist")
+    assert after == before
+
+
+def test_approved_target_changed_evidence_and_other_bundle_are_not_effective(settings):
+    from .verification_helpers import command
+
+    s = approved(settings)
+    assert context(detail(s), "coach").effective_approval_uuid
+    s.profile.refresh_from_db()
+    new = command(
+        "prepare_verification",
+        s.actor,
+        ("coach",),
+        s.profile.version,
+        uuid4(),
+        timezone.now(),
+    )
+    s.case = command(
+        "submit_verification", s.actor, new.id, new.version, uuid4(), timezone.now()
+    )
+    # The old reviewer needs a new exact-case step-up before this read.
+    from django.db import transaction
+
+    from apps.governance.staff import MockStepUpProvider, issue_mock_step_up
+
+    provider = MockStepUpProvider()
+    at = timezone.now()
+    assertion = provider.prepare(
+        s.staff.user.public_id, "professional_verification", s.case.id, at
+    )
+    with transaction.atomic():
+        s.staff.step = issue_mock_step_up(
+            s.staff.user,
+            "professional_verification",
+            s.case.id,
+            assertion.raw_assertion,
+            s.staff.grant.granted_by,
+            at,
+            provider,
+        )
+    s.case = assign(s, s.staff)
+    assert context(detail(s), "coach").effective_approval_uuid is None
+    mutate_evidence(s, "coach")
+    assert context(detail(s), "coach").effective_approval_uuid is None
