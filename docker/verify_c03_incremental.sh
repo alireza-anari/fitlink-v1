@@ -2,6 +2,71 @@
 # Explicit cumulative C03 selections. Extend in each owning task, never skip.
 set -eu
 
+# Task 13 bounded consolidation is additive to the inherited Foundation run.
+if [ "${1:-}" = --task13-foundation ]; then
+  if [ "${C03_CONSOLIDATION_CHILD:-}" != 1 ]; then
+    exec env C03_CONSOLIDATION_CHILD=1 timeout -k 10s 600s sh "$0" --task13-foundation
+  fi
+  project=${C01_VERIFY_PROJECT:-fitlink-foundation-verify}
+  env_file=${C01_VERIFY_ENV_FILE:-.env.verify}
+  mkdir -p .runtime/c03-diagnostics
+  cat > .runtime/c03-consolidation-compose.yml <<'CONSOLIDATION'
+services:
+  browser:
+    network_mode: !reset null
+    networks: [default, scan-private]
+CONSOLIDATION
+  dc() { docker compose -f compose.yaml -f .runtime/c03-consolidation-compose.yml -p "$project" --env-file "$env_file" --profile test "$@"; }
+  # The inherited parent's EXIT trap owns all Foundation cleanup. Installed C03
+  # backend suites already ran in its complete tests/unit tests/integration gate.
+  dc build scanner scanner-signatures
+  dc up -d --wait scanner
+  dc exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
+  dc run --rm --no-deps checks timeout -k 10s 180s uv run --frozen pytest tests/integration/c03/test_c03_failure_recovery.py -q --strict-markers
+  dc run --rm --no-deps browser timeout -k 10s 240s uv run --frozen pytest tests/e2e/c03/test_owner_setup.py tests/e2e/c03/test_private_uploads.py -q --strict-markers --tracing=off --screenshot=off --video=off
+  dc run --rm --no-deps browser timeout -k 10s 240s uv run --frozen pytest tests/e2e/c03/test_staff_verification.py -q --strict-markers --tracing=off --screenshot=off --video=off
+  exit 0
+fi
+
+if [ "${1:-}" = --task13-restart ]; then
+  if [ "${C03_RESTART_CHILD:-}" != 1 ]; then
+    exec env C03_RESTART_CHILD=1 timeout -k 10s 600s sh "$0" --task13-restart
+  fi
+  project=fitlink-c03-private-processing
+  env_file=.env.c03-task13
+  [ -z "$(docker volume ls --filter label=com.docker.compose.project="$project" -q)" ] || exit 1
+  python docker/generate_env.py "$env_file"
+  dc() { docker compose -p "$project" --env-file "$env_file" --profile test "$@"; }
+  cleanup() { dc down --remove-orphans >/dev/null 2>&1 || true; }
+  trap cleanup EXIT
+  dc build scanner scanner-signatures minio minio-init checks worker
+  dc up -d --wait db redis minio scanner
+  dc run --rm minio-init
+  dc run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
+  dc up -d --wait worker
+  dc exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
+  dc run --rm --no-deps checks timeout -k 10s 180s uv run --frozen pytest tests/integration/c03/test_c03_failure_recovery.py -q --strict-markers
+  probe() { dc run --rm --no-deps checks timeout -k 5s 45s uv run --frozen python docker/c03_asset_restart_probe.py "$@"; }
+  for stage in before after; do
+    probe prepare "$stage"
+    probe start "$stage"
+    dc kill -s SIGKILL worker
+    dc restart redis minio scanner
+    dc up -d --wait redis minio scanner
+    dc up -d --wait --force-recreate worker
+    probe verify "$stage"
+  done
+  for stage in scanner storage broker; do
+    probe prepare "$stage"
+    case "$stage" in scanner) service=scanner ;; storage) service=minio ;; broker) service=redis ;; esac
+    dc stop "$service"
+    probe fault "$stage"
+    dc up -d --wait "$service"
+    probe verify "$stage"
+  done
+  exit 0
+fi
+
 # Task 11 uses the established supervised private-storage project on its own
 # runner. Existing cumulative child/gate bounds and every inherited selection stay.
 if [ "${1:-}" = --task11-owner ]; then

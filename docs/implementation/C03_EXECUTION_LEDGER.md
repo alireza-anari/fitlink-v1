@@ -3212,3 +3212,72 @@ not claimed to have executed again under their carried attempt2 job IDs.
 - Tasks1–12 COMPLETE. Task13 NOT started; Task14 NOT started; C04 NOT started.
   No merge, deployment, force push, protected/unrelated ref write or migration.
   **TASK_12_COMPLETE — STOP.**
+# Task 13 unpublished-state loss recovery (2026-10-11)
+
+The prior Task 13 attempt contained unpublished local ledger, foundation-evidence
+correction and RED/test work. Its workspace was lost before any commit or push;
+no Task 13 commit/ref update or authoritative Task 13 hosted GREEN resulted.
+The missing local work is classified **UNRECOVERABLE_UNPUBLISHED_STATE** under
+the user's explicit recovery authorization. No exact missing diff, test output,
+ledger prose or timestamps are claimed recovered or reused as acceptance evidence.
+Task 13 resumes from published HEAD
+`4706c4d0ffc831616b6b2bae6c88d605b1084dd8`, tree
+`134b56e5643dde2b8e8293a035ca0c84467b7654`. Tasks 1–12 remain COMPLETE.
+The recovered checkout is clean and both immutable rehearsal blobs match their
+published pins. All newly created corrections and behavioral evidence require
+fresh verification; no Task 14/C04, migration, merge or deployment is authorized.
+
+## Task 13 recreated prefix correction
+
+The new correction pins 2793 inherited Foundation bytes and Git blob
+`344898c20c0d5ede46fe7d5e653df378c267d9b7`, retaining the original C02 whole-file
+assertion unchanged. The sole permitted nonempty suffix has an explicit Task 13
+sentinel and delegates to the bounded consolidation mode. Fresh verification:
+`uv run --frozen pytest tests/unit/test_c03_foundation_evidence.py -q`:
+10 passed, no skips, 1.78s on the unmodified baseline script. Exact additive suffix
+accepted; byte change, command removal/reordering, shortening/internal insertion,
+replacement and unapproved suffix rejected. An initial incorrect test command
+literal caused fixture assertions; corrected against the actual inherited source.
+Neither that fixture failure nor this scope correction is behavioral RED.
+
+## Task 13 fresh consolidation RED and candidate checkpoint
+
+Fresh observed contract RED from the published-source/new-test state:
+`uv run --frozen pytest tests/unit/c03/test_ci_contract.py -q`:
+3 failed /42 passed /0 skipped, 1.28s. Named failures are
+`test_existing_c02_gates_not_removed`,
+`test_every_incremental_gate_still_installed`, and
+`test_completed_task_has_authoritative_service_evidence`. They demonstrate
+absent new executable consolidation/resilience gates and a fail-closed evidence
+validator refusing even a complete validator specimen; no missing import or
+collection failure is counted as behavioral RED. This is new observed evidence,
+not the lost prior output. The processing implementation is preserved: new crash,
+outage, current-authority/hold and exhaustion cases add coverage of existing
+fences, and only demonstrated consolidation/evidence gaps are implemented.
+
+Fresh read-only API inspection verified all twelve published run head SHAs,
+commit tree SHAs and required job success/step success. Actual complete logs of
+all required final/carried jobs were retrieved; carried successful retries are
+not relabeled as new executions. No selected skips/failures occur in their raw
+pytest summaries or redacted execution journals. Processing stages retain real
+SIGKILL/broker restart/scanner outage/restoration/Beat/decoder-parent-death proof;
+owner/staff counts remain75/67, storage91 and processing62. No prior task is
+reopened merely because this recovery workspace was lost.
+
+New focused run after implementation:62passed/0failed/0skipped in2.43s across
+CI contracts and Foundation evidence. Entire Ruff lint and427-file format check,
+shell syntax and diff whitespace pass. Fresh local full units:661passed/18failed
+in26.70s: six immutable-C01 tests require the not-yet-materialized exact fixture;
+`test_manifest_template_paths` requires generated static assets; eleven image
+sanitization/isolation cases cannot pass on this native host's sandbox. These
+failures are not acceptance GREEN or waived; real hosted quality/native/container
+and full cumulative verification remain mandatory.
+
+Ruling: baseline_storage withdrawal during a professional processing job tests
+current baseline projection denial, without inventing professional media consent.
+Unrelated baseline consent neither grants professional material access nor changes
+its existing private self-storage authority. Current account/revocation/exact hold
+changes fence release; sources remain retained. No new grant or privacy purpose.
+
+Task13 remains INCOMPLETE pending actual new hosted restart and cumulative GREEN.
+No migration, Task14/C04, merge, deployment or protected/unrelated ref write.

@@ -12,6 +12,23 @@ import pytest
 pytestmark = pytest.mark.unit
 ROOT = Path(__file__).resolve().parents[2]
 
+# Pinned from authoritative Task 12 HEAD, before any Task 13 script extension.
+INHERITED_FOUNDATION_LENGTH = 2793
+INHERITED_FOUNDATION_BLOB = "344898c20c0d5ede46fe7d5e653df378c267d9b7"
+TASK13_SUFFIX = b"""# C03 TASK 13 APPENDED CONSOLIDATION -- inherited prefix ends above.
+if [ -d tests/integration/c03 ]; then
+  sh docker/verify_c03_incremental.sh --task13-foundation
+fi
+"""
+
+
+def foundation_extension_valid(body):
+    prefix = body[:INHERITED_FOUNDATION_LENGTH]
+    digest = hashlib.sha1(b"blob " + str(len(prefix)).encode() + b"\0" + prefix)
+    return digest.hexdigest() == INHERITED_FOUNDATION_BLOB and body[
+        INHERITED_FOUNDATION_LENGTH:
+    ] in (b"", TASK13_SUFFIX)
+
 
 def test_foundation_reporter_loads_after_console_bootstrap(tmp_path):
     env = dict(os.environ)
@@ -46,7 +63,6 @@ def test_inherited_rehearsal_commands_remain_unmodified():
     # Reviewed Git blob IDs work with GitHub's depth-one checkout, too.
     expected = {
         "docker/verify_c02.sh": "bebab2374dd3daf2d234cf5c0a94300ce3796b8a",
-        "docker/verify_foundation.sh": "344898c20c0d5ede46fe7d5e653df378c267d9b7",
     }
     for path, blob in expected.items():
         body = (ROOT / path).read_bytes()
@@ -54,6 +70,40 @@ def test_inherited_rehearsal_commands_remain_unmodified():
             hashlib.sha1(b"blob " + str(len(body)).encode() + b"\0" + body).hexdigest()
             == blob
         )
+    assert foundation_extension_valid(
+        (ROOT / "docker/verify_foundation.sh").read_bytes()
+    )
+
+
+def test_exact_appended_extension_preserves_complete_inherited_blob():
+    prefix = (ROOT / "docker/verify_foundation.sh").read_bytes()[
+        :INHERITED_FOUNDATION_LENGTH
+    ]
+    assert foundation_extension_valid(prefix)
+    assert foundation_extension_valid(prefix + TASK13_SUFFIX)
+    for suffix in (b"exit 0\n", TASK13_SUFFIX + b"true\n", TASK13_SUFFIX * 2):
+        assert not foundation_extension_valid(prefix + suffix)
+    assert not foundation_extension_valid(TASK13_SUFFIX)
+
+
+@pytest.mark.parametrize("mutation", ["byte", "remove", "reorder", "shorten", "insert"])
+def test_inherited_prefix_mutations_are_rejected(mutation):
+    prefix = (ROOT / "docker/verify_foundation.sh").read_bytes()[
+        :INHERITED_FOUNDATION_LENGTH
+    ]
+    command = (
+        b"dc run --rm browser uv run --frozen pytest tests/e2e/c02 "
+        b"-q -m e2e --strict-markers\n"
+    )
+    assert command in prefix
+    candidates = {
+        "byte": b"!" + prefix[1:],
+        "remove": prefix.replace(command, b"", 1),
+        "reorder": command + prefix.replace(command, b"", 1),
+        "shorten": prefix[:-1],
+        "insert": prefix[:100] + TASK13_SUFFIX + prefix[100:],
+    }
+    assert not foundation_extension_valid(candidates[mutation] + TASK13_SUFFIX)
 
 
 def test_observational_reporter_continues_after_session_snapshot(tmp_path, monkeypatch):

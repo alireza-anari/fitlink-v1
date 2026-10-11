@@ -194,7 +194,8 @@ C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
 def inherited_workflow_is_intact(source):
     inherited = source.replace(TRIGGER, "    branches: [accounts/c02-cloud]")
     inherited = re.sub(
-        r"^  c03-(?:owner|staff):\n.*?(?=^  [a-z][a-z0-9-]*:\n|\Z)",
+        r"^  c03-(?:owner|staff|restart|evidence-audit):\n"
+        r".*?(?=^  [a-z][a-z0-9-]*:\n|\Z)",
         "",
         inherited,
         flags=re.M | re.S,
@@ -245,7 +246,7 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 11
+    assert source.count("        if:") == 13
     assert source.count(TASK8_REPORT) == 1
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)
@@ -669,3 +670,149 @@ def test_task12_gate_cannot_hide_missing_execution_in_owner_block(defect):
     else:
         block = block.replace("trap cleanup EXIT", "true")
     assert not staff_gate_valid(workflow, gate[:start] + block + gate[end:])
+
+
+TASK13_BLOCK_SHA256 = "1c1a9206d597f84dc62d905c4db05aff423bb693e1ed4fb452f986cd8f18dc68"
+TASK13_JOB_SHA256 = {
+    "c03-restart": "1ef55b0b909b5f5971a078aa3e714ffb436e2a4daff8f05f1e306bd62b153ff2",
+    "c03-evidence-audit": (
+        "f0a08d28c4154064d46e513ab8cd78e52790c6f5b5fcdda37bb4147049954647"
+    ),
+}
+
+
+def task13_installed(workflow, entry):
+    if "# Task 13 bounded consolidation" not in entry or "# Task 11 uses" not in entry:
+        return False
+    block = entry.split("# Task 13 bounded consolidation", 1)[1].split(
+        "# Task 11 uses", 1
+    )[0]
+    if hashlib.sha256(block.encode()).hexdigest() != TASK13_BLOCK_SHA256:
+        return False
+    required_jobs = {
+        "c03-restart": "python docker/c03_asset_restart_probe.py run",
+        "c03-evidence-audit": "python docker/c03_asset_restart_probe.py audit",
+    }
+    for name, command in required_jobs.items():
+        match = re.search(
+            rf"^  {name}:\n.*?(?=^  [a-z][a-z0-9-]*:\n|\Z)",
+            workflow,
+            flags=re.M | re.S,
+        )
+        if (
+            not match
+            or hashlib.sha256(match.group().encode()).hexdigest()
+            != TASK13_JOB_SHA256[name]
+            or command not in match.group().split("\n        run: ")[-1]
+        ):
+            return False
+        if (
+            "    if: github.ref == 'refs/heads/profiles/c03-cloud'\n"
+            not in match.group()
+        ):
+            return False
+    return (
+        inherited_workflow_is_intact(workflow)
+        and owner_gate_valid(workflow, entry)
+        and 'if [ "${1:-}" = --task11-owner ]; then' in entry
+        and staff_gate_valid(workflow, entry)
+        and 'if [ "${1:-}" = --task13-restart ]; then' in entry
+        and 'if [ "${1:-}" = --task13-foundation ]; then' in entry
+        and "tests/integration/c03/test_c03_failure_recovery.py" in entry
+        and "continue-on-error" not in workflow
+        and "pull_request:" not in workflow
+    )
+
+
+def test_existing_c02_gates_not_removed():
+    workflow, entry = WORKFLOW.read_text(), ENTRY.read_text()
+    assert task13_installed(workflow, entry), "Task 13 consolidation is not installed"
+    for item in ("tests/integration/c02", TRIGGER, "sh docker/verify_c02.sh"):
+        assert not task13_installed(workflow.replace(item, "omitted"), entry)
+
+
+def test_every_incremental_gate_still_installed():
+    workflow, entry = WORKFLOW.read_text(), ENTRY.read_text()
+    assert task13_installed(workflow, entry), "Task 13 resilience/evidence gate absent"
+    for item in (
+        "--task11-owner",
+        "--task12-staff",
+        "--task13-restart",
+        "--task13-foundation",
+        "tests/integration/c03/test_c03_failure_recovery.py",
+    ):
+        assert not task13_installed(workflow, entry.replace(item, "omitted"))
+
+
+def test_completed_task_has_authoritative_service_evidence():
+    from docker.c03_asset_restart_probe import completed_evidence_valid
+
+    # Synthetic validator specimen only; never used as historical authority.
+    record = {
+        "expected_sha": "a" * 40,
+        "expected_tree": "b" * 40,
+        "head_sha": "a" * 40,
+        "tree": "b" * 40,
+        "event": "push",
+        "head_branch": "profiles/c03-cloud",
+        "status": "completed",
+        "conclusion": "success",
+        "id": 1,
+        "required_jobs": ["foundation", "c02-migrations", "c03-processing"],
+        "jobs": [
+            {
+                "id": i + 1,
+                "name": name,
+                "head_sha": "a" * 40,
+                "conclusion": "success",
+                "execution": {
+                    "real": True,
+                    "passed": 1,
+                    "skipped": 0,
+                    "exitstatus": 0,
+                    "selections": [name],
+                },
+            }
+            for i, name in enumerate(["foundation", "c02-migrations", "c03-processing"])
+        ],
+    }
+    assert completed_evidence_valid(record)
+    import copy
+
+    for defect in ("head", "tree", "absent", "skipped", "fake", "selection"):
+        bad = copy.deepcopy(record)
+        if defect == "head":
+            bad["head_sha"] = "c" * 40
+        elif defect == "tree":
+            bad["tree"] = "c" * 40
+        elif defect == "absent":
+            bad["jobs"].pop()
+        else:
+            field, value = {
+                "skipped": ("skipped", 1),
+                "fake": ("real", False),
+                "selection": ("selections", []),
+            }[defect]
+            bad["jobs"][-1]["execution"][field] = value
+        assert not completed_evidence_valid(bad), defect
+
+
+@pytest.mark.parametrize(
+    "old,new",
+    [
+        ("dc kill -s SIGKILL worker", "true # dc kill -s SIGKILL worker"),
+        ("dc restart redis minio scanner", "dc restart redis"),
+        ("timeout -k 10s 600s", "true # timeout -k 10s 600s"),
+        ("probe verify", "echo probe verify"),
+        ("trap cleanup EXIT", "true"),
+        ("--strict-markers", "--strict-markers -k safe"),
+        (
+            "tests/e2e/c03/test_staff_verification.py",
+            "tests/e2e/c03/test_owner_setup.py",
+        ),
+    ],
+)
+def test_task13_exact_owned_processes_and_selections_cannot_be_weakened(old, new):
+    entry = ENTRY.read_text()
+    assert old in entry
+    assert not task13_installed(WORKFLOW.read_text(), entry.replace(old, new))

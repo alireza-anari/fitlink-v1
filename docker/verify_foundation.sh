@@ -48,3 +48,7 @@ dc up -d --wait minio
 dc run --rm minio-init
 dc run --rm checks uv run --frozen pytest tests/integration/test_minio_storage.py -q --strict-markers
 dc run --rm browser uv run --frozen pytest tests/e2e/test_foundation_smoke.py -q -m e2e --strict-markers
+# C03 TASK 13 APPENDED CONSOLIDATION -- inherited prefix ends above.
+if [ -d tests/integration/c03 ]; then
+  sh docker/verify_c03_incremental.sh --task13-foundation
+fi

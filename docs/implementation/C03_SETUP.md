@@ -113,3 +113,31 @@ No merge, deployment, public projection, later profile setup workflow, verificat
 review endpoint or raw-source delivery is part of Task 5. Live collection still
 requires approved disclosure/retention/backup and verification procedures, private
 network/ACL/secrets, scanner maintenance and authenticated derivative delivery.
+
+## Task 13 additive consolidation and restart audit
+
+The inherited Foundation script's complete 2793-byte prefix retains blob
+`344898c20c0d5ede46fe7d5e653df378c267d9b7`. Its sole appended suffix has an explicit
+Task 13 boundary and invokes `--task13-foundation`: the original full backend,
+C02 browser/service/restart checks execute first, then the new recovery suite and
+separate owner and staff Chromium processes. The immutable C02 whole-file pin
+remains unchanged. All inherited supervisor/process limits remain in force.
+
+`python docker/c03_asset_restart_probe.py run` owns a fresh existing-type isolated
+private-processing Compose project under the established storage supervisor.
+It tests deterministic recovery transitions on PostgreSQL/private MinIO, then
+kills a real non-eager worker before and after immutable derivative write but
+before ready commit. Real Redis/MinIO/ClamAV restarts preserve fixture volumes;
+expired fixture leases recover one inventory/effect, and an actual acknowledged
+stale broker delivery is denied. Separate actual scanner, storage and broker
+outages must fail closed and recover through the production reconciler. Only the
+isolated runtime worker override imports the test barrier tasks. No production
+registration, schema, retention policy or consent purpose changes are made.
+
+`python docker/c03_asset_restart_probe.py audit` requires a read-only Actions token
+in its dedicated branch-only job. It pins the twelve published implementation
+SHA/tree/run authorities, retrieves every required successful job and actual log,
+and rejects missing/wrong-head/skipped/fake-only proof. Metadata journals contain
+only bounded stages, digest/engine/signature/retry evidence and authority IDs.
+Tokens are never forwarded to redirected log hosts; private raw logs are not
+printed or uploaded. Completed older tasks are audited, not rerun as new work.
