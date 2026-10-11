@@ -72,6 +72,17 @@ def test_only_foundation_routes_and_identity_model():
         "professional/preview/",
         "professional/setup/",
         "professional/verification/",
+        "staff/professional-verification/queue/",
+        "staff/professional-verification/<uuid:verification_uuid>/",
+        "api/v1/staff/professional-verification/queue/",
+        "api/v1/staff/professional-verification/<uuid:verification_uuid>/",
+        "api/v1/staff/professional-verification/<uuid:verification_uuid>/assign/",
+        "api/v1/staff/professional-verification/<uuid:verification_uuid>/start/",
+        "api/v1/staff/professional-verification/<uuid:verification_uuid>/decide/",
+        "api/v1/staff/professional-verification/<uuid:verification_uuid>/revoke/",
+        "api/v1/staff/professional-verification/<uuid:verification_uuid>/restrict-role/",
+        "api/v1/staff/professional-verification/<uuid:verification_uuid>/release-role-restriction/",
+        "api/v1/staff/professional-verification/<uuid:verification_uuid>/evidence/<uuid:asset_uuid>/",
     }
     assert settings.AUTH_USER_MODEL == "accounts.User"
     assert "django.contrib.admin" not in settings.INSTALLED_APPS

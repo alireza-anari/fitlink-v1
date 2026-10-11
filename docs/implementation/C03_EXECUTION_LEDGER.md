@@ -2924,3 +2924,154 @@ baselines; execution branch remains guarded and fast-forward only. This final
 checkpoint modifies only C03_EXECUTION_LEDGER.md and preserves the validated
 implementation files byte for byte. No merge, deployment, force push, protected
 ref mutation or Task12/13/C04 work. TASK_11_COMPLETE; STOP.
+
+
+### Task 12 preflight — BLOCKED_TASK_12 route-inventory edit-surface conflict
+
+Latest user authorization is C03 Task 12 ONLY. Recovered a separate clean real
+Git checkout at bed9b381e391c1d68a92cb49388e59fffcd39d80, tree
+c758db19c7d463f387c0464a7d41905fdbdc9edc. No existing Task 12 staged,
+unstaged or untracked source work was present. Remote execution head matches;
+all eight protected/unrelated branch refs match the Task 11 recorded baselines.
+Authenticated Actions read confirms Task 11 run38113535678 attempt2 completed
+SUCCESS on27a6e2f57d48a66c75fd507155c821bf7a1832fa, implementation tree
+d6046f576694572b2c1cc52d9179aab10adddce7. Tasks1–11 remain COMPLETE;
+no documentation-only run is used to reopen Task11.
+
+Approved plan sections11/12 require nine staff API patterns and two native
+patterns. The current-source inherited
+ tests/unit/test_foundation_scope.py::test_only_foundation_routes_and_identity_model
+asserts exact equality with61 route patterns; all11 required additions are absent.
+That file is outside the user's Task12 approved modify/create surface. Its prior
+Task11 authorization was explicitly limited to26 owner patterns. Mandatory full
+units and hosted foundation cannot pass with Task12 routes installed unless this
+current-source inventory receives a new additive correction. Do not hide routes
+under includes, change resolver behavior, bypass the test, or change immutable
+C01/C02 verification.
+
+Untouched baseline command: uv run --frozen pytest
+ tests/unit/test_foundation_scope.py -q --strict-markers =>1passed, exit0.
+Separate memory-only scope probe executes that same unchanged assertion before
+and after installing only the11 approved staff patterns into the live resolver:
+baseline PASS, exact equality FAIL with additions, restored baseline PASS.
+This is a structural scope-conflict demonstration, NOT Task12 behavioral RED,
+staff API execution or actual Playwright evidence. Frozen dev sync succeeded.
+The uv-managed Python path initially escaped the durable writable workspace;
+workspace-local UV_PYTHON_INSTALL_DIR/UV_CACHE_DIR/TMPDIR resolves that setup issue
+without dependency/lock/source changes. No real-service/browser gate is claimed.
+
+Prepared but DID NOT APPLY an additive-only candidate in ignored
+.runtime/task12-foundation-route-inventory.patch; git apply --check succeeds.
+It adds only the following exact approved patterns and a Task12 comment:
+- staff/professional-verification/queue/
+- staff/professional-verification/<uuid:verification_uuid>/
+- api/v1/staff/professional-verification/queue/
+- api/v1/staff/professional-verification/<uuid:verification_uuid>/
+- api/v1/staff/professional-verification/<uuid:verification_uuid>/assign/
+- api/v1/staff/professional-verification/<uuid:verification_uuid>/start/
+- api/v1/staff/professional-verification/<uuid:verification_uuid>/decide/
+- api/v1/staff/professional-verification/<uuid:verification_uuid>/revoke/
+- api/v1/staff/professional-verification/<uuid:verification_uuid>/restrict-role/
+- api/v1/staff/professional-verification/<uuid:verification_uuid>/release-role-restriction/
+- api/v1/staff/professional-verification/<uuid:verification_uuid>/evidence/<uuid:asset_uuid>/
+
+One required user action: authorize ONLY these11 additive expected-route strings
+in tests/unit/test_foundation_scope.py, retaining exact equality, all61 existing
+routes, every model/User assertion and immutable C01/C02 sources. The request
+comes from the explicit user file-surface restriction, not a skill approval rule.
+Task12 remains BLOCKED at preflight; complete plan/ledger reading, behavioral RED,
+staff adapters, same-task hosted staff API/browser gate, focused/cumulative GREEN,
+security review, final implementation publishing and exact-head hosted acceptance
+are unfinished. Only this append-only local checkpoint changes tracked content;
+no commit/push, implementation, migration, merge/deployment, protected ref change,
+Task13/14/C04 or other future-domain work. Preserve this checkpoint on resume.
+
+
+### Task 12 route correction applied; new assigned-review projection blocker
+
+User authorized exactly11 additive route strings in the CURRENT-SOURCE
+ tests/unit/test_foundation_scope.py. Applied only those11 lines, with no comment
+or other edit. Exact equality and every61 prior route/model/User assertion are
+unchanged; removing those11 lines restores the original file byte for byte.
+Preserved the prior local61-line ledger checkpoint. No commit or push.
+Re-ran uv run --frozen pytest tests/unit/test_foundation_scope.py -q
+ --strict-markers:1failed, exit1, because the11 required Task12 routes are not yet
+installed. This expected transitional inventory failure is NOT behavioral RED,
+Task12 PASS or completed acceptance. git diff --check passes.
+
+New approved-contract contradiction: Task12 must render current role restriction
+and release controls, approval-linked revocation and bounded exact-case history,
+using existing assigned services, with no direct ORM authorization/mutation or
+service-rule duplication in adapters. However assigned_verification_detail
+returns VerificationStaffDTO with only id/state/version/submitted_at/targets/
+identity_name/evidence/assignment_uuid. Each VerificationTargetDTO contains only
+id/target/state/version. assigned_target_review_binding returns evidence_revision,
+decision_version,declaration_version,snapshot_hash,restriction_token; it has no
+role UUID/version or effective approval UUID and exposes no bounded history.
+
+Executed the REAL existing verification._staff_dto on a synthetic approved Coach
+target that carries a role reference and effective approval reference; returned
+staff target still has only id/target/state/version. Confirmed dataclass fields
+and exact installed composition signatures at runtime:
+- restrict/release require role_uuid and expected_role_version.
+- revoke requires effective_approval_uuid in addition to target binding/versions.
+- no current assigned DTO contains any of these three values or case history.
+This is concrete projection-contract evidence, NOT HTTP/PostgreSQL/browser RED.
+The only matching effective_decision helper requires an ORM profile; the owner
+profile selector cannot expose another owner's profile to staff. Moving those
+queries into staff_views/staff_api would violate the required adapter boundary;
+manual guessing or retained test-fixture IDs cannot implement current native
+review controls. No downstream field/version/approval authority was fabricated.
+
+Narrow concrete correction proposed (NOT applied): authorize only
+ apps/professionals/contracts.py and
+ apps/professionals/verification_selectors.py for a STAFF-ONLY read projection.
+Keep owner DTOs and all existing command/authorization/decision rules unchanged.
+In assigned_verification_detail, inside its existing transaction and after the
+existing _staff_anchors authority chain, enrich a dedicated staff review context
+with each case target's role UUID/current role version (null for identity),
+current effective approval UUID, existing TargetReviewBinding/restriction token,
+and at most25 case history events limited to event/target UUID/timestamp. All
+rows must resolve from the already-authorized exact case/profile/target anchors;
+append the existing required verification.read audit before returning. No new
+lookup endpoint, generic selector, raw source/keys, owner data, private audit
+payload, schema change, service mutation or adapter ORM query is authorized.
+Existing assigned detail output fields remain available; composition command
+responses may retain their current DTO, with native successful POST followed by
+GET obtaining the freshly authorized projection. This adds read context only.
+
+ONE required user action: authorize that bounded two-file staff-only projection
+correction, then resume Task12. The restriction comes from the user's approved
+file surface; neither file is currently in it, and the11-route exception covers
+only tests/unit/test_foundation_scope.py. Do not reinterpret it as broad service
+or schema authority. Current HEAD/tree remain bed9b381e391c1d68a92cb49388e59fffcd39d80/
+c758db19c7d463f387c0464a7d41905fdbdc9edc; working tree has only the ledger append
+and authorized11 route strings. Task12 BLOCKED; full source preflight reading,
+behavioral RED, API/browser gates, implementation/security review, cumulative
+GREEN and exact-head hosted GREEN remain incomplete. Tasks1–11 remain COMPLETE;
+Task13/14/C04 unstarted. No migration, merge, deploy, force push or remote write.
+
+
+### Task 12 authorized staff projection and behavioral test checkpoint
+
+User explicitly authorized only contracts.py and verification_selectors.py for
+assigned staff read context, preserving command DTOs/rules and all existing
+current actor/capability/assignment/case-step-up/audit checks. Prior local ledger
+and exact11route addition preserved. Added real PostgreSQL projection tests;
+initial local attempt9setup errors from absent PostgreSQL is infrastructure,
+NOT behavioral RED. No local service substitution is acceptance evidence.
+A scratch-only packaged PostgreSQL tooling exploration was not started: its root
+startup would create a system user/change ancestor permissions, outside workspace
+scope. Hosted services remain the approved execution path.
+
+Installed all11 exact staff route patterns with minimal private read adapters,
+server-session step-up references (never authority), assigned selectors and
+native access forms. Decision/restriction/revoke controls remain unimplemented
+for behavioral RED. Added explicit staff API/unit and actual Chromium test files,
+including every named Task12 case at both viewports. Separate exact-C03 staff
+hosted job reuses the installed private-storage supervisor and process/service
+ownership/timeout contracts; inherited owner/C02/jobs/limits remain unchanged.
+Initial local unit RED distinguishes missing DecisionForm from any CI harness
+issue. Same-task hosted staff backend/browser behavioral verdict is pending;
+this checkpoint is NOT Task12 completion. No schema/migration, command rule,
+protected ref, future task or public surface change.

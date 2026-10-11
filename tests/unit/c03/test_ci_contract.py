@@ -194,7 +194,7 @@ C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
 def inherited_workflow_is_intact(source):
     inherited = source.replace(TRIGGER, "    branches: [accounts/c02-cloud]")
     inherited = re.sub(
-        r"^  c03-owner:\n.*?(?=^  [a-z][a-z0-9-]*:\n|\Z)",
+        r"^  c03-(?:owner|staff):\n.*?(?=^  [a-z][a-z0-9-]*:\n|\Z)",
         "",
         inherited,
         flags=re.M | re.S,
@@ -245,7 +245,7 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 9
+    assert source.count("        if:") == 11
     assert source.count(TASK8_REPORT) == 1
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)
@@ -543,3 +543,51 @@ def test_owner_job_wrong_branch_and_fake_only_rejected():
             "dc up -d --wait db redis minio scanner", "true # db redis minio scanner"
         ),
     )
+
+
+def staff_gate_valid(workflow, gate):
+    match = re.search(
+        r"^  c03-staff:\n.*?(?=^  [a-z][a-z0-9-]*:\n|\Z)", workflow, flags=re.M | re.S
+    )
+    if match is None:
+        return False
+    job = match.group()
+    return (
+        "    if: github.ref == 'refs/heads/profiles/c03-cloud'\n" in job
+        and "sh docker/verify_c03_incremental.sh --task12-staff" in job
+        and "--acceptance storage" in job
+        and owner_gate_valid(workflow, gate)
+        and all(
+            value in gate
+            for value in (
+                "tests/unit/c03/test_staff_adapters.py",
+                "tests/integration/c03/test_verification_api.py",
+                "tests/e2e/c03/test_staff_verification.py",
+                "--task12-staff",
+                "--tracing=off --screenshot=off --video=off",
+            )
+        )
+    )
+
+
+def test_task12_staff_api_browser_and_inherited_gates_mandatory():
+    workflow, gate = WORKFLOW.read_text(), ENTRY.read_text()
+    assert staff_gate_valid(workflow, gate)
+    for item in (
+        "tests/unit/c03/test_staff_adapters.py",
+        "tests/integration/c03/test_verification_api.py",
+        "tests/e2e/c03/test_staff_verification.py",
+        "tests/e2e/c03/test_owner_setup.py",
+        "tests/e2e/c02",
+        "dc up -d --wait db redis minio scanner",
+        "trap cleanup EXIT",
+    ):
+        assert not staff_gate_valid(workflow, gate.replace(item, "omitted"))
+    for item in ("--task12-staff", "--acceptance storage", TRIGGER):
+        assert not staff_gate_valid(workflow.replace(item, "omitted"), gate)
+    for extra in (
+        "continue-on-error: true",
+        "pull_request:",
+        "    branches: [main, '*']",
+    ):
+        assert not staff_gate_valid(workflow.replace(TRIGGER, extra), gate)

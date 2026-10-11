@@ -1,0 +1,6 @@
+{% extends 'accounts/base.html' %}
+{% block account_content %}
+<h1>بررسی خصوصی پرونده</h1><p>این بررسی صفحهٔ عمومی ایجاد نمی‌کند.</p>
+<form method="post">{% csrf_token %}{% include 'accounts/form.html' %}<button class="c02-button">باز کردن پرونده</button></form>
+{% if case %}{% for target in case.targets %}<section data-target="{{ target.target }}"><h2>{% if target.target == 'identity' %}هویت{% elif target.target == 'coach' %}مربی{% else %}متخصص تغذیه{% endif %}</h2><p>{{ target.state }}</p></section>{% endfor %}{% endif %}
+{% endblock %}

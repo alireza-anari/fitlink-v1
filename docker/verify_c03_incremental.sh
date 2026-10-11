@@ -38,14 +38,53 @@ OWNER_COMPOSE
   exit $?
 fi
 
+if [ "${1:-}" = --task12-staff ]; then
+  if [ "${C03_STAFF_CHILD:-}" != 1 ]; then
+    exec env C03_STAFF_CHILD=1 timeout -k 10s 900s sh "$0" --task12-staff
+  fi
+  project=fitlink-c03-private-storage
+  env_file=.env.c03-staff
+  [ -z "$(docker volume ls --filter label=com.docker.compose.project="$project" -q)" ] || exit 1
+  python docker/generate_env.py "$env_file"
+  mkdir -p .runtime/c03-diagnostics
+  chmod 777 .runtime/c03-diagnostics
+  cat > .runtime/c03-staff-compose.yml <<'OWNER_COMPOSE'
+services:
+  browser:
+    network_mode: !reset null
+    networks: [default, scan-private]
+OWNER_COMPOSE
+  dc() { docker compose -f compose.yaml -f .runtime/c03-staff-compose.yml -p "$project" --env-file "$env_file" --profile test "$@"; }
+  cleanup() { dc down --remove-orphans >/dev/null 2>&1 || true; }
+  trap cleanup EXIT
+  dc build scanner scanner-signatures minio minio-init checks web browser worker
+  dc up -d --wait db redis minio scanner
+  dc run --rm minio-init
+  dc run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
+  dc up -d --wait web worker
+  dc exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
+  backend_exit=0
+  dc run --rm --no-deps -e C03_FOUNDATION_TRIAGE=1 -e C03_FOUNDATION_EVIDENCE_DIRECTORY=/app/.runtime/c03-diagnostics checks timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_staff_adapters.py tests/integration/c03/test_verification_api.py -q --strict-markers || backend_exit=$?
+  browser_exit=0
+  dc run --rm --no-deps -e C03_FOUNDATION_TRIAGE=1 -e C03_FOUNDATION_EVIDENCE_DIRECTORY=/app/.runtime/c03-diagnostics browser timeout -k 10s 240s uv run --frozen pytest tests/e2e/c03/test_staff_verification.py -q --strict-markers --tracing=off --screenshot=off --video=off || browser_exit=$?
+  dc run --rm --no-deps -e C03_FOUNDATION_TRIAGE=1 -e C03_FOUNDATION_EVIDENCE_DIRECTORY=/app/.runtime/c03-diagnostics browser timeout -k 10s 300s uv run --frozen pytest tests/e2e/c02 -q --strict-markers --tracing=off --screenshot=off --video=off
+  [ "$backend_exit" -eq 0 ] && [ "$browser_exit" -eq 0 ]
+  exit $?
+fi
+
 # Read the existing redacted observer journal outside the stdout supervisor.
 # This reporting mode never executes or changes an acceptance gate.
-if [ "${1:-}" = --task8-evidence ] || [ "${1:-}" = --task11-evidence ]; then
+if [ "${1:-}" = --task8-evidence ] || [ "${1:-}" = --task11-evidence ] || [ "${1:-}" = --task12-evidence ]; then
   timeout -k 10s 30s uv run --frozen python - <<'REPORT'
 import json
 from pathlib import Path
 
 selections = {
+    12: (
+        "tests/unit/c03/test_staff_adapters.py::",
+        "tests/integration/c03/test_verification_api.py::",
+        "tests/e2e/c03/test_staff_verification.py::",
+    ),
     11: (
         "tests/unit/c03/test_api_schema.py::",
         "tests/unit/c03/test_forms.py::",

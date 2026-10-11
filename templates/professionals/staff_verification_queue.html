@@ -1,0 +1,6 @@
+{% extends 'accounts/base.html' %}
+{% block account_content %}
+<h1>صف خصوصی بررسی مدارک</h1><p>فقط پروندهٔ واگذارشده با احراز تازه قابل بررسی است.</p>
+<form method="post">{% csrf_token %}{% include 'accounts/form.html' %}<button class="c02-button">باز کردن صف</button></form>
+{% if queue %}{% for item in queue.items %}<p><a href="/staff/professional-verification/{{ item.id }}/"><bdi>{{ item.id }}</bdi></a></p>{% empty %}<p>درخواستی در صف نیست.</p>{% endfor %}{% endif %}
+{% endblock %}
