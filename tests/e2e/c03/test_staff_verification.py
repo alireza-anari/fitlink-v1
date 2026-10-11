@@ -346,20 +346,34 @@ async def test_case_revoked_between_post_and_get_denied(
     await open_case(page, live_server, auth_runtime, s, viewport)
 
     async def invalidate_redirect(route):
+        if route.request.method != "POST":
+            await route.continue_()
+            return
+        # Playwright routes only the first URL in a redirect chain. Hold the
+        # real committed POST response until authority is invalidated, then
+        # deliver that unchanged redirect for the browser's actual fresh GET.
+        response = await route.fetch(max_redirects=0)
+        assert response.status == 302
+        assert response.headers["location"] == (
+            f"/staff/professional-verification/{s.case.id}/"
+        )
         await database(
             lambda: VerificationAssignment.objects.filter(
                 verification_id=s.case.id, ended_at__isnull=True
             ).update(ended_at=timezone.now())
         )
-        await route.continue_()
+        await route.fulfill(response=response)
 
     await page.route(
         "**/staff/professional-verification/*/",
-        lambda route: (
-            invalidate_redirect(route)
-            if route.request.method == "GET"
-            else route.continue_()
-        ),
+        invalidate_redirect,
     )
-    await decide(page, "coach")
+    async with page.expect_response(
+        lambda response: (
+            response.request.method == "GET"
+            and response.url.endswith(f"/staff/professional-verification/{s.case.id}/")
+        )
+    ) as redirected:
+        await decide(page, "coach")
+    assert (await redirected.value).status == 403
     await expect(page.get_by_text("دسترسی مجاز نیست.", exact=True)).to_be_visible()
