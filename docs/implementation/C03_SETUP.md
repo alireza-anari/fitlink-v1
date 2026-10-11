@@ -123,7 +123,7 @@ C02 browser/service/restart checks execute first, then the new recovery suite an
 separate owner and staff Chromium processes. The immutable C02 whole-file pin
 remains unchanged. All inherited supervisor/process limits remain in force.
 
-`python docker/c03_asset_restart_probe.py run` owns a fresh existing-type isolated
+`uv run --frozen python docker/c03_asset_restart_probe.py run` owns a fresh existing-type isolated
 private-processing Compose project under the established storage supervisor.
 It tests deterministic recovery transitions on PostgreSQL/private MinIO, then
 kills a real non-eager worker before and after immutable derivative write but
@@ -134,9 +134,11 @@ outages must fail closed and recover through the production reconciler. Only the
 isolated runtime worker override imports the test barrier tasks. No production
 registration, schema, retention policy or consent purpose changes are made.
 
-`python docker/c03_asset_restart_probe.py audit` requires a read-only Actions token
-in its dedicated branch-only job. It pins the twelve published implementation
-SHA/tree/run authorities, retrieves every required successful job and actual log,
+`uv run --frozen python docker/c03_asset_restart_probe.py audit` requires a read-only Actions token
+in its dedicated branch-only job. It pins the twelve published specification and implementation
+SHA/tree/run authorities, verifies ancestry and each run/job binding, and reads
+bounded digest-verified actual journals plus exact-source supervised selections.
+It retrieves every required successful job and actual log,
 and rejects missing/wrong-head/skipped/fake-only proof. Metadata journals contain
 only bounded stages, digest/engine/signature/retry evidence and authority IDs.
 Tokens are never forwarded to redirected log hosts; private raw logs are not

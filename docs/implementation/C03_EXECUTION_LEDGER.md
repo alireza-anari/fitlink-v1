@@ -3380,3 +3380,19 @@ processor deliberately emits exact `scan_error`; it does not throw
 `scan_error`; retain stopped real scanner, never-ready assertions and required
 restoration/recovery. Storage remains exactly `storage_unavailable`. No
 production code changed. This partial probe is not acceptance GREEN.
+
+Final evidence precision refinement: recovered retry metadata now reads the
+actual ready AssetProcessingAttempt.attempt; engine/signature come from that same
+row. Earlier preliminary probe emitted constant retry2 (the intentionally second
+claim); its journal field alone is not reused as independently measured retry
+acceptance. Final actual database-derived retry evidence is required. Setup
+commands explicitly use frozen uv, and document specification/implementation
+ancestry and job-specific artifact/source selection proof. No production change.
+Lock/security review: no dependency/lock, Compose, Celery configuration, production
+apps/use-case or migration changes against authoritative Task12 baseline. Only
+nine authorized Task13 files changed. Both exact inherited Git blob pins freshly
+verified; read-only Actions token stripped on all redirects, bounded archive reads
+without extraction, metadata-only exported journals, real services and all
+inherited gate bounds/ownership kept. Only profiles/c03-cloud updated by guarded
+true-parent fast-forwards with force=false; no unrelated ref update, merge or
+deployment. Task13 remains incomplete pending exact implementation source GREEN.

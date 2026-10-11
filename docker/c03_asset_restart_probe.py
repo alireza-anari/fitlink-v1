@@ -278,15 +278,12 @@ def verify(stage):
     wait_for(lambda: broker().get(STAGE) == b"denied")
     assert asset.derivatives.count() == 1
     assert scan_due_assets(p.timezone.now(), 1) == 0
+    ready_attempt = p.AssetProcessingAttempt.objects.get(asset=asset, state="ready")
     evidence(
         stage + "_recovered_one_effect_stale_delivery_denied",
-        engine=p.AssetProcessingAttempt.objects.get(
-            asset=asset, state="ready"
-        ).scanner_engine,
-        signature=p.AssetProcessingAttempt.objects.get(
-            asset=asset, state="ready"
-        ).scanner_signature,
-        retry=2,
+        engine=ready_attempt.scanner_engine,
+        signature=ready_attempt.scanner_signature,
+        retry=ready_attempt.attempt,
         source_digest=asset.sha256,
         derivative_digest=derivative.sha256,
     )
