@@ -430,6 +430,10 @@ jobs:
       - run: uv sync --frozen --group dev
       - name: Task 14 real native processing diagnostic only
         run: sh docker/verify_c03.sh --native-processing-diagnostic
+      - name: Task 14 finite historical HTTP diagnostic only
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: timeout -k 5s 120s uv run --frozen python docker/c03_upgrade_probe.py history-http-diagnostic unused
       - name: Task 14 metadata-only diagnostic stages
         if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

@@ -863,7 +863,7 @@ def replay_live(path):
             if name == "coach_approve_nutritionist_reject":
                 assert set(
                     VerificationDecision.objects.filter(
-                        verification_id=s.case.id,
+                        target__verification_id=s.case.id,
                     ).values_list("target_kind", "decision", "reason_code")
                 ) == {
                     ("identity", "approve", "credentials_approved"),
@@ -1163,8 +1163,52 @@ def decoder_runtime_diagnostic():
     print("C03_TASK14_RUNTIME " + json.dumps(result), flush=True)
 
 
+def history_http_diagnostic():
+    """Observe the unchanged historical audit boundary; never print URLs/body."""
+    from urllib import request
+    from urllib.error import HTTPError
+
+    from docker.c03_asset_restart_probe import audit
+
+    original = request.build_opener
+
+    def build(*handlers):
+        opener = original(*handlers)
+        original_open = opener.open
+
+        def open_request(*args, **kwargs):
+            try:
+                return original_open(*args, **kwargs)
+            except HTTPError as error:
+                result = {"status": error.code}
+                for name, header in (
+                    ("rate_remaining", "X-RateLimit-Remaining"),
+                    ("rate_reset_epoch", "X-RateLimit-Reset"),
+                ):
+                    value = error.headers.get(header, "")
+                    if value.isdecimal() and len(value) <= 12:
+                        result[name] = int(value)
+                print("C03_TASK14_HISTORY_HTTP " + json.dumps(result), flush=True)
+                raise
+
+        opener.open = open_request
+        return opener
+
+    request.build_opener = build
+    try:
+        audit()
+    except HTTPError:
+        # Diagnostic observation only; original mandatory audit still fails.
+        print("C03_TASK14 history_http_failure_observed", flush=True)
+    finally:
+        request.build_opener = original
+
+
 def main():
     sys.path.insert(0, os.getcwd())
+    if sys.argv[1:] == ["history-http-diagnostic", "unused"]:
+        history_http_diagnostic()
+        return
     sys.path.insert(0, str(Path.cwd() / "tests/integration/c02"))
     import django
 

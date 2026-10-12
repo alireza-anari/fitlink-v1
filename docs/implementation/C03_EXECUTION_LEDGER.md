@@ -3897,3 +3897,36 @@ processing GREEN and full upgraded replay still required on this new source.
 Task14 remains incomplete. New diagnostic historical-audit114810951494 fails
 with finite HTTPError (artifact11747736305), not decoder failure; no retry
 or acceptance waiver inferred.
+
+### Task14 native real processing RED→GREEN VERIFIED
+
+Minimal launcher implementation389ca7863b8bad9ab26b0966d4e1668643d8d099/tree
+39a4fca54c737a56ec1c2da3f9ff1c69a725eb5a, run38250013031 attempt1,
+nativejob114813565267 SUCCESS: all three actual credential uploads quarantine/
+claim/production process_asset/sanitized derivative ready; diagnostic_native
+exit0, cleanup exit0. Direct runtime retains intentional PID1 isolation failure
+(exit2), supervised same UID and worker isolation pass(exit0). This closes
+decode_unavailable as a Task14 harness PID1 mismatch with actual native
+RED→GREEN, not a production processing defect. Original production files and
+all Task5/Task13 decoder isolation controls untouched. No full Task14 acceptance.
+
+Next fix ONLY the Task14 bundle-outcome query harness: VerificationDecision has
+target FK, not verification FK. Exact bbc Foundation reports FieldError for
+mixed-case test; current native replay contains the same invalid query. Local
+Django query construction reproduces old FieldError without DB I/O; replacing
+with target__verification_id resolves real native relation. This correction
+keeps the strong one-bundle/three-outcomes/reasons assertion and all replay
+bodies unchanged, to obtain genuine semantic RED rather than count FieldError
+as missing behavior. Ordered-race assertion remains unchanged/RED. Corrected
+query must next run on focused real PostgreSQL and actual same upgraded DB.
+Task14 remains incomplete; no outside-authority change, migration or C04.
+
+Two consecutive unchanged historical-audit executions returned finite HTTPError
+(821998b/run38249245485 and389ca78/run38250013031); the first artifact records
+only that class. Add one bounded diagnostic-only step in the new Task14 native
+job: invokes the unmodified audit through an HTTP observation wrapper and
+prints only integer status/rate-remaining/reset-epoch headers on HTTPError.
+No URL, response body, token, exception text or redirect destination is emitted.
+Original mandatory c03-evidence-audit job/pins remain byte-identical and its
+failure is not waived or replaced. This diagnostic may only classify external
+access/rate failures; it is not acceptance or a fake historical audit.120s bound.

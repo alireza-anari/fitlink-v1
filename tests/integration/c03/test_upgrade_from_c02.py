@@ -71,7 +71,7 @@ def test_upgrade_replays_all_eleven_capability_cases(settings, case):
 
         outcomes = set(
             VerificationDecision.objects.filter(
-                verification_id=subject.case.id
+                target__verification_id=subject.case.id
             ).values_list("target_kind", "decision", "reason_code")
         )
         assert outcomes == {
