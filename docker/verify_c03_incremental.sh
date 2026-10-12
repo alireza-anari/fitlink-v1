@@ -362,4 +362,31 @@ C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnosti
 C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnostics timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_scope_boundary.py tests/integration/c03/test_owner_preview.py tests/integration/c03/test_assistant_primitive.py tests/integration/c03/test_c03_dependency_direction.py -q --strict-markers -o faulthandler_timeout=30
 
 # Task 14 focused preservation negatives; mandatory, no skipped service PASS.
-timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=short --show-capture=no
+task14_exit=0
+C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnostics timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=short --show-capture=no || task14_exit=$?
+uv run --frozen python - <<'PY'
+import json
+from pathlib import Path
+
+selected = (
+    "tests/unit/c03/test_exact_baseline.py::",
+    "tests/unit/c03/test_final_rehearsal.py::",
+    "tests/integration/c03/test_upgrade_from_c02.py::",
+)
+counts = {"passed": 0, "failed": 0, "skipped": 0}
+for path in sorted(Path(".runtime/c03-diagnostics").glob("foundation-*.jsonl")):
+    events = [json.loads(line) for line in path.read_text().splitlines()]
+    if not any(event.get("node", "").startswith(selected) for event in events):
+        continue
+    for event in events:
+        if event.get("event") == "test_report" and event.get("phase") == "call":
+            outcome = event.get("outcome")
+            if outcome in counts:
+                counts[outcome] += 1
+        if event.get("event") in {"pytest_exit", "pytest_internalerror"} or (
+            event.get("event") == "test_report" and event.get("outcome") != "passed"
+        ):
+            print("C03_TASK14_FOCUSED " + json.dumps(event, sort_keys=True), flush=True)
+print("C03_TASK14_FOCUSED_COUNTS " + json.dumps(counts, sort_keys=True), flush=True)
+PY
+[ "$task14_exit" -eq 0 ] || exit "$task14_exit"

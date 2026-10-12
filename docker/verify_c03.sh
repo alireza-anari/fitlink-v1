@@ -37,10 +37,13 @@ run_step() {
 import re
 import sys
 from pathlib import Path
+from docker.c03_upgrade_probe import private_log_metadata
 
 for line in Path(sys.argv[1]).read_text(errors="replace").splitlines():
     if re.fullmatch(r"C03_TASK14 [A-Za-z_]+(?: [A-Za-z_]+)?(?: line=[0-9]+)?", line):
         print(line, flush=True)
+import json
+print("C03_TASK14_DIAGNOSTIC " + json.dumps(private_log_metadata(sys.argv[1])), flush=True)
 PY
   test "$result" -eq 0
 }

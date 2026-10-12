@@ -3543,3 +3543,29 @@ foundation/c01-cloud75c551e5b9bbbfb7777ee52b09a1993b681e921a;
 accounts/c02-cloud0905be6c6ca608d469fe33e87f514b22591132d1;
 profiles/c03-plan79fd62e583cbe81f335bb08fce0eb43ff36b0167.
 No C04, merge, deployment or force push.
+
+Task14 hosted RED-harness checkpoint1008fb70e2b16fdb177277a12e66cb5eaa0e0198,
+treec516196c655092e7d9d649c7820902aed91d968d, guarded expected-parent fast-forward
+from ba088686, force=false. Exact push run38204340266 attempt1. Foundation
+job114664382343 confirms final-gate behavioral RED:1failed/699passed, no skip,
+only test_final_gates_include_all_c02_and_real_c03_services_browser failed.
+Source negatives in new final job114664382367:12passed/0skips with exact C02/C01
+source trees verified. Original immutable C02 verifier then returned1 before
+population at04:37:48Z. Its captured output is private, deliberately not uploaded.
+This is an unclassified original-runtime/harness failure, NOT upgrade RED and NOT
+Task13 reopening. Add bounded static-only error classes/source locations/counts
+to diagnose it without exporting exception messages, phone/session values or
+snapshot contents. No proposed production or migration fix without root cause.
+
+PostgreSQL job114664382410 confirms inherited C02 selection269passed and Task8
+108passed/Task9 89passed/Task10 86passed with zero skips, then appended focused
+invocation exits1. Existing supervisor redacts raw pytest output; that invocation
+had no opt-in metadata journal, so its individual comparator outcomes are not yet
+accepted as observed RED. Enable the existing journal for only that additive
+suffix. The installed Task13 prefix and observation limits remain unchanged.
+Specify missing upgraded constraint execution and all eleven capability replay
+boundaries using healthy real approved-subject preconditions before assertions;
+these new specs are not claimed executed until hosted PostgreSQL logs prove it.
+Fresh source/CI/secret-safe diagnostics checks:73passed,1deselected (only known
+final-gate RED excluded from this diagnostic invocation), zero skips. This
+selection is not the mandatory focused command and not acceptance GREEN.

@@ -2,11 +2,78 @@
 
 import json
 import os
+import re
 import sys
 from dataclasses import replace
 from datetime import timedelta
 from pathlib import Path
 from uuid import uuid4
+
+
+def private_log_metadata(path):
+    """Bounded static diagnostics only; private error text never leaves the host."""
+    with Path(path).open("rb") as stream:
+        stream.seek(0, 2)
+        stream.seek(max(0, stream.tell() - 65536))
+        text = stream.read(65536).decode(errors="replace")
+    exceptions = {
+        name
+        for name in (
+            "AssertionError",
+            "ValueError",
+            "RuntimeError",
+            "PermissionError",
+            "IntegrityError",
+            "OperationalError",
+            "ImproperlyConfigured",
+            "CalledProcessError",
+            "ModuleNotFoundError",
+            "ConnectionError",
+        )
+        if re.search(r"\b" + name + r"\b", text)
+    }
+    root = Path(__file__).resolve().parents[1]
+    known_tests = {
+        p.relative_to(root).as_posix() for p in (root / "tests").rglob("test_*.py")
+    }
+    tests = {
+        path + "::" + name
+        for path, name in re.findall(
+            r"(tests/(?:[a-z0-9_]+/)*test_[a-z0-9_]+\.py)::([a-zA-Z_][a-zA-Z0-9_]*)",
+            text,
+        )
+        if path in known_tests
+    }
+    sources = {p.name for p in (root / "apps").rglob("*.py")}
+    sources |= {p.name for p in (root / "config").rglob("*.py")}
+    sources |= {"probe.py", "manage.py", "subprocess.py"}
+    locations = [
+        {"file": Path(filename).name, "line": int(line)}
+        for filename, line in re.findall(r'File "([^"\n]+\.py)", line ([0-9]+)', text)
+        if Path(filename).name in sources
+    ][-12:]
+    counts = {
+        name: [int(n) for n in re.findall(r"\b([0-9]+) " + name + r"\b", text)][-16:]
+        for name in ("passed", "failed", "skipped")
+    }
+    infrastructure = [
+        name
+        for name, pattern in (
+            ("build_failure", r"failed to (?:build|solve)"),
+            ("registry_rate_limit", r"(?:toomanyrequests|pull rate limit)"),
+            ("service_unhealthy", r"(?:unhealthy|failed to start)"),
+            ("connection_refused", r"[Cc]onnection refused"),
+            ("dependency_download", r"[Ff]ailed to (?:download|fetch)"),
+        )
+        if re.search(pattern, text)
+    ]
+    return {
+        "exceptions": sorted(exceptions),
+        "tests": sorted(tests)[-24:],
+        "locations": locations,
+        "counts": counts,
+        "infrastructure": infrastructure,
+    }
 
 
 def snapshot(connection):
@@ -32,6 +99,45 @@ def snapshot(connection):
 def verify_preservation(previous, current):
     """Unimplemented comparator boundary for independently observed RED."""
     return True
+
+
+CAPABILITY_CASES = (
+    "coach_approve_nutritionist_reject",
+    "nutritionist_expiry_preserves_coach",
+    "coach_revocation_preserves_nutritionist",
+    "temporary_role_restriction_is_local",
+    "restriction_removal_reuses_valid_approval",
+    "restriction_removal_cannot_undo_revocation",
+    "add_declared_role_preserves_other_approval",
+    "deactivate_role_preserves_other_approval",
+    "inflight_requested_role_or_evidence_edit_is_stale",
+    "c04_input_excludes_unverified_declarations",
+    "concurrent_restriction_revocation_decision_consistent",
+)
+CONSTRAINT_CASES = (
+    "identity_role_null_rule",
+    "role_target_equality",
+    "evidence_target_binding",
+    "terminal_outcome_uniqueness",
+    "explicit_revoke_linkage",
+    "one_current_restriction",
+    "immutable_decision",
+    "immutable_snapshot",
+    "immutable_history",
+    "cross_role_rejection",
+    "bulk_protection",
+    "direct_sql_protection",
+)
+
+
+def upgraded_constraints(subject):
+    """Missing Task14 constraint execution boundary, specified before implementation."""
+    return {}
+
+
+def upgraded_capability_case(name, subject):
+    """Missing Task14 replay boundary; never borrow an earlier CI result."""
+    return False
 
 
 def prepare(path):

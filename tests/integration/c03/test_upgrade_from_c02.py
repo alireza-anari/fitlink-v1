@@ -6,7 +6,16 @@ import pytest
 from django.db import connection
 
 from apps.accounts.models import User
-from docker.c03_upgrade_probe import snapshot, verify_preservation
+from docker.c03_upgrade_probe import (
+    CAPABILITY_CASES,
+    CONSTRAINT_CASES,
+    snapshot,
+    upgraded_capability_case,
+    upgraded_constraints,
+    verify_preservation,
+)
+
+from .test_verification_decisions import approved, eligibility
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
 
@@ -37,3 +46,23 @@ def test_upgrade_probe_preserves_all_c02_rows_sessions_governance_oid_and_no_pro
         current = snapshot(connection)
     with pytest.raises(AssertionError, match="preservation"):
         verify_preservation(previous, current)
+
+
+def test_upgrade_new_target_and_restriction_constraints(settings):
+    assert connection.vendor == "postgresql"
+    subject = approved(settings)
+    assert eligibility(subject).verified_roles == ("coach", "nutritionist")
+    proof = upgraded_constraints(subject)
+    assert set(proof) == set(CONSTRAINT_CASES), "Task14 constraint replay is missing"
+    assert all(proof[name] is True for name in CONSTRAINT_CASES)
+
+
+@pytest.mark.parametrize("case", CAPABILITY_CASES)
+def test_upgrade_replays_all_eleven_capability_cases(settings, case):
+    assert connection.vendor == "postgresql"
+    subject = approved(settings)
+    assert eligibility(subject).identity_verified
+    assert eligibility(subject).verified_roles == ("coach", "nutritionist")
+    assert upgraded_capability_case(case, subject) is True, (
+        "Task14 capability replay is missing: " + case
+    )

@@ -41,3 +41,31 @@ def test_final_gates_include_all_c02_and_real_c03_services_browser():
     assert final_gates_valid(source), "Task 14 actual final rehearsal is omitted"
     for item in REQUIRED:
         assert not final_gates_valid(source.replace(item, "omitted"))
+
+
+def test_private_rehearsal_diagnostics_never_export_exception_text_or_sessions(
+    tmp_path,
+):
+    import json
+
+    from docker.c03_upgrade_probe import private_log_metadata
+
+    path = tmp_path / "private.log"
+    sentinel = "PRIVATE-SNAPSHOT-SESSION-AND-OTP-SENTINEL"
+    path.write_text(
+        'File "/app/config/settings/env.py", line 17, in invalid\n'
+        "ImproperlyConfigured: " + sentinel + " +989123000001\n"
+        "FAILED tests/unit/c02/test_security_config.py::test_unsafe_config["
+        + sentinel
+        + "] - "
+        + sentinel
+        + "\n"
+        "3 passed, 1 failed\n"
+    )
+    result = private_log_metadata(path)
+    assert result["exceptions"] == ["ImproperlyConfigured"]
+    assert result["counts"]["passed"] == [3]
+    assert result["counts"]["failed"] == [1]
+    assert result["locations"] == [{"file": "env.py", "line": 17}]
+    assert sentinel not in json.dumps(result)
+    assert "+989123000001" not in json.dumps(result)
