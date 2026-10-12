@@ -699,15 +699,30 @@ def approved_live_subject(settings, subject, staff=None):
         )
         print("C03_TASK14 native_processing_claimed", flush=True)
         attempt = AssetProcessingAttempt.objects.get(asset=asset, state="running")
-        assert (
-            asset_processing.process_asset(
-                asset.id,
-                asset.processing_version,
-                attempt.lease_uuid,
-                timezone.now(),
-            )
-            == "ready"
+        processing_result = asset_processing.process_asset(
+            asset.id,
+            asset.processing_version,
+            attempt.lease_uuid,
+            timezone.now(),
         )
+        if processing_result != "ready":
+            known = {
+                "denied",
+                "unavailable",
+                "source_changed",
+                "storage_unavailable",
+                "scanner_unavailable",
+                "scan_unknown",
+                "scan_stale",
+                "scan_malicious",
+                "decode_unavailable",
+                "decode_invalid",
+                "decode_timeout",
+                "release_denied",
+            }
+            code = processing_result if processing_result in known else "unclassified"
+            print("C03_TASK14 native_processing_" + code, flush=True)
+        assert processing_result == "ready"
         print("C03_TASK14 native_derivative_ready", flush=True)
         asset.refresh_from_db()
         assert (
@@ -1184,6 +1199,14 @@ def main():
         assert executor.loader.graph.leaf_nodes()
         assert not executor.migration_plan(executor.loader.graph.leaf_nodes())
         print("C03_TASK14 independent_zero_state_chain_passed", flush=True)
+    elif phase == "diagnostic":
+        from tests.integration.c03.profile_helpers import make_actor
+
+        settings.ACCOUNT_SECURITY = replace(
+            settings.ACCOUNT_SECURITY, step_up_provider="mock"
+        )
+        approved_live_subject(settings, make_actor("+989124009998"))
+        print("C03_TASK14 diagnostic_only_no_acceptance", flush=True)
     else:
         raise ValueError("Unknown Task 14 phase")
 

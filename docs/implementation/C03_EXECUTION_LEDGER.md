@@ -3806,3 +3806,31 @@ verifier precondition; ignore comment lines and reject unconditional success exi
 All four final-orchestration unit tests now GREEN/0skips, including actual
 intermediate-command shell failure propagation. This supplements actual hosted
 executions, never substitutes string checks for runtime acceptance.
+
+Native diagnostic checkpoint2b0693295fcd8cc2501c80ce3a3be836de491d5a,
+treeda15a5d38b42ddc88583f6883f0cb998c972c086, run38236450689 attempt1.
+Finaljob114768204010 proves strict original frozen C02 runtime/full verifier,
+source validation/population,40 SQL inspections, same DB migrate/no-op/drift,
+exact row/OID/session preservation and actual MinIO/scanner health GREEN.
+Static native markers prove baseline submitted, professional created, real credential
+upload quarantined and processing attempt claimed. Then AssertionError at exact
+native probe line703: production process_asset result is not ready. This identifies
+the processing component, not the finite failure code/root cause. No schema bug,
+upgrade-matrix RED, waiver or acceptance is inferred. No production correction
+until root cause is observed. Snapshot/private log data remain unexported.
+
+Add bounded finite processing-result diagnostics; unknown values map to a constant
+unclassified marker, never raw exception/private text. Add one isolated real-service
+native processing diagnostic mode/job to obtain this code rapidly. It uses its own
+fresh project/volume/env/private-log namespace and synthetic current C03 subjects,
+real PostgreSQL/private MinIO/ClamAV, with exactly the same native flow and caller
+UID. This is explicitly DIAGNOSTIC ONLY, not exact C02 populated-upgrade or clean
+C03 acceptance. The separate unqualified sh docker/verify_c03.sh remains mandatory
+and unchanged in authority: original C02 verifier, preserved same DB, all11 replays,
+constraints, independent full clean/service/browser/restart/cleanup gates.
+CI mutation now explicitly rejects replacing that final invocation with diagnostic
+mode. Inherited workflow normalization excludes only this exact literal C03-only
+job and its artifact condition adds one exact counted condition (20); original C02
+workflow blob and all Task13 byte pins/limits remain unchanged. No PR/main/wildcard
+or continue-on-error expansion. Fresh source/final/CI contracts79passed/0skips.
+Task14/C03/handoff remain incomplete. No C04, merge, deployment or force push.

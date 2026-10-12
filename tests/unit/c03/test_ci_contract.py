@@ -98,7 +98,7 @@ def test_task14_exact_upgrade_final_job_cannot_be_omitted_or_weakened():
             "ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a",
             "path: .runtime/c02/.runtime/c01",
             "pytest tests/unit/c03/test_exact_baseline.py -q --strict-markers",
-            "run: sh docker/verify_c03.sh",
+            "        run: sh docker/verify_c03.sh\n",
             ".runtime/c03-foundation-evidence/*.jsonl",
             "if-no-files-found: error",
         )
@@ -120,6 +120,10 @@ def test_task14_exact_upgrade_final_job_cannot_be_omitted_or_weakened():
             "run: pytest tests/integration/c03/test_c03_migrations.py",
         ),
         ("run: sh docker/verify_c03.sh", "run: echo fake-only-upgrade"),
+        (
+            "run: sh docker/verify_c03.sh",
+            "run: sh docker/verify_c03.sh --native-processing-diagnostic",
+        ),
         ("run: sh docker/verify_c03.sh", "run: sh docker/verify_foundation.sh"),
         ("ref: 0905be6c6ca608d469fe33e87f514b22591132d1", "ref: main"),
         ("path: .runtime/c02/.runtime/c01", "path: omitted"),
@@ -267,7 +271,7 @@ TASK14_FOCUSED = """      - name: Task 14 focused behavioral contracts on real P
 def inherited_workflow_is_intact(source):
     inherited = source.replace(TRIGGER, "    branches: [accounts/c02-cloud]")
     inherited = re.sub(
-        r"^  c03-(?:owner|staff|restart|evidence-audit|final):\n"
+        r"^  c03-(?:owner|staff|restart|evidence-audit|task14-native|final):\n"
         r".*?(?=^  [a-z][a-z0-9-]*:\n|\Z)",
         "",
         inherited,
@@ -321,7 +325,7 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 19
+    assert source.count("        if:") == 20
     assert source.count(TASK8_REPORT) == 1
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)

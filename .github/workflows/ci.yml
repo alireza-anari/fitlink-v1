@@ -399,6 +399,45 @@ jobs:
           path: .runtime/c03-triage/task13.jsonl
           include-hidden-files: true
           if-no-files-found: error
+  c03-task14-native:
+    if: github.ref == 'refs/heads/profiles/c03-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+          path: .runtime/c02
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/c01
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/c02/.runtime/c01
+          persist-credentials: false
+      - run: uv sync --frozen --group dev
+      - name: Task 14 real native processing diagnostic only
+        run: sh docker/verify_c03.sh --native-processing-diagnostic
+      - name: Task 14 metadata-only diagnostic stages
+        if: always() && github.ref == 'refs/heads/profiles/c03-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-task14-native-diagnostic
+          path: .runtime/c03-task14-native-evidence/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
   c03-final:
     if: github.ref == 'refs/heads/profiles/c03-cloud'
     runs-on: ubuntu-24.04

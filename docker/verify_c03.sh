@@ -2,7 +2,7 @@
 # Exact immutable C02, populated same-database upgrade and independent clean C03.
 set -eu
 if [ "${C03_TASK14_CHILD:-}" != 1 ]; then
-  exec env C03_TASK14_CHILD=1 timeout -k 20s 3300s sh "$0"
+  exec env C03_TASK14_CHILD=1 timeout -k 20s 3300s sh "$0" "$@"
 fi
 umask 077
 root=$(pwd)
@@ -12,6 +12,16 @@ clean_project=fitlink-c03-task14-clean
 private=$root/.runtime/task14-private
 evidence=$root/.runtime/c03-task14-evidence
 env_file=$root/.env.c03-task14-upgrade
+case "${1:-}" in
+  '') ;;
+  --native-processing-diagnostic)
+    project=fitlink-c03-task14-native-diagnostic
+    private=$root/.runtime/task14-native-private
+    evidence=$root/.runtime/c03-task14-native-evidence
+    env_file=$root/.env.c03-task14-native-diagnostic
+    ;;
+  *) exit 1 ;;
+esac
 python docker/c03_baseline.py "$baseline"
 python docker/c02_baseline.py "$root/.runtime/c01"
 python docker/c02_baseline.py "$baseline/.runtime/c01"
@@ -61,6 +71,26 @@ PY
   printf 'C03_TASK14 stage=%s exit_code=%s\n' "$stage" "$result"
   test "$result" -eq 0
 }
+if [ "${1:-}" = --native-processing-diagnostic ]; then
+  # Real-service diagnostic only. The separate unqualified final verifier is
+  # still mandatory and retains original C02 plus both complete rehearsals.
+  python docker/generate_env.py "$env_file"
+  diagnostic() { timeout -k 10s 300s docker compose -p "$project" -f "$root/compose.yaml" --env-file "$env_file" --profile test "$@"; }
+  diagnostic_cleanup() {
+    diagnostic down --remove-orphans >>"$private/cleanup.log" 2>&1
+    test -z "$(docker ps -aq --filter label=com.docker.compose.project="$project")"
+    test -z "$(docker network ls -q --filter label=com.docker.compose.project="$project")"
+  }
+  trap 'exit_status=$?; trap - EXIT; diagnostic_cleanup || exit_status=1; exit "$exit_status"' EXIT
+  run_step diagnostic_build diagnostic build checks scanner scanner-signatures minio minio-init
+  run_step diagnostic_services diagnostic up -d --wait db redis minio scanner
+  run_step diagnostic_minio diagnostic run --rm minio-init
+  run_step diagnostic_migrate diagnostic run --rm --no-deps checks /opt/venv/bin/python manage.py migrate --noinput
+  run_step diagnostic_native diagnostic run --rm --no-deps --user "$(id -u):$(id -g)" checks /opt/venv/bin/python docker/c03_upgrade_probe.py diagnostic unused
+  run_step diagnostic_cleanup diagnostic_cleanup
+  trap - EXIT
+  exit
+fi
 original_c02() (
   cd "$baseline"
   # Original public static/dependency outputs must remain readable by the
