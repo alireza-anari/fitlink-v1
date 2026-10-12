@@ -97,7 +97,90 @@ def snapshot(connection):
 
 
 def verify_preservation(previous, current):
-    """Unimplemented comparator boundary for independently observed RED."""
+    """Exact old rows/OIDs; only enumerated Django installation metadata may grow."""
+    from django.apps import apps
+    from django.db import connection
+    from django.db.migrations.loader import MigrationLoader
+
+    def require(value, reason):
+        if not value:
+            raise AssertionError("preservation " + reason)
+
+    require(previous["database_oid"] == current["database_oid"], "database identity")
+    before, after = previous["tables"], current["tables"]
+    require("accounts_user" in before, "original User table")
+    require("auth_user" not in before and "auth_user" not in after, "auth_user absent")
+    require(set(before) <= set(after), "original tables")
+    catalogs = {"django_migrations", "django_content_type", "auth_permission"}
+    additions = {}
+    for name, original in before.items():
+        actual = after[name]
+        require(original["oid"] == actual["oid"], "original table OID")
+        require(original["count"] == len(original["rows"]), "original count")
+        require(actual["count"] == len(actual["rows"]), "current count")
+        if name not in catalogs:
+            require(original == actual, "original rows and values")
+            continue
+        old_rows, new_rows = set(original["rows"]), set(actual["rows"])
+        require(len(old_rows) == original["count"], "original catalog identity")
+        require(len(new_rows) == actual["count"], "current catalog identity")
+        require(old_rows <= new_rows, "original catalog rows")
+        additions[name] = [json.loads(row) for row in new_rows - old_rows]
+    models = {
+        (model._meta.app_label, model._meta.model_name): model
+        for model in apps.get_models()
+        if model._meta.app_label in {"assets", "athletes", "professionals"}
+    }
+    types = [json.loads(row) for row in before["django_content_type"]["rows"]]
+    old_models = {(row["app_label"], row["model"]) for row in types}
+    new_types = additions["django_content_type"]
+    added_models = {(row["app_label"], row["model"]) for row in new_types}
+    require(added_models == set(models) - old_models, "exact C03 content types")
+    require(len(new_types) == len(added_models), "unique new content types")
+    expected_permissions = set()
+    for row in new_types:
+        model = models[(row["app_label"], row["model"])]
+        permissions = [
+            (
+                f"{verb}_{model._meta.model_name}",
+                f"Can {verb} {model._meta.verbose_name_raw}",
+            )
+            for verb in model._meta.default_permissions
+        ] + list(model._meta.permissions)
+        expected_permissions.update(
+            (row["id"], code, name) for code, name in permissions
+        )
+    permission_rows = additions["auth_permission"]
+    require(
+        {
+            (row["content_type_id"], row["codename"], row["name"])
+            for row in permission_rows
+        }
+        == expected_permissions,
+        "exact C03 permission metadata",
+    )
+    require(len(permission_rows) == len(expected_permissions), "unique new permissions")
+    old_migrations = {
+        (row["app"], row["name"])
+        for row in map(json.loads, before["django_migrations"]["rows"])
+    }
+    expected_migrations = (
+        set(MigrationLoader(connection).disk_migrations) - old_migrations
+    )
+    new_migrations = additions["django_migrations"]
+    require(
+        {(row["app"], row["name"]) for row in new_migrations} == expected_migrations,
+        "exact additive migration records",
+    )
+    require(len(new_migrations) == len(expected_migrations), "unique new migrations")
+    require(
+        all(
+            table["count"] == 0
+            for name, table in after.items()
+            if name.startswith(("assets_", "athletes_", "professionals_"))
+        ),
+        "no automatic C03 business rows",
+    )
     return True
 
 
@@ -131,13 +214,401 @@ CONSTRAINT_CASES = (
 
 
 def upgraded_constraints(subject):
-    """Missing Task14 constraint execution boundary, specified before implementation."""
-    return {}
+    """Exercise native guards on this connection, never a historical model graph."""
+    from django.db import DatabaseError, connection, transaction
+    from django.db.models import Max
+    from django.utils import timezone
+
+    from apps.professionals.models import (
+        CredentialRevision,
+        ProfessionalRoleRestriction,
+        RoleRestrictionHistory,
+        Verification,
+        VerificationDecision,
+        VerificationEvidence,
+        VerificationHistory,
+        VerificationTarget,
+    )
+
+    assert connection.vendor == "postgresql"
+    result = {}
+
+    def denied(name, operation):
+        try:
+            with transaction.atomic():
+                operation()
+                transaction.set_rollback(True)
+        except DatabaseError as error:
+            assert getattr(error.__cause__, "sqlstate", None) in {
+                "23503",
+                "23505",
+                "23514",
+                "42501",
+            }, "Unexpected infrastructure/SQL error, not a constraint proof"
+            result[name] = True
+            return
+        raise AssertionError("Upgraded PostgreSQL accepted forbidden " + name)
+
+    def sql(statement, parameters):
+        with connection.cursor() as cursor:
+            cursor.execute(statement, parameters)
+
+    sequence = (
+        Verification.objects.filter(profile=subject.profile).aggregate(
+            value=Max("sequence")
+        )["value"]
+        + 1
+    )
+    draft = Verification.objects.create(profile=subject.profile, sequence=sequence)
+    roles = {row.role: row for row in subject.profile.roles.all()}
+    base = {"verification": draft, "target_snapshot_hash": "c" * 64}
+    denied(
+        "identity_role_null_rule",
+        lambda: VerificationTarget.objects.create(
+            **base,
+            target="identity",
+            role=roles["coach"],
+            bound_declaration_version=1,
+        ),
+    )
+    denied(
+        "role_target_equality",
+        lambda: VerificationTarget.objects.create(
+            **base,
+            target="coach",
+            role=roles["nutritionist"],
+            bound_declaration_version=1,
+        ),
+    )
+    coach = VerificationTarget.objects.create(
+        **base,
+        target="coach",
+        role=roles["coach"],
+        bound_declaration_version=1,
+    )
+    nutrition = (
+        CredentialRevision.objects.filter(
+            credential__profile=subject.profile, credential__role=roles["nutritionist"]
+        )
+        .order_by("sequence")
+        .last()
+    )
+    assert nutrition is not None
+    denied(
+        "evidence_target_binding",
+        lambda: VerificationEvidence.objects.bulk_create(
+            [
+                VerificationEvidence(
+                    target=coach,
+                    credential_revision=nutrition,
+                    category="qualification",
+                )
+            ]
+        ),
+    )
+    approval = VerificationDecision.objects.get(
+        profile=subject.profile, target_kind="coach", decision="approve"
+    )
+
+    def clone(**changes):
+        values = {
+            field.attname: getattr(approval, field.attname)
+            for field in approval._meta.concrete_fields
+            if not field.primary_key
+        }
+        values.update(id=uuid4(), decision_sequence=approval.decision_sequence + 1)
+        values.update(changes)
+        return VerificationDecision(**values)
+
+    denied(
+        "terminal_outcome_uniqueness",
+        lambda: VerificationDecision.objects.bulk_create(
+            [clone(decision="reject", reason_code="credentials_invalid")]
+        ),
+    )
+    denied(
+        "explicit_revoke_linkage",
+        lambda: VerificationDecision.objects.bulk_create(
+            [
+                clone(
+                    decision="revoke",
+                    reason_code="evidence_revoked",
+                    revoked_approval_id=None,
+                )
+            ]
+        ),
+    )
+    other = VerificationTarget.objects.get(
+        verification_id=subject.case.id, target="nutritionist"
+    )
+    denied(
+        "cross_role_rejection",
+        lambda: VerificationDecision.objects.bulk_create(
+            [
+                clone(
+                    target_id=other.id,
+                    target_kind="nutritionist",
+                    decision="revoke",
+                    reason_code="evidence_revoked",
+                    revoked_approval_id=approval.id,
+                    target_snapshot_hash=other.target_snapshot_hash,
+                    bound_evidence_revision=other.bound_evidence_revision,
+                )
+            ]
+        ),
+    )
+    restricted = dict(
+        role=roles["nutritionist"],
+        verification_id=subject.case.id,
+        applied_by=subject.staff.user,
+        reason_code="role_restricted",
+        applied_at=timezone.now(),
+    )
+    episode = ProfessionalRoleRestriction.objects.create(**restricted)
+    denied(
+        "one_current_restriction",
+        lambda: ProfessionalRoleRestriction.objects.bulk_create(
+            [ProfessionalRoleRestriction(**restricted)]
+        ),
+    )
+    denied(
+        "immutable_decision",
+        lambda: sql(
+            "UPDATE professionals_verificationdecision "
+            "SET explanation='changed' WHERE id=%s",
+            [approval.id],
+        ),
+    )
+    frozen = VerificationTarget.objects.get(
+        verification_id=subject.case.id, target="coach"
+    )
+    denied(
+        "immutable_snapshot",
+        lambda: sql(
+            "UPDATE professionals_verificationtarget "
+            "SET target_snapshot_hash=%s WHERE id=%s",
+            ["f" * 64, frozen.id],
+        ),
+    )
+    history = VerificationHistory.objects.filter(
+        verification_id=subject.case.id
+    ).first()
+    assert history is not None
+    denied(
+        "immutable_history",
+        lambda: sql(
+            "DELETE FROM professionals_verificationhistory WHERE id=%s",
+            [history.id],
+        ),
+    )
+    restriction_history = RoleRestrictionHistory.objects.create(
+        restriction=episode,
+        actor=subject.staff.user,
+        event="applied",
+        reason_code="role_restricted",
+        prior_version=0,
+        new_version=1,
+        at=episode.applied_at,
+    )
+    denied(
+        "bulk_protection",
+        lambda: sql(
+            "UPDATE professionals_rolerestrictionhistory "
+            "SET reason_code='restriction_removed' "
+            "WHERE id=%s",
+            [restriction_history.id],
+        ),
+    )
+    role_name = "c03_task14_" + uuid4().hex
+    role_sql = connection.ops.quote_name(role_name)
+    with connection.cursor() as cursor:
+        cursor.execute(f"CREATE ROLE {role_sql} NOLOGIN NOSUPERUSER")
+        cursor.execute(f"GRANT USAGE ON SCHEMA public TO {role_sql}")
+        cursor.execute(
+            "GRANT SELECT, INSERT, UPDATE, DELETE ON "
+            f"professionals_verificationdecision TO {role_sql}"
+        )
+    try:
+
+        def runtime(statement):
+            with connection.cursor() as cursor:
+                cursor.execute(f"SET LOCAL ROLE {role_sql}")
+                cursor.execute(statement)
+
+        for statement in (
+            "UPDATE professionals_verificationdecision SET explanation='changed'",
+            "DELETE FROM professionals_verificationdecision",
+            "TRUNCATE professionals_verificationdecision CASCADE",
+        ):
+            denied("direct_sql_protection", lambda value=statement: runtime(value))
+    finally:
+        with connection.cursor() as cursor:
+            cursor.execute(f"DROP OWNED BY {role_sql}")
+            cursor.execute(f"DROP ROLE {role_sql}")
+    assert set(result) == set(CONSTRAINT_CASES)
+    return result
 
 
 def upgraded_capability_case(name, subject):
-    """Missing Task14 replay boundary; never borrow an earlier CI result."""
-    return False
+    """Run fresh commands/assertions on the caller's actual upgraded connection."""
+    from copy import copy
+
+    from django.db import connection
+    from django.utils import timezone
+
+    from apps.professionals.contracts import ProfileConflict
+    from apps.professionals.models import VerificationDecision, VerificationTarget
+    from tests.integration.c03.profile_helpers import in_connection
+    from tests.integration.c03.test_professional_setup import save
+    from tests.integration.c03.test_verification_decision_races import race
+    from tests.integration.c03.test_verification_decisions import (
+        decision,
+        eligibility,
+        facts,
+        mutate_evidence,
+    )
+    from tests.integration.c03.test_verification_revocation import (
+        rereview,
+        restrict,
+        revoke,
+    )
+
+    assert connection.vendor == "postgresql" and name in CAPABILITY_CASES
+    s = subject
+
+    def roles(expected):
+        current = eligibility(s)
+        assert current.identity_verified and current.eligible
+        assert current.verified_roles == expected
+
+    def counters(kind):
+        row = s.profile.roles.get(role=kind)
+        return row.declaration_version, row.evidence_revision, row.decision_version
+
+    if name == "coach_approve_nutritionist_reject":
+        before = counters("coach")
+        mutate_evidence(s, "nutritionist")
+        rereview(s, "nutritionist")
+        decision(s, "nutritionist", "reject")
+        roles(("coach",))
+        assert counters("coach") == before
+    elif name == "nutritionist_expiry_preserves_coach":
+        before = counters("coach")
+        current = eligibility(s, timezone.now() + timedelta(days=2))
+        assert current.identity_verified and current.verified_roles == ("coach",)
+        assert counters("coach") == before
+    elif name == "coach_revocation_preserves_nutritionist":
+        before = counters("nutritionist")
+        revoke(s, "coach")
+        roles(("nutritionist",))
+        assert counters("nutritionist") == before
+        row = VerificationDecision.objects.get(profile=s.profile, decision="revoke")
+        assert row.revoked_approval.target_id == row.target_id
+    elif name in {
+        "temporary_role_restriction_is_local",
+        "restriction_removal_reuses_valid_approval",
+    }:
+        before = counters("nutritionist"), counters("coach")
+        count = VerificationDecision.objects.filter(profile=s.profile).count()
+        restrict(s)
+        roles(("coach",))
+        if name == "restriction_removal_reuses_valid_approval":
+            restrict(s, release=True)
+            roles(("coach", "nutritionist"))
+        assert (counters("nutritionist"), counters("coach")) == before
+        assert VerificationDecision.objects.filter(profile=s.profile).count() == count
+    elif name == "restriction_removal_cannot_undo_revocation":
+        restrict(s)
+        revoke(s, "nutritionist")
+        restrict(s, release=True)
+        roles(("coach",))
+        assert (
+            VerificationDecision.objects.filter(
+                profile=s.profile, decision="revoke"
+            ).count()
+            == 1
+        )
+    elif name == "add_declared_role_preserves_other_approval":
+        revoke(s, "nutritionist")
+        save(s, "identity", {"roles": ["coach"]})
+        before = counters("coach")
+        save(s, "identity", {"roles": ["coach", "nutritionist"]})
+        roles(("coach",))
+        assert counters("coach") == before
+    elif name == "deactivate_role_preserves_other_approval":
+        before = counters("nutritionist")
+        approvals = list(
+            VerificationDecision.objects.filter(profile=s.profile).values_list(
+                "id", flat=True
+            )
+        )
+        save(s, "identity", {"roles": ["nutritionist"]})
+        roles(("nutritionist",))
+        assert counters("nutritionist") == before
+        assert set(approvals) == set(
+            VerificationDecision.objects.filter(profile=s.profile).values_list(
+                "id", flat=True
+            )
+        )
+    elif name == "inflight_requested_role_or_evidence_edit_is_stale":
+        for change in ("evidence", "declaration"):
+            mutate_evidence(s, "coach")
+            rereview(s, "coach")
+            captured = facts(s, "coach")
+            before = counters("nutritionist")
+            if change == "evidence":
+                mutate_evidence(s, "coach")
+            else:
+                save(s, "identity", {"roles": ["nutritionist"]})
+            try:
+                decision(s, "coach", captured=captured)
+            except ProfileConflict:
+                pass
+            else:
+                raise AssertionError("Stale upgraded decision accepted")
+            row = VerificationTarget.objects.get(pk=captured[1].id)
+            assert (
+                row.state == "stale"
+                and row.target_snapshot_hash == captured[1].target_snapshot_hash
+            )
+            assert counters("nutritionist") == before
+            roles(("nutritionist",))
+    elif name == "c04_input_excludes_unverified_declarations":
+        revoke(s, "nutritionist")
+        assert set(
+            s.profile.roles.filter(declared_active=True).values_list("role", flat=True)
+        ) == {"coach", "nutritionist"}
+        roles(("coach",))
+    else:
+        original = copy(s)
+        original.staff = copy(s.staff)
+        original_facts = facts(original, "coach")
+        rereview(s, "coach")
+        pending = facts(s, "coach")
+        results = race(
+            lambda: revoke(original, captured=original_facts),
+            lambda: revoke(original, captured=original_facts),
+        )
+        assert results.count("conflict") == 1
+        try:
+            in_connection(lambda: decision(s, "coach", captured=pending))
+        except ProfileConflict:
+            pass
+        else:
+            raise AssertionError("Older pending decision overwrote revoke")
+        assert VerificationTarget.objects.get(pk=pending[1].id).state == "stale"
+        # Real separate connections also race a restriction and query; release
+        # cannot undo the already committed approval-linked revocation.
+        race(lambda: restrict(original, "coach"), lambda: eligibility(s))
+        in_connection(lambda: restrict(original, "coach", release=True))
+        roles(("nutritionist",))
+        assert (
+            VerificationDecision.objects.filter(
+                profile=s.profile, target_kind="coach", decision="revoke"
+            ).count()
+            == 1
+        )
+    return True
 
 
 def prepare(path):
@@ -361,7 +832,45 @@ def main():
         assert current["database_oid"] == data["snapshot"]["database_oid"]
         assert current["tables"]["accounts_user"]["count"] > 0
         assert "professionals_verificationtarget" in current["tables"]
-        raise AssertionError("Task 14 populated preservation is not implemented")
+        verify_preservation(data["snapshot"], current)
+        from django.utils import timezone
+        from test_sessions import request_with_session
+
+        from apps.accounts.sessions import actor_user, resolve_session
+
+        at = timezone.now()
+        sessions = data["sessions"]
+        owner = resolve_session(request_with_session(sessions["normal"]), at)
+        assert owner is not None and str(owner.user_uuid) == data["owner_uuid"]
+        assert owner.scope == "normal"
+        control = resolve_session(request_with_session(sessions["control"]), at)
+        assert control is not None and control.scope == "account_control"
+        for name in (
+            "revoked",
+            "revoked_control",
+            "expired",
+            "expired_control",
+            "stale_auth",
+            "legacy",
+            "suspended",
+        ):
+            assert resolve_session(request_with_session(sessions[name]), at) is None
+        assert resolve_session(request_with_session("unsupported-cookie"), at) is None
+        for action in (
+            "athlete.profile_write",
+            "professional.profile_write",
+            "professional.verify_submit",
+            "asset.owner_write",
+        ):
+            try:
+                actor_user(control, action, at)
+            except PermissionError:
+                pass
+            else:
+                raise AssertionError("Preserved control acquired C03 authority")
+        # Session resolution is read-only; no regeneration or delayed mutation.
+        verify_preservation(data["snapshot"], snapshot(connection))
+        print("C03_TASK14 exact_preservation_and_sessions_passed", flush=True)
     else:
         raise ValueError("Unknown Task 14 phase")
 

@@ -3630,3 +3630,38 @@ Native C02 current-session revoke service now creates retained revoked normal an
 control session rows rather than replacing their cookies; every saved session
 key must have its real row before the0600 snapshot. Only C02 services/helpers.
 Fresh source plus inherited CI contracts73passed/0skips in2.82s. Still incomplete.
+
+Exact populated same-database behavioral RED is now observed on70497453d79f2b074f94cee995123f9a7022f5af,
+treeec989968efa0a47a512276f293d9fc231dea7871, run38207559545 attempt1,
+final job114674312251. Original exact C02 verifier exit0; separate C02 population
+exit0 with0600 snapshot; C03 forward migrate, second migrate, drift and
+showmigrations all exit0. Actual verify phase fails at the explicit missing
+preservation AssertionError on published probe line364, AFTER reading the real
+snapshot, same database OID, populated accounts_user and installed C03 target
+schema. This is healthy same-database RED, not unavailable infrastructure.
+No acceptance or exact preservation GREEN yet. Cleanup is still a later gate.
+
+Executor temporarily returned409 environment_offline while a patch attempted
+its first file read. That operation failed before mutation. Executor reconnected;
+clean checkout reverified at7049745/ec98996; protected refs freshly match all four
+published baselines. No lost unpublished patch or RED was fabricated. Continue.
+
+Implement preservation comparator with exact old table OIDs/rows/identifiers/counts
+and zero C03 business rows. Ruling: only required Django installation metadata
+may append — exact new registered C03 content types/default permissions and exact
+new migration records — because adding installed models necessarily creates those
+catalog rows. Original catalog rows/IDs remain byte-for-byte and no application
+row growth is permitted during migration. Cost if wrong: compatibility gate
+rejects any unenumerated catalog growth rather than permitting arbitrary data.
+Session checks consume only the preserved C02 cookie keys, deny revoked/expired/
+stale/legacy/suspended variants, bound restricted controls and recheck exact
+preservation after reads. No replacement owner session is generated.
+
+Implement actual relational target/evidence/outcome/revoke/restriction guards,
+immutable SQL history/snapshot/decision checks, temporary ordinary SQL principal
+update/delete/truncate negatives with owned cleanup, and command-based capability
+replay. Every rejection requires actual PostgreSQL SQLSTATE23503/23505/23514/42501;
+connection failures or SQL syntax errors cannot count. Eleven commands/assertions
+are new executions, not citations to earlier Task8 results. Fresh PostgreSQL
+GREEN still pending. Final orchestration, real explicit owner flows, clean install,
+all corrected-head gates, independent review and handoff remain incomplete.
