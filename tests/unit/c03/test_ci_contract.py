@@ -200,6 +200,20 @@ TASK14_FIXTURE = """      - name: Immutable completed C02 fixture for Task 14
         if: github.ref == 'refs/heads/profiles/c03-cloud'
         run: python docker/c03_baseline.py .runtime/c02
 """
+TASK14_FOCUSED = """      - name: Task 14 focused behavioral contracts on real PostgreSQL
+        if: github.ref == 'refs/heads/profiles/c03-cloud'
+        env:
+          C03_FOUNDATION_TRIAGE: '1'
+          C03_FOUNDATION_EVIDENCE_DIRECTORY: .runtime/c03-diagnostics
+        run: |
+          mkdir .runtime/task14-focused-private
+          chmod 700 .runtime/task14-focused-private
+          umask 077
+          result=0
+          timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=no --show-capture=no >.runtime/task14-focused-private/pytest.log 2>&1 || result=$?
+          uv run --frozen python -c 'import json; from docker.c03_upgrade_probe import private_log_metadata; print("C03_TASK14_FOCUSED " + json.dumps(private_log_metadata(".runtime/task14-focused-private/pytest.log")))'
+          exit "$result"
+"""  # noqa: E501
 
 
 def inherited_workflow_is_intact(source):
@@ -212,6 +226,7 @@ def inherited_workflow_is_intact(source):
         flags=re.M | re.S,
     )
     inherited = inherited.replace(TASK14_FIXTURE, "")
+    inherited = inherited.replace(TASK14_FOCUSED, "")
     inherited = inherited.replace(
         DIAGNOSTIC_FOUNDATION, "        run: sh docker/verify_c02.sh\n"
     )
@@ -258,7 +273,7 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 18
+    assert source.count("        if:") == 19
     assert source.count(TASK8_REPORT) == 1
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)

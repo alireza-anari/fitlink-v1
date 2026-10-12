@@ -3593,3 +3593,17 @@ accepted. New extra_build_output test observed DID NOT RAISE with valid fixture
 precondition; narrowed this allowance to nonexecutable static/dist/app.css only.
 Fresh13passed/0skips source-integrity GREEN. No production/schema change. Task14
 remains incomplete; original-runtime correction still requires hosted validation.
+
+Harness correction checkpoint4175770ccb64068dbb77c95cd959c15b4dfd2154,
+tree014a3c20ee9037e3b0356b7bc1d86e9d23246741, exact push run38205593575
+attempt1. Original C02/C01 runtime is now running under corrected immutable
+fixture paths/build permissions; no original-runtime GREEN yet claimed.
+Second checkpoint PostgreSQL job114666535209 actually hit the inherited300s
+child bound (exit124 at301.1s), before Task14 focused selection. This is timeout,
+not behavioral RED. Restore Task13's entire cumulative entry byte-for-byte
+(original Git blob800f75dbfa0295f97e889f09de244f4374fdbfc2); select Task14 in a
+separate bounded real-PostgreSQL workflow step and in the new final verifier.
+No Task13 limit or selection is increased/weakened. The focused step retains
+all31 cases, opt-in static metadata journal and exit propagation; raw pytest
+output is kept only in ignored0600 logs under0700 folder. Current inherited
+workflow/entry contract60passed/0skips. Task14 remains incomplete.

@@ -240,6 +240,19 @@ jobs:
           done
           docker exec "$C02_REDIS_CONTAINER" redis-cli ping
           uv run --frozen python docker/c02_limiter_restart_probe.py verify
+      - name: Task 14 focused behavioral contracts on real PostgreSQL
+        if: github.ref == 'refs/heads/profiles/c03-cloud'
+        env:
+          C03_FOUNDATION_TRIAGE: '1'
+          C03_FOUNDATION_EVIDENCE_DIRECTORY: .runtime/c03-diagnostics
+        run: |
+          mkdir .runtime/task14-focused-private
+          chmod 700 .runtime/task14-focused-private
+          umask 077
+          result=0
+          timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=no --show-capture=no >.runtime/task14-focused-private/pytest.log 2>&1 || result=$?
+          uv run --frozen python -c 'import json; from docker.c03_upgrade_probe import private_log_metadata; print("C03_TASK14_FOCUSED " + json.dumps(private_log_metadata(".runtime/task14-focused-private/pytest.log")))'
+          exit "$result"
       - name: C03 cumulative installed PostgreSQL contracts
         if: github.ref == 'refs/heads/profiles/c03-cloud'
         run: |

@@ -104,4 +104,5 @@ run_step populated_preservation c03 run --rm --no-deps --user "$(id -u):$(id -g)
   -v "$private/preservation:/rehearsal" checks uv run --frozen python /probe.py verify /rehearsal/metadata.json
 # Intentionally fail closed: replay, constraints and independent clean gates
 # cannot be claimed from the above migration harness.
+run_step focused_task14 c03 run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=no --show-capture=no
 exit 1
