@@ -120,3 +120,17 @@ def test_private_rehearsal_diagnostics_never_export_exception_text_or_sessions(
     assert result["locations"] == [{"file": "env.py", "line": 17}]
     assert sentinel not in json.dumps(result)
     assert "+989123000001" not in json.dumps(result)
+
+
+def test_native_processing_launches_python_below_a_bounded_supervisor():
+    source = (ROOT / "docker/verify_c03.sh").read_text()
+    launchers = [
+        line
+        for line in source.splitlines()
+        if "docker/c03_upgrade_probe.py" in line
+        and ("diagnostic unused" in line or line.startswith("probe()"))
+    ]
+    assert len(launchers) == 2
+    assert all(
+        "checks timeout -k 5s 240s /opt/venv/bin/python" in line for line in launchers
+    ), "Task14 native decoder caller must have a non-PID1 parent with a finite bound"

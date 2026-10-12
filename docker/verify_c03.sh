@@ -103,7 +103,7 @@ if [ "${1:-}" = --native-processing-diagnostic ]; then
   run_step diagnostic_runtime_supervised diagnostic run --rm --no-deps --user "$(id -u):$(id -g)" checks timeout -k 5s 90s /opt/venv/bin/python docker/c03_upgrade_probe.py runtime unused
   run_step diagnostic_worker diagnostic up -d --wait worker
   run_step diagnostic_runtime_worker diagnostic exec -T worker timeout -k 5s 90s /opt/venv/bin/python docker/c03_upgrade_probe.py runtime unused
-  run_step diagnostic_native diagnostic run --rm --no-deps --user "$(id -u):$(id -g)" checks /opt/venv/bin/python docker/c03_upgrade_probe.py diagnostic unused
+  run_step diagnostic_native diagnostic run --rm --no-deps --user "$(id -u):$(id -g)" checks timeout -k 5s 240s /opt/venv/bin/python docker/c03_upgrade_probe.py diagnostic unused
   run_step diagnostic_cleanup diagnostic_cleanup
   trap - EXIT
   exit
@@ -194,7 +194,7 @@ run_step upgrade_private_build c03 build scanner scanner-signatures minio minio-
 run_step upgrade_private_services c03 up -d --wait minio scanner
 run_step upgrade_private_init c03 run --rm minio-init
 run_step upgrade_scanner_health c03 exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
-probe() { c03 run --rm --no-deps --user "$(id -u):$(id -g)" -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python docker/c03_upgrade_probe.py "$@" /rehearsal/metadata.json; }
+probe() { c03 run --rm --no-deps --user "$(id -u):$(id -g)" -v "$private/preservation:/rehearsal" checks timeout -k 5s 240s /opt/venv/bin/python docker/c03_upgrade_probe.py "$@" /rehearsal/metadata.json; }
 run_step upgraded_capabilities probe replay
 run_step upgraded_constraints probe constraints
 run_step upgraded_c02_backend c03 run --rm --no-deps checks uv run --frozen pytest tests/integration/c02 -q --strict-markers --tb=no --show-capture=no

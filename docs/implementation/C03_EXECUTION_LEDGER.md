@@ -3868,3 +3868,32 @@ Local frozen source/final/CI contracts79passed/0skips; Ruff/shell/diff pass.
 Local Docker unavailable; actual runtime proof must come from new hosted run.
 Tasks1-13 preserved COMPLETE, Task14/C03 incomplete; no migration/C04/merge/
 deployment/force push.
+
+### Task14 decoder mismatch PROVEN; minimal harness correction
+
+Diagnostic821998b72985907c8407cbd5871d2dfcb20cbb49/tree
+60bf8e40d5c8d9d0bdb0bc052eb7cfe9bf211675, run38249245485 attempt1,
+nativejob114810951561. Exact runtime direct checks UID/GID1001/1001 PID1:
+child_exit2/isolation_ok=false. Same checks target and UID/GID with bounded
+timeout supervisor: PID!=1, child_exit0/isolation_ok=true. Actual approved
+worker development target UID/GID1000/1000 via exec also child_exit0 and
+isolation_ok=true. All three: /opt/venv/bin/python3.13.15, Pillow12.3.0,
+native PNG/JPEG available, Linux x86_64, /app, exact decoder path exists,
+parent NoNewPrivs0/seccomp2/effective capabilities0. No privileged/security
+option difference. Shared anchored scanner/store environment and scan-private
+network freshly compared from current Compose. Existing decoder independently
+sets NoNewPrivs1/additional seccomp and denies network/write/fork.
+Unchanged direct native flow again fails decode_unavailable at725.
+This is decision A: Task14 caller PID1 violates intentional existing parent
+fence, not an approved production worker defect. No production code changed.
+
+Before fixing: added launcher contract observed1failed at expected assertion.
+Minimal fix adds timeout -k5s240s only to diagnostic native and full replay/
+constraints native launchers; direct Python executable/UID/source/service flow
+unchanged. Bounds do not weaken3300s full verifier or300s Compose command.
+Decoder parent fence/seccomp/PDEATHSIG untouched; no fake processing.
+Source/final/CI80passed/0skips plus Ruff/format/shell/diff pass. Hosted native
+processing GREEN and full upgraded replay still required on this new source.
+Task14 remains incomplete. New diagnostic historical-audit114810951494 fails
+with finite HTTPError (artifact11747736305), not decoder failure; no retry
+or acceptance waiver inferred.
