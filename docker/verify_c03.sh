@@ -91,7 +91,7 @@ run_step c02_services c02 up -d --wait db redis
 run_step c02_migrate c02 run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
 run_step c02_populate c02 run --rm --no-deps --user "$(id -u):$(id -g)" \
   -v "$root/docker/c03_upgrade_probe.py:/probe.py:ro" \
-  -v "$private/preservation:/rehearsal" checks uv run --frozen python /probe.py prepare /rehearsal/metadata.json
+  -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python /probe.py prepare /rehearsal/metadata.json
 # The same project/db/container/volume/network/env file stay in place.
 run_step c03_config c03 config --quiet
 run_step c03_build c03 build checks
@@ -101,7 +101,7 @@ run_step c03_drift c03 run --rm --no-deps checks uv run --frozen python manage.p
 run_step c03_migrations c03 run --rm --no-deps checks uv run --frozen python manage.py showmigrations
 run_step populated_preservation c03 run --rm --no-deps --user "$(id -u):$(id -g)" \
   -v "$root/docker/c03_upgrade_probe.py:/probe.py:ro" \
-  -v "$private/preservation:/rehearsal" checks uv run --frozen python /probe.py verify /rehearsal/metadata.json
+  -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python /probe.py verify /rehearsal/metadata.json
 # Intentionally fail closed: replay, constraints and independent clean gates
 # cannot be claimed from the above migration harness.
 run_step focused_task14 c03 run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=no --show-capture=no

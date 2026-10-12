@@ -3607,3 +3607,26 @@ No Task13 limit or selection is increased/weakened. The focused step retains
 all31 cases, opt-in static metadata journal and exit propagation; raw pytest
 output is kept only in ignored0600 logs under0700 folder. Current inherited
 workflow/entry contract60passed/0skips. Task14 remains incomplete.
+
+Dedicated focused checkpoint13c18f47bd0d556708f123594096dec26b858327,
+treebd006bfde3c1f34fb1c6a6e055b36114da6e0761, exact push run38206460774
+attempt1. Real PostgreSQL focused job114670914189 executes all31 cases:
+14passed/17failed/0skips, naturalexit1 in approximately18s. Static diagnostic
+names identify the four preservation comparator negatives, missing constraint
+replay, all eleven missing capability replays and final-gate RED; healthy
+approved-subject preconditions precede each constraint/replay assertion. This
+proves missing probe behavior on real PostgreSQL test databases. It is NOT the
+populated same-database compatibility proof or its actual-preservation RED.
+
+Corrected original-runtime job114668258119 on4175770 confirms original complete
+C02 verifier exit0 at05:06:04Z, exact C02 source verified afterward. Its captured
+last backend/browser/restart selections575/2/38/5/1/2 all pass; no failed/skipped
+metadata. Original immutable C01 and all original C02 runtime stages completed.
+Then separate new C02 project/config/build/services/migrations all exit0; population
+CLI exits2 before entering the probe. Not behavioral RED. Host-UID probe launch
+must bypass uv's user-home/cache discovery and use /opt/venv/bin/python from the
+already frozen/built exact checks image. No dependency/source substitution.
+Native C02 current-session revoke service now creates retained revoked normal and
+control session rows rather than replacing their cookies; every saved session
+key must have its real row before the0600 snapshot. Only C02 services/helpers.
+Fresh source plus inherited CI contracts73passed/0skips in2.82s. Still incomplete.

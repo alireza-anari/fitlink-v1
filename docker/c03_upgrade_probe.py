@@ -148,7 +148,7 @@ def prepare(path):
     from django.utils import timezone
 
     from apps.accounts.models import User
-    from apps.accounts.sessions import issue_session, resolve_session
+    from apps.accounts.sessions import issue_session, resolve_session, revoke_sessions
     from apps.governance.audit import append_event
     from apps.governance.consents import validate_scope
     from apps.governance.flag_models import FeatureFlag
@@ -201,15 +201,25 @@ def prepare(path):
     session("control", restricted, "account_control")
     session("expired", candidate, at=now - timedelta(days=30))
     session("expired_control", restricted, "account_control", now - timedelta(hours=1))
-    # C02 issue_session rotates/revokes the old key through its normal service.
+    # Native C02 logout retains session bytes while revoking control authority.
     revoked_user = owner("+989123000005")
     old = session("revoked", revoked_user)
-    with transaction.atomic():
-        issue_session(old, revoked_user, "normal", now, append_event)
+    old_actor = resolve_session(old, now)
+    assert old_actor is not None
+    revoke_sessions(
+        revoked_user, "current", now, append_event, control_id=old_actor.control_id
+    )
     revoked_control_user = owner("+989123000006", state="restricted")
     old = session("revoked_control", revoked_control_user, "account_control")
-    with transaction.atomic():
-        issue_session(old, revoked_control_user, "account_control", now, append_event)
+    old_actor = resolve_session(old, now)
+    assert old_actor is not None
+    revoke_sessions(
+        revoked_control_user,
+        "current",
+        now,
+        append_event,
+        control_id=old_actor.control_id,
+    )
     # Real dual OTP/phone-change command creates proof/history and revokes actor.
     values = fully_proved(started())
     _, identity, phone_user, phone_actor, phone_request, intent = values
@@ -307,6 +317,9 @@ def prepare(path):
     for event in OutboxEvent.objects.filter(state="leased"):
         assert dispatch_event(event.id, timezone.now(), lease_uuid=event.lease_uuid)
     assert OutboxDeliveryReceipt.objects.exists()
+    from django.contrib.sessions.models import Session
+
+    assert all(Session.objects.filter(pk=key).exists() for key in sessions.values())
     print("C03_TASK14 c02_population_complete", flush=True)
     data = {
         "source_commit": "0905be6c6ca608d469fe33e87f514b22591132d1",
