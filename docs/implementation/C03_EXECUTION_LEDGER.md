@@ -3506,3 +3506,40 @@ Tasks1–12 remain COMPLETE by their published authority and new exact evidence
 audit. Task13 is COMPLETE by the new implementation SHA/run above. This append
 records acceptance only and does not alter its implementation source. No merge,
 deployment, force push, protected/unrelated ref update, Task14 or C04. STOP.
+
+### Task 14 continuation — exact source GREEN and hosted RED harness (incomplete)
+
+Resumed existing unpublished Task14 files without reset/clean/stash. Starting and
+freshly fetched published HEAD remains ba0886861d2afcedd4a9a14880251fc9f0c56f20,
+tree ee0e302a3fe4598031145125ce08487ecc179bff. Tasks1–13 remain COMPLETE; Task13
+run38173680423 freshly queried with all nine jobs successful. No docs-only run
+reopens Task13. Existing .runtime/task14/source-red.log records independent
+modified/missing/extra/symlink DID NOT RAISE failures with a valid fixture PASS;
+source-ref-red.log records wrong-ref RED. These local files were present on
+continuation, not recovered from lost workspaces. Fresh resumed source verifier:
+12passed/0skips; source plus inherited CI contracts:72passed/0skips in3.04s.
+Final-gate test freshly RED (1failed): installed script does not yet include all
+mandatory Task14 replay/constraint/clean/service/browser gates. No database RED
+or acceptance is claimed from a missing local Docker/PostgreSQL executable.
+
+Exact C02 worktree is 0905be6c6ca608d469fe33e87f514b22591132d1 / tree
+ed788191bb6f5011e6b35a63823ae8183af7b53d; its manifest is byte/blob/mode/tree
+metadata only. Separate original C01 worktree retained. Original verify_c02.sh,
+all immutable fixtures and all migrations unchanged. Added minimal hosted C02
+checkouts and a branch-literal final job to obtain actual same-database RED.
+Original complete C02 verifier runs inside its exact fixture before a new,
+separate population database is created. Private captured logs and preservation
+files are ignored; mode0600 snapshot and mode0700 folder. Only static stage/exit
+markers are exported, never snapshot rows/secrets. Existing project/container/
+network/volume names are rejected before cleanup ownership; volumes retained.
+Task13 entry-point prefix and its two job digests stay pinned unchanged; Task14
+focused selections append after it. No inherited verifier is rewritten.
+
+This is a test/infrastructure checkpoint, NOT Task14 implementation acceptance.
+Comparator and final replay/constraints/clean orchestration remain incomplete.
+No TASK_14_COMPLETE/C03_COMPLETE/handoff claim. Protected refs freshly read:
+main8ede9a451db6103f4e3ebf65784ee9f16b96feb2;
+foundation/c01-cloud75c551e5b9bbbfb7777ee52b09a1993b681e921a;
+accounts/c02-cloud0905be6c6ca608d469fe33e87f514b22591132d1;
+profiles/c03-plan79fd62e583cbe81f335bb08fce0eb43ff36b0167.
+No C04, merge, deployment or force push.

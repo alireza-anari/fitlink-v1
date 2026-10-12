@@ -189,17 +189,29 @@ TASK8_REPORT = """      - name: Task 8 metadata-only PostgreSQL verdict
 
 # Exact approved C02 workflow blob, before the narrowly authorized extension.
 C02_WORKFLOW_BLOB = "2f1f36ff45ca9ec8537413c2403640f9bb151bbe"
+TASK14_FIXTURE = """      - name: Immutable completed C02 fixture for Task 14
+        if: github.ref == 'refs/heads/profiles/c03-cloud'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+          path: .runtime/c02
+          persist-credentials: false
+      - name: Verify exact C02 source tree before use
+        if: github.ref == 'refs/heads/profiles/c03-cloud'
+        run: python docker/c03_baseline.py .runtime/c02
+"""
 
 
 def inherited_workflow_is_intact(source):
     inherited = source.replace(TRIGGER, "    branches: [accounts/c02-cloud]")
     inherited = re.sub(
-        r"^  c03-(?:owner|staff|restart|evidence-audit):\n"
+        r"^  c03-(?:owner|staff|restart|evidence-audit|final):\n"
         r".*?(?=^  [a-z][a-z0-9-]*:\n|\Z)",
         "",
         inherited,
         flags=re.M | re.S,
     )
+    inherited = inherited.replace(TASK14_FIXTURE, "")
     inherited = inherited.replace(
         DIAGNOSTIC_FOUNDATION, "        run: sh docker/verify_c02.sh\n"
     )
@@ -246,7 +258,7 @@ def test_c03_branch_runs_inherited_plus_installed_gates():
 
 def test_c03_conditions_cannot_exclude_c02_regression():
     source = WORKFLOW.read_text()
-    assert source.count("        if:") == 13
+    assert source.count("        if:") == 18
     assert source.count(TASK8_REPORT) == 1
     assert C03_STEP in source
     assert inherited_workflow_is_intact(source)
@@ -323,6 +335,7 @@ def test_every_installed_mandatory_c03_test_selected():
     assert ENTRY.is_file(), "C03 cumulative test selection is missing"
     source = ENTRY.read_text() + (ROOT / "docker/verify_c03_storage.sh").read_text()
     source += (ROOT / "docker/verify_c03_processing.sh").read_text()
+    source += (ROOT / "docker/verify_c03.sh").read_text()
     installed = {
         str(path.relative_to(ROOT))
         for folder in ("tests/unit/c03", "tests/integration/c03")
@@ -702,7 +715,8 @@ def task13_installed(workflow, entry):
         or body[INHERITED_FOUNDATION_LENGTH:] != TASK13_SUFFIX
     ):
         return False
-    if hashlib.sha256(entry.encode()).hexdigest() != TASK13_ENTRY_SHA256:
+    inherited_entry = entry.split("\n# Task 14 focused preservation negatives;", 1)[0]
+    if hashlib.sha256(inherited_entry.encode()).hexdigest() != TASK13_ENTRY_SHA256:
         return False
     required_jobs = {
         "c03-restart": "python docker/c03_asset_restart_probe.py run",

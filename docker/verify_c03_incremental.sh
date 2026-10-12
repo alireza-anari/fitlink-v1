@@ -360,3 +360,6 @@ C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnosti
 
 # Task 10 owner-only preview, inert metadata and scope/dependency guard.
 C03_FOUNDATION_TRIAGE=1 C03_FOUNDATION_EVIDENCE_DIRECTORY=.runtime/c03-diagnostics timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_scope_boundary.py tests/integration/c03/test_owner_preview.py tests/integration/c03/test_assistant_primitive.py tests/integration/c03/test_c03_dependency_direction.py -q --strict-markers -o faulthandler_timeout=30
+
+# Task 14 focused preservation negatives; mandatory, no skipped service PASS.
+timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=short --show-capture=no
