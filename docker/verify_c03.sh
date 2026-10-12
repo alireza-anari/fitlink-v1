@@ -61,6 +61,19 @@ for line in Path(sys.argv[1]).read_text(errors="replace").splitlines():
     if re.fullmatch(r"C03_TASK14 [A-Za-z_]+(?: [A-Za-z_]+)?(?: line=[0-9]+)?", line):
         print(line, flush=True)
 import json
+for line in Path(sys.argv[1]).read_text(errors="replace").splitlines():
+    if line.startswith("C03_TASK14_RUNTIME "):
+        result = json.loads(line.removeprefix("C03_TASK14_RUNTIME "))
+        bools = {"pid_one", "python_expected", "native_png", "native_jpeg",
+                 "platform_supported", "cwd_expected", "decoder_expected",
+                 "capabilities_zero", "isolation_ok"}
+        ints = {"uid", "gid", "no_new_privileges", "seccomp", "child_exit"}
+        versions = {"python_version", "pillow_version"}
+        assert set(result) == bools | ints | versions
+        assert all(type(result[k]) is bool for k in bools)
+        assert all(type(result[k]) is int and -999 <= result[k] <= 65535 for k in ints)
+        assert all(re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", result[k]) for k in versions)
+        print("C03_TASK14_RUNTIME " + json.dumps(result), flush=True)
 print("C03_TASK14_DIAGNOSTIC " + json.dumps(private_log_metadata(sys.argv[1])), flush=True)
 with Path(sys.argv[1]).open(errors="replace") as stream:
     if any(re.search(r"\b[1-9][0-9]* skipped\b", line) for line in stream):
@@ -82,10 +95,14 @@ if [ "${1:-}" = --native-processing-diagnostic ]; then
     test -z "$(docker network ls -q --filter label=com.docker.compose.project="$project")"
   }
   trap 'exit_status=$?; trap - EXIT; diagnostic_cleanup || exit_status=1; exit "$exit_status"' EXIT
-  run_step diagnostic_build diagnostic build checks scanner scanner-signatures minio minio-init
+  run_step diagnostic_build diagnostic build checks worker scanner scanner-signatures minio minio-init
   run_step diagnostic_services diagnostic up -d --wait db redis minio scanner
   run_step diagnostic_minio diagnostic run --rm minio-init
   run_step diagnostic_migrate diagnostic run --rm --no-deps checks /opt/venv/bin/python manage.py migrate --noinput
+  run_step diagnostic_runtime_direct diagnostic run --rm --no-deps --user "$(id -u):$(id -g)" checks /opt/venv/bin/python docker/c03_upgrade_probe.py runtime unused
+  run_step diagnostic_runtime_supervised diagnostic run --rm --no-deps --user "$(id -u):$(id -g)" checks timeout -k 5s 90s /opt/venv/bin/python docker/c03_upgrade_probe.py runtime unused
+  run_step diagnostic_worker diagnostic up -d --wait worker
+  run_step diagnostic_runtime_worker diagnostic exec -T worker timeout -k 5s 90s /opt/venv/bin/python docker/c03_upgrade_probe.py runtime unused
   run_step diagnostic_native diagnostic run --rm --no-deps --user "$(id -u):$(id -g)" checks /opt/venv/bin/python docker/c03_upgrade_probe.py diagnostic unused
   run_step diagnostic_cleanup diagnostic_cleanup
   trap - EXIT

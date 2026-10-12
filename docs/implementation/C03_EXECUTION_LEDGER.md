@@ -3834,3 +3834,37 @@ job and its artifact condition adds one exact counted condition (20); original C
 workflow blob and all Task13 byte pins/limits remain unchanged. No PR/main/wildcard
 or continue-on-error expansion. Fresh source/final/CI contracts79passed/0skips.
 Task14/C03/handoff remain incomplete. No C04, merge, deployment or force push.
+
+### Task 14 bounded decoder-runtime investigation (2026-10-12)
+
+Resume from authoritative bbc2af7018ab5e64ebbc12d17a6a1226fe75d79e/tree
+80715db5b912f9347e4abfe6741c7988ab719482. Fresh GitHub branch, local HEAD/tree
+and clean worktree verified; no reset or lost unpublished patch inferred.
+Run38239175307 attempt1: native114777238203 and final114777238089 both fail
+real process_asset at line725 with decode_unavailable after real quarantine/claim.
+Final exact original C02/population/40 SQL/migrate/no-op/drift/preservation/scanner
+stages exit0. Foundation114777238058 has1686passed/2failed/0skipped reports:
+both Task14 eleven-case specs (FieldError and AssertionError), naturalexit1 with
+cleanup. Focused PostgreSQL114777239089 has32passed/2failed/0skipped Task14
+contracts; original269 account cases and durable quota restart passed.
+Same-head processing114777238107/restart114777238344 SUCCESS with cleanup.
+Historical Task5 processing113832013660 (run37934189103) and Task13 processing
+114571428135/restart114571427997 (run38173680423) freshly read: real worker
+recovery/Beat/private scanner/store and additional sandbox/parent SIGKILL GREEN.
+
+Hypothesis only: Task14 direct Python container PID1 violates existing decoder
+expected_parent<=1 fence, while approved probes use timeout/uv and workers use
+uv/Celery parents. No production change. Add diagnostic-only bounded runtime
+comparison: exact current UID checks direct; same checks UID/interpreter with
+timeout supervisor; approved worker default UID via exec. Reports only fixed
+runtime booleans/UID/GID/versions/seccomp/NoNewPrivs/capability status and
+child exit0/2/other class; stdout/stderr/private bytes discarded. Existing
+isolation_probe checks nonroot/network/write/fork denial unchanged. Native
+flow remains direct and failing pending evidence; no fix/acceptance claimed.
+Checks/development share pinned base/locked Pillow/native wheels, /app/source
+mount and private scanner/S3 wiring; checks adds dev dependencies and probe
+overrides host UID/GID. Compose privileges/seccomp remain unchanged.
+Local frozen source/final/CI contracts79passed/0skips; Ruff/shell/diff pass.
+Local Docker unavailable; actual runtime proof must come from new hosted run.
+Tasks1-13 preserved COMPLETE, Task14/C03 incomplete; no migration/C04/merge/
+deployment/force push.

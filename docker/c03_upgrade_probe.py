@@ -1111,6 +1111,58 @@ def prepare(path):
     assert path.stat().st_mode & 0o777 == 0o600
 
 
+def decoder_runtime_diagnostic():
+    """Finite public runtime facts; no image, app environment or child stderr."""
+    import platform
+    import subprocess
+
+    from PIL import __version__ as pillow_version
+    from PIL import features
+
+    from apps.assets.images import DECODER_PATH, isolation_probe
+
+    fields = dict(
+        line.split(":", 1)
+        for line in Path("/proc/self/status").read_text().splitlines()
+        if ":" in line
+    )
+    child = subprocess.run(
+        [sys.executable, "-I", "-B", str(DECODER_PATH), "probe"],
+        input=b"",
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        env={"LANG": "C.UTF-8", "C03_DECODER_PARENT_PID": str(os.getpid())},
+        close_fds=True,
+        start_new_session=True,
+        timeout=35,
+    )
+    isolation = isolation_probe()
+    result = {
+        "pid_one": os.getpid() == 1,
+        "uid": os.getuid(),
+        "gid": os.getgid(),
+        "python_expected": sys.executable == "/opt/venv/bin/python",
+        "python_version": platform.python_version(),
+        "pillow_version": pillow_version,
+        "native_png": features.check_codec("zlib"),
+        "native_jpeg": features.check_codec("jpg"),
+        "platform_supported": sys.platform == "linux"
+        and platform.machine() == "x86_64",
+        "cwd_expected": Path.cwd() == Path("/app"),
+        "decoder_expected": DECODER_PATH == Path("/app/apps/assets/image_decoder.py")
+        and DECODER_PATH.is_file(),
+        "no_new_privileges": int(fields["NoNewPrivs"]),
+        "seccomp": int(fields["Seccomp"]),
+        "capabilities_zero": int(fields["CapEff"], 16) == 0,
+        "child_exit": child.returncode if child.returncode in {0, 2} else -999,
+        "isolation_ok": all(
+            isolation.get(key) is True
+            for key in ("nonroot", "network_denied", "write_denied", "fork_denied")
+        ),
+    }
+    print("C03_TASK14_RUNTIME " + json.dumps(result), flush=True)
+
+
 def main():
     sys.path.insert(0, os.getcwd())
     sys.path.insert(0, str(Path.cwd() / "tests/integration/c02"))
@@ -1125,7 +1177,9 @@ def main():
     assert connection.settings_dict["HOST"] == "db"
     phase, filename = sys.argv[1:]
     path = Path(filename)
-    if phase == "prepare":
+    if phase == "runtime":
+        decoder_runtime_diagnostic()
+    elif phase == "prepare":
         prepare(path)
         print("C03_TASK14 exact_c02_populated_snapshot_0600", flush=True)
     elif phase == "verify":
