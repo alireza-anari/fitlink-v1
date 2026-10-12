@@ -3569,3 +3569,27 @@ these new specs are not claimed executed until hosted PostgreSQL logs prove it.
 Fresh source/CI/secret-safe diagnostics checks:73passed,1deselected (only known
 final-gate RED excluded from this diagnostic invocation), zero skips. This
 selection is not the mandatory focused command and not acceptance GREEN.
+
+Second spec checkpoint9ca0b7530526a25a7d97199f3b2c310fe4d5c59e,
+treef73ed8efbe999f6ad99c0986d8902057c17ecb88, exact-source run38205036730
+attempt1. New final job114666535095 secret-safe diagnostic identifies original
+C01 test_rtl_page::test_manifest_template_paths PermissionError (89passed,
+1failed). Root cause: Task14 outer umask077 leaked into the original static-build
+workflow, producing directories/files unreadable by immutable uid1000 containers.
+Keep captured logs/private snapshot0600/0700; restore original umask022 only
+inside the immutable runtime subshell. This is harness failure, not schema RED.
+Also independently reproduced all6 original C02 fixture tests failing because
+its unchanged tests require .runtime/c02/.runtime/c01, not an external fixture
+path. Materialized a third detached exact75c551e C01 checkout at that ignored
+original path; all6 unchanged original tests now PASS and exact C02 tree proof
+still PASS. Add same pinned checkout to only the new final CI job. Never alter
+inherited tests/verifiers or fill a C02 tracked source file from current C03.
+Complete original C02 host frozen/static/quality/unit checks precede its original
+verifier, matching the preparation its original workflow supplies. Build only
+original C02 assets from its own lock/templates, with no current-source copies.
+
+Source-generated-output review found arbitrary static/dist/*.css previously
+accepted. New extra_build_output test observed DID NOT RAISE with valid fixture
+precondition; narrowed this allowance to nonexecutable static/dist/app.css only.
+Fresh13passed/0skips source-integrity GREEN. No production/schema change. Task14
+remains incomplete; original-runtime correction still requires hosted validation.

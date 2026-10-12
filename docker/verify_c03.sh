@@ -10,6 +10,7 @@ evidence=$root/.runtime/c03-task14-evidence
 env_file=$root/.env.c03-task14-upgrade
 python docker/c03_baseline.py "$baseline"
 python docker/c02_baseline.py "$root/.runtime/c01"
+python docker/c02_baseline.py "$baseline/.runtime/c01"
 # Reject names before acquiring cleanup ownership. Never delete existing data.
 for owned in fitlink-c02-immutable-c01 fitlink-c02-exact-upgrade fitlink-foundation-verify "$project"; do
   test -z "$(docker ps -aq --filter label=com.docker.compose.project="$owned")"
@@ -49,7 +50,22 @@ PY
 }
 original_c02() (
   cd "$baseline"
-  C02_BASELINE_DIR="$root/.runtime/c01" sh docker/verify_c02.sh
+  # Original public static/dependency outputs must remain readable by the
+  # immutable nonroot containers. The outer captured log stays mode0600.
+  umask 022
+  uv lock --check
+  uv sync --frozen --group dev
+  npm ci
+  npm run build:css
+  npm run check:js
+  uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build --ignore=src/styles.css
+  uv run --frozen ruff check .
+  uv run --frozen ruff format --check .
+  uv run --frozen mypy config/settings/env.py config/health.py apps/assets/storage.py apps/accounts apps/governance config/use_cases config/account_middleware.py config/authentication.py config/permissions.py
+  uv run --frozen python manage.py check --settings=config.settings.test
+  uv run --frozen pytest tests/unit -q --strict-markers --tb=short --show-capture=no
+  uv run --frozen python docker/production_check.py
+  C02_BASELINE_DIR="$baseline/.runtime/c01" sh docker/verify_c02.sh
 )
 # Invoke the immutable complete original, including its separate C01 proof.
 run_step exact_original_c02 original_c02

@@ -53,7 +53,9 @@ def test_exact_c02_wrong_checkout_ref_rejected(tmp_path):
         verify_baseline(target)
 
 
-@pytest.mark.parametrize("defect", ["mode", "parent_symlink", "cache_source"])
+@pytest.mark.parametrize(
+    "defect", ["mode", "parent_symlink", "cache_source", "extra_build_output"]
+)
 def test_exact_c02_source_modes_and_generated_namespace_bounds(tmp_path, defect):
     from docker.c03_baseline import verify_baseline
 
@@ -69,10 +71,14 @@ def test_exact_c02_source_modes_and_generated_namespace_bounds(tmp_path, defect)
         directory = target / "apps/accounts"
         directory.rename(target / "saved")
         directory.symlink_to(target / "saved", target_is_directory=True)
-    else:
+    elif defect == "cache_source":
         path = target / "apps/accounts/__pycache__/injected.py"
         path.parent.mkdir(exist_ok=True)
         path.write_text("# unexpected source in generated namespace\n")
+    else:
+        path = target / "static/dist/unexpected.css"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("/* unenumerated build output */\n")
     with pytest.raises(ValueError, match="baseline"):
         verify_baseline(target)
 

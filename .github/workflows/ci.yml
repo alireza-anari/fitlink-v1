@@ -414,6 +414,12 @@ jobs:
           ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
           path: .runtime/c01
           persist-credentials: false
+      - name: Exact C01 fixture at the original C02 runtime path
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/c02/.runtime/c01
+          persist-credentials: false
       - name: Frozen Task 14 environment
         run: uv sync --frozen --group dev
       - name: Task 14 exact C02 source and tamper negatives

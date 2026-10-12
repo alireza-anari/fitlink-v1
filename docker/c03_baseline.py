@@ -118,7 +118,11 @@ def verify_baseline(root: Path) -> str:
                 children.remove(name)
                 continue
             if relative.startswith("static/dist/") or relative == "static/dist":
-                if path.is_file() and not relative.endswith(".css"):
+                if relative != "static/dist" and (
+                    relative != "static/dist/app.css"
+                    or not path.is_file()
+                    or path.stat().st_mode & 0o111
+                ):
                     raise ValueError("Unexpected baseline build output")
                 continue
             if "__pycache__" in parts:
