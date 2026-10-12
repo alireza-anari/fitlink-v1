@@ -3736,3 +3736,46 @@ mandatory. Generated local pytest scratch moved intact into ignored Task14 works
 no legitimate unpublished files removed. Protected refs freshly match all four
 recorded immutable baselines. Task14/C03 remain INCOMPLETE; no handoff completion,
 C04, public profile/search, merge, deployment, force push or protected-ref mutation.
+
+Final orchestration checkpointcde5b14370a04d3fa51db14054f8249c7a441870,
+tree2e161d01239492c1596fbe74be7cbe9c8a9033f2, guarded fast-forward from6efa807.
+New exact-source run38234274773 attempt1 is in progress. Focused real-PostgreSQL
+job114760984128 confirms32passed/0failed/0skips in12s; inherited269 C02 and
+Task8/9/10 counters108/89/86 all GREEN. Storage/processing/restart/timeout/history
+jobs also GREEN at observation. Final populated live replay and clean orchestration
+are not yet accepted; handoff remains pending.
+
+User-authorized read-only independent wholebranch review performed by one fresh
+reviewer on exact C02base0905be6..cde5b143, in deliberate passes across requirements,
+route/auth boundaries, current decision/restriction/eligibility, private delivery/
+processing/privacy, migrations and Task14 fixture/preservation/replay/CI. Reviewer
+ran only harmless shell reproduction; no database/browser tests, file/ref mutations
+or additional reviewers. No confirmed Critical finding or product authority/privacy
+escape; review explicitly does not certify all44,391 added lines exhaustively.
+Three Important Task14 findings accepted and must be corrected before acceptance:
+1. run_step's OR-list suppressed errexit within frozen/static/quality shell functions.
+2. mixed approve/reject replay used a separate Nutritionist bundle rather than one
+identity/Coach/Nutritionist bundle with retained individual reasons/outcomes.
+3. upgraded race replay omitted decide/restrict/release/revoke interactions in both
+commit orders; ordinary pytest DB race suites cannot replace upgraded-DB evidence.
+
+Finding1 freshly reproduced using the actual extracted run_step: intermediate
+false then success yieldedexit0 and swallowed marker (behavioral1failed RED).
+Execute unconditional background child and capture wait status instead; same test
+now1passed GREEN and no post-failure marker. Retain timeout ownership and private
+logs. Findings2/3: add exact shared-bundle outcome/reason and six ordered
+independent-connection proof assertions to focused integration selection and actual
+same-upgraded-database replay; existing implementations intentionally unchanged
+until those missing behaviors are observed RED. Same-DB phase executes independent
+subjects and accumulates only these assertion failures, then rejects the entire
+phase; successful-case markers are never emitted for a failed specification.
+No fixture/infrastructure failure is caught or counted as behavioral RED.
+
+Review set-aside rulings: production MFA/provider readiness remains an explicit
+release prerequisite with production staff verification closed; C04/C09 remain
+future scope, and their implementation is not authorized; current hosted acceptance/
+handoff remain pending and cannot be claimed. Costs: no live rollout/publication
+permission; missing corrected-head engineering evidence prevents C03 completion.
+No Minor findings. Reviewer changes made after reviewed head are verified by
+covering RED→GREEN and a complete corrected-head rehearsal, not falsely represented
+as independently reviewed. No waiver, merge/deploy/C04/protected-ref change.

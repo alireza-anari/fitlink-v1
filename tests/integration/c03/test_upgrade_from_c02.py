@@ -66,3 +66,25 @@ def test_upgrade_replays_all_eleven_capability_cases(settings, case):
     assert upgraded_capability_case(case, subject) is True, (
         "Task14 capability replay is missing: " + case
     )
+    if case == "coach_approve_nutritionist_reject":
+        from apps.professionals.models import VerificationDecision
+
+        outcomes = set(
+            VerificationDecision.objects.filter(
+                verification_id=subject.case.id
+            ).values_list("target_kind", "decision", "reason_code")
+        )
+        assert outcomes == {
+            ("identity", "approve", "credentials_approved"),
+            ("coach", "approve", "credentials_approved"),
+            ("nutritionist", "reject", "credentials_invalid"),
+        }, "Upgraded mixed outcomes must share one submitted bundle"
+    if case == "concurrent_restriction_revocation_decision_consistent":
+        assert set(getattr(subject, "upgrade_race_cases", ())) == {
+            "restrict_then_decide",
+            "decide_then_restrict",
+            "revoke_then_decide",
+            "decide_then_revoke",
+            "revoke_then_release",
+            "release_then_revoke",
+        }, "Upgraded ordered independent-connection race proofs are missing"

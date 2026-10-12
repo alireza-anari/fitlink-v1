@@ -1,5 +1,6 @@
 """Final Task 14 orchestration must retain every required source/service gate."""
 
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -49,6 +50,30 @@ def test_final_gates_include_all_c02_and_real_c03_services_browser():
     assert final_gates_valid(source), "Task 14 actual final rehearsal is omitted"
     for item in REQUIRED:
         assert not final_gates_valid(source.replace(item, "omitted"))
+
+
+def test_final_stage_propagates_early_function_failure(tmp_path):
+    source = (ROOT / "docker/verify_c03.sh").read_text()
+    function = source[source.index("run_step() {") : source.index("original_c02() (")]
+    private = tmp_path / "private"
+    evidence = tmp_path / "evidence"
+    private.mkdir()
+    evidence.mkdir()
+    script = (
+        "set -eu\nprivate='"
+        + str(private)
+        + "'\nevidence='"
+        + str(evidence)
+        + "'\n"
+        + function
+        + "fixture() { false; printf 'EARLY_FAILURE_SWALLOWED'; }\n"
+        + "run_step synthetic fixture\n"
+    )
+    result = subprocess.run(
+        ["sh", "-c", script], cwd=ROOT, capture_output=True, timeout=10
+    )
+    assert result.returncode != 0, "Final verifier swallowed an earlier gate failure"
+    assert "EARLY_FAILURE_SWALLOWED" not in (private / "synthetic.log").read_text()
 
 
 def test_private_rehearsal_diagnostics_never_export_exception_text_or_sessions(

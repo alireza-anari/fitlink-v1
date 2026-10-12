@@ -33,7 +33,11 @@ run_step() {
   stage=$1
   shift
   result=0
-  "$@" >"$private/$stage.log" 2>&1 || result=$?
+  # A background child keeps errexit active inside gate functions. An OR-list
+  # around the function call would disable it and hide earlier failed commands.
+  "$@" >"$private/$stage.log" 2>&1 &
+  step_pid=$!
+  wait "$step_pid" || result=$?
   # Only constant probe markers may leave private logs. Never print failures,
   # pytest locals, session rows, credential environment or snapshot contents.
   metadata_result=0

@@ -790,6 +790,7 @@ def replay_live(path):
     from apps.accounts.sessions import resolve_session
     from apps.athletes.models import AthleteProfile
     from apps.governance.flag_models import FeatureFlag
+    from apps.professionals.models import VerificationDecision
     from config.use_cases import athlete_profile
     from tests.integration.c02.test_sessions import request_with_session
     from tests.integration.c03.baseline_helpers import required
@@ -829,13 +830,41 @@ def replay_live(path):
     s = approved_live_subject(settings, s)
     print("C03_TASK14 preserved_owner_real_private_flows_passed", flush=True)
     staff = s.staff
+    missing = []
     for index, name in enumerate(CAPABILITY_CASES):
         if index:
             s = approved_live_subject(
                 settings, make_actor(f"+98912400{index:04d}"), staff
             )
         assert upgraded_capability_case(name, s) is True
-        print("C03_TASK14 capability_" + name, flush=True)
+        # Independent subjects let both missing-behavior specifications be
+        # observed on this same upgraded DB; any failure rejects the whole phase.
+        try:
+            if name == "coach_approve_nutritionist_reject":
+                assert set(
+                    VerificationDecision.objects.filter(
+                        verification_id=s.case.id,
+                    ).values_list("target_kind", "decision", "reason_code")
+                ) == {
+                    ("identity", "approve", "credentials_approved"),
+                    ("coach", "approve", "credentials_approved"),
+                    ("nutritionist", "reject", "credentials_invalid"),
+                }
+            if name == "concurrent_restriction_revocation_decision_consistent":
+                assert set(getattr(s, "upgrade_race_cases", ())) == {
+                    "restrict_then_decide",
+                    "decide_then_restrict",
+                    "revoke_then_decide",
+                    "decide_then_revoke",
+                    "revoke_then_release",
+                    "release_then_revoke",
+                }
+        except AssertionError:
+            missing.append(name)
+            print("C03_TASK14 replay_spec_failed_" + name, flush=True)
+        else:
+            print("C03_TASK14 capability_" + name, flush=True)
+    assert not missing, "Upgraded database replay requirements are missing"
     s = approved_live_subject(settings, make_actor("+989124009999"), staff)
     data["constraint_subject"] = {
         "profile": str(s.profile.id),
