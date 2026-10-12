@@ -447,6 +447,8 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: c03-task14-final
-          path: .runtime/c03-task14-evidence/*.jsonl
+          path: |
+            .runtime/c03-task14-evidence/*.jsonl
+            .runtime/c03-foundation-evidence/*.jsonl
           include-hidden-files: true
           if-no-files-found: error

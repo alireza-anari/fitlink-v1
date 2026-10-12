@@ -3665,3 +3665,74 @@ connection failures or SQL syntax errors cannot count. Eleven commands/assertion
 are new executions, not citations to earlier Task8 results. Fresh PostgreSQL
 GREEN still pending. Final orchestration, real explicit owner flows, clean install,
 all corrected-head gates, independent review and handoff remain incomplete.
+
+Task14 resumed at published6efa8077f699445870412b3132bd334ed0651b66,
+treea5d90c44a47f3b036098de618f62af8a6052e06d, clean tracked checkout and
+freshly fetched matching remote. Run38210222993 attempt1 finaljob114682503223:
+original immutable C02 verifierexit0; exact population/snapshotexit0; both
+migrations/drift/showmigrationsexit0; exact same-database preservation and preserved
+session/auth checks nowexit0 at06:10:46Z. This is actual compatibility GREEN for
+preservation, not full Task14/C03 completion. Final focused stage still fails;
+capability/constraint/final gates remain outstanding.
+
+Same run focused PostgreSQLjob114682503221:28passed/3failed/0skips. Redacted
+artifact11729212504 digestsha256:f552ee3df64c99989ac54e7860225db3fdcb8b56ed082355ac45fd5ca4bbd62d
+identifies probe failures: RoleRestrictionHistory insertion atline404 violates
+prior_version>=1; repeated evidence mutation atline560 reuses stale CredentialDTO
+version. Correct only probe fixture values (1→2) and retain returned current DTO
+between edits. Database GREEN pending; no product or migration correction.
+Foundationjob114682503270:701passed/1failed, only missing final orchestration.
+Ownerjob114682503213 failed one installed owner browser case; restartjob114682503101
+failed its restart probe. These remain final corrected-head gates, not reopened
+completed Task11/Task13 tasks. No acceptance from this failed run.
+
+Final container source test harness investigation: frozen checks image has no Git
+executable; all source-negative preconditions must still pass. New
+exact_ref_verification_without_git_binary observed behavioral RED (ValueError,
+13passed/1failed), then GREEN14passed/0skips. When Git is absent only, read actual
+checkout HEAD/loose or packed ref, require exact immutable commit, then independently
+reconstruct every Git blob/file mode/subtree/whole expected tree as always.
+Wrong-ref/tamper/missing/extra/symlink negatives remain mandatory. Git command
+failures other than missing executable still fail closed. No C03 file fills C02.
+
+Implement native preserved-owner athlete/baseline commands, professional declaration,
+credential-bound uploads, real MinIO/scanner/sanitized derivative processing,
+trusted synthetic staff grant/step-up, submission/target approval and independent
+capability replays on the actual upgraded connection. Only after preservation
+passes may these mutate application state. Independent subjects use established
+trusted test helpers; all eleven replay assertions run afresh, including PostgreSQL
+independent connections. A separate native approved subject exercises actual
+constraint/SQL/immutable-history/runtime-principal negatives on upgraded DB.
+These live phases are not yet claimed GREEN.
+
+Ruling: final orchestration directly runs installed complete backend/browser/service
+and restart commands inside distinct Task14 upgrade/clean Compose projects rather
+than invoking multiple wrappers that hardcode identical retained project/volume
+names. Original immutable verify_c02.sh is invoked unchanged exactly once and
+includes its separate C01 proof. No inherited verifier or Task13 entry/pins changed.
+Final-gate tests now require actual direct installed selections, real worker/scanner/
+MinIO/Redis/Channels, every crash/fault/recovery command and independent project;
+they no longer use wrapper filename presence as a proxy for the executions.
+Cost if wrong: hosted final rehearsal fails; no compatibility or completion waiver.
+
+Final shell adds all new sqlmigrate output before forward upgrade, complete C02
+backend/browser regression after upgraded flows, new zero-state C03 database,
+complete unit/integration suites, focused Task14, owner/staff/C02 browsers,
+actual non-eager worker/Beat, crash/restart/storage/scanner/broker recovery,
+Redis/Channels/Celery/MinIO tests, timeout ownership, frozen/static/quality/production
+checks and owned cleanup. Private log/snapshot contents remain local/ignored;
+0600/0700 boundaries retained. Only stage exits, bounded safe metadata and opt-in
+redacted test journals are published. Any selected skip fails the stage. New CI
+negatives reject omitted/fake/historical-only/fresh-only final command, wrong fixture,
+missing C01 and continue-on-error. Fresh focused source/final/inherited CI contracts:
+77passed/0skips. Ruff check/format and shell syntax/diff checks GREEN.
+
+Full local unit attempt:691passed/12failed/0skips. Ten parametrized
+clean_pixels_strip_all_metadata cases and isolation_denies_network_disk_write_and_privilege
+fail because the restricted local sanitizer returns unavailable; manifest_template_paths
+fails without the generated hashed static manifest. These local environment failures
+are NOT behavioral RED or acceptance. Hosted frozen/static/container execution is
+mandatory. Generated local pytest scratch moved intact into ignored Task14 workspace;
+no legitimate unpublished files removed. Protected refs freshly match all four
+recorded immutable baselines. Task14/C03 remain INCOMPLETE; no handoff completion,
+C04, public profile/search, merge, deployment, force push or protected-ref mutation.

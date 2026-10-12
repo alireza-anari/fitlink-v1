@@ -19,6 +19,47 @@ def object_hash(kind, body):
     ).hexdigest()
 
 
+def checkout_head(root):
+    """Read a checkout ref when the frozen runtime has no Git executable.
+
+    The complete blob/mode/tree reconstruction below remains mandatory.
+    """
+    metadata = root / ".git"
+    if metadata.is_symlink():
+        raise ValueError("Unsafe baseline metadata")
+    if metadata.is_file():
+        value = metadata.read_text().strip()
+        if not value.startswith("gitdir: "):
+            raise ValueError("Invalid baseline metadata")
+        metadata = (root / value[8:]).resolve()
+    head = metadata / "HEAD"
+    if head.is_symlink():
+        raise ValueError("Unsafe baseline ref")
+    value = head.read_text().strip()
+    if value.startswith("ref: "):
+        ref = value[5:]
+        path = PurePosixPath(ref)
+        if path.is_absolute() or ".." in path.parts or not ref.startswith("refs/"):
+            raise ValueError("Invalid baseline ref")
+        common = metadata
+        if (metadata / "commondir").is_file():
+            common = (metadata / (metadata / "commondir").read_text().strip()).resolve()
+        loose = common / ref
+        if loose.is_file():
+            if any(p.is_symlink() for p in (loose, *loose.parents)):
+                raise ValueError("Unsafe baseline ref")
+            value = loose.read_text().strip()
+        else:
+            packed = (common / "packed-refs").read_text().splitlines()
+            values = [line.split()[0] for line in packed if line.endswith(" " + ref)]
+            if len(values) != 1:
+                raise ValueError("Unavailable baseline ref")
+            value = values[0]
+    if value != C02_COMMIT:
+        raise ValueError("Wrong baseline checkout ref")
+    return value
+
+
 def verify_baseline(root: Path) -> str:
     root = Path(root).absolute()
     if root.is_symlink() or not root.is_dir():
@@ -41,6 +82,11 @@ def verify_baseline(root: Path) -> str:
                 text=True,
                 timeout=10,
             ).splitlines()
+        except FileNotFoundError:
+            try:
+                identity = [checkout_head(root), C02_TREE]
+            except OSError as error:
+                raise ValueError("Unavailable baseline checkout identity") from error
         except (OSError, subprocess.SubprocessError) as error:
             raise ValueError("Unavailable baseline checkout identity") from error
         if identity != [C02_COMMIT, C02_TREE]:

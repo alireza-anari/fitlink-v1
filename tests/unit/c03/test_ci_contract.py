@@ -83,6 +83,54 @@ def test_task9_lifetime_holds_cleanup_and_races_are_mandatory():
 TRIGGER = "    branches: [accounts/c02-cloud, profiles/c03-cloud]"
 
 
+def test_task14_exact_upgrade_final_job_cannot_be_omitted_or_weakened():
+    workflow = (ROOT / ".github/workflows/ci.yml").read_text()
+
+    def valid(source):
+        marker = "  c03-final:\n"
+        if marker not in source:
+            return False
+        final = source.split(marker, 1)[1]
+        required = (
+            "    if: github.ref == 'refs/heads/profiles/c03-cloud'\n",
+            "ref: 0905be6c6ca608d469fe33e87f514b22591132d1",
+            "path: .runtime/c02",
+            "ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a",
+            "path: .runtime/c02/.runtime/c01",
+            "pytest tests/unit/c03/test_exact_baseline.py -q --strict-markers",
+            "run: sh docker/verify_c03.sh",
+            ".runtime/c03-foundation-evidence/*.jsonl",
+            "if-no-files-found: error",
+        )
+        return all(item in final for item in required) and not any(
+            item in final
+            for item in (
+                "continue-on-error",
+                "--deselect",
+                "--reuse-db",
+                "-m 'not",
+                "|| true",
+            )
+        )
+
+    assert valid(workflow)
+    for old, new in (
+        (
+            "run: sh docker/verify_c03.sh",
+            "run: pytest tests/integration/c03/test_c03_migrations.py",
+        ),
+        ("run: sh docker/verify_c03.sh", "run: echo fake-only-upgrade"),
+        ("run: sh docker/verify_c03.sh", "run: sh docker/verify_foundation.sh"),
+        ("ref: 0905be6c6ca608d469fe33e87f514b22591132d1", "ref: main"),
+        ("path: .runtime/c02/.runtime/c01", "path: omitted"),
+        (
+            "run: sh docker/verify_c03.sh",
+            "continue-on-error: true\n        run: sh docker/verify_c03.sh",
+        ),
+    ):
+        assert not valid(workflow.replace(old, new))
+
+
 def test_task10_private_preview_assistant_scope_dependency_gates_mandatory():
     source = ENTRY.read_text()
     required = (

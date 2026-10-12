@@ -406,8 +406,8 @@ def upgraded_constraints(subject):
         actor=subject.staff.user,
         event="applied",
         reason_code="role_restricted",
-        prior_version=0,
-        new_version=1,
+        prior_version=1,
+        new_version=2,
         at=episode.applied_at,
     )
     denied(
@@ -476,6 +476,12 @@ def upgraded_capability_case(name, subject):
     assert connection.vendor == "postgresql" and name in CAPABILITY_CASES
     s = subject
 
+    def edit(kind):
+        asset, _ = s.assets[kind]
+        dto = mutate_evidence(s, kind)
+        s.assets[kind] = asset, dto
+        return dto
+
     def roles(expected):
         current = eligibility(s)
         assert current.identity_verified and current.eligible
@@ -487,7 +493,7 @@ def upgraded_capability_case(name, subject):
 
     if name == "coach_approve_nutritionist_reject":
         before = counters("coach")
-        mutate_evidence(s, "nutritionist")
+        edit("nutritionist")
         rereview(s, "nutritionist")
         decision(s, "nutritionist", "reject")
         roles(("coach",))
@@ -552,12 +558,12 @@ def upgraded_capability_case(name, subject):
         )
     elif name == "inflight_requested_role_or_evidence_edit_is_stale":
         for change in ("evidence", "declaration"):
-            mutate_evidence(s, "coach")
+            edit("coach")
             rereview(s, "coach")
             captured = facts(s, "coach")
             before = counters("nutritionist")
             if change == "evidence":
-                mutate_evidence(s, "coach")
+                edit("coach")
             else:
                 save(s, "identity", {"roles": ["nutritionist"]})
             try:
@@ -609,6 +615,257 @@ def upgraded_capability_case(name, subject):
             == 1
         )
     return True
+
+
+def approved_live_subject(settings, subject, staff=None):
+    """Explicit native commands plus real private storage/scanner/derivative I/O."""
+    from io import BytesIO
+
+    from django.db import transaction
+    from django.utils import timezone
+    from PIL import Image
+
+    from apps.assets.models import Asset, AssetProcessingAttempt
+    from apps.assets.storage import S3PrivateStore
+    from apps.governance.outbox_models import OutboxEvent
+    from apps.governance.staff import MockStepUpProvider, issue_mock_step_up
+    from apps.professionals.models import ProfessionalProfile
+    from config.use_cases import asset_processing, professional_profile, profile_assets
+    from tests.integration.c03.test_credential_revisions import create, payload
+    from tests.integration.c03.test_professional_setup import save
+    from tests.integration.c03.test_verification_decisions import decision, eligibility
+    from tests.integration.c03.verification_helpers import assign, command, reviewer
+
+    s = subject
+    dto = professional_profile.create_professional_profile(s.actor, uuid4(), s.at)
+    s.profile = ProfessionalProfile.objects.get(pk=dto.id)
+    save(
+        s,
+        "identity",
+        {
+            "display_name": "Fixture",
+            "identity_name": "Fixture",
+            "roles": ["coach", "nutritionist"],
+        },
+    )
+    save(s, "locations", {"service_modes": ["online"], "languages": ["fa"]})
+    save(s, "preview", {})
+    s.assets = {}
+    output = BytesIO()
+    Image.new("RGB", (64, 48), (32, 96, 128)).save(output, format="PNG")
+    body = output.getvalue()
+    for kind in ("identity", "coach", "nutritionist"):
+        category = "identity" if kind == "identity" else "qualification"
+        role = None if kind == "identity" else kind
+        credential = create(s, category=category, role=role)
+        uploaded = profile_assets.begin_profile_upload(
+            s.actor,
+            "identity_evidence" if kind == "identity" else "credential_evidence",
+            credential.id,
+            uuid4(),
+            timezone.now(),
+            declared_size=len(body),
+            declared_type="image/png",
+        )
+        uploaded = profile_assets.receive_profile_upload(
+            s.actor,
+            uploaded.id,
+            uploaded.version,
+            BytesIO(body),
+            timezone.now(),
+        )
+        uploaded = profile_assets.finalize_profile_upload(
+            s.actor,
+            uploaded.id,
+            uploaded.version,
+            uuid4(),
+            timezone.now(),
+        )
+        asset = Asset.objects.get(pk=uploaded.id)
+        event = OutboxEvent.objects.get(
+            event_type="asset.processing_requested",
+            aggregate_uuid=asset.id,
+        )
+        asset_processing.request_processing(event, timezone.now())
+        assert (
+            asset_processing.scan_due_assets(
+                timezone.now(),
+                100,
+                enqueue=lambda *args: None,
+            )
+            == 1
+        )
+        attempt = AssetProcessingAttempt.objects.get(asset=asset, state="running")
+        assert (
+            asset_processing.process_asset(
+                asset.id,
+                asset.processing_version,
+                attempt.lease_uuid,
+                timezone.now(),
+            )
+            == "ready"
+        )
+        asset.refresh_from_db()
+        assert (
+            asset.state == "ready"
+            and asset.derivatives.filter(state="ready").count() == 1
+        )
+        derivative = asset.derivatives.get(state="ready")
+        decoded = Image.open(
+            BytesIO(S3PrivateStore().read_limited(derivative.key, 10_000_000))
+        )
+        assert decoded.size == (64, 48) and not decoded.getexif()
+        values = {"category": category, "role": role, "source_asset": asset.id}
+        if kind == "nutritionist":
+            values["expires_on"] = timezone.now().date() + timedelta(days=1)
+        dto = professional_profile.revise_credential(
+            s.actor,
+            credential.id,
+            payload(**values),
+            credential.version,
+            uuid4(),
+            timezone.now(),
+        )
+        s.assets[kind] = asset, dto
+    s.profile.refresh_from_db()
+    s.case = command(
+        "prepare_verification",
+        s.actor,
+        ("identity", "coach", "nutritionist"),
+        s.profile.version,
+        uuid4(),
+        timezone.now(),
+    )
+    s.case = command(
+        "submit_verification",
+        s.actor,
+        s.case.id,
+        s.case.version,
+        uuid4(),
+        timezone.now(),
+    )
+    if staff is None:
+        s.staff = reviewer(settings, s.case.id)
+    else:
+        s.staff = staff
+        at = timezone.now()
+        provider = MockStepUpProvider()
+        proof = provider.prepare(
+            staff.user.public_id, "professional_verification", s.case.id, at
+        )
+        with transaction.atomic():
+            staff.step = issue_mock_step_up(
+                staff.user,
+                "professional_verification",
+                s.case.id,
+                proof.raw_assertion,
+                s.user,
+                at,
+                provider,
+            )
+    s.case = assign(s, s.staff)
+    s.case = command(
+        "start_verification_review",
+        s.staff.actor,
+        s.case.id,
+        s.case.version,
+        s.staff.step,
+        "verification_review",
+        timezone.now(),
+    )
+    for kind in ("identity", "coach", "nutritionist"):
+        decision(s, kind)
+    assert eligibility(s).verified_roles == ("coach", "nutritionist")
+    return s
+
+
+def replay_live(path):
+    from types import SimpleNamespace
+
+    from django.conf import settings
+    from django.db import connection
+    from django.utils import timezone
+
+    from apps.accounts.models import User
+    from apps.accounts.sessions import resolve_session
+    from apps.athletes.models import AthleteProfile
+    from apps.governance.flag_models import FeatureFlag
+    from config.use_cases import athlete_profile
+    from tests.integration.c02.test_sessions import request_with_session
+    from tests.integration.c03.baseline_helpers import required
+    from tests.integration.c03.profile_helpers import make_actor
+
+    data = json.loads(path.read_text())
+    verify_preservation(data["snapshot"], snapshot(connection))
+    assert data.get("preservation_verified") is True
+    settings.ACCOUNT_SECURITY = replace(
+        settings.ACCOUNT_SECURITY, step_up_provider="mock"
+    )
+    request = request_with_session(data["sessions"]["normal"])
+    actor = resolve_session(request, timezone.now())
+    assert actor is not None and str(actor.user_uuid) == data["owner_uuid"]
+    s = SimpleNamespace(
+        user=User.objects.get(public_id=actor.user_uuid),
+        actor=actor,
+        request=request,
+        at=timezone.now(),
+    )
+    profile = athlete_profile.create_athlete_profile(actor, uuid4(), s.at)
+    row = athlete_profile.begin_baseline(actor, profile.version, uuid4(), s.at)
+    row = required(s, row)
+    current_profile = AthleteProfile.objects.get(pk=profile.id)
+    resumed = athlete_profile.begin_baseline(
+        actor, current_profile.version, uuid4(), s.at
+    )
+    assert resumed.id == row.id and resumed.version == row.version
+    row = athlete_profile.submit_baseline(actor, row.id, row.version, uuid4(), s.at)
+    assert (
+        row.state == "submitted"
+        and AthleteProfile.objects.get(pk=profile.id).current_baseline_id == row.id
+    )
+    FeatureFlag.objects.update_or_create(
+        key="professional_registration", defaults={"enabled": True}
+    )
+    s = approved_live_subject(settings, s)
+    print("C03_TASK14 preserved_owner_real_private_flows_passed", flush=True)
+    staff = s.staff
+    for index, name in enumerate(CAPABILITY_CASES):
+        if index:
+            s = approved_live_subject(
+                settings, make_actor(f"+98912400{index:04d}"), staff
+            )
+        assert upgraded_capability_case(name, s) is True
+        print("C03_TASK14 capability_" + name, flush=True)
+    s = approved_live_subject(settings, make_actor("+989124009999"), staff)
+    data["constraint_subject"] = {
+        "profile": str(s.profile.id),
+        "case": str(s.case.id),
+        "staff_uuid": str(staff.user.public_id),
+    }
+    data["capability_cases"] = list(CAPABILITY_CASES)
+    path.write_text(json.dumps(data))
+
+
+def constraints_live(path):
+    from types import SimpleNamespace
+
+    from django.db import connection
+
+    from apps.accounts.models import User
+    from apps.professionals.models import ProfessionalProfile, Verification
+
+    data = json.loads(path.read_text())
+    assert data["capability_cases"] == list(CAPABILITY_CASES)
+    assert snapshot(connection)["database_oid"] == data["snapshot"]["database_oid"]
+    values = data["constraint_subject"]
+    s = SimpleNamespace(
+        profile=ProfessionalProfile.objects.get(pk=values["profile"]),
+        case=Verification.objects.get(pk=values["case"]),
+        staff=SimpleNamespace(user=User.objects.get(public_id=values["staff_uuid"])),
+    )
+    result = upgraded_constraints(s)
+    assert set(result) == set(CONSTRAINT_CASES) and all(result.values())
+    print("C03_TASK14 upgraded_constraints_passed", flush=True)
 
 
 def prepare(path):
@@ -870,7 +1127,29 @@ def main():
                 raise AssertionError("Preserved control acquired C03 authority")
         # Session resolution is read-only; no regeneration or delayed mutation.
         verify_preservation(data["snapshot"], snapshot(connection))
+        data["preservation_verified"] = True
+        path.write_text(json.dumps(data))
         print("C03_TASK14 exact_preservation_and_sessions_passed", flush=True)
+    elif phase == "replay":
+        replay_live(path)
+    elif phase == "constraints":
+        constraints_live(path)
+    elif phase == "clean":
+        from django.db.migrations.executor import MigrationExecutor
+
+        state = snapshot(connection)
+        assert "auth_user" not in state["tables"]
+        assert "accounts_user" in state["tables"]
+        assert all(
+            table["count"] == 0
+            for name, table in state["tables"].items()
+            if name
+            not in {"django_migrations", "django_content_type", "auth_permission"}
+        )
+        executor = MigrationExecutor(connection)
+        assert executor.loader.graph.leaf_nodes()
+        assert not executor.migration_plan(executor.loader.graph.leaf_nodes())
+        print("C03_TASK14 independent_zero_state_chain_passed", flush=True)
     else:
         raise ValueError("Unknown Task 14 phase")
 

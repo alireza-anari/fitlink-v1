@@ -40,6 +40,27 @@ def test_exact_c02_manifest_and_source_identity():
     assert verify_baseline(ROOT / ".runtime/c02") == C02_TREE
 
 
+def test_exact_ref_verification_without_git_binary(tmp_path, monkeypatch):
+    from docker import c03_baseline
+
+    target = tmp_path / "baseline"
+    shutil.copytree(
+        ROOT / ".runtime/c02", target, ignore=shutil.ignore_patterns(".git")
+    )
+    metadata = target / ".git"
+    metadata.mkdir()
+    (metadata / "HEAD").write_text(c03_baseline.C02_COMMIT + "\n")
+
+    def unavailable(*args, **kwargs):
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(c03_baseline.subprocess, "check_output", unavailable)
+    assert c03_baseline.verify_baseline(target) == C02_TREE
+    (metadata / "HEAD").write_text("a" * 40 + "\n")
+    with pytest.raises(ValueError, match="baseline"):
+        c03_baseline.verify_baseline(target)
+
+
 def test_exact_c02_wrong_checkout_ref_rejected(tmp_path):
     from docker.c03_baseline import verify_baseline
 
