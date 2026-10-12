@@ -3779,3 +3779,30 @@ permission; missing corrected-head engineering evidence prevents C03 completion.
 No Minor findings. Reviewer changes made after reviewed head are verified by
 covering RED→GREEN and a complete corrected-head rehearsal, not falsely represented
 as independently reviewed. No waiver, merge/deploy/C04/protected-ref change.
+
+Review-spec checkpointcdfd08a7c01723e85f608ad2dd9ad75cf14e3906,
+treeefbe44c82e6cf229cba7c638b01c850fad8a5b0a, guarded fromcde5b143.
+Run38235284614 attempt1 focused PostgreSQLjob114764325458:
+31passed/2failed/0skips, only upgraded replay shared-bundle and ordered-race
+assertions fail (AssertionError, healthy269 C02 selection first). This is reproduced
+review-finding behavioral RED on PostgreSQL; actual same-DB phase remains separate.
+
+Run38234274773 finaljob114760984451 confirms original exact C02 runtime GREEN,
+all40 new additive SQL inspectionsexit0, migration/no-op/drift/showmigrationsexit0,
+populated exact preservation/sessions GREEN, actual MinIO/scanner startup/health
+GREEN. Native upgraded_capabilities then fails AssertionError before its complete
+owner-flow marker. Existing location filter recognizes only mounted/probe.py, not
+native docker/c03_upgrade_probe.py, therefore emittedline0. No root cause or
+mixed/race same-DB RED is claimed from that unclassified failure. Extend static
+location matching to both exact known probe basenames and add bounded constant
+native baseline/profile/quarantine/claim/derivative progress markers. No exception
+message, UUID/phone/session/evidence data leaves private logs. Diagnose before
+any production/schema/probe-flow alteration. All other earlier completed real
+service/restart/owner/staff jobs in this run are GREEN; full final not accepted.
+
+Final contract self-review: comment-only/early-exit substitute containing every
+required string was accepted. New negative freshly RED1failed with a healthy valid
+verifier precondition; ignore comment lines and reject unconditional success exit.
+All four final-orchestration unit tests now GREEN/0skips, including actual
+intermediate-command shell failure propagation. This supplements actual hosted
+executions, never substitutes string checks for runtime acceptance.

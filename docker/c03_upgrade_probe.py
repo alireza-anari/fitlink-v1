@@ -638,6 +638,7 @@ def approved_live_subject(settings, subject, staff=None):
 
     s = subject
     dto = professional_profile.create_professional_profile(s.actor, uuid4(), s.at)
+    print("C03_TASK14 native_professional_created", flush=True)
     s.profile = ProfessionalProfile.objects.get(pk=dto.id)
     save(
         s,
@@ -681,6 +682,7 @@ def approved_live_subject(settings, subject, staff=None):
             uuid4(),
             timezone.now(),
         )
+        print("C03_TASK14 native_credential_upload_quarantined", flush=True)
         asset = Asset.objects.get(pk=uploaded.id)
         event = OutboxEvent.objects.get(
             event_type="asset.processing_requested",
@@ -695,6 +697,7 @@ def approved_live_subject(settings, subject, staff=None):
             )
             == 1
         )
+        print("C03_TASK14 native_processing_claimed", flush=True)
         attempt = AssetProcessingAttempt.objects.get(asset=asset, state="running")
         assert (
             asset_processing.process_asset(
@@ -705,6 +708,7 @@ def approved_live_subject(settings, subject, staff=None):
             )
             == "ready"
         )
+        print("C03_TASK14 native_derivative_ready", flush=True)
         asset.refresh_from_db()
         assert (
             asset.state == "ready"
@@ -824,6 +828,7 @@ def replay_live(path):
         row.state == "submitted"
         and AthleteProfile.objects.get(pk=profile.id).current_baseline_id == row.id
     )
+    print("C03_TASK14 native_baseline_submitted", flush=True)
     FeatureFlag.objects.update_or_create(
         key="professional_registration", defaults={"enabled": True}
     )
@@ -1191,7 +1196,11 @@ if __name__ == "__main__":
 
         frames = traceback.extract_tb(error.__traceback__)
         # Static location only; never exception messages, source lines or locals.
-        own = [frame for frame in frames if Path(frame.filename).name == "probe.py"]
+        own = [
+            frame
+            for frame in frames
+            if Path(frame.filename).name in {"probe.py", Path(__file__).name}
+        ]
         line = own[-1].lineno if own else 0
         print(
             "C03_TASK14 probe_failed " + type(error).__name__ + f" line={line}",

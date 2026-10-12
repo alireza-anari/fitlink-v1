@@ -40,8 +40,16 @@ REQUIRED = (
 
 
 def final_gates_valid(source):
-    return all(item in source for item in REQUIRED) and all(
-        item not in source for item in ("--reuse-db", "--deselect", "continue-on-error")
+    code = "\n".join(
+        line for line in source.splitlines() if not line.lstrip().startswith("#")
+    )
+    return (
+        all(item in code for item in REQUIRED)
+        and all(
+            item not in code
+            for item in ("--reuse-db", "--deselect", "continue-on-error")
+        )
+        and not any(line.strip() == "exit 0" for line in code.splitlines())
     )
 
 
@@ -50,6 +58,16 @@ def test_final_gates_include_all_c02_and_real_c03_services_browser():
     assert final_gates_valid(source), "Task 14 actual final rehearsal is omitted"
     for item in REQUIRED:
         assert not final_gates_valid(source.replace(item, "omitted"))
+
+
+def test_final_contract_rejects_comment_only_and_early_exit_substitutes():
+    source = (ROOT / "docker/verify_c03.sh").read_text()
+    assert final_gates_valid(source)
+    fake = "#!/bin/sh\nexit 0\n" + "\n".join(
+        "# " + line for line in source.splitlines()
+    )
+    assert not final_gates_valid(fake), "Comment-only gate falsely accepted"
+    assert not final_gates_valid(source.replace("set -eu", "set -eu\nexit 0", 1))
 
 
 def test_final_stage_propagates_early_function_failure(tmp_path):
