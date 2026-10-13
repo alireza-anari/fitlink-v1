@@ -74,6 +74,34 @@ for line in Path(sys.argv[1]).read_text(errors="replace").splitlines():
         assert all(type(result[k]) is int and -999 <= result[k] <= 65535 for k in ints)
         assert all(re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", result[k]) for k in versions)
         print("C03_TASK14_RUNTIME " + json.dumps(result), flush=True)
+mutation_lines = [
+    line
+    for line in Path(sys.argv[1]).read_text(errors="replace").splitlines()
+    if line.startswith("C03_TASK14_C02_MUTATION ")
+]
+assert len(mutation_lines) <= 32
+for line in mutation_lines:
+    mutation = json.loads(line.removeprefix("C03_TASK14_C02_MUTATION "))
+    assert set(mutation) == {
+        "path",
+        "kind",
+        "expected_type",
+        "observed_type",
+        "expected_sha256",
+        "observed_sha256",
+    }
+    path = mutation["path"]
+    assert isinstance(path, str) and re.fullmatch(r"[A-Za-z0-9._/-]{1,240}", path)
+    assert not path.startswith("/") and ".." not in path.split("/") and "//" not in path
+    assert mutation["kind"] in {"modified", "missing", "extra", "symlink"}
+    assert mutation["expected_type"] in {"file", "directory", "missing", "symlink"}
+    assert mutation["observed_type"] in {"file", "directory", "missing", "symlink"}
+    for key in ("expected_sha256", "observed_sha256"):
+        value = mutation[key]
+        assert value is None or (
+            isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
+        )
+    print("C03_TASK14_C02_MUTATION " + json.dumps(mutation, sort_keys=True), flush=True)
 print("C03_TASK14_DIAGNOSTIC " + json.dumps(private_log_metadata(sys.argv[1])), flush=True)
 with Path(sys.argv[1]).open(errors="replace") as stream:
     if any(re.search(r"\b[1-9][0-9]* skipped\b", line) for line in stream):
@@ -83,6 +111,179 @@ PY
   printf '{"stage":"%s","exit_code":%s}\n' "$stage" "$result" >>"$evidence/upgrade.jsonl"
   printf 'C03_TASK14 stage=%s exit_code=%s\n' "$stage" "$result"
   test "$result" -eq 0
+}
+c02_source_snapshot() {
+  python - "$1" "$2" <<'PY'
+import hashlib
+import json
+import os
+import stat
+import sys
+from pathlib import Path, PurePosixPath
+
+root = Path(sys.argv[1]).absolute()
+out = Path(sys.argv[2])
+manifest = json.loads(Path("docker/c03_source_manifest.json").read_text())
+entries = manifest["entries"]
+sources = {
+    entry["path"]: entry
+    for entry in entries
+    if entry["type"] == "blob" and entry["mode"] in {"100644", "100755"}
+}
+directories = {
+    entry["path"]
+    for entry in entries
+    if entry["type"] == "tree" and entry["mode"] == "040000"
+}
+generated_roots = {
+    ".git",
+    ".venv",
+    "node_modules",
+    "staticfiles",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".mypy_cache",
+    "test-results",
+    "playwright-report",
+}
+generated_files = {
+    ".env.verify",
+    ".env.c02-upgrade",
+    ".runtime/upgrade/metadata.json",
+}
+
+
+def observed(path):
+    if path.is_symlink():
+        return {"observed_type": "symlink", "sha256": None}
+    try:
+        mode = path.stat().st_mode
+    except OSError:
+        return {"observed_type": "missing", "sha256": None}
+    if stat.S_ISREG(mode):
+        digest = hashlib.sha256()
+        with path.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        return {"observed_type": "file", "sha256": digest.hexdigest()}
+    if stat.S_ISDIR(mode):
+        return {"observed_type": "directory", "sha256": None}
+    return {"observed_type": "symlink", "sha256": None}
+
+
+records = {}
+for entry in entries:
+    expected_type = "file" if entry["type"] == "blob" else "directory"
+    records[entry["path"]] = {
+        "expected_type": expected_type,
+        **observed(root / entry["path"]),
+    }
+
+extras = 0
+
+
+def record_invalid(relative, path):
+    global extras
+    if relative not in records:
+        extras += 1
+        if extras > 128:
+            raise RuntimeError("C02 source diagnostic exceeded bound")
+        records[relative] = {"expected_type": "missing", **observed(path)}
+
+
+for parent, children, files in os.walk(root, followlinks=False):
+    for name in (*children, *files):
+        path = Path(parent) / name
+        relative = path.relative_to(root).as_posix()
+        parts = PurePosixPath(relative).parts
+        if parts[0] in generated_roots:
+            if relative == parts[0] and path.is_symlink():
+                record_invalid(relative, path)
+            if name in children:
+                children.remove(name)
+            continue
+        if path.is_symlink():
+            record_invalid(relative, path)
+            if name in children:
+                children.remove(name)
+            continue
+        if relative == ".runtime/c01":
+            if name in children:
+                children.remove(name)
+            continue
+        if relative.startswith("static/dist/") or relative == "static/dist":
+            if relative != "static/dist" and (
+                relative != "static/dist/app.css"
+                or not path.is_file()
+                or path.stat().st_mode & 0o111
+            ):
+                record_invalid(relative, path)
+            continue
+        if "__pycache__" in parts:
+            if path.is_file() and not relative.endswith(".pyc"):
+                record_invalid(relative, path)
+            continue
+        if relative in generated_files:
+            if not path.is_file():
+                record_invalid(relative, path)
+            continue
+        if path.is_file() and relative not in sources:
+            record_invalid(relative, path)
+            continue
+        if (
+            path.is_dir()
+            and relative not in directories
+            and relative not in {".runtime", ".runtime/upgrade"}
+        ):
+            record_invalid(relative, path)
+
+out.write_text(json.dumps(records, sort_keys=True))
+out.chmod(0o600)
+PY
+}
+c02_source_compare() {
+  c02_source_snapshot "$baseline" "$private/c02-source-after.json"
+  python - "$private/c02-source-before.json" "$private/c02-source-after.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+before = json.loads(Path(sys.argv[1]).read_text())
+after = json.loads(Path(sys.argv[2]).read_text())
+missing = {"expected_type": "missing", "observed_type": "missing", "sha256": None}
+changes = []
+for relative in sorted(set(before) | set(after)):
+    old = before.get(relative, missing)
+    new = after.get(relative, missing)
+    if (old["observed_type"], old["sha256"]) == (
+        new["observed_type"],
+        new["sha256"],
+    ):
+        continue
+    expected_type = old["observed_type"]
+    observed_type = new["observed_type"]
+    if observed_type == "symlink":
+        kind = "symlink"
+    elif observed_type == "missing":
+        kind = "missing"
+    elif expected_type == "missing":
+        kind = "extra"
+    else:
+        kind = "modified"
+    changes.append(
+        {
+            "path": relative,
+            "kind": kind,
+            "expected_type": expected_type,
+            "observed_type": observed_type,
+            "expected_sha256": old["sha256"],
+            "observed_sha256": new["sha256"],
+        }
+    )
+assert len(changes) <= 32, "C02 source mutation diagnostic exceeded output bound"
+for change in changes:
+    print("C03_TASK14_C02_MUTATION " + json.dumps(change, sort_keys=True), flush=True)
+PY
 }
 if [ "${1:-}" = --native-processing-diagnostic ]; then
   # Real-service diagnostic only. The separate unqualified final verifier is
@@ -169,10 +370,12 @@ run_step c02_build c02 build checks
 run_step c02_services c02 up -d --wait db redis
 run_step c02_migrate c02 run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
 run_step exact_c02_before_populate python docker/c03_baseline.py "$baseline"
+run_step c02_source_snapshot_before c02_source_snapshot "$baseline" "$private/c02-source-before.json"
 run_step c02_populate c02 run --rm --no-deps --user "$(id -u):$(id -g)" \
   -v "$root/docker/c03_upgrade_probe.py:/app/docker/c03_upgrade_probe.py:ro" \
   -v "$root/docker/c03_upgrade_probe_impl.py:/app/docker/c03_upgrade_probe_impl.py:ro" \
   -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python /app/docker/c03_upgrade_probe.py prepare /rehearsal/metadata.json
+run_step c02_source_mutation_compare c02_source_compare
 run_step exact_c02_after_populate python docker/c03_baseline.py "$baseline"
 # The same project/db/container/volume/network/env file stay in place.
 run_step c03_config c03 config --quiet
