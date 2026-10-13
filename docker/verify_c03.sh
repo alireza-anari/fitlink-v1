@@ -224,7 +224,7 @@ clean_cleanup() {
   clean down --remove-orphans >>"$private/cleanup.log" 2>&1 || result=$?
   test -z "$(docker ps -aq --filter label=com.docker.compose.project="$clean_project")" || result=1
   test -z "$(docker network ls -q --filter label=com.docker.compose.project="$clean_project")" || result=1
-  printf '{"stage":"clean_cleanup","exit_code":%s}\n' "$stage" "$result" >>"$evidence/upgrade.jsonl"
+  printf '{"stage":"clean_cleanup","exit_code":%s}\n' "$result" >>"$evidence/upgrade.jsonl"
   return "$result"
 }
 trap 'exit_status=$?; trap - EXIT; cleanup || exit_status=1; clean_cleanup || exit_status=1; exit "$exit_status"' EXIT
