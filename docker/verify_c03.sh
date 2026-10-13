@@ -353,7 +353,26 @@ chmod 777 "$root/.runtime/c03-foundation-evidence"
 export C03_FOUNDATION_TRIAGE=1
 mkdir "$private/preservation"
 chmod 700 "$private/preservation"
-c02() { docker compose -p "$project" -f "$baseline/compose.yaml" --env-file "$env_file" --profile test "$@"; }
+cat > "$private/c02-populate-compose.yml" <<C02_POPULATE_COMPOSE
+services:
+  checks:
+    volumes:
+      - type: bind
+        source: "$baseline"
+        target: /app
+        read_only: true
+        bind:
+          create_host_path: false
+C02_POPULATE_COMPOSE
+c02() {
+  docker compose -p "$project" -f "$baseline/compose.yaml" \
+    --env-file "$env_file" --profile test "$@"
+}
+c02_population() {
+  docker compose -p "$project" -f "$baseline/compose.yaml" \
+    -f "$private/c02-populate-compose.yml" \
+    --env-file "$env_file" --profile test "$@"
+}
 c03() { timeout -k 10s 900s docker compose -p "$project" -f "$root/compose.yaml" --env-file "$env_file" --profile test "$@"; }
 cleanup() {
   cleanup_status=0
@@ -371,10 +390,10 @@ run_step c02_services c02 up -d --wait db redis
 run_step c02_migrate c02 run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
 run_step exact_c02_before_populate python docker/c03_baseline.py "$baseline"
 run_step c02_source_snapshot_before c02_source_snapshot "$baseline" "$private/c02-source-before.json"
-run_step c02_populate c02 run --rm --no-deps --user "$(id -u):$(id -g)" \
-  -v "$root/docker/c03_upgrade_probe.py:/app/docker/c03_upgrade_probe.py:ro" \
-  -v "$root/docker/c03_upgrade_probe_impl.py:/app/docker/c03_upgrade_probe_impl.py:ro" \
-  -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python /app/docker/c03_upgrade_probe.py prepare /rehearsal/metadata.json
+run_step c02_populate c02_population run --rm --no-deps --user "$(id -u):$(id -g)" \
+  -v "$root/docker/c03_upgrade_probe.py:/task14/docker/c03_upgrade_probe.py:ro" \
+  -v "$root/docker/c03_upgrade_probe_impl.py:/task14/docker/c03_upgrade_probe_impl.py:ro" \
+  -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python /task14/docker/c03_upgrade_probe.py prepare /rehearsal/metadata.json
 run_step c02_source_mutation_compare c02_source_compare
 run_step exact_c02_after_populate python docker/c03_baseline.py "$baseline"
 # The same project/db/container/volume/network/env file stay in place.
