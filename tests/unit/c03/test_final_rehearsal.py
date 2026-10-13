@@ -165,7 +165,9 @@ def test_c02_population_preserves_exact_read_only_source_and_external_probe():
     )
     positions = [normalized.find(item) for item in ordered]
     assert all(position >= 0 for position in positions)
-    assert positions == sorted(positions), "C02 must be exact before and after population"
+    assert positions == sorted(positions), (
+        "C02 must be exact before and after population"
+    )
 
     assert 'cat > "$private/c02-populate-compose.yml"' in code, (
         "C02 population must define an isolated Compose source override"
@@ -195,7 +197,9 @@ def test_c02_population_preserves_exact_read_only_source_and_external_probe():
     for module in dependencies:
         relative = module.replace(".", "/") + ".py"
         mount = f'"$root/{relative}:/task14/{relative}:ro"'
-        assert mount in populate, f"Missing external read-only C02 probe dependency: {module}"
+        assert mount in populate, (
+            f"Missing external read-only C02 probe dependency: {module}"
+        )
 
     forbidden = (
         "git checkout",
