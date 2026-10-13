@@ -236,6 +236,9 @@ run_step clean_drift clean run --rm --no-deps checks uv run --frozen python mana
 run_step clean_showmigrations clean run --rm --no-deps checks uv run --frozen python manage.py showmigrations
 run_step clean_runtime clean up -d --wait web worker beat
 run_step clean_scanner clean exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
+run_step exact_c02_host_preflight python docker/c03_baseline.py "$baseline"
+run_step exact_c02_clean_runtime_preflight clean run --rm --no-deps checks uv run --frozen python docker/c03_baseline.py /app/.runtime/c02
+run_step isolated_exact_baseline clean run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py -q --strict-markers
 run_step complete_backend clean run --rm --no-deps checks uv run --frozen pytest tests/unit tests/integration -q --strict-markers --tb=no --show-capture=no
 run_step focused_task14 clean run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=no --show-capture=no
 browser_gate() {
