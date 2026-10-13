@@ -96,6 +96,66 @@ def snapshot(connection):
     return {"database_oid": database_oid, "tables": tables}
 
 
+def clean_state_valid(state):
+    """Accept only the migration-owned C02 feature-flag seed on a fresh chain."""
+    from uuid import NAMESPACE_URL, uuid5
+
+    tables = state.get("tables")
+    if not isinstance(tables, dict):
+        return False
+    if "auth_user" in tables or "accounts_user" not in tables:
+        return False
+
+    seed = tables.get("governance_featureflag")
+    if not isinstance(seed, dict):
+        return False
+    rows = seed.get("rows")
+    if seed.get("count") != 4 or not isinstance(rows, list) or len(rows) != 4:
+        return False
+    try:
+        parsed = [json.loads(row) for row in rows]
+    except (TypeError, json.JSONDecodeError):
+        return False
+
+    keys = (
+        "marketplace",
+        "professional_registration",
+        "ai_insights",
+        "ai_mirror",
+    )
+    expected = {
+        key: {
+            "id": str(uuid5(NAMESPACE_URL, "fitlink:c02:flag:" + key)),
+            "key": key,
+            "enabled": False,
+            "version": 1,
+        }
+        for key in keys
+    }
+    actual = {}
+    fields = {"id", "key", "enabled", "version"}
+    for row in parsed:
+        if not isinstance(row, dict) or set(row) != fields:
+            return False
+        key = row.get("key")
+        if not isinstance(key, str) or key in actual:
+            return False
+        actual[key] = row
+    if actual != expected:
+        return False
+
+    catalogs = {"django_migrations", "django_content_type", "auth_permission"}
+    for name, table in tables.items():
+        if name in catalogs or name == "governance_featureflag":
+            continue
+        if not isinstance(table, dict) or table.get("count") != 0:
+            return False
+        table_rows = table.get("rows")
+        if not isinstance(table_rows, list) or table_rows:
+            return False
+    return True
+
+
 def verify_preservation(previous, current):
     """Exact old rows/OIDs; only enumerated Django installation metadata may grow."""
     from django.apps import apps
@@ -1285,14 +1345,7 @@ def main():
         from django.db.migrations.executor import MigrationExecutor
 
         state = snapshot(connection)
-        assert "auth_user" not in state["tables"]
-        assert "accounts_user" in state["tables"]
-        assert all(
-            table["count"] == 0
-            for name, table in state["tables"].items()
-            if name
-            not in {"django_migrations", "django_content_type", "auth_permission"}
-        )
+        assert clean_state_valid(state)
         executor = MigrationExecutor(connection)
         assert executor.loader.graph.leaf_nodes()
         assert not executor.migration_plan(executor.loader.graph.leaf_nodes())
