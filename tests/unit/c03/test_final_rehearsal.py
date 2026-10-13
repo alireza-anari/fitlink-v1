@@ -195,3 +195,138 @@ def test_native_processing_launches_python_below_a_bounded_supervisor():
     assert all(
         "checks timeout -k 5s 240s /opt/venv/bin/python" in line for line in launchers
     ), "Task14 native decoder caller must have a non-PID1 parent with a finite bound"
+
+
+def _clean_state_fixture():
+    import json
+    from uuid import NAMESPACE_URL, uuid5
+
+    def table(rows):
+        encoded = [json.dumps(row, sort_keys=True) for row in rows]
+        return {"oid": 1, "count": len(encoded), "rows": encoded}
+
+    keys = (
+        "marketplace",
+        "professional_registration",
+        "ai_insights",
+        "ai_mirror",
+    )
+    flags = [
+        {
+            "id": str(uuid5(NAMESPACE_URL, "fitlink:c02:flag:" + key)),
+            "key": key,
+            "enabled": False,
+            "version": 1,
+        }
+        for key in keys
+    ]
+    return {
+        "database_oid": 1,
+        "tables": {
+            "django_migrations": table([{"app": "governance", "name": "0008_seed_feature_flags"}]),
+            "django_content_type": table([{"app_label": "governance", "model": "featureflag"}]),
+            "auth_permission": table([{"codename": "view_featureflag"}]),
+            "accounts_user": table([]),
+            "governance_featureflag": table(flags),
+            "django_session": table([]),
+            "assets_asset": table([]),
+            "athletes_athleteprofile": table([]),
+            "professionals_professionalprofile": table([]),
+            "professionals_professionalrole": table([]),
+            "professionals_verification": table([]),
+        },
+    }
+
+
+def _set_table_rows(state, name, rows):
+    import json
+
+    encoded = [json.dumps(row, sort_keys=True) for row in rows]
+    state["tables"][name] = {"oid": 1, "count": len(encoded), "rows": encoded}
+
+
+def test_clean_probe_allows_only_exact_c02_migration_owned_feature_flags():
+    import copy
+    import json
+    from uuid import NAMESPACE_URL, uuid4, uuid5
+
+    from docker import c03_upgrade_probe_impl as probe
+
+    predicate = getattr(probe, "clean_state_valid", None)
+    assert predicate is not None, "missing clean-state predicate"
+
+    valid = _clean_state_fixture()
+    assert predicate(valid), "exact inherited clean seed state must be accepted"
+
+    invalid = []
+
+    missing = copy.deepcopy(valid)
+    rows = [json.loads(row) for row in missing["tables"]["governance_featureflag"]["rows"]]
+    _set_table_rows(missing, "governance_featureflag", rows[:-1])
+    invalid.append(("missing seed", missing))
+
+    fifth = copy.deepcopy(valid)
+    rows = [json.loads(row) for row in fifth["tables"]["governance_featureflag"]["rows"]]
+    rows.append(
+        {
+            "id": str(uuid4()),
+            "key": "unexpected",
+            "enabled": False,
+            "version": 1,
+        }
+    )
+    _set_table_rows(fifth, "governance_featureflag", rows)
+    invalid.append(("unexpected fifth flag", fifth))
+
+    wrong_key = copy.deepcopy(valid)
+    rows = [json.loads(row) for row in wrong_key["tables"]["governance_featureflag"]["rows"]]
+    rows[0]["key"] = "wrong"
+    _set_table_rows(wrong_key, "governance_featureflag", rows)
+    invalid.append(("wrong key", wrong_key))
+
+    enabled = copy.deepcopy(valid)
+    rows = [json.loads(row) for row in enabled["tables"]["governance_featureflag"]["rows"]]
+    rows[0]["enabled"] = True
+    _set_table_rows(enabled, "governance_featureflag", rows)
+    invalid.append(("enabled seed", enabled))
+
+    wrong_version = copy.deepcopy(valid)
+    rows = [json.loads(row) for row in wrong_version["tables"]["governance_featureflag"]["rows"]]
+    rows[0]["version"] = 2
+    _set_table_rows(wrong_version, "governance_featureflag", rows)
+    invalid.append(("wrong version", wrong_version))
+
+    wrong_uuid = copy.deepcopy(valid)
+    rows = [json.loads(row) for row in wrong_uuid["tables"]["governance_featureflag"]["rows"]]
+    rows[0]["id"] = str(uuid4())
+    _set_table_rows(wrong_uuid, "governance_featureflag", rows)
+    invalid.append(("wrong UUID", wrong_uuid))
+
+    user = copy.deepcopy(valid)
+    _set_table_rows(user, "accounts_user", [{"public_id": str(uuid4())}])
+    invalid.append(("accounts user row", user))
+
+    business = copy.deepcopy(valid)
+    _set_table_rows(business, "professionals_professionalprofile", [{"id": str(uuid4())}])
+    invalid.append(("business row", business))
+
+    auth_user = copy.deepcopy(valid)
+    _set_table_rows(auth_user, "auth_user", [])
+    invalid.append(("auth_user present", auth_user))
+
+    missing_accounts = copy.deepcopy(valid)
+    del missing_accounts["tables"]["accounts_user"]
+    invalid.append(("accounts_user absent", missing_accounts))
+
+    # Prove deterministic IDs rather than merely accepting any four disabled keys.
+    rows = [json.loads(row) for row in valid["tables"]["governance_featureflag"]["rows"]]
+    assert {
+        row["id"]
+        for row in rows
+    } == {
+        str(uuid5(NAMESPACE_URL, "fitlink:c02:flag:" + row["key"]))
+        for row in rows
+    }
+
+    for label, state in invalid:
+        assert not predicate(state), f"invalid clean state accepted: {label}"
