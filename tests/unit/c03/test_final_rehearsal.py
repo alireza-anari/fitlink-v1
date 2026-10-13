@@ -1,5 +1,6 @@
 """Final Task 14 orchestration must retain every required source/service gate."""
 
+import ast
 import subprocess
 from pathlib import Path
 
@@ -11,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[3]
 REQUIRED = (
     "docker/c03_baseline.py",
     "sh docker/verify_c02.sh",
-    "/probe.py prepare",
-    "/probe.py verify",
+    "run_step c02_populate c02 run",
+    "run_step populated_preservation c03 run",
     "upgraded_capabilities probe replay",
     "upgraded_constraints probe constraints",
     "docker/c03_upgrade_probe.py clean",
@@ -120,6 +121,66 @@ def test_private_rehearsal_diagnostics_never_export_exception_text_or_sessions(
     assert result["locations"] == [{"file": "env.py", "line": 17}]
     assert sentinel not in json.dumps(result)
     assert "+989123000001" not in json.dumps(result)
+
+
+def _docker_probe_dependencies(source):
+    tree = ast.parse(source)
+    dependencies = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            dependencies.update(
+                alias.name for alias in node.names if alias.name.startswith("docker.")
+            )
+        elif isinstance(node, ast.ImportFrom):
+            if node.module and node.module.startswith("docker."):
+                dependencies.add(node.module)
+        elif (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and isinstance(node.func.value, ast.Name)
+            and node.func.value.id == "importlib"
+            and node.func.attr == "import_module"
+            and len(node.args) == 1
+            and isinstance(node.args[0], ast.Constant)
+            and isinstance(node.args[0].value, str)
+            and node.args[0].value.startswith("docker.")
+        ):
+            dependencies.add(node.args[0].value)
+    return dependencies
+
+
+def test_c02_population_probe_mounts_valid_package_root_and_all_dependencies():
+    verifier = (ROOT / "docker/verify_c03.sh").read_text()
+    wrapper = (ROOT / "docker/c03_upgrade_probe.py").read_text()
+    assert "ROOT = Path(__file__).resolve().parents[1]" in wrapper
+
+    populate_start = verifier.index("run_step c02_populate ")
+    populate_end = verifier.index("# The same project/db/container", populate_start)
+    populate = verifier[populate_start:populate_end]
+    assert (
+        '"$root/docker/c03_upgrade_probe.py:/app/docker/c03_upgrade_probe.py:ro"'
+        in populate
+    )
+    assert (
+        "/opt/venv/bin/python /app/docker/c03_upgrade_probe.py prepare "
+        in populate.replace("\\\n", "")
+    )
+
+    dependencies = _docker_probe_dependencies(wrapper)
+    assert dependencies
+    for module in dependencies:
+        relative = module.replace(".", "/") + ".py"
+        mount = f'"$root/{relative}:/app/{relative}:ro"'
+        assert mount in populate, f"Missing read-only C02 probe dependency: {module}"
+
+    preserve_start = verifier.index("run_step populated_preservation ")
+    preserve_end = verifier.index("# Deliberate C03 commands", preserve_start)
+    preserve = verifier[preserve_start:preserve_end]
+    assert "/probe.py" not in preserve
+    assert (
+        "/opt/venv/bin/python docker/c03_upgrade_probe.py verify "
+        in preserve.replace("\\\n", "")
+    )
 
 
 def test_native_processing_launches_python_below_a_bounded_supervisor():
