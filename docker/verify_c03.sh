@@ -169,8 +169,9 @@ run_step c02_build c02 build checks
 run_step c02_services c02 up -d --wait db redis
 run_step c02_migrate c02 run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
 run_step c02_populate c02 run --rm --no-deps --user "$(id -u):$(id -g)" \
-  -v "$root/docker/c03_upgrade_probe.py:/probe.py:ro" \
-  -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python /probe.py prepare /rehearsal/metadata.json
+  -v "$root/docker/c03_upgrade_probe.py:/app/docker/c03_upgrade_probe.py:ro" \
+  -v "$root/docker/c03_upgrade_probe_impl.py:/app/docker/c03_upgrade_probe_impl.py:ro" \
+  -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python /app/docker/c03_upgrade_probe.py prepare /rehearsal/metadata.json
 # The same project/db/container/volume/network/env file stay in place.
 run_step c03_config c03 config --quiet
 run_step c03_build c03 build checks
@@ -187,8 +188,7 @@ run_step c03_migrate_noop c03 run --rm --no-deps checks uv run --frozen python m
 run_step c03_drift c03 run --rm --no-deps checks uv run --frozen python manage.py makemigrations --check --dry-run
 run_step c03_migrations c03 run --rm --no-deps checks uv run --frozen python manage.py showmigrations
 run_step populated_preservation c03 run --rm --no-deps --user "$(id -u):$(id -g)" \
-  -v "$root/docker/c03_upgrade_probe.py:/probe.py:ro" \
-  -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python /probe.py verify /rehearsal/metadata.json
+  -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python docker/c03_upgrade_probe.py verify /rehearsal/metadata.json
 # Deliberate C03 commands only after exact preservation and session checks.
 run_step upgrade_private_build c03 build scanner scanner-signatures minio minio-init
 run_step upgrade_private_services c03 up -d --wait minio scanner
