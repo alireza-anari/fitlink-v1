@@ -253,8 +253,7 @@ def _feature_rows(state):
     import json
 
     return [
-        json.loads(row)
-        for row in state["tables"]["governance_featureflag"]["rows"]
+        json.loads(row) for row in state["tables"]["governance_featureflag"]["rows"]
     ]
 
 
@@ -335,8 +334,7 @@ def test_clean_probe_allows_only_exact_c02_migration_owned_feature_flags():
 
     rows = _feature_rows(valid)
     assert {row["id"] for row in rows} == {
-        str(uuid5(NAMESPACE_URL, "fitlink:c02:flag:" + row["key"]))
-        for row in rows
+        str(uuid5(NAMESPACE_URL, "fitlink:c02:flag:" + row["key"])) for row in rows
     }
 
     for label, state in invalid:
