@@ -223,8 +223,12 @@ def _clean_state_fixture():
     return {
         "database_oid": 1,
         "tables": {
-            "django_migrations": table([{"app": "governance", "name": "0008_seed_feature_flags"}]),
-            "django_content_type": table([{"app_label": "governance", "model": "featureflag"}]),
+            "django_migrations": table(
+                [{"app": "governance", "name": "0008_seed_feature_flags"}]
+            ),
+            "django_content_type": table(
+                [{"app_label": "governance", "model": "featureflag"}]
+            ),
             "auth_permission": table([{"codename": "view_featureflag"}]),
             "accounts_user": table([]),
             "governance_featureflag": table(flags),
@@ -245,9 +249,17 @@ def _set_table_rows(state, name, rows):
     state["tables"][name] = {"oid": 1, "count": len(encoded), "rows": encoded}
 
 
+def _feature_rows(state):
+    import json
+
+    return [
+        json.loads(row)
+        for row in state["tables"]["governance_featureflag"]["rows"]
+    ]
+
+
 def test_clean_probe_allows_only_exact_c02_migration_owned_feature_flags():
     import copy
-    import json
     from uuid import NAMESPACE_URL, uuid4, uuid5
 
     from docker import c03_upgrade_probe_impl as probe
@@ -261,12 +273,11 @@ def test_clean_probe_allows_only_exact_c02_migration_owned_feature_flags():
     invalid = []
 
     missing = copy.deepcopy(valid)
-    rows = [json.loads(row) for row in missing["tables"]["governance_featureflag"]["rows"]]
-    _set_table_rows(missing, "governance_featureflag", rows[:-1])
+    _set_table_rows(missing, "governance_featureflag", _feature_rows(missing)[:-1])
     invalid.append(("missing seed", missing))
 
     fifth = copy.deepcopy(valid)
-    rows = [json.loads(row) for row in fifth["tables"]["governance_featureflag"]["rows"]]
+    rows = _feature_rows(fifth)
     rows.append(
         {
             "id": str(uuid4()),
@@ -279,25 +290,25 @@ def test_clean_probe_allows_only_exact_c02_migration_owned_feature_flags():
     invalid.append(("unexpected fifth flag", fifth))
 
     wrong_key = copy.deepcopy(valid)
-    rows = [json.loads(row) for row in wrong_key["tables"]["governance_featureflag"]["rows"]]
+    rows = _feature_rows(wrong_key)
     rows[0]["key"] = "wrong"
     _set_table_rows(wrong_key, "governance_featureflag", rows)
     invalid.append(("wrong key", wrong_key))
 
     enabled = copy.deepcopy(valid)
-    rows = [json.loads(row) for row in enabled["tables"]["governance_featureflag"]["rows"]]
+    rows = _feature_rows(enabled)
     rows[0]["enabled"] = True
     _set_table_rows(enabled, "governance_featureflag", rows)
     invalid.append(("enabled seed", enabled))
 
     wrong_version = copy.deepcopy(valid)
-    rows = [json.loads(row) for row in wrong_version["tables"]["governance_featureflag"]["rows"]]
+    rows = _feature_rows(wrong_version)
     rows[0]["version"] = 2
     _set_table_rows(wrong_version, "governance_featureflag", rows)
     invalid.append(("wrong version", wrong_version))
 
     wrong_uuid = copy.deepcopy(valid)
-    rows = [json.loads(row) for row in wrong_uuid["tables"]["governance_featureflag"]["rows"]]
+    rows = _feature_rows(wrong_uuid)
     rows[0]["id"] = str(uuid4())
     _set_table_rows(wrong_uuid, "governance_featureflag", rows)
     invalid.append(("wrong UUID", wrong_uuid))
@@ -307,7 +318,11 @@ def test_clean_probe_allows_only_exact_c02_migration_owned_feature_flags():
     invalid.append(("accounts user row", user))
 
     business = copy.deepcopy(valid)
-    _set_table_rows(business, "professionals_professionalprofile", [{"id": str(uuid4())}])
+    _set_table_rows(
+        business,
+        "professionals_professionalprofile",
+        [{"id": str(uuid4())}],
+    )
     invalid.append(("business row", business))
 
     auth_user = copy.deepcopy(valid)
@@ -318,12 +333,8 @@ def test_clean_probe_allows_only_exact_c02_migration_owned_feature_flags():
     del missing_accounts["tables"]["accounts_user"]
     invalid.append(("accounts_user absent", missing_accounts))
 
-    # Prove deterministic IDs rather than merely accepting any four disabled keys.
-    rows = [json.loads(row) for row in valid["tables"]["governance_featureflag"]["rows"]]
-    assert {
-        row["id"]
-        for row in rows
-    } == {
+    rows = _feature_rows(valid)
+    assert {row["id"] for row in rows} == {
         str(uuid5(NAMESPACE_URL, "fitlink:c02:flag:" + row["key"]))
         for row in rows
     }
