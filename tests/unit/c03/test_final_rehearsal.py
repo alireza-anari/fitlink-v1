@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[3]
 REQUIRED = (
     "docker/c03_baseline.py",
     "sh docker/verify_c02.sh",
-    "run_step c02_populate c02 run",
+    "run_step c02_populate ",
     "run_step populated_preservation c03 run",
     "upgraded_capabilities probe replay",
     "upgraded_constraints probe constraints",
@@ -149,20 +149,44 @@ def _docker_probe_dependencies(source):
     return dependencies
 
 
-def test_c02_population_probe_mounts_valid_package_root_and_all_dependencies():
+def test_c02_population_preserves_exact_read_only_source_and_external_probe():
     verifier = (ROOT / "docker/verify_c03.sh").read_text()
     wrapper = (ROOT / "docker/c03_upgrade_probe.py").read_text()
     assert "ROOT = Path(__file__).resolve().parents[1]" in wrapper
 
-    populate_start = verifier.index("run_step c02_populate ")
-    populate_end = verifier.index("# The same project/db/container", populate_start)
+    code = "\n".join(
+        line for line in verifier.splitlines() if not line.lstrip().startswith("#")
+    )
+    normalized = " ".join(code.replace("\\\n", " ").split())
+    ordered = (
+        'run_step exact_c02_before_populate python docker/c03_baseline.py "$baseline"',
+        "run_step c02_populate ",
+        'run_step exact_c02_after_populate python docker/c03_baseline.py "$baseline"',
+    )
+    positions = [normalized.find(item) for item in ordered]
+    assert all(position >= 0 for position in positions)
+    assert positions == sorted(positions), "C02 must be exact before and after population"
+
+    assert 'cat > "$private/c02-populate-compose.yml"' in code, (
+        "C02 population must define an isolated Compose source override"
+    )
+    assert 'source: "$baseline"' in code
+    assert "target: /app" in code
+    assert "read_only: true" in code, "Authoritative C02 /app must be read-only"
+    assert '-f "$private/c02-populate-compose.yml"' in code
+
+    populate_start = verifier.find("run_step c02_populate ")
+    populate_end = verifier.find("run_step exact_c02_after_populate ", populate_start)
+    assert populate_start >= 0 and populate_end > populate_start
     populate = verifier[populate_start:populate_end]
+    assert "c02_population run" in populate
+    assert "/app/docker/c03_upgrade_probe.py" not in populate
     assert (
-        '"$root/docker/c03_upgrade_probe.py:/app/docker/c03_upgrade_probe.py:ro"'
+        '"$root/docker/c03_upgrade_probe.py:/task14/docker/c03_upgrade_probe.py:ro"'
         in populate
     )
     assert (
-        "/opt/venv/bin/python /app/docker/c03_upgrade_probe.py prepare "
+        "/opt/venv/bin/python /task14/docker/c03_upgrade_probe.py prepare "
         in populate.replace("\\\n", "")
     )
 
@@ -170,8 +194,21 @@ def test_c02_population_probe_mounts_valid_package_root_and_all_dependencies():
     assert dependencies
     for module in dependencies:
         relative = module.replace(".", "/") + ".py"
-        mount = f'"$root/{relative}:/app/{relative}:ro"'
-        assert mount in populate, f"Missing read-only C02 probe dependency: {module}"
+        mount = f'"$root/{relative}:/task14/{relative}:ro"'
+        assert mount in populate, f"Missing external read-only C02 probe dependency: {module}"
+
+    forbidden = (
+        "git checkout",
+        "git reset",
+        "git clone",
+        "cp -a ",
+        "rsync ",
+        "curl ",
+        "wget ",
+    )
+    assert all(item not in normalized for item in forbidden), (
+        "C02 exactness must not be restored by self-healing or re-download"
+    )
 
     preserve_start = verifier.index("run_step populated_preservation ")
     preserve_end = verifier.index("# Deliberate C03 commands", preserve_start)
