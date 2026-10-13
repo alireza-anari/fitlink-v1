@@ -168,10 +168,12 @@ run_step c02_config c02 config --quiet
 run_step c02_build c02 build checks
 run_step c02_services c02 up -d --wait db redis
 run_step c02_migrate c02 run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
+run_step exact_c02_before_populate python docker/c03_baseline.py "$baseline"
 run_step c02_populate c02 run --rm --no-deps --user "$(id -u):$(id -g)" \
   -v "$root/docker/c03_upgrade_probe.py:/app/docker/c03_upgrade_probe.py:ro" \
   -v "$root/docker/c03_upgrade_probe_impl.py:/app/docker/c03_upgrade_probe_impl.py:ro" \
   -v "$private/preservation:/rehearsal" checks /opt/venv/bin/python /app/docker/c03_upgrade_probe.py prepare /rehearsal/metadata.json
+run_step exact_c02_after_populate python docker/c03_baseline.py "$baseline"
 # The same project/db/container/volume/network/env file stay in place.
 run_step c03_config c03 config --quiet
 run_step c03_build c03 build checks
@@ -222,7 +224,7 @@ clean_cleanup() {
   clean down --remove-orphans >>"$private/cleanup.log" 2>&1 || result=$?
   test -z "$(docker ps -aq --filter label=com.docker.compose.project="$clean_project")" || result=1
   test -z "$(docker network ls -q --filter label=com.docker.compose.project="$clean_project")" || result=1
-  printf '{"stage":"clean_cleanup","exit_code":%s}\n' "$result" >>"$evidence/upgrade.jsonl"
+  printf '{"stage":"clean_cleanup","exit_code":%s}\n' "$stage" "$result" >>"$evidence/upgrade.jsonl"
   return "$result"
 }
 trap 'exit_status=$?; trap - EXIT; cleanup || exit_status=1; clean_cleanup || exit_status=1; exit "$exit_status"' EXIT
