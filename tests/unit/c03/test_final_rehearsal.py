@@ -339,3 +339,38 @@ def test_clean_probe_allows_only_exact_c02_migration_owned_feature_flags():
 
     for label, state in invalid:
         assert not predicate(state), f"invalid clean state accepted: {label}"
+
+
+def _final_exact_c02_preflight_valid(source):
+    code = "\n".join(
+        line for line in source.splitlines() if not line.lstrip().startswith("#")
+    )
+    normalized = " ".join(code.replace("\\\n", " ").split())
+    ordered = (
+        'run_step exact_c02_host_preflight python docker/c03_baseline.py "$baseline"',
+        "run_step exact_c02_clean_runtime_preflight clean run --rm --no-deps checks uv run --frozen python docker/c03_baseline.py /app/.runtime/c02",
+        "run_step isolated_exact_baseline clean run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py -q --strict-markers",
+        "run_step complete_backend clean run --rm --no-deps checks uv run --frozen pytest tests/unit tests/integration -q --strict-markers",
+    )
+    positions = [normalized.find(item) for item in ordered]
+    forbidden = (
+        "git checkout",
+        "git reset",
+        "git clone",
+        "--deselect",
+        "continue-on-error",
+        "|| true",
+    )
+    return (
+        all(position >= 0 for position in positions)
+        and positions == sorted(positions)
+        and all(item not in normalized for item in forbidden)
+    )
+
+
+def test_final_verifier_revalidates_exact_c02_immediately_before_complete_backend():
+    source = (ROOT / "docker/verify_c03.sh").read_text()
+    assert _final_exact_c02_preflight_valid(source), (
+        "complete_backend must be preceded by ordered host, clean-runtime, and isolated "
+        "exact-C02 integrity gates without self-healing or skips"
+    )
