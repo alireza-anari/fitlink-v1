@@ -516,7 +516,7 @@ run_step clean_runtime clean up -d --wait web worker beat
 run_step clean_scanner clean exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
 run_step exact_c02_host_preflight python docker/c03_baseline.py "$baseline"
 run_step exact_c02_clean_runtime_preflight clean run --rm --no-deps checks uv run --frozen python docker/c03_baseline.py /app/.runtime/c02
-if [ "$clone_diagnostic_only" -eq 1 ]; then
+cloneability_preflight() {
   cat > "$private/clone-diagnostic.py" <<'PY'
 import json
 import os
@@ -622,13 +622,14 @@ with tempfile.TemporaryDirectory(prefix="c03-task14-clone-") as temporary:
             ),
             flush=True,
         )
-        raise SystemExit(2)
+        raise SystemExit(0)
 PY
   chmod 600 "$private/clone-diagnostic.py"
-  run_step clone_copytree_diagnostic clean run --rm --no-deps \
+  clean run --rm --no-deps \
     -v "$private/clone-diagnostic.py:/task14/clone-diagnostic.py:ro" \
     checks /opt/venv/bin/python /task14/clone-diagnostic.py
-fi
+}
+run_step cloneability_preflight cloneability_preflight
 run_step isolated_exact_baseline clean run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py -q --strict-markers
 run_step complete_backend clean run --rm --no-deps checks uv run --frozen pytest tests/unit tests/integration -q --strict-markers --tb=no --show-capture=no
 run_step focused_task14 clean run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=no --show-capture=no
