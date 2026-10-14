@@ -12,6 +12,7 @@ clean_project=fitlink-c03-task14-clean
 private=$root/.runtime/task14-private
 evidence=$root/.runtime/c03-task14-evidence
 env_file=$root/.env.c03-task14-upgrade
+clone_diagnostic_only=0
 case "${1:-}" in
   '') ;;
   --native-processing-diagnostic)
@@ -19,6 +20,14 @@ case "${1:-}" in
     private=$root/.runtime/task14-native-private
     evidence=$root/.runtime/c03-task14-native-evidence
     env_file=$root/.env.c03-task14-native-diagnostic
+    ;;
+  --clone-diagnostic)
+    clone_diagnostic_only=1
+    project=fitlink-c03-task14-clone-diagnostic
+    clean_project=fitlink-c03-task14-clone-clean
+    private=$root/.runtime/task14-clone-private
+    evidence=$root/.runtime/c03-task14-clone-evidence
+    env_file=$root/.env.c03-task14-clone-diagnostic
     ;;
   *) exit 1 ;;
 esac
@@ -74,6 +83,50 @@ for line in Path(sys.argv[1]).read_text(errors="replace").splitlines():
         assert all(type(result[k]) is int and -999 <= result[k] <= 65535 for k in ints)
         assert all(re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", result[k]) for k in versions)
         print("C03_TASK14_RUNTIME " + json.dumps(result), flush=True)
+clone_lines = [
+    line
+    for line in Path(sys.argv[1]).read_text(errors="replace").splitlines()
+    if line.startswith("C03_TASK14_CLONE_DIAGNOSTIC ")
+]
+assert len(clone_lines) <= 1
+for line in clone_lines:
+    clone = json.loads(line.removeprefix("C03_TASK14_CLONE_DIAGNOSTIC "))
+    assert set(clone) == {
+        "relative_path",
+        "lstat_type",
+        "error_class",
+        "errno",
+        "symlink_target_exists",
+        "symlink_target_kind",
+    }
+    relative = clone["relative_path"]
+    assert isinstance(relative, str) and 1 <= len(relative) <= 240
+    assert not relative.startswith("/")
+    assert all(ord(character) >= 32 and ord(character) != 127 for character in relative)
+    assert clone["lstat_type"] in {
+        "regular", "directory", "symlink", "socket", "fifo", "other",
+        "missing", "not-applicable",
+    }
+    assert isinstance(clone["error_class"], str)
+    assert re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,63}|none|unknown", clone["error_class"])
+    error_number = clone["errno"]
+    assert error_number is None or (
+        type(error_number) is int and 1 <= error_number <= 4095
+    )
+    assert clone["symlink_target_exists"] in {"yes", "no", "not-applicable"}
+    assert clone["symlink_target_kind"] in {
+        "absolute", "relative", "unavailable", "not-applicable"
+    }
+    print("FIRST OFFENDING RELATIVE PATH: " + json.dumps(relative), flush=True)
+    print("LSTAT TYPE: " + clone["lstat_type"], flush=True)
+    print("ERROR CLASS: " + clone["error_class"], flush=True)
+    print(
+        "ERRNO: " + (str(error_number) if error_number is not None else "unavailable"),
+        flush=True,
+    )
+    print("SYMLINK TARGET EXISTS: " + clone["symlink_target_exists"], flush=True)
+    if clone["lstat_type"] == "symlink":
+        print("SYMLINK TARGET KIND: " + clone["symlink_target_kind"], flush=True)
 mutation_lines = [
     line
     for line in Path(sys.argv[1]).read_text(errors="replace").splitlines()
@@ -102,7 +155,8 @@ for line in mutation_lines:
             isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
         )
     print("C03_TASK14_C02_MUTATION " + json.dumps(mutation, sort_keys=True), flush=True)
-print("C03_TASK14_DIAGNOSTIC " + json.dumps(private_log_metadata(sys.argv[1])), flush=True)
+if not clone_lines:
+    print("C03_TASK14_DIAGNOSTIC " + json.dumps(private_log_metadata(sys.argv[1])), flush=True)
 with Path(sys.argv[1]).open(errors="replace") as stream:
     if any(re.search(r"\b[1-9][0-9]* skipped\b", line) for line in stream):
         raise SystemExit(1)
@@ -462,6 +516,119 @@ run_step clean_runtime clean up -d --wait web worker beat
 run_step clean_scanner clean exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
 run_step exact_c02_host_preflight python docker/c03_baseline.py "$baseline"
 run_step exact_c02_clean_runtime_preflight clean run --rm --no-deps checks uv run --frozen python docker/c03_baseline.py /app/.runtime/c02
+if [ "$clone_diagnostic_only" -eq 1 ]; then
+  cat > "$private/clone-diagnostic.py" <<'PY'
+import json
+import os
+import re
+import shutil
+import stat
+import tempfile
+from pathlib import Path
+
+source = Path("/app/.runtime/c02")
+with tempfile.TemporaryDirectory(prefix="c03-task14-clone-") as temporary:
+    destination = Path(temporary) / "baseline"
+    try:
+        shutil.copytree(
+            source,
+            destination,
+            ignore=shutil.ignore_patterns(".git"),
+        )
+    except shutil.Error as aggregate:
+        failures = aggregate.args[0]
+        if not isinstance(failures, list) or not failures:
+            result = {
+                "relative_path": "<aggregate-entry-unavailable>",
+                "lstat_type": "not-applicable",
+                "error_class": "unknown",
+                "errno": None,
+                "symlink_target_exists": "not-applicable",
+                "symlink_target_kind": "not-applicable",
+            }
+        else:
+            src, _dst, message = failures[0]
+            path = Path(src)
+            try:
+                relative = path.relative_to(source).as_posix()
+            except ValueError:
+                relative = "<outside-c02>"
+            if len(relative) > 240:
+                relative = "<relative-path-over-bound>"
+
+            try:
+                mode = path.lstat().st_mode
+            except OSError:
+                lstat_type = "missing"
+            else:
+                if stat.S_ISREG(mode):
+                    lstat_type = "regular"
+                elif stat.S_ISDIR(mode):
+                    lstat_type = "directory"
+                elif stat.S_ISLNK(mode):
+                    lstat_type = "symlink"
+                elif stat.S_ISSOCK(mode):
+                    lstat_type = "socket"
+                elif stat.S_ISFIFO(mode):
+                    lstat_type = "fifo"
+                else:
+                    lstat_type = "other"
+
+            if lstat_type == "symlink":
+                target_exists = "yes" if path.exists() else "no"
+                try:
+                    target = os.readlink(path)
+                except OSError:
+                    target_kind = "unavailable"
+                else:
+                    target_kind = "absolute" if os.path.isabs(target) else "relative"
+            else:
+                target_exists = "not-applicable"
+                target_kind = "not-applicable"
+
+            match = re.search(r"\[Errno ([0-9]+)\]", str(message))
+            error_number = int(match.group(1)) if match else None
+            error_class = (
+                OSError(error_number, "").__class__.__name__
+                if error_number is not None
+                else "unknown"
+            )
+            result = {
+                "relative_path": relative,
+                "lstat_type": lstat_type,
+                "error_class": error_class,
+                "errno": error_number,
+                "symlink_target_exists": target_exists,
+                "symlink_target_kind": target_kind,
+            }
+        print(
+            "C03_TASK14_CLONE_DIAGNOSTIC " + json.dumps(result, sort_keys=True),
+            flush=True,
+        )
+        raise SystemExit(1)
+    else:
+        print(
+            "C03_TASK14_CLONE_DIAGNOSTIC "
+            + json.dumps(
+                {
+                    "relative_path": "none",
+                    "lstat_type": "not-applicable",
+                    "error_class": "none",
+                    "errno": None,
+                    "symlink_target_exists": "not-applicable",
+                    "symlink_target_kind": "not-applicable",
+                },
+                sort_keys=True,
+            ),
+            flush=True,
+        )
+        raise SystemExit(2)
+PY
+  chmod 600 "$private/clone-diagnostic.py"
+  run_step clone_copytree_diagnostic clean run --rm --no-deps \
+    -v "$private/clone-diagnostic.py:/task14/clone-diagnostic.py:ro" \
+    checks /opt/venv/bin/python /task14/clone-diagnostic.py
+fi
 run_step isolated_exact_baseline clean run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py -q --strict-markers
 run_step complete_backend clean run --rm --no-deps checks uv run --frozen pytest tests/unit tests/integration -q --strict-markers --tb=no --show-capture=no
 run_step focused_task14 clean run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=no --show-capture=no
