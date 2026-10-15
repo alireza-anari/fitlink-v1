@@ -624,7 +624,7 @@ with tempfile.TemporaryDirectory(prefix="c03-task14-clone-") as temporary:
         )
         raise SystemExit(0)
 PY
-  chmod 600 "$private/clone-diagnostic.py"
+  chmod 644 "$private/clone-diagnostic.py"
   clean run --rm --no-deps \
     -v "$private/clone-diagnostic.py:/task14/clone-diagnostic.py:ro" \
     checks /opt/venv/bin/python /task14/clone-diagnostic.py
