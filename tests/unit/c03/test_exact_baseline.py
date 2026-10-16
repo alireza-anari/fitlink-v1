@@ -11,6 +11,15 @@ ROOT = Path(__file__).resolve().parents[3]
 C02_TREE = "ed788191bb6f5011e6b35a63823ae8183af7b53d"
 
 
+def _clone_exact_c02(source, target):
+    return shutil.copytree(
+        source,
+        target,
+        symlinks=True,
+        ignore=shutil.ignore_patterns(".git"),
+    )
+
+
 @pytest.mark.parametrize("defect", ["modified", "missing", "extra", "symlink"])
 def test_exact_c02_source_tamper_missing_extra_symlink(tmp_path, defect):
     from docker.c03_baseline import verify_baseline
@@ -19,7 +28,7 @@ def test_exact_c02_source_tamper_missing_extra_symlink(tmp_path, defect):
     # This assertion must pass before a deliberate source mutation can count RED.
     assert verify_baseline(source) == C02_TREE
     target = tmp_path / "baseline"
-    shutil.copytree(source, target, ignore=shutil.ignore_patterns(".git"))
+    _clone_exact_c02(source, target)
     assert verify_baseline(target) == C02_TREE
     path = target / "apps/accounts/models.py"
     if defect == "modified":
@@ -44,9 +53,7 @@ def test_exact_ref_verification_without_git_binary(tmp_path, monkeypatch):
     from docker import c03_baseline
 
     target = tmp_path / "baseline"
-    shutil.copytree(
-        ROOT / ".runtime/c02", target, ignore=shutil.ignore_patterns(".git")
-    )
+    _clone_exact_c02(ROOT / ".runtime/c02", target)
     metadata = target / ".git"
     metadata.mkdir()
     (metadata / "HEAD").write_text(c03_baseline.C02_COMMIT + "\n")
@@ -65,9 +72,7 @@ def test_exact_c02_wrong_checkout_ref_rejected(tmp_path):
     from docker.c03_baseline import verify_baseline
 
     target = tmp_path / "baseline"
-    shutil.copytree(
-        ROOT / ".runtime/c02", target, ignore=shutil.ignore_patterns(".git")
-    )
+    _clone_exact_c02(ROOT / ".runtime/c02", target)
     assert verify_baseline(target) == C02_TREE
     (target / ".git").write_text("gitdir: " + str(ROOT / ".git") + "\n")
     with pytest.raises(ValueError, match="baseline"):
@@ -81,9 +86,7 @@ def test_exact_c02_source_modes_and_generated_namespace_bounds(tmp_path, defect)
     from docker.c03_baseline import verify_baseline
 
     target = tmp_path / "baseline"
-    shutil.copytree(
-        ROOT / ".runtime/c02", target, ignore=shutil.ignore_patterns(".git")
-    )
+    _clone_exact_c02(ROOT / ".runtime/c02", target)
     assert verify_baseline(target) == C02_TREE
     path = target / "apps/accounts/models.py"
     if defect == "mode":
