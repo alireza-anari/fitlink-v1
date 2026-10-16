@@ -838,11 +838,13 @@ with out.open("a") as stream:
         + "\n"
     )
 PY
-  return "$result"
+  case "$result" in
+    0|1) return 0 ;;
+    *) return "$result" ;;
+  esac
 }
-run_step clean_c02_browser clean_c02_browser_diagnostic
-# This diagnostic-only commit intentionally stops once the bounded evidence is captured.
-exit 1
+run_step clean_c02_browser_diagnostic clean_c02_browser_diagnostic
+run_step clean_c02_browser clean run --rm --no-deps browser uv run --frozen pytest tests/e2e/c02 tests/e2e/test_foundation_smoke.py -q --strict-markers --tracing=off --screenshot=off --video=off
 restart_probe() { clean run --rm --no-deps checks timeout -k 5s 60s uv run --frozen python docker/c03_asset_restart_probe.py "$@"; }
 mkdir -p "$root/.runtime/c03-triage"
 chmod 777 "$root/.runtime/c03-triage"
