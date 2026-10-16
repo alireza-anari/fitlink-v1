@@ -12,12 +12,26 @@ C02_TREE = "ed788191bb6f5011e6b35a63823ae8183af7b53d"
 
 
 def _clone_exact_c02(source, target):
-    return shutil.copytree(
-        source,
-        target,
-        symlinks=True,
-        ignore=shutil.ignore_patterns(".git"),
-    )
+    from docker.c03_baseline import verify_baseline
+
+    assert verify_baseline(source) == C02_TREE
+    manifest = json.loads((ROOT / "docker/c03_source_manifest.json").read_text())
+    entries = manifest["entries"]
+    target.mkdir()
+    for entry in sorted(
+        (entry for entry in entries if entry["type"] == "tree"),
+        key=lambda entry: (entry["path"].count("/"), entry["path"]),
+    ):
+        (target / entry["path"]).mkdir(parents=True, exist_ok=True)
+    for entry in entries:
+        if entry["type"] != "blob":
+            continue
+        destination = target / entry["path"]
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source / entry["path"], destination)
+        destination.chmod(0o755 if entry["mode"] == "100755" else 0o644)
+    assert verify_baseline(target) == C02_TREE
+    return target
 
 
 @pytest.mark.parametrize("defect", ["modified", "missing", "extra", "symlink"])

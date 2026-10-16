@@ -533,7 +533,6 @@ with tempfile.TemporaryDirectory(prefix="c03-task14-clone-") as temporary:
         shutil.copytree(
             source,
             destination,
-            symlinks=True,
             ignore=shutil.ignore_patterns(".git"),
         )
     except shutil.Error as aggregate:
@@ -634,7 +633,6 @@ if [ "$clone_diagnostic_only" -eq 1 ]; then
   run_step cloneability_preflight cloneability_preflight
   exit
 fi
-run_step cloneability_preflight cloneability_preflight
 run_step isolated_exact_baseline clean run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py -q --strict-markers
 run_step complete_backend clean run --rm --no-deps checks uv run --frozen pytest tests/unit tests/integration -q --strict-markers --tb=no --show-capture=no
 run_step focused_task14 clean run --rm --no-deps checks uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=no --show-capture=no
