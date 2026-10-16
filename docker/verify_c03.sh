@@ -647,7 +647,202 @@ browser_gate() {
 }
 run_step clean_owner_browser browser_gate --task11-owner
 run_step clean_staff_browser browser_gate --task12-staff
-run_step clean_c02_browser clean run --rm --no-deps browser uv run --frozen pytest tests/e2e/c02 tests/e2e/test_foundation_smoke.py -q --strict-markers --tracing=off --screenshot=off --video=off
+clean_c02_browser_diagnostic() {
+  diagnostic_script=$private/clean-c02-browser-diagnostic.py
+  diagnostic_log=$private/clean-c02-browser-focused.log
+  diagnostic_evidence=$evidence/browser-diagnostic.jsonl
+  web_id=$(clean ps -q web)
+  if [ -n "$web_id" ]; then
+    web_state=$(docker inspect --format '{{.State.Status}}' "$web_id" 2>/dev/null || printf 'unavailable')
+    web_health=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}undefined{{end}}' "$web_id" 2>/dev/null || printf 'unavailable')
+    web_restarts=$(docker inspect --format '{{.RestartCount}}' "$web_id" 2>/dev/null || printf 'unavailable')
+  else
+    web_state=missing
+    web_health=unavailable
+    web_restarts=unavailable
+  fi
+  python - "$diagnostic_evidence" "$web_state" "$web_health" "$web_restarts" <<'PY'
+import json
+import re
+import sys
+from pathlib import Path
+
+out = Path(sys.argv[1])
+state, health, restarts = sys.argv[2:]
+assert re.fullmatch(r"[a-z-]{1,32}", state)
+assert re.fullmatch(r"[a-z-]{1,32}", health)
+restart_count = None if restarts == "unavailable" else int(restarts)
+assert restart_count is None or 0 <= restart_count <= 1000000
+out.write_text(
+    json.dumps(
+        {
+            "event": "clean_web_service",
+            "web_state": state,
+            "web_health": health,
+            "web_restart_count": restart_count,
+        },
+        sort_keys=True,
+    )
+    + "\n"
+)
+PY
+  cat > "$diagnostic_script" <<'PY'
+import json
+import socket
+import urllib.error
+import urllib.request
+
+
+def probe(target_class, url):
+    try:
+        response = urllib.request.urlopen(url, timeout=5)
+    except urllib.error.HTTPError as error:
+        result = {
+            "target_class": target_class,
+            "result": "reachable",
+            "http_status": int(error.code),
+            "error_class": "none",
+            "errno": None,
+        }
+    except Exception as error:
+        reason = getattr(error, "reason", error)
+        error_number = getattr(reason, "errno", None)
+        result = {
+            "target_class": target_class,
+            "result": "unreachable",
+            "http_status": None,
+            "error_class": reason.__class__.__name__,
+            "errno": error_number if type(error_number) is int else None,
+        }
+    else:
+        result = {
+            "target_class": target_class,
+            "result": "reachable",
+            "http_status": int(response.status),
+            "error_class": "none",
+            "errno": None,
+        }
+        response.close()
+    print("C03_TASK14_BROWSER_PROBE " + json.dumps(result, sort_keys=True), flush=True)
+
+
+try:
+    socket.getaddrinfo("web", 8000, type=socket.SOCK_STREAM)
+except OSError:
+    network = "unavailable"
+else:
+    network = "available"
+print(
+    "C03_TASK14_BROWSER_NETWORK "
+    + json.dumps({"available": network}, sort_keys=True),
+    flush=True,
+)
+probe("loopback-8001", "http://127.0.0.1:8001/fa/auth/login/")
+probe("compose-web-8000", "http://web:8000/fa/auth/login/")
+PY
+  chmod 644 "$diagnostic_script"
+  result=0
+  clean run --rm --no-deps \
+    -v "$diagnostic_script:/task14/clean-c02-browser-diagnostic.py:ro" \
+    browser sh -c '/opt/venv/bin/python /task14/clean-c02-browser-diagnostic.py && exec uv run --frozen pytest tests/e2e/test_foundation_smoke.py::test_foundation_smoke -q --strict-markers --tb=long --tracing=off --screenshot=off --video=off' \
+    >"$diagnostic_log" 2>&1 || result=$?
+  python - "$diagnostic_log" "$diagnostic_evidence" "$result" <<'PY'
+import json
+import re
+import sys
+from pathlib import Path
+
+log = Path(sys.argv[1]).read_text(errors="replace")
+out = Path(sys.argv[2])
+pytest_exit = int(sys.argv[3])
+records = []
+network = None
+for line in log.splitlines():
+    if line.startswith("C03_TASK14_BROWSER_NETWORK "):
+        assert network is None
+        network = json.loads(line.removeprefix("C03_TASK14_BROWSER_NETWORK "))
+    if line.startswith("C03_TASK14_BROWSER_PROBE "):
+        records.append(json.loads(line.removeprefix("C03_TASK14_BROWSER_PROBE ")))
+assert network is not None and set(network) == {"available"}
+assert network["available"] in {"available", "unavailable"}
+assert len(records) == 2
+by_target = {record["target_class"]: record for record in records}
+assert set(by_target) == {"loopback-8001", "compose-web-8000"}
+with out.open("a") as stream:
+    stream.write(
+        json.dumps(
+            {"event": "browser_network", "available": network["available"]},
+            sort_keys=True,
+        )
+        + "\n"
+    )
+    for target in ("loopback-8001", "compose-web-8000"):
+        record = by_target[target]
+        assert set(record) == {
+            "target_class", "result", "http_status", "error_class", "errno"
+        }
+        assert record["result"] in {"reachable", "unreachable"}
+        status = record["http_status"]
+        assert status is None or type(status) is int and 100 <= status <= 599
+        error_class = record["error_class"]
+        assert re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,63}|none", error_class)
+        error_number = record["errno"]
+        assert error_number is None or type(error_number) is int and 1 <= error_number <= 4095
+        stream.write(json.dumps(record, sort_keys=True) + "\n")
+
+clean = re.sub(r"\x1b\[[0-9;]*m", "", log)
+error_class = "none" if pytest_exit == 0 else "unavailable"
+message = "none" if pytest_exit == 0 else "playwright navigation error unavailable"
+for line in clean.splitlines():
+    match = re.search(
+        r"playwright\._impl\._errors\.([A-Za-z][A-Za-z0-9_]{0,63}):\s*(.+)",
+        line,
+    )
+    if not match:
+        continue
+    error_class = match.group(1)
+    raw = match.group(2)
+    destination_match = re.search(
+        r"https?://(?:127\.0\.0\.1|web):(?:8000|8001)(?:/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*)?",
+        raw,
+    )
+    destination = destination_match.group(0) if destination_match else None
+    if "ERR_CONNECTION_REFUSED" in raw:
+        message = "Page.goto: net::ERR_CONNECTION_REFUSED"
+    elif "ERR_NAME_NOT_RESOLVED" in raw:
+        message = "Page.goto: net::ERR_NAME_NOT_RESOLVED"
+    elif "ERR_CONNECTION_RESET" in raw:
+        message = "Page.goto: net::ERR_CONNECTION_RESET"
+    elif "ERR_ABORTED" in raw:
+        message = "Page.goto: net::ERR_ABORTED"
+    elif "Timeout" in raw or "timeout" in raw:
+        message = "Page.goto: timeout"
+    else:
+        message = "Page.goto: unclassified navigation failure"
+    if destination is not None:
+        message += " at " + destination
+    break
+assert re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,63}|none|unavailable", error_class)
+assert 1 <= len(message) <= 300 and all(32 <= ord(character) < 127 for character in message)
+with out.open("a") as stream:
+    stream.write(
+        json.dumps(
+            {
+                "event": "playwright_error",
+                "error_class": error_class,
+                "message": message,
+                "pytest_exit_code": pytest_exit,
+            },
+            sort_keys=True,
+        )
+        + "\n"
+    )
+PY
+  return "$result"
+}
+run_step clean_c02_browser clean_c02_browser_diagnostic
+# This diagnostic-only commit intentionally stops once the bounded evidence is captured.
+exit 1
 restart_probe() { clean run --rm --no-deps checks timeout -k 5s 60s uv run --frozen python docker/c03_asset_restart_probe.py "$@"; }
 mkdir -p "$root/.runtime/c03-triage"
 chmod 777 "$root/.runtime/c03-triage"
