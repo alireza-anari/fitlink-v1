@@ -49,18 +49,18 @@ test ! -e "$env_file"
 mkdir "$private" "$evidence"
 chmod 700 "$private" "$evidence"
 run_step() {
-  stage=$1
+  gate_stage=$1
   shift
   result=0
   # A background child keeps errexit active inside gate functions. An OR-list
   # around the function call would disable it and hide earlier failed commands.
-  "$@" >"$private/$stage.log" 2>&1 &
+  "$@" >"$private/$gate_stage.log" 2>&1 &
   step_pid=$!
   wait "$step_pid" || result=$?
   # Only constant probe markers may leave private logs. Never print failures,
   # pytest locals, session rows, credential environment or snapshot contents.
   metadata_result=0
-  python - "$private/$stage.log" <<'PY' || metadata_result=$?
+  python - "$private/$gate_stage.log" <<'PY' || metadata_result=$?
 import re
 import sys
 from pathlib import Path
@@ -162,8 +162,8 @@ with Path(sys.argv[1]).open(errors="replace") as stream:
         raise SystemExit(1)
 PY
   test "$metadata_result" -eq 0 || result=1
-  printf '{"stage":"%s","exit_code":%s}\n' "$stage" "$result" >>"$evidence/upgrade.jsonl"
-  printf 'C03_TASK14 stage=%s exit_code=%s\n' "$stage" "$result"
+  printf '{"stage":"%s","exit_code":%s}\n' "$gate_stage" "$result" >>"$evidence/upgrade.jsonl"
+  printf 'C03_TASK14 stage=%s exit_code=%s\n' "$gate_stage" "$result"
   test "$result" -eq 0
 }
 c02_source_snapshot() {
