@@ -1,0 +1,3204 @@
+{
+  "commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+  "tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a124ef608f99470c66c7ba253cce5357c5593c71"
+    },
+    {
+      "path": ".env.example",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "15fe12db29c64b469651f168770257ccc99c7c34"
+    },
+    {
+      "path": ".github",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "511318e90fcf1b5f74d9f65566478a5ee176cb80"
+    },
+    {
+      "path": ".github/workflows",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5dbf0a58f661bfde537a618068911316399130c2"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6c48c8e36e887ac4189f8b8c24916a55451f46f0"
+    },
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d384e4c77abf8c6a3d2b16d20dd3d1002cc337eb"
+    },
+    {
+      "path": ".node-version",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "60ade1ae01e833a5c291c47883bf26fb031f7727"
+    },
+    {
+      "path": ".python-version",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4de75f8d77a3e872d8883636a5d65deefb47fbe6"
+    },
+    {
+      "path": "Dockerfile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "07fd5cd34d9873636fd80418b3b57e9182944ab6"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "131dbf2f5d4fc00689675cb260fefce6bd2a69ec"
+    },
+    {
+      "path": "apps",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e5a16ab702cd83cc6bddeb386f81a2757bc8c63b"
+    },
+    {
+      "path": "apps/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/accounts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fe95a8b7ca661a0dc392ec4a06146d2e33ab5403"
+    },
+    {
+      "path": "apps/accounts/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/accounts/api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "175e78f4463991847c0f1befbf64cb98475d1af5"
+    },
+    {
+      "path": "apps/accounts/apps.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3ceb5a53c75c9f7000cb844faa98bde0a8adb21"
+    },
+    {
+      "path": "apps/accounts/client_ip.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eb29609ddc82dd943c23dae32d83cfe6b38f7066"
+    },
+    {
+      "path": "apps/accounts/contracts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b98b0fd9a94377205ac85e9ccd1405c5845c3c97"
+    },
+    {
+      "path": "apps/accounts/dates.LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b5d608742affc320b4e6fe3b6b2ad903ea75954"
+    },
+    {
+      "path": "apps/accounts/dates.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2188a87d97747d59fe40808fc684600235eb08b"
+    },
+    {
+      "path": "apps/accounts/forms.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f0b8cde10c1863d110d68fd5ce027bbeab1fdc18"
+    },
+    {
+      "path": "apps/accounts/limiter.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b0b5b63b54bd8cb1a53e649fb8788936f538e089"
+    },
+    {
+      "path": "apps/accounts/lua",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1419c3305241dd098c96a33de2b82b50ec51fcc8"
+    },
+    {
+      "path": "apps/accounts/lua/otp_admission.lua",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f49ab1ffe5a815bb9ccefc2dbb7ef6742e64951c"
+    },
+    {
+      "path": "apps/accounts/managers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7cdfceb467932c13e4906ea69f80054f758ed7f2"
+    },
+    {
+      "path": "apps/accounts/migrations",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1944b0ee933e50f791bcf4ba900369d474140567"
+    },
+    {
+      "path": "apps/accounts/migrations/0001_initial.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "919cc7f8fb31fede3a6fdc4096db34a8e1e6b8ae"
+    },
+    {
+      "path": "apps/accounts/migrations/0002_account_security.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "110d0b0e22509f55c6844fbc9a44cc23d6ed87c4"
+    },
+    {
+      "path": "apps/accounts/migrations/0003_map_legacy_account_state.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ca2084b3cf5cf87ea5ffdb6da69858dd69715fcf"
+    },
+    {
+      "path": "apps/accounts/migrations/0004_account_state_constraints.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "06713d17cc477175af80b5e1e852a87e8bd183f9"
+    },
+    {
+      "path": "apps/accounts/migrations/0005_target_binding_constraint.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1a259267b8341e954c20d6422016eb3a9542b95e"
+    },
+    {
+      "path": "apps/accounts/migrations/0006_recoveryrequest_recoveryevidencemetadata_and_more.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2700f6e384fc2d7dea748256e9d3b20f14192922"
+    },
+    {
+      "path": "apps/accounts/migrations/0007_recoveryrequest_recovery_live_target.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4901ee876ff515d4bbfc42b1c4c795366c22ec93"
+    },
+    {
+      "path": "apps/accounts/migrations/0008_history_append_only.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "093e966abdf4c6fa6e88c3bb43d588727f9f7438"
+    },
+    {
+      "path": "apps/accounts/migrations/0009_recoveryrequest_decided_at.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d949d97b146358eaa8f1169157d4aaa0a7232a8d"
+    },
+    {
+      "path": "apps/accounts/migrations/0010_remove_recoveryrequest_recovery_decision_binding_and_more.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e971729293f8ac0443918f0ae64c4d1c2b278ac8"
+    },
+    {
+      "path": "apps/accounts/migrations/0011_alter_recoveryevidencemetadata_classification.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a0c6d15910bb3b467bd23a956d10d079a3c80660"
+    },
+    {
+      "path": "apps/accounts/migrations/0012_phonechangeintent.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e4274033e9605026c3dd272071b3d844b911a9f3"
+    },
+    {
+      "path": "apps/accounts/migrations/0013_invitereferrallink_referralattribution_and_more.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eff08e245af688e081830cdf35cada2024faf527"
+    },
+    {
+      "path": "apps/accounts/migrations/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/accounts/models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b7529263ab398edae590799eb5ad9075ab42d4b3"
+    },
+    {
+      "path": "apps/accounts/otp.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "909918b4f9a7c57e7bf8a94b68adb19986df13ff"
+    },
+    {
+      "path": "apps/accounts/phone.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "84d8ac736c38a5063297c8dfebeccc69f89dfdca"
+    },
+    {
+      "path": "apps/accounts/phone_change.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ed6050d703d5248bf0463ea19d1faa5dd38b0da6"
+    },
+    {
+      "path": "apps/accounts/policies.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c695b6fce3ecf972049d1d290648fd32f5984ba8"
+    },
+    {
+      "path": "apps/accounts/recovery.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "233924d1ec85962b96f00d2b0488edcc5cbba22e"
+    },
+    {
+      "path": "apps/accounts/recovery_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "289d16758b99419e5356ac1ef242deef3814bfdc"
+    },
+    {
+      "path": "apps/accounts/referral_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ad46262654f7189d9616d7e3e88e18d1d594bc62"
+    },
+    {
+      "path": "apps/accounts/referrals.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf32baea84770b6cc7d9af705e9b77cfd3398bbb"
+    },
+    {
+      "path": "apps/accounts/security_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "077e2c4b604a2eca59b3c0a8852ce164fe63af58"
+    },
+    {
+      "path": "apps/accounts/security_keys.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50838abba43a9dff509f2b13ffe0961fd9f0b712"
+    },
+    {
+      "path": "apps/accounts/security_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03003c371ac6dc88e4d8a1cf170f3f8ef4054537"
+    },
+    {
+      "path": "apps/accounts/selectors.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9967d5384c5c7bc2650e71ea8145464f6d938f7"
+    },
+    {
+      "path": "apps/accounts/serializers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f38b8047bb61123d8c14818e3b49c545ae3c788"
+    },
+    {
+      "path": "apps/accounts/sessions.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "507365f66e0b84a20a60fa34c35c68ff16124132"
+    },
+    {
+      "path": "apps/accounts/sms.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f254b6baf8d113957f5a6a4cb56fc243a599b986"
+    },
+    {
+      "path": "apps/accounts/staff_views.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d5c09cf0316374c8aeeb099e2a7c508d13aa3188"
+    },
+    {
+      "path": "apps/accounts/state.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "21272912c734e5528acba37dc15e57217190c98d"
+    },
+    {
+      "path": "apps/accounts/urls.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "de9821b1a9119fff4e0e898c0427f9e025b7a44d"
+    },
+    {
+      "path": "apps/accounts/views.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "69aa552cf1933666e5a653d1dc8afa4de9b65a69"
+    },
+    {
+      "path": "apps/assets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e0a56b27a9f1299ce0bb36317ffedfaed21b48a7"
+    },
+    {
+      "path": "apps/assets/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/assets/api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8a96286a6123cce577a08c50ab22cbc6529cb502"
+    },
+    {
+      "path": "apps/assets/apps.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "434f69ea900ca2318a5ef234c42caf88494a83d3"
+    },
+    {
+      "path": "apps/assets/cleanup.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "00128fb1d937e02e790b56f6f5fd388af4efc146"
+    },
+    {
+      "path": "apps/assets/contracts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ad85b3a2184d802416a415952a3226a1b30f5f8"
+    },
+    {
+      "path": "apps/assets/delivery.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "225f9e6b0427e71534dd1ef5793ade3a0374150b"
+    },
+    {
+      "path": "apps/assets/derivative_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1eb6d05c014e960c4e423b5dd23bdd863a1e43c6"
+    },
+    {
+      "path": "apps/assets/image_decoder.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7bdaab84c45874010ebf777ddccf198e0f00e341"
+    },
+    {
+      "path": "apps/assets/images.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "60aeb2e05658704880264f548d3b2622032980ce"
+    },
+    {
+      "path": "apps/assets/migrations",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e3e87106f7c841b36e683a909ca498b727578a03"
+    },
+    {
+      "path": "apps/assets/migrations/0001_private_asset_metadata.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a110ad0e8d99817ea1df9a7374e2134f87cb4fea"
+    },
+    {
+      "path": "apps/assets/migrations/0002_remove_assetprocessingattempt_attempt_lease_pair_and_more.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0998be4b88aa31c6b7258bd88467e5e651d91b99"
+    },
+    {
+      "path": "apps/assets/migrations/0003_bounded_metadata.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e1864184b98e89b06f46354531b334801ec1c6e"
+    },
+    {
+      "path": "apps/assets/migrations/0004_immutable_accepted_source.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8604e2c8e9521233b24ef3d1f1ce35103a583c34"
+    },
+    {
+      "path": "apps/assets/migrations/0005_record_timestamps.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "19444df97898010d2a132e2f9e5fd0f9a07e9e50"
+    },
+    {
+      "path": "apps/assets/migrations/0006_lifecycle_timestamp_guard.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8575cac93f8e4abfd0bcc835b9b2dc96f9f49c8a"
+    },
+    {
+      "path": "apps/assets/migrations/0007_lifecycle_metadata.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "160ed626d97d8c5ae9ce75bc1944d3339c76f5b3"
+    },
+    {
+      "path": "apps/assets/migrations/0008_processing_authority.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7e2ea75aff24450e6ac8966e8fd3a531691157ef"
+    },
+    {
+      "path": "apps/assets/migrations/0009_processing_algorithm_prompts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb353b58e04e9942d5c192152eb5fb9503f10f96"
+    },
+    {
+      "path": "apps/assets/migrations/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/assets/models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a00be6919caf88948fbc1274477c04e1600238a"
+    },
+    {
+      "path": "apps/assets/policies.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c9d0996a560e91f00fc526729d87f09f9e58ba32"
+    },
+    {
+      "path": "apps/assets/privacy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "de2238546e9a00703db08d221489bac92c721773"
+    },
+    {
+      "path": "apps/assets/processing.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "491b7b1270c1bfdcbca63f794f61960f7f5247ae"
+    },
+    {
+      "path": "apps/assets/processing_worker.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "176a7c73daaf1a0fe8400af606213d2670e12f0b"
+    },
+    {
+      "path": "apps/assets/scanner.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c4d404b61b19d97b3668589c87b09e0bc9f64c8d"
+    },
+    {
+      "path": "apps/assets/serializers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b67645212be5fc67a2c4818849f5f9e609f160b5"
+    },
+    {
+      "path": "apps/assets/storage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03d958856ba327914522844a18b8270355cf076d"
+    },
+    {
+      "path": "apps/assets/tasks.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "af8f32da8c721d318a99b339060e5458b50ae68a"
+    },
+    {
+      "path": "apps/assets/uploads.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a2ee77029c18ecf7facd7412408c70403ff26c1"
+    },
+    {
+      "path": "apps/assets/urls.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aedd73345b2b9c61d8cbf36ecd8ac539bbfc6dec"
+    },
+    {
+      "path": "apps/assets/validation.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "296a7d325836515d4b8a5c02b173c04c8c51b3fb"
+    },
+    {
+      "path": "apps/assets/views.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a6b64229177a8cb08981085ab8ab2644b9fde5c"
+    },
+    {
+      "path": "apps/athletes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "24dfde522053244d27d3baeed5d6dab3719f7db1"
+    },
+    {
+      "path": "apps/athletes/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/athletes/api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bc8164e008ff75886b994ba4401e011d912bd2b0"
+    },
+    {
+      "path": "apps/athletes/apps.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ccab792682f68da2213f9e0cc2495b49370b0c7"
+    },
+    {
+      "path": "apps/athletes/baseline.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "be6869389b8b6b4863410fa3bbc8d1e22b60351d"
+    },
+    {
+      "path": "apps/athletes/baseline_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "18b5e458f9d28847e1644e581245cd2d343d5785"
+    },
+    {
+      "path": "apps/athletes/consent.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "239ca8c30f74f0535def73a88c0a2510447e23eb"
+    },
+    {
+      "path": "apps/athletes/contracts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e64c1ba1a5dd506d9bf8796e40dba5a4ac3de807"
+    },
+    {
+      "path": "apps/athletes/forms.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e7e5216b44307fc9a289cfb9bfd48b0af90bcc6"
+    },
+    {
+      "path": "apps/athletes/migrations",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "83aee21e2f81918e301203cbe2523deb6f0bfe1a"
+    },
+    {
+      "path": "apps/athletes/migrations/0001_initial.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8b7a430ac717bd607d3a0ece7fc7f77a2cb525e4"
+    },
+    {
+      "path": "apps/athletes/migrations/0002_baseline_guards.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "68b708763afd747f517687175ea1f28117487e87"
+    },
+    {
+      "path": "apps/athletes/migrations/0003_submitted_baseline_delete_guard.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aebd3b8c1a310600fb36bda09649b2dba4990254"
+    },
+    {
+      "path": "apps/athletes/migrations/0004_bounded_metadata.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "965dcd9e7dd4c585ddcb38e4cd7446a19d00d724"
+    },
+    {
+      "path": "apps/athletes/migrations/0005_receipt_restriction_contracts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "67b59477a04688c2ed0d7d83982d88d3345b22aa"
+    },
+    {
+      "path": "apps/athletes/migrations/0006_baseline_json_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aa10fb648ed1b4eb7a9bb5ec7c35c8d630d23a1f"
+    },
+    {
+      "path": "apps/athletes/migrations/0007_record_timestamps.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ebb5698718cea99e62185136b8beb10083d0dda4"
+    },
+    {
+      "path": "apps/athletes/migrations/0008_lifecycle_timestamp_guard.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04a8e31ba1665c1ad4c6d660d272382120193707"
+    },
+    {
+      "path": "apps/athletes/migrations/0009_ownership_anchors.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "97e37be98a10cf192274ed2f27c728bd8520e40d"
+    },
+    {
+      "path": "apps/athletes/migrations/0010_task3_baseline_command_contracts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bdf4919354ca1145f45825b03e359c39eee6e80b"
+    },
+    {
+      "path": "apps/athletes/migrations/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/athletes/models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f0348c3c48d22c78e265d3440ece1a5d68d9ee5"
+    },
+    {
+      "path": "apps/athletes/policies.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e76c93730ea5586b02383bafe7faae6ea98edda0"
+    },
+    {
+      "path": "apps/athletes/privacy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9a75b0ab4b24ee1ebdfe233d9f7132871a9538c6"
+    },
+    {
+      "path": "apps/athletes/receipt_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d489adffc7fbd9418b76ddcdbe4cc4def43cd07"
+    },
+    {
+      "path": "apps/athletes/selectors.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "37d7b6f01a65717078d443b5948511227df492f3"
+    },
+    {
+      "path": "apps/athletes/serializers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d58dfb1a5383c6a3a2febdaf409b77fee09f8041"
+    },
+    {
+      "path": "apps/athletes/services.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e0ef69bd5fb13a978a83cf6baca190269ec85ae"
+    },
+    {
+      "path": "apps/athletes/urls.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e832551f4faeac34a715f099d96759cc0c37a4a4"
+    },
+    {
+      "path": "apps/athletes/validation.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dbe0ac3601ad87fb89029339daafc8c819d2c348"
+    },
+    {
+      "path": "apps/athletes/views.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4acc619727d14476de4f34385f5d213c3fe88b45"
+    },
+    {
+      "path": "apps/governance",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e2438743b8dcd115238379cda362b8050598bd20"
+    },
+    {
+      "path": "apps/governance/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/governance/apps.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a4296ab87f7d5c34aaf9b7f0cfa38e44cb490dbf"
+    },
+    {
+      "path": "apps/governance/audit.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d5b65e93777f9a0ff174cdfa8d89347e57539331"
+    },
+    {
+      "path": "apps/governance/audit_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9673a1fbd367574e39f82b045bb5e1371b4dec32"
+    },
+    {
+      "path": "apps/governance/consent_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2696c57a0804ae5cce393dafe23a59a18f6899c"
+    },
+    {
+      "path": "apps/governance/consents.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f0fc4860dd16163410a256f93968265e74d673f8"
+    },
+    {
+      "path": "apps/governance/flag_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e05b010a6d79ef81a8d46da44e3ed1cd5783a45"
+    },
+    {
+      "path": "apps/governance/flags.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "60a0281f349a4d1b8bef5eff321bc60c7d1fc72a"
+    },
+    {
+      "path": "apps/governance/migrations",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b310c5c2e45f0b3fdf3e7eb74ffab9ec026c8a9f"
+    },
+    {
+      "path": "apps/governance/migrations/0001_initial.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eb22be7b06a29440d19c84cca8744b0d0a826f92"
+    },
+    {
+      "path": "apps/governance/migrations/0002_audit_append_only.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e7933655211e591e42ccfc18b2dcafaf58f6305"
+    },
+    {
+      "path": "apps/governance/migrations/0003_evidence_payload_constraints.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c48994498096d51d7f5496b9792108f0f2ae2ab"
+    },
+    {
+      "path": "apps/governance/migrations/0004_consent_core.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cf9d79ee713697df10d62419b69a9d8827b8b7fa"
+    },
+    {
+      "path": "apps/governance/migrations/0005_consent_granted_outbox.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9f050cc5b4b6ebcc65a08f2e1b80a707df5aabef"
+    },
+    {
+      "path": "apps/governance/migrations/0006_consent_terminal_guards.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "65508865ac6d44feb4964015b999c1f5d7a486cb"
+    },
+    {
+      "path": "apps/governance/migrations/0007_featureflag.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef349f7db23f053ca974abe68a8f28578ab742cd"
+    },
+    {
+      "path": "apps/governance/migrations/0008_seed_feature_flags.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2083979a25d6595887c4886fc03c0a490e980326"
+    },
+    {
+      "path": "apps/governance/migrations/0009_privacyrequest_recordhold_retentionpolicy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f63838cbb162eef22b2810a3cdccddd7b958f8ee"
+    },
+    {
+      "path": "apps/governance/migrations/0010_outboxdeliveryreceipt.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "87003c2233db81e85df62a1d9d339eddc97b318e"
+    },
+    {
+      "path": "apps/governance/migrations/0011_c03_profile_contracts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "14facb25f6d0d6dfe780d3468e0c7b9299258c34"
+    },
+    {
+      "path": "apps/governance/migrations/0012_c03_staff_capability_width.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5c4e8f2ccece2a872bcf8ffe89a099278be819ad"
+    },
+    {
+      "path": "apps/governance/migrations/0013_c03_audit_consent_hold_contracts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5226d04faaf3a2204a212ad4956baa20e8b07030"
+    },
+    {
+      "path": "apps/governance/migrations/0014_task3_baseline_read_audit.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b823c358458c6216c2be229afc10693f2af9843f"
+    },
+    {
+      "path": "apps/governance/migrations/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/governance/models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6dac6c2b433fdea55737601e0b53c94066db5292"
+    },
+    {
+      "path": "apps/governance/outbox.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e443b48536d0e159204f900fc9b9943d537066c"
+    },
+    {
+      "path": "apps/governance/outbox_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "88ac2114fabf9a3db05e0e0fd0a4db3006f04516"
+    },
+    {
+      "path": "apps/governance/privacy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6efe1a6a045909e3da6c58de7f12f6f2c1f1f92d"
+    },
+    {
+      "path": "apps/governance/privacy_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "242d860dd789b2e66d6e85049f4d1c26d3160643"
+    },
+    {
+      "path": "apps/governance/retention.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "109d04dc3e5797788e3d0d9a44a46dbb089388c3"
+    },
+    {
+      "path": "apps/governance/staff.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd519787c5ddc57ea795eb2ff4c2dc16f9e791ae"
+    },
+    {
+      "path": "apps/governance/staff_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "89bd34f583247d911d181ce56638a768940300ab"
+    },
+    {
+      "path": "apps/governance/tasks.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3813b958c9fbdac488224526846afffd8dc525ab"
+    },
+    {
+      "path": "apps/governance/views.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b9b58b84be8279fc4165f463cea6deb41d70d0d3"
+    },
+    {
+      "path": "apps/professionals",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f2071561eb1a3563d383f2b0333c20ea8933da3c"
+    },
+    {
+      "path": "apps/professionals/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/professionals/api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d7794ad979eba055661f5ec76f3042a951ced9af"
+    },
+    {
+      "path": "apps/professionals/apps.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8bf4a5d2480cfe84fd2b517802275970ad432436"
+    },
+    {
+      "path": "apps/professionals/assistant_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "394b16e1fcec16ce8e7c50fba7b1b2cf2807a904"
+    },
+    {
+      "path": "apps/professionals/assistants.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4c49921eee8d303831544ab29662b8b735d625a8"
+    },
+    {
+      "path": "apps/professionals/contracts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f06a55f58131d37072ffc313094e7d1b28602a02"
+    },
+    {
+      "path": "apps/professionals/credential_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1a5b4f4a62e502465543ffc147ebdadc817ae80"
+    },
+    {
+      "path": "apps/professionals/credentials.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d239eb283b5ac3cb790d5495e47e8464fb2878ac"
+    },
+    {
+      "path": "apps/professionals/forms.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2d99cb4587cba2ee10f05f0953a296bb6865ec0"
+    },
+    {
+      "path": "apps/professionals/migrations",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "12a5d221a945c1217e04283cdcdab486ba8b0b74"
+    },
+    {
+      "path": "apps/professionals/migrations/0001_profile_verification_metadata.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "66429c1963762572db6f497781d387cecb28a15c"
+    },
+    {
+      "path": "apps/professionals/migrations/0002_relational_guards.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "13b882ae29c65e5af95e6ee4fe610bfcc7f18c1d"
+    },
+    {
+      "path": "apps/professionals/migrations/0003_immutable_evidence_guards.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3172ff8ce77a0b092eb42b6be2bf3d526e8e267b"
+    },
+    {
+      "path": "apps/professionals/migrations/0004_fix_verification_decision_guard.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "140c8d7312b14809e9e99b170b90dedc0d6157cc"
+    },
+    {
+      "path": "apps/professionals/migrations/0005_remove_verificationtarget_target_role_declaration_pair_and_more.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6c183bd5dfa401ca8288fb31fba79a10fc169c4a"
+    },
+    {
+      "path": "apps/professionals/migrations/0006_submission_set_guards.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3006c7119c5b9a3551da543909429059f74ee82a"
+    },
+    {
+      "path": "apps/professionals/migrations/0007_assistant_nonself.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4808b8ef64aabc6dc9698d877a5b97358d42698d"
+    },
+    {
+      "path": "apps/professionals/migrations/0008_bounded_metadata.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7d631f933c2d1746eac38da799221a2514826df"
+    },
+    {
+      "path": "apps/professionals/migrations/0009_evidence_metadata_contracts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d828a59f6de852bd3cc2732bf297a61c50f414d9"
+    },
+    {
+      "path": "apps/professionals/migrations/0010_decision_snapshot_guard.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8c143b060402a5d621ec95fe2328fa1482cde644"
+    },
+    {
+      "path": "apps/professionals/migrations/0011_receipt_restriction_contracts.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6920f1a3534e8251ef6b234a8d95f9c60bfe77e0"
+    },
+    {
+      "path": "apps/professionals/migrations/0012_profile_json_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "39cb4047c6bba456fbc9d33def9bc86147138c19"
+    },
+    {
+      "path": "apps/professionals/migrations/0013_evidence_source_bindings.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "954710d02a8e448bfde33c48e336fc315c9dbfac"
+    },
+    {
+      "path": "apps/professionals/migrations/0014_record_timestamps.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "74ed20c8a61258a5bcabf513c60144976ed4ecaa"
+    },
+    {
+      "path": "apps/professionals/migrations/0015_lifecycle_timestamp_guards.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3390ef5243ca281ac9d9814a286f1a1bbd182e0e"
+    },
+    {
+      "path": "apps/professionals/migrations/0016_lifecycle_metadata.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f86b86c50f4af6a2c6d50332b5e9f8667cbb10b8"
+    },
+    {
+      "path": "apps/professionals/migrations/0017_ownership_anchors.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4759b9317448e1b728fa9191b922d821b8409ba9"
+    },
+    {
+      "path": "apps/professionals/migrations/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "apps/professionals/models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "54112cf9c34852a88b5bc0f4609264ab983a967e"
+    },
+    {
+      "path": "apps/professionals/policies.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4a41f4ccbf5249fafc0fe0d8a0e869062b53e3b"
+    },
+    {
+      "path": "apps/professionals/preview.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "083f14125052f003ab14f6c2c68a6359a819dfcd"
+    },
+    {
+      "path": "apps/professionals/privacy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "520c82b90c9d8bc4bd1eda1297d92e9234899cbb"
+    },
+    {
+      "path": "apps/professionals/profile_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a1569daceeefc60796b4ef8bfca2b74b94b5f11"
+    },
+    {
+      "path": "apps/professionals/receipt_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b2e8bb58e15b045e927b510cec7f65208d60cd0"
+    },
+    {
+      "path": "apps/professionals/restriction_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8ee2bf1300431b1c1ab350071aeb2ce19f39303f"
+    },
+    {
+      "path": "apps/professionals/restrictions.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2e576c29bf7d430fab3066ab111159bd3a7a3de"
+    },
+    {
+      "path": "apps/professionals/selectors.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85d9e703d6e2c2ec13f4015d5ede7d4fe48fa223"
+    },
+    {
+      "path": "apps/professionals/serializers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4eb2fcc575b5fc6b8a88a8f362bb622e3636b955"
+    },
+    {
+      "path": "apps/professionals/services.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d35e9b3823a253debb89340603fcd655b679652b"
+    },
+    {
+      "path": "apps/professionals/setup.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4a9157c999edfe6eb644d47872d6e49bc735817"
+    },
+    {
+      "path": "apps/professionals/staff_api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a6923ba42d0aa9d89b505707bb4ce6d7c5438b29"
+    },
+    {
+      "path": "apps/professionals/staff_forms.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae6615d789d52c8d6abc2e36a27e71e3a8452ac5"
+    },
+    {
+      "path": "apps/professionals/staff_views.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e48709499d272849aea856191f21db4aaa76b3e9"
+    },
+    {
+      "path": "apps/professionals/urls.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b823cf9a8fe2b310b0ccf061f467c7b1115fffa4"
+    },
+    {
+      "path": "apps/professionals/validation.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "994286292d78c374bc0db04034a30d225826b033"
+    },
+    {
+      "path": "apps/professionals/verification.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0c87cf3d0e198dd6806878870b3c7472f0d59bb9"
+    },
+    {
+      "path": "apps/professionals/verification_models.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8780cb2b5e45d1ae2518b42c1062c2ff48f255de"
+    },
+    {
+      "path": "apps/professionals/verification_selectors.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c0ec1b23d3cfbb03b8d7c76796d2f24a33d8797e"
+    },
+    {
+      "path": "apps/professionals/views.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "647258b066f41642c8dd9f57e7c4c44ab2b94534"
+    },
+    {
+      "path": "compose.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fa71a3ca4d76b8dcdb039bb2d2afcba32b2f37ed"
+    },
+    {
+      "path": "config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a8217e02ab76ff8ff1b77f877220b8cee87bf764"
+    },
+    {
+      "path": "config/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "370372af0d6acb6929b3ba5151d02b8c695b9d65"
+    },
+    {
+      "path": "config/account_middleware.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3bc7554fbc57588fa3c2c5adb43bd92926735479"
+    },
+    {
+      "path": "config/api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "92754fb24847303a2302391287e75c03c9c521ac"
+    },
+    {
+      "path": "config/api_security.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe679f538e4ddb7e15245e40995c606c926ab8d5"
+    },
+    {
+      "path": "config/asgi.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5407af6f2d0c48e4c77730337e194bbe42bbd1c"
+    },
+    {
+      "path": "config/authentication.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a822851d1cd874ddbaeb7eff43a7bd0afc786bc8"
+    },
+    {
+      "path": "config/c03_celery.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a49e25a1137b397624db76716051562133ce0bb"
+    },
+    {
+      "path": "config/c03_event_handlers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "36a55851e223e7f2493708874d70c9ac37424a6f"
+    },
+    {
+      "path": "config/celery.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "103b9d5377703a2f77d201445b43e670ec22cc3d"
+    },
+    {
+      "path": "config/event_handlers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9a8c4263f06ac0b45d3fa63d615e67983f7f8948"
+    },
+    {
+      "path": "config/health.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fb9b1a28259a624be715d0a806c4ca57cad6dc14"
+    },
+    {
+      "path": "config/logging.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c910affeb1c181094282e33bc5a0a5ae50b0b100"
+    },
+    {
+      "path": "config/middleware.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c73b9b7fd16981933ac309f5c8c451c4c57bca8d"
+    },
+    {
+      "path": "config/permissions.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "19317a206a4c4db8fbdfa77797772038bdbc1de5"
+    },
+    {
+      "path": "config/referral_views.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "107aa8e23c392a9241d99ad9622e439e49951945"
+    },
+    {
+      "path": "config/routing.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b3600a3553b68a8df42c79cd1e8c039781235fb7"
+    },
+    {
+      "path": "config/server.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b1d8649819cbc62d8bde37532eb4c8ed29783d7f"
+    },
+    {
+      "path": "config/settings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "710dc47715c6003f0dd030e3580cb620f90ed72b"
+    },
+    {
+      "path": "config/settings/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "config/settings/base.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1c0e7e6571203207838fa34405f0e618923e8266"
+    },
+    {
+      "path": "config/settings/build.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7111ff9c69567ff95486d4798bc52f99c37065d3"
+    },
+    {
+      "path": "config/settings/development.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b1d9b1f1e2dcc7af45d24ca76a63f39dfe4c5ce8"
+    },
+    {
+      "path": "config/settings/env.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5e2eff79de2ed6079b54ba318ce3e85f47e9dbab"
+    },
+    {
+      "path": "config/settings/production.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f805b20c00a8730dc2d1ce587858c344ed21ae8"
+    },
+    {
+      "path": "config/settings/test.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "06587133780abb3f5b21645d80e513e669566b90"
+    },
+    {
+      "path": "config/tasks.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5b100742e717bacdbeb3fe6138a077f8fbb37afa"
+    },
+    {
+      "path": "config/upload_ingress.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "22b268a4c692d3855176f6e4068af5855bcafb0b"
+    },
+    {
+      "path": "config/urls.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1d7db4d243fd132514d6a9733714c58b9493e925"
+    },
+    {
+      "path": "config/use_cases",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a77f8d288d25728313be13f130fe99d1c49bf44e"
+    },
+    {
+      "path": "config/use_cases/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26b35be6cfe6498bc519844003918289f9147712"
+    },
+    {
+      "path": "config/use_cases/asset_processing.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1fed33cf690903c5d8fbbbc528cbc6bde0a350de"
+    },
+    {
+      "path": "config/use_cases/athlete_profile.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04053891dc323b2f3db656b531e0df163955608d"
+    },
+    {
+      "path": "config/use_cases/c03_privacy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ceca4fcb156d3b930d105fc30e5a2c023cff767"
+    },
+    {
+      "path": "config/use_cases/consent.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a88d8ee6d5954c6198a62cb235f2ff66651fcb8e"
+    },
+    {
+      "path": "config/use_cases/entry.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd3c36fa260fa621854739136540d93785d06bcc"
+    },
+    {
+      "path": "config/use_cases/identity.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "652c2c19aefc8ff89149e63149437c4eb175b52a"
+    },
+    {
+      "path": "config/use_cases/privacy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d72dc4c0a04d472857f22a3bec1512904be5b10"
+    },
+    {
+      "path": "config/use_cases/professional_profile.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f0dde38de0b7aa66659e6cdc101eff5a955a2c08"
+    },
+    {
+      "path": "config/use_cases/professional_verification.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d2933673e2dfe1748d7ef790cced6dd39828467f"
+    },
+    {
+      "path": "config/use_cases/profile_assets.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "79f6efd35219da2c5917ccb880307da2c35dcc99"
+    },
+    {
+      "path": "config/use_cases/recovery.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "220e46fe20d369f4af0bb35f3cee0b2ce3a2b11d"
+    },
+    {
+      "path": "config/use_cases/referral.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "291958d5dcabee4f484f1b756cf607bb04da5f9d"
+    },
+    {
+      "path": "config/views.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8734c7d8176f07e99e12732ec4c923c169c0dfda"
+    },
+    {
+      "path": "config/wsgi.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f52bca47cef2d3ad18e5076a6e59062379d1616"
+    },
+    {
+      "path": "docker",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "821f04e573420782770ffe55fdda0225e0641f24"
+    },
+    {
+      "path": "docker/Clamav.Dockerfile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b106c5000435291f23af48079b617612546daf7d"
+    },
+    {
+      "path": "docker/Minio.Dockerfile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "868cfe1d6099263adb8031f4e7bb492b71ee37ae"
+    },
+    {
+      "path": "docker/c01_source_manifest.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "22cbf9764d77a4afd8c8146f77954016cc92a53a"
+    },
+    {
+      "path": "docker/c02_baseline.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f4d54b55d6119a12b1601458fcb1b411f5b21a7"
+    },
+    {
+      "path": "docker/c02_limiter_restart_probe.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cfca26572679062b820af7151a1a261dd495ac65"
+    },
+    {
+      "path": "docker/c02_outbox_restart_probe.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5f49ec6b371afdbc40c9d0d696262f604f2f5de2"
+    },
+    {
+      "path": "docker/c02_upgrade_probe.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dee420f5e8b04131f1301d6d9e9c3e67a8b0d04f"
+    },
+    {
+      "path": "docker/c03_asset_restart_probe.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7dfd4cbe041358b098fe4bfd3df94118b9dfac88"
+    },
+    {
+      "path": "docker/c03_baseline.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cd2f0f6727f00237b51167955d8bcd310dcf74a1"
+    },
+    {
+      "path": "docker/c03_compose_check.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e8ba26a32ae3d347b1a09bd7f205dd41eb094102"
+    },
+    {
+      "path": "docker/c03_foundation_evidence.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04c20333302a4fdd95a6c64510702a0f93478751"
+    },
+    {
+      "path": "docker/c03_gate_diagnostics.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "384fe9f5aff04ac47332701d061bcb448b19b187"
+    },
+    {
+      "path": "docker/c03_processing_evidence.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3d77d78bd862e52fa62759de487c187ee487cebe"
+    },
+    {
+      "path": "docker/c03_processing_probe.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2993b94853836e7962a5b0935f76885869d02091"
+    },
+    {
+      "path": "docker/c03_pytest_triage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "55f5fb1e7733fe8ce78240fb878ce700886aa6cd"
+    },
+    {
+      "path": "docker/c03_source_manifest.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9210132a52c8c12edce631b3fece16ce97db5c96"
+    },
+    {
+      "path": "docker/c03_storage_errors.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7335e5204033889c4d4e09afac4804a8f49c1c5a"
+    },
+    {
+      "path": "docker/c03_storage_probe.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6cfa45540ea283c58d19de85dcb75af74a8d0be"
+    },
+    {
+      "path": "docker/c03_storage_slice.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d50b0b1427ecde1a66e36aff2a8e2c138c52b766"
+    },
+    {
+      "path": "docker/c03_timeout_probe.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0718e29fb621fdb96a417c6007851f5eed1ab835"
+    },
+    {
+      "path": "docker/c03_triage_runner.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b0453ca07e90bdadd26f12b0cfc89b1649ecaaf8"
+    },
+    {
+      "path": "docker/c03_upgrade_probe.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a3f8d6f41197f0d06c6d804eee8bdead046b1f8e"
+    },
+    {
+      "path": "docker/c03_upgrade_probe_impl.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5d27e2ea8aba0ec0219dffc725e324234813a622"
+    },
+    {
+      "path": "docker/c03_worker_fixture.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "044c1402b837b03c588efd72b28d7f5b51de4b3d"
+    },
+    {
+      "path": "docker/clamd.c03.conf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ffc82fb0773027537e3b9b66369900f4fc2c57a3"
+    },
+    {
+      "path": "docker/compose.c03-processing-evidence.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c27f1b986effb76e4f354430b880419e62890ac8"
+    },
+    {
+      "path": "docker/compose.c03-storage-evidence.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5d2844499f39bbf4f42534bd1fd837b9671cc6a6"
+    },
+    {
+      "path": "docker/compose.c03-worker-probe.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "453a8b53f3ce7b525c8fedb1b2ed153812f25c79"
+    },
+    {
+      "path": "docker/generate_env.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "86f5e5b1f9e3d3367d867de8a884079fe47d540a"
+    },
+    {
+      "path": "docker/healthcheck.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e5a96b95722248d0cbabe06d8798a7adf389e49"
+    },
+    {
+      "path": "docker/minio-init.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "253757571fd24a1f9e9c853da2da2b33a70a9831"
+    },
+    {
+      "path": "docker/production_check.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3365753387143f402f5a5a808d921780ec98eca2"
+    },
+    {
+      "path": "docker/verify_c02.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bebab2374dd3daf2d234cf5c0a94300ce3796b8a"
+    },
+    {
+      "path": "docker/verify_c03.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9abc15544377526e8ebcc3b2851424d885ab7338"
+    },
+    {
+      "path": "docker/verify_c03_incremental.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "800f75dbfa0295f97e889f09de244f4374fdbfc2"
+    },
+    {
+      "path": "docker/verify_c03_processing.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "d429b230fbb60071a0cefc81b59c0f93f0246fdb"
+    },
+    {
+      "path": "docker/verify_c03_storage.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "601485bafe63223dc991b1ca9f4b93e11a6d3331"
+    },
+    {
+      "path": "docker/verify_foundation.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b3062feebc1a57e6491fa9bfe575e814ad6131f7"
+    },
+    {
+      "path": "docs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "24f2f24768333ce1a52462965f6e0210939a8645"
+    },
+    {
+      "path": "docs/architecture",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "12e217f125184fa1914252e267b5e0b4e59691be"
+    },
+    {
+      "path": "docs/architecture/ADR-001-modular-monolith.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b9816a5dd44889bd3497647185ab32906e13460"
+    },
+    {
+      "path": "docs/architecture/ADR-002-authentication.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "14c708b8238cc68b8965a76a20a66d61a23a391a"
+    },
+    {
+      "path": "docs/architecture/ADR-003-realtime-background-jobs.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3bc2e98b45706101af4d2197927e2fba65315b69"
+    },
+    {
+      "path": "docs/architecture/ADR-004-storage-privacy.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "450ee8e09dd8ee79eea6f661242269e65a2bec73"
+    },
+    {
+      "path": "docs/architecture/ADR-005-ai-boundaries.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ce86cb8c0847e4f41e4b773ab496248a9ee4545"
+    },
+    {
+      "path": "docs/architecture/DOMAIN_MODEL.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ba325df225b3d7e8f740a871afef7940be72574"
+    },
+    {
+      "path": "docs/architecture/PERMISSIONS_MATRIX.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec3be34a352f8df8c8f59902428c6863004abc92"
+    },
+    {
+      "path": "docs/architecture/V1_ARCHITECTURE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b529a010d40e15fdeb22f87ea2e04b2c3af5a009"
+    },
+    {
+      "path": "docs/development",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d7d1ab6e1c3ea72c654907ffa1eb08fbf10e0da8"
+    },
+    {
+      "path": "docs/development/DEPENDENCIES.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "510407b3ba141d4f92d997bf681b11630ed7a272"
+    },
+    {
+      "path": "docs/development/FOUNDATION_HANDOFF.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9f401b8b144ff5c0e459c312eb16d83b00fde083"
+    },
+    {
+      "path": "docs/development/FOUNDATION_SETUP.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6fbf2de78a4cd92c310f34ed6b1975e10cbee2d4"
+    },
+    {
+      "path": "docs/implementation",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5022cfbef49934953deaefc04378a2a1ea5ae2ae"
+    },
+    {
+      "path": "docs/implementation/C01_CLOUD_EXECUTION_LEDGER.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81eff632307dd2a8e8f970347b3bf9f4e39ffe79"
+    },
+    {
+      "path": "docs/implementation/C02_EXECUTION_LEDGER.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bfea46f2011e252fc458395b379c91df61d26d6d"
+    },
+    {
+      "path": "docs/implementation/C02_HANDOFF.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0281b5c08d29d2bae1c67ed038ae07687e783aba"
+    },
+    {
+      "path": "docs/implementation/C02_SETUP.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7cbeee4d152985b9b246270097d3176475dfb271"
+    },
+    {
+      "path": "docs/implementation/C03_EXECUTION_LEDGER.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26d142af76b1941b1a93331866cfe79ba0f3370d"
+    },
+    {
+      "path": "docs/implementation/C03_HANDOFF.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "333c37df156b8ad3f9eae0d87ee05e59c4d1eb7b"
+    },
+    {
+      "path": "docs/implementation/C03_SETUP.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4de075ac9a891cfa64d13de802ec8425460b306b"
+    },
+    {
+      "path": "docs/implementation/V1_IMPLEMENTATION_ROADMAP.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "68a475ea6b5fd841ab1cd71224d0c29ad1e9dfe5"
+    },
+    {
+      "path": "docs/product",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e7a8ce4bb82af6023e460cec9bd352340aabbd0a"
+    },
+    {
+      "path": "docs/product/OPEN_QUESTIONS_AND_RISKS.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1df738b3de4b0570b4b51659ac1bb6e06a58df2b"
+    },
+    {
+      "path": "docs/product/V1_PRODUCT_SPEC.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c42ffba1020644b076c9f04cee754d683b45e42a"
+    },
+    {
+      "path": "docs/superpowers",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a5a34d80c07d2962b4ad0b1dddb40c8bbc8b345a"
+    },
+    {
+      "path": "docs/superpowers/plans",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b477773bc87abfc298d65f6bea3b711dab36260b"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-03-project-foundation.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "784aa240d8a6c5f2e9baaa9b851ec7b931441141"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-05-c02-accounts-authentication.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "82a62260f51be0ddbe97492ecfe06499ca99731c"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-06-c03-profiles-verification.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0847f9f76b6caf559cc25f94bfe4f6bcf5c79d33"
+    },
+    {
+      "path": "manage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a688de5d27a6861cb56ddb5e9c8c8299da87795"
+    },
+    {
+      "path": "package-lock.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3aa868756024299f38987759f8c987033ab1dda1"
+    },
+    {
+      "path": "package.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db67dd4b6c9098ae4ba4ba6cc68f145a3dd7cc33"
+    },
+    {
+      "path": "pyproject.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c9ce650f3993ca8bb773c4b61852e2eb90bfec4a"
+    },
+    {
+      "path": "static",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7dbe97325dd4e7f0afd38682a670ed4d8076ad6a"
+    },
+    {
+      "path": "static/src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6f5461dba841b38b8eec6f30319cbc07dd8c436a"
+    },
+    {
+      "path": "static/src/accounts.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f702f4cead57a9f9b5f43c0d04dc5885f6a759d6"
+    },
+    {
+      "path": "static/src/app.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b4d3e1cf66d68ea5f3b4f2767d29153e8bf0c62c"
+    },
+    {
+      "path": "static/src/profiles.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c4daeab08a0e60987036d518b44119e16717390a"
+    },
+    {
+      "path": "static/src/styles.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5d09f5ab38bf95f16dcf13a930c125ff9fc7a870"
+    },
+    {
+      "path": "templates",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "03964d57967787371512e061165a6ed075cc2add"
+    },
+    {
+      "path": "templates/accounts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7540edd50f8dbf821791264b02fbeb16f217945e"
+    },
+    {
+      "path": "templates/accounts/base.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8919651d3d524def2cdea0bbc8779ee263362592"
+    },
+    {
+      "path": "templates/accounts/entry.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c216e38618dc400064c24122a650815335a80eca"
+    },
+    {
+      "path": "templates/accounts/form.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4b7cd4a265eed54f84678f737dcac4e57f12e5a6"
+    },
+    {
+      "path": "templates/accounts/me.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "203b9a941bc86d2d6acd28adde3b89dceaf2449f"
+    },
+    {
+      "path": "templates/accounts/phone_change.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a2cd9cb5c2672492bad9b32ab85d33b4ba7abeb3"
+    },
+    {
+      "path": "templates/accounts/recovery.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e4bd9ec2cc84c21cea1018e5c03cf6f0bef3cdef"
+    },
+    {
+      "path": "templates/accounts/staff_authority.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a0fccc211b533ef3f795be397ae8f76dedc2c075"
+    },
+    {
+      "path": "templates/accounts/staff_recovery.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6331ffd45d44eb5da84b931ed82368b9155fae7c"
+    },
+    {
+      "path": "templates/accounts/verify.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e95b8e521f4d4c45e2d20d0849d16b603f43cb41"
+    },
+    {
+      "path": "templates/athletes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "48b46f5c3656bde67b548f0d8ab45be9dbc1c4c7"
+    },
+    {
+      "path": "templates/athletes/baseline.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8e715d0c2f15a153eae3b5f76cdb07d80ae02062"
+    },
+    {
+      "path": "templates/athletes/setup.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69455ab35c68e20d6eae567b521ec012f15527c"
+    },
+    {
+      "path": "templates/base.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "367068b01969226eecda994056025d8f67caebbe"
+    },
+    {
+      "path": "templates/foundation.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "660e83a32f2e79a00f8f29c64af4a4868d71143e"
+    },
+    {
+      "path": "templates/governance",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "366a13b4508dfd3c4cdfc436a00669eda8b86756"
+    },
+    {
+      "path": "templates/governance/privacy.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a347a2785907153cc3a56f322b2fb2f3081ba37f"
+    },
+    {
+      "path": "templates/professionals",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e84385796cf8db71adc02f9d30f29ec8895ac95b"
+    },
+    {
+      "path": "templates/professionals/preview.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6d1a70cf4c2aa452dda305f1f64337b641ff9974"
+    },
+    {
+      "path": "templates/professionals/setup.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "add4510bdd17ecd7a56d971440d03039e19a4ef9"
+    },
+    {
+      "path": "templates/professionals/staff_verification.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "45d91886f3b15d411d0c9fccacea96296f81b403"
+    },
+    {
+      "path": "templates/professionals/staff_verification_queue.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9601b340326a2129a17d3039a182c11f6947e158"
+    },
+    {
+      "path": "templates/professionals/verification.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "05de65fb438fdc96b98c3df1cb2f6cff545bac3e"
+    },
+    {
+      "path": "tests",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "54ec12468c7967edf1ee8abab3b09e82b10e2a3d"
+    },
+    {
+      "path": "tests/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "tests/conftest.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0c0eb9f9d4f196bcb3ddbec1ee7d48e1574ce25d"
+    },
+    {
+      "path": "tests/e2e",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "449cbf7295140e5d87253611bb0b580c9e0f86f3"
+    },
+    {
+      "path": "tests/e2e/c02",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e41ea7d688e2a645590bae86654c647a3324b089"
+    },
+    {
+      "path": "tests/e2e/c02/conftest.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "816cb145033dfe954b6d2658169297c98fa6193f"
+    },
+    {
+      "path": "tests/e2e/c02/helpers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "727af290517cc2302040b656035ccc6645c8ea08"
+    },
+    {
+      "path": "tests/e2e/c02/test_account_flows.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03430a215c176b72f252d263ba6fc8f2b79b2078"
+    },
+    {
+      "path": "tests/e2e/c02/test_recovery_privacy_flows.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd827b9891e994031382afcfa477fb6338e3e60c"
+    },
+    {
+      "path": "tests/e2e/c02/test_staff_recovery_flows.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "02cc820c85b79cdbf3215034c25bb065dfcf28f9"
+    },
+    {
+      "path": "tests/e2e/c03",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fd071d659b42576360c820244a15fa188ead90dc"
+    },
+    {
+      "path": "tests/e2e/c03/conftest.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4a4693392035bf17c11e95494355991789530d92"
+    },
+    {
+      "path": "tests/e2e/c03/helpers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "248e469d123ad27d1d76963287b943effbd73aa9"
+    },
+    {
+      "path": "tests/e2e/c03/test_owner_setup.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ad332ada975857e37d33ad041245801364492334"
+    },
+    {
+      "path": "tests/e2e/c03/test_private_uploads.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e201577519cbd7dd004b7ed1ada809436135516"
+    },
+    {
+      "path": "tests/e2e/c03/test_staff_verification.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fb575aa47f1f4a03d78b76a7a1f6f22729209804"
+    },
+    {
+      "path": "tests/e2e/test_foundation_smoke.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf32d22de8ad9cfbba99bbd012c72e82c9183d95"
+    },
+    {
+      "path": "tests/fixtures",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "67d3374177e81ffe9a1b438614e4620cf1becb7a"
+    },
+    {
+      "path": "tests/fixtures/c03",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cd91e44d9c6083f824a329aca6c8907cafe45193"
+    },
+    {
+      "path": "tests/fixtures/c03/asset_manifest.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a5a457b560140d4579fdd9587706df0576f036d7"
+    },
+    {
+      "path": "tests/fixtures/c03/synthetic.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cbd2a1951abd0017fbc9377ba7117b75bcadf3ab"
+    },
+    {
+      "path": "tests/fixtures/c03/synthetic.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d71817e5851623899f95706c127ceca5dba51c4f"
+    },
+    {
+      "path": "tests/integration",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1f19d1d262a8539b5e707e183244cd6c6bff26b7"
+    },
+    {
+      "path": "tests/integration/c02",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f8606a7ef14bafc9a531c524de6c6578a4231c82"
+    },
+    {
+      "path": "tests/integration/c02/api_helpers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7f7a15eae354f8628259fcd13e8dc99046523e21"
+    },
+    {
+      "path": "tests/integration/c02/conftest.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e3d98e631715d79e3f98548e5d59a533cf23610"
+    },
+    {
+      "path": "tests/integration/c02/test_account_migrations.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f976968d6252085b3486acff1b85965745d4fb0a"
+    },
+    {
+      "path": "tests/integration/c02/test_account_state_races.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2aeea38f22501ecfd1be0247ac1095a3073187a"
+    },
+    {
+      "path": "tests/integration/c02/test_adult_entry.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c828d9f29773fc42e6ce2f05b57318431291d445"
+    },
+    {
+      "path": "tests/integration/c02/test_anonymous_csrf.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ad3ed8d54edac574191561909ece280cdfcca10d"
+    },
+    {
+      "path": "tests/integration/c02/test_audit_transactions.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "90c33a2c657463f6410a45be0aa75daa72ddf401"
+    },
+    {
+      "path": "tests/integration/c02/test_auth_api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3b4701ffc2a0b7df3b96518416619a199d078a89"
+    },
+    {
+      "path": "tests/integration/c02/test_consent_core.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "737014103ae32d603a31f9d30a8b205237b12382"
+    },
+    {
+      "path": "tests/integration/c02/test_dependency_direction.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1e23dd5954ed6b5ade4afdba33d190efaabfc5b"
+    },
+    {
+      "path": "tests/integration/c02/test_flag_referral_state.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a9e7e43dfef9de7cee77b089f5f944104bb6969"
+    },
+    {
+      "path": "tests/integration/c02/test_hold_metadata.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "76e17a46e596f578bc03169ce0d3fd7d187fe360"
+    },
+    {
+      "path": "tests/integration/c02/test_limiter_failures.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32431a51541201bddb935a8f7e1d649497291ac9"
+    },
+    {
+      "path": "tests/integration/c02/test_otp_consume.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6c95ad43d2d5f9301e5cd8e423c7d72f80ee1c23"
+    },
+    {
+      "path": "tests/integration/c02/test_otp_issue.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7ef33b002a5d84ae78d60bb813e331734d46a845"
+    },
+    {
+      "path": "tests/integration/c02/test_otp_limits.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "937b2c7770bd9d8ad62a5d29465ddcc23442bf7e"
+    },
+    {
+      "path": "tests/integration/c02/test_outbox_races.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7e11b3cee83333d9263b1180944c8f6d2eb3dbd0"
+    },
+    {
+      "path": "tests/integration/c02/test_outbox_worker.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecfb6c6cc712078ec4721fefa2f7177ea1af5b33"
+    },
+    {
+      "path": "tests/integration/c02/test_phone_change.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "49dd5377b3c57a8dc0b07cc7d937cb5631d55a23"
+    },
+    {
+      "path": "tests/integration/c02/test_privacy_api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f0c630a505015a78c9e00f959a402316b6b9735"
+    },
+    {
+      "path": "tests/integration/c02/test_privacy_intake.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "245af33f65e9d73d55a3dc21c4d8de258abe0a8e"
+    },
+    {
+      "path": "tests/integration/c02/test_recovery_api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ffc25e723e5cc07a87707e83cb9e669bac5b57c5"
+    },
+    {
+      "path": "tests/integration/c02/test_recovery_apply.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a21f742a0e4ab86646487601ae5d0e1793faa1f"
+    },
+    {
+      "path": "tests/integration/c02/test_recovery_authorization.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8c2f5edd6bf58273011a3abb5a4dd3dc9d302ae1"
+    },
+    {
+      "path": "tests/integration/c02/test_regression_scope.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bff3dc5e4111dfde11096b551b8ea0fd83d4396e"
+    },
+    {
+      "path": "tests/integration/c02/test_sessions.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "808fd2da771a641526b1ac088fde2b097605fea4"
+    },
+    {
+      "path": "tests/integration/c02/test_staff_authority.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "355d0b6f335ae8cce9d2494f33f1350840b522a9"
+    },
+    {
+      "path": "tests/integration/c02/test_upgrade_from_c01.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "664fa368d2f2800888b85da08e39306b9502aa82"
+    },
+    {
+      "path": "tests/integration/c03",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8a104e0a0f416c5a351ab92c697e1db130149f8f"
+    },
+    {
+      "path": "tests/integration/c03/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "tests/integration/c03/baseline_helpers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93fcb0e96848f3cf8ef43a10a83ba8b7cf67bad5"
+    },
+    {
+      "path": "tests/integration/c03/conftest.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee5e888979510b8f66780d089eedc7b951b545b4"
+    },
+    {
+      "path": "tests/integration/c03/processing_helpers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b6436ea7c3ffb06c64947e8541bac80d0736c08"
+    },
+    {
+      "path": "tests/integration/c03/profile_helpers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae9dcbe5af0911ad50b73c491491c437570776f6"
+    },
+    {
+      "path": "tests/integration/c03/test_asset_cleanup_races.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01afb642b7a2d0881c52803db9ab67f5564d3325"
+    },
+    {
+      "path": "tests/integration/c03/test_asset_holds.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "822943ddeb09ecd6b9530e19e0ef98fc88951be4"
+    },
+    {
+      "path": "tests/integration/c03/test_asset_processing.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9abdbe5f3ee24b48cb7489806691b83b18810514"
+    },
+    {
+      "path": "tests/integration/c03/test_assistant_primitive.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "df031df314561f5d90560f401e184b38d7cf8041"
+    },
+    {
+      "path": "tests/integration/c03/test_baseline_consent.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "35fab5ad1864ad1fb1ec5d1ab5d1b2337cdcea5f"
+    },
+    {
+      "path": "tests/integration/c03/test_baseline_races.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "73c38a69fc2a08b190b68f026f1579f2c7b78588"
+    },
+    {
+      "path": "tests/integration/c03/test_baseline_workflow.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32b366b790726b35f0a88413523a0d8fab599bb1"
+    },
+    {
+      "path": "tests/integration/c03/test_bound_edit_races.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4e20ebdfb54a4f610d248453835d6f559db20d20"
+    },
+    {
+      "path": "tests/integration/c03/test_c03_deletion_effects.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5bce18614dc77c4fb6b835dfe8452d082951fa54"
+    },
+    {
+      "path": "tests/integration/c03/test_c03_dependency_direction.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8af8c4d78e41e825b7a8258058f77565ddbc3fc7"
+    },
+    {
+      "path": "tests/integration/c03/test_c03_failure_recovery.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a16cd3f32b48884ca32d4740d0a0b88dce9c2077"
+    },
+    {
+      "path": "tests/integration/c03/test_c03_migrations.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d18d7af516091f2e02cc7ebd5d32b33d531dfe94"
+    },
+    {
+      "path": "tests/integration/c03/test_credential_revisions.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2ca26b4d19499e62281de9a5dbe4e7401989dcd9"
+    },
+    {
+      "path": "tests/integration/c03/test_evidence_guards.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4fea1747659fb3e5402544342b5a610a929846bb"
+    },
+    {
+      "path": "tests/integration/c03/test_owned_profiles.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bf80af24c294fdd3fc5d40a2395ffad8ddd6defc"
+    },
+    {
+      "path": "tests/integration/c03/test_owner_api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c82165c09d818909d253eb16bcd0807bdecf52a1"
+    },
+    {
+      "path": "tests/integration/c03/test_owner_preview.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecce0f2830bc669c5add005ac07981fc9ad4abce"
+    },
+    {
+      "path": "tests/integration/c03/test_private_assets.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c57ba8da9bc49311dc2aceb6f447facb4feea29f"
+    },
+    {
+      "path": "tests/integration/c03/test_processing_worker.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "11fd8a3ee99e7fda07df07546c085bcdbaed9b83"
+    },
+    {
+      "path": "tests/integration/c03/test_professional_setup.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5223e8809247f0e6efd0fa8a766ba0f1273a6415"
+    },
+    {
+      "path": "tests/integration/c03/test_profile_races.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a25a2564ce343be11c03cfaf9d543d8f8f33b390"
+    },
+    {
+      "path": "tests/integration/c03/test_scanner_service.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc490abeaa8e2633d8f072e3dc0e5cd4accbeba4"
+    },
+    {
+      "path": "tests/integration/c03/test_upgrade_from_c02.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f6cceaa61be82a0103ccd04238d1a0a3c70609cb"
+    },
+    {
+      "path": "tests/integration/c03/test_upload_lifecycle.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "67e9668b4caa7c55ff9a171e06ca446cf77622b2"
+    },
+    {
+      "path": "tests/integration/c03/test_upload_races.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c9bd3ced602925b393e45ff92126c5adf6055f3"
+    },
+    {
+      "path": "tests/integration/c03/test_verification_api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "233def427011aa2cd71faca7d7ab7a326eba76ac"
+    },
+    {
+      "path": "tests/integration/c03/test_verification_assignment_races.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a5adc9f769fc9773af7da9b431ef5524cec5b94"
+    },
+    {
+      "path": "tests/integration/c03/test_verification_decision_races.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "448d444296b3ff39f15c1ce96bda78b1477ae4d7"
+    },
+    {
+      "path": "tests/integration/c03/test_verification_decisions.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bdf98b8842a1dbb6eedc58daa62f63a0544e068d"
+    },
+    {
+      "path": "tests/integration/c03/test_verification_revocation.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff803e1c087f818e8726f8d87327f5a65589c36e"
+    },
+    {
+      "path": "tests/integration/c03/test_verification_staff.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ad30e575a92ce143db9fc0a11f9d9c771605602"
+    },
+    {
+      "path": "tests/integration/c03/test_verification_submission.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "671661adc44bb5e8c8a5270a4787e8c596e7d83c"
+    },
+    {
+      "path": "tests/integration/c03/upload_helpers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d42af90734d2e26e6181a82d6b7666eaecc404a1"
+    },
+    {
+      "path": "tests/integration/c03/verification_helpers.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "55688260d7dcb4d3ec3a92044b124f07dc2f7841"
+    },
+    {
+      "path": "tests/integration/test_celery_roundtrip.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e403391246818aff12a379822f8b4be2e4504725"
+    },
+    {
+      "path": "tests/integration/test_channel_layer.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b442b58b4710f77b01d7d67bc70a4c37006f905"
+    },
+    {
+      "path": "tests/integration/test_database.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c32b238769ff7d17d12f320c3255ee3418f23c19"
+    },
+    {
+      "path": "tests/integration/test_initial_migration.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3dee28659b64e9f136374fd109d9369e8a845e14"
+    },
+    {
+      "path": "tests/integration/test_minio_storage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "667caab04f75a7cad66a0f66cd96a0f6f21069f0"
+    },
+    {
+      "path": "tests/integration/test_readiness.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6fd5d878e62931ae700819f24175ee7be575d078"
+    },
+    {
+      "path": "tests/integration/test_redis.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7dd6b083a18375abbb1185a25754419b9ceb6a88"
+    },
+    {
+      "path": "tests/integration/test_runtime_failures.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5454b8a43077208cfba64b25530ebfda6c8d4a49"
+    },
+    {
+      "path": "tests/integration/test_user_model.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c4cb5dd6293c8c4b6e1d96c61d41c0ac62fd8e6"
+    },
+    {
+      "path": "tests/unit",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "babbb6559392bcff2accdcde2782d7ef6ca22086"
+    },
+    {
+      "path": "tests/unit/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "tests/unit/c02",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b19f8c61296f69b1dc8a04c43b6c3698024353d1"
+    },
+    {
+      "path": "tests/unit/c02/test_account_policy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "61d51ea3ddf7bbeb806217c66dcb703aa896e154"
+    },
+    {
+      "path": "tests/unit/c02/test_api_csrf_order.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e687a421665e295147cb99717905d32d3885852"
+    },
+    {
+      "path": "tests/unit/c02/test_api_schema.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "55a81e9df166d425943276a591e65bdbc925b73b"
+    },
+    {
+      "path": "tests/unit/c02/test_audit_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8614560c7dd4fd402596126a54b76c04a4cdfb1b"
+    },
+    {
+      "path": "tests/unit/c02/test_browser_thread_boundary.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "62bbce4250ce618f382a696cbc33a041b31f5737"
+    },
+    {
+      "path": "tests/unit/c02/test_consent_scope.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5811933e04a58e05f5eb31e33de364113543092"
+    },
+    {
+      "path": "tests/unit/c02/test_final_rehearsal.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "74799c98de725f975e0b445ed87fe08df6a6f281"
+    },
+    {
+      "path": "tests/unit/c02/test_final_review.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4278068bf18e7cf7500f5fbb81c79798b9abf6b9"
+    },
+    {
+      "path": "tests/unit/c02/test_flags.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e28035e89e2ae247d22fa81ec72815270ef7f618"
+    },
+    {
+      "path": "tests/unit/c02/test_forms.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b91ca5ffa75253c8e7385b9e293b683b1a6dc076"
+    },
+    {
+      "path": "tests/unit/c02/test_html_adapters.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30b6382201374fc6f9f58f931667a92628ae6f7e"
+    },
+    {
+      "path": "tests/unit/c02/test_inputs.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e4e7cbef934d19dd9a97567bc77338b8c134a401"
+    },
+    {
+      "path": "tests/unit/c02/test_limiter_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f0409e4ec2ca9a803f1a4eee0676c17cfe3612fb"
+    },
+    {
+      "path": "tests/unit/c02/test_otp_digest.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c9510fcf8eb8ccf23e08f3788973b1e9c1f4c358"
+    },
+    {
+      "path": "tests/unit/c02/test_otp_verify_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ba13f8a26bdadbd6d6534fcfab41cd242956302"
+    },
+    {
+      "path": "tests/unit/c02/test_outbox_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "12f1dd63a2d72731a3b5a507f16f5d6652feba0e"
+    },
+    {
+      "path": "tests/unit/c02/test_phone_change_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f9aae26c5e166779a13c49e8fe40e132582a0d8"
+    },
+    {
+      "path": "tests/unit/c02/test_privacy_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db3c4922efcc04be45acb7afbf9e9714bc086dd0"
+    },
+    {
+      "path": "tests/unit/c02/test_recovery_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecf361c9a635b44bbff260f269a815bcd583a730"
+    },
+    {
+      "path": "tests/unit/c02/test_referrals.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fee7103a9f61fb8ac435fee4a3cde94441f49cfd"
+    },
+    {
+      "path": "tests/unit/c02/test_schema_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "690a6f3e77809084451be8cab2dbb7fe570d7c7c"
+    },
+    {
+      "path": "tests/unit/c02/test_security_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e89a63e7856ea83247e1b600bf1ec17f174cd489"
+    },
+    {
+      "path": "tests/unit/c02/test_sms_provider.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03e96a12631673fa779616807e168e7fdb980300"
+    },
+    {
+      "path": "tests/unit/c03",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5761f20f9e56f0b521bb4a2e43220215722c42f8"
+    },
+    {
+      "path": "tests/unit/c03/__init__.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "tests/unit/c03/test_api_schema.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7cd5ef642c148824ef1d217558475d8f49d84a9d"
+    },
+    {
+      "path": "tests/unit/c03/test_asset_validation.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd54aa8e6e523510d2ffff1bf26a0d9c740e4973"
+    },
+    {
+      "path": "tests/unit/c03/test_baseline_fields.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "efa211a62b4d36be38cf8b7ca0d03c37c06b0645"
+    },
+    {
+      "path": "tests/unit/c03/test_ci_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ad6a1488e0738f9fabfe828def823ccc30b887c"
+    },
+    {
+      "path": "tests/unit/c03/test_consent_callback_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2370569f7d6a898a9745609568d5857af8fc2233"
+    },
+    {
+      "path": "tests/unit/c03/test_exact_baseline.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1c696a3c8f74f1670d1f4c2c921ff73de78b8ee8"
+    },
+    {
+      "path": "tests/unit/c03/test_final_rehearsal.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "64d2d61db199db7c8e1bf3bcb5aaecbd1dc168cb"
+    },
+    {
+      "path": "tests/unit/c03/test_forms.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4744e4b67c0a90a296dbdd91f1d1750a5fa2728c"
+    },
+    {
+      "path": "tests/unit/c03/test_gate_diagnostics.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecc39bcb75200040cee558128577c56a38ab18f5"
+    },
+    {
+      "path": "tests/unit/c03/test_image_sanitization.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3caf2a70342d42c54ff934c00af1cffa0563e831"
+    },
+    {
+      "path": "tests/unit/c03/test_native_adapters.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "674f37d1b136d503cd13481fe2b6f3f676854e00"
+    },
+    {
+      "path": "tests/unit/c03/test_privacy_inventory.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bda2096ab188eb42d9ab771497bcf7a6fcfbdbd2"
+    },
+    {
+      "path": "tests/unit/c03/test_professional_fields.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f3a7c8d9d283e6b25355d2b0defab2b92f2a6e1b"
+    },
+    {
+      "path": "tests/unit/c03/test_profile_policy.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "55a27bbb17999c4979f2f407fa4d01fa1024cf76"
+    },
+    {
+      "path": "tests/unit/c03/test_publication_eligibility.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f6d0588c9a18ab41e7801eea896b3bad10c7edb0"
+    },
+    {
+      "path": "tests/unit/c03/test_scanner_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8783d177580386db8c45c785be1e2114557e0ec2"
+    },
+    {
+      "path": "tests/unit/c03/test_schema_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dd47b83422da59392f59ed61d7c44da49a1a9650"
+    },
+    {
+      "path": "tests/unit/c03/test_scope_boundary.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3ab2592dc76e5c734a8149e1582cd4a939c249e7"
+    },
+    {
+      "path": "tests/unit/c03/test_source_non_delivery.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe046d8e54c586e2e2e54e3ecf2759289b581205"
+    },
+    {
+      "path": "tests/unit/c03/test_staff_adapters.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8a97deb1f8aff0be4c29762e17bb5d6f2291e63a"
+    },
+    {
+      "path": "tests/unit/c03/test_upload_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "314f3c095d81d8ac3d4115f94d204f0055f38ac5"
+    },
+    {
+      "path": "tests/unit/c03/test_verification_binding.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e22c679fe9abeb4eeb97477dff7307376d2cd74"
+    },
+    {
+      "path": "tests/unit/c03/test_verification_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c644ee610377b11ffe767367bd48db87c312d4ea"
+    },
+    {
+      "path": "tests/unit/outbox_worker_settings.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cedbd1416d47893ecf5f50e9690e8fcb563e326a"
+    },
+    {
+      "path": "tests/unit/test_asgi.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b96204056c6e627b7f095aeb6efbc79fd2a3f2ac"
+    },
+    {
+      "path": "tests/unit/test_c03_acceptance.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "46b70f0bed61fbd019c9164e19e2c1fb20c6e1a1"
+    },
+    {
+      "path": "tests/unit/test_c03_foundation_evidence.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "20712dbd9ddf6fdb655b1fde3d063b16fedee382"
+    },
+    {
+      "path": "tests/unit/test_c03_minio_cors.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "663562098097a4d7b415945901f72f8d86282ba0"
+    },
+    {
+      "path": "tests/unit/test_c03_storage_observability.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1a78105cc466bf5abf583d5d5223ab1d2d56f175"
+    },
+    {
+      "path": "tests/unit/test_c03_storage_slice.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5b87caac28b700a991dcbc6a0604363cd51db0b8"
+    },
+    {
+      "path": "tests/unit/test_c03_triage_evidence.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dce4c4b6679cb817ae8c1e15cafffbb02bb16242"
+    },
+    {
+      "path": "tests/unit/test_celery_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b82cd55aad5655b0ef99acdecabf5c8568e38333"
+    },
+    {
+      "path": "tests/unit/test_database_probe.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "54cdb65e1a2c480ff09f8eb19f876dfb80435e7b"
+    },
+    {
+      "path": "tests/unit/test_environment.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e637904dd1101c61e9fec06c95be572e07f5e3c2"
+    },
+    {
+      "path": "tests/unit/test_foundation_scope.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0bd0fc2dd11adabd3c9075afd5eb7ea7fa4b9462"
+    },
+    {
+      "path": "tests/unit/test_health_api.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ded0395fc74813b12c469cfd78722110a77303ce"
+    },
+    {
+      "path": "tests/unit/test_healthcheck_entrypoint.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f90c3a7d284e0d22ffdb1ec2baf087cea8d6027f"
+    },
+    {
+      "path": "tests/unit/test_logging.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c354479f2f1622b077a401e2b91da990979e1ae1"
+    },
+    {
+      "path": "tests/unit/test_redis_config.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "45e3dd97fe0ee45ab410f413f1d27e717dbe1664"
+    },
+    {
+      "path": "tests/unit/test_rtl_page.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "20317b8488bc7590bd8228f04b46b81352bfe246"
+    },
+    {
+      "path": "tests/unit/test_settings.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "21f125d1a40da03ed5c4de92b4742197141f7c09"
+    },
+    {
+      "path": "tests/unit/test_storage.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c97fcc7643680a826e1ccd932b56a8c0826312e0"
+    },
+    {
+      "path": "tests/unit/test_user_contract.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "52a67ad2e6d71674b94cf599b6684d41b364d9fb"
+    },
+    {
+      "path": "uv.lock",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bd7699e5e5b8b0ea524c2c5c64c9b8e725a44ec9"
+    }
+  ]
+}

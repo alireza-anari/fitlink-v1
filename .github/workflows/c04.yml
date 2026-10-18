@@ -1,0 +1,710 @@
+name: C04 Marketplace and inherited regression
+on:
+  push:
+    branches: [marketplace/c04-cloud]
+permissions:
+  contents: read
+concurrency:
+  group: c04-marketplace-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  foundation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Immutable completed C01 fixture
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/c01
+          persist-credentials: false
+      - name: Verify exact C01 source tree before use
+        run: python docker/c02_baseline.py .runtime/c01
+      - name: Immutable completed C02 fixture for Task 14
+        if: github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+          path: .runtime/c02
+          persist-credentials: false
+      - name: Verify exact C02 source tree before use
+        if: github.ref == 'refs/heads/marketplace/c04-cloud'
+        run: python docker/c03_baseline.py .runtime/c02
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .node-version
+      - name: Immutable C03 source fixture for C04 unit controls
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+          path: .runtime/c03
+          persist-credentials: false
+      - name: Frozen dependency checks
+        run: |
+          uv lock --check
+          uv sync --frozen --group dev
+          npm ci
+      - name: Tailwind, ES module, hashed static build
+        run: |
+          npm run build:css
+          npm run check:js
+          test -s static/dist/app.css
+          uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build --ignore=src/styles.css
+          test -s staticfiles/staticfiles.json
+      - name: Ruff, format, mypy, Django, unit and production checks
+        run: |
+          uv run --frozen ruff check .
+          uv run --frozen ruff format --check .
+          uv run --frozen mypy config/settings/env.py config/health.py apps/assets/storage.py apps/accounts apps/governance config/use_cases config/account_middleware.py config/authentication.py config/permissions.py
+          uv run --frozen python manage.py check --settings=config.settings.test
+          uv run --frozen pytest tests/unit -q --strict-markers
+          uv run --frozen python docker/production_check.py
+      - name: Exact C01 upgrade and complete isolated C02 regression
+        run: |
+          if [ "$GITHUB_REF" = refs/heads/marketplace/c04-cloud ]; then
+            python docker/c03_foundation_evidence.py
+          else
+            sh docker/verify_c02.sh
+          fi
+      - name: C03 bounded diagnostic evidence
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-foundation-diagnostics
+          path: |
+            .runtime/c03-diagnostics/*.jsonl
+            .runtime/c03-foundation-evidence/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c03-owner:
+    if: github.ref == 'refs/heads/marketplace/c04-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Frozen owner gate and static assets
+        run: |
+          uv sync --frozen --group dev
+          npm ci
+          npm run build:css
+          npm run check:js
+      - name: Real owner API and private browser gates
+        run: |
+          python docker/c03_gate_diagnostics.py --acceptance storage \
+            sh docker/verify_c03_incremental.sh --task11-owner
+      - name: Task 11 metadata-only behavioral verdict
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        run: sh docker/verify_c03_incremental.sh --task11-evidence
+      - name: C03 owner metadata-only diagnostics
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-owner-diagnostics
+          path: .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c03-staff:
+    if: github.ref == 'refs/heads/marketplace/c04-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Frozen staff gate and static assets
+        run: |
+          uv sync --frozen --group dev
+          npm ci
+          npm run build:css
+          npm run check:js
+      - name: Real staff API and private browser gates
+        run: |
+          python docker/c03_gate_diagnostics.py --acceptance storage \
+            sh docker/verify_c03_incremental.sh --task12-staff
+      - name: Task 12 metadata-only behavioral verdict
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        run: sh docker/verify_c03_incremental.sh --task12-evidence
+      - name: C03 staff metadata-only diagnostics
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-staff-diagnostics
+          path: .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c02-migrations:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+        env:
+          POSTGRES_DB: fitlink
+          POSTGRES_USER: fitlink
+          POSTGRES_PASSWORD: ci-migration-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U fitlink -d fitlink"
+          --health-interval 3s --health-timeout 3s --health-retries 30
+      redis:
+        image: redis@sha256:c6eabf748fc7a61dbb5a705c78bcf3d6377b1127a97d0ce965c11c44ba46896f
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 3s --health-timeout 3s --health-retries 30
+    env:
+      OTP_RATE_REDIS_URL: 'redis://127.0.0.1:6379/4'
+      CELERY_BROKER_URL: 'redis://127.0.0.1:6379/1'
+      CELERY_RESULT_BACKEND: 'redis://127.0.0.1:6379/2'
+      POSTGRES_HOST: '127.0.0.1'
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: fitlink
+      POSTGRES_USER: fitlink
+      POSTGRES_PASSWORD: ci-migration-only
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Immutable completed C02 fixture for Task 14
+        if: github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+          path: .runtime/c02
+          persist-credentials: false
+      - name: Verify exact C02 source tree before use
+        if: github.ref == 'refs/heads/marketplace/c04-cloud'
+        run: python docker/c03_baseline.py .runtime/c02
+      - name: Frozen migration environment
+        run: uv sync --frozen --group dev
+      - name: Inspect additive migration SQL
+        run: |
+          uv run --frozen python manage.py sqlmigrate accounts 0002 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate accounts 0004 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate accounts 0005 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate accounts 0006 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate accounts 0007 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate accounts 0008 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate accounts 0009 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate accounts 0010 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate accounts 0011 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate accounts 0012 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate accounts 0013 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate governance 0002 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate governance 0003 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate governance 0004 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate governance 0005 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate governance 0006 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate governance 0007 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate governance 0008 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate governance 0009 --settings=config.settings.test
+          uv run --frozen python manage.py sqlmigrate governance 0010 --settings=config.settings.test
+      - name: Real PostgreSQL account upgrade and constraint contracts
+        run: uv run --frozen pytest tests/integration/c02 tests/integration/test_initial_migration.py -q --strict-markers
+
+      - name: Real Redis restart and lost-counter durable quota gate
+        env:
+          C02_REDIS_CONTAINER: ${{ job.services.redis.id }}
+        run: |
+          uv run --frozen python manage.py migrate --noinput --settings=config.settings.test
+          uv run --frozen python docker/c02_limiter_restart_probe.py prepare
+          docker restart "$C02_REDIS_CONTAINER"
+          for probe in $(seq 1 30); do
+            if docker exec "$C02_REDIS_CONTAINER" redis-cli ping >/dev/null; then break; fi
+            sleep 1
+          done
+          docker exec "$C02_REDIS_CONTAINER" redis-cli ping
+          uv run --frozen python docker/c02_limiter_restart_probe.py verify
+      - name: Task 14 focused behavioral contracts on real PostgreSQL
+        if: github.ref == 'refs/heads/marketplace/c04-cloud'
+        env:
+          C03_FOUNDATION_TRIAGE: '1'
+          C03_FOUNDATION_EVIDENCE_DIRECTORY: .runtime/c03-diagnostics
+        run: |
+          mkdir .runtime/task14-focused-private
+          chmod 700 .runtime/task14-focused-private
+          umask 077
+          result=0
+          timeout -k 10s 180s uv run --frozen pytest tests/unit/c03/test_exact_baseline.py tests/unit/c03/test_final_rehearsal.py tests/integration/c03/test_upgrade_from_c02.py -q --strict-markers --tb=no --show-capture=no >.runtime/task14-focused-private/pytest.log 2>&1 || result=$?
+          uv run --frozen python -c 'import json; from docker.c03_upgrade_probe import private_log_metadata; print("C03_TASK14_FOCUSED " + json.dumps(private_log_metadata(".runtime/task14-focused-private/pytest.log")))'
+          exit "$result"
+      - name: C03 cumulative installed PostgreSQL contracts
+        if: github.ref == 'refs/heads/marketplace/c04-cloud'
+        run: |
+          python docker/c03_gate_diagnostics.py --acceptance postgresql \
+            sh docker/verify_c03_incremental.sh
+      - name: Task 8 metadata-only PostgreSQL verdict
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        run: sh docker/verify_c03_incremental.sh --task8-evidence
+      - name: C03 bounded diagnostic evidence
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-postgresql-diagnostics
+          path: .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c03-storage:
+    if: github.ref == 'refs/heads/marketplace/c04-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Frozen private storage gate environment
+        run: uv sync --frozen --group dev
+      - name: C03 real private MinIO and owned upload contracts
+        run: |
+          python docker/c03_storage_slice.py
+      - name: C03 bounded diagnostic evidence
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-storage-diagnostics
+          path: |
+            .runtime/c03-diagnostics/*.jsonl
+            .runtime/c03-triage/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c03-timeout-probe:
+    if: github.ref == 'refs/heads/marketplace/c04-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Isolated actual Compose timeout ownership probe
+        run: python docker/c03_timeout_probe.py
+      - name: C03 bounded diagnostic evidence
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-timeout-probe-diagnostics
+          path: .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c03-processing:
+    if: github.ref == 'refs/heads/marketplace/c04-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Frozen processing gate environment
+        run: uv sync --frozen --group dev
+      - name: C03 real scanner and durable non-eager worker
+        run: python docker/c03_processing_evidence.py
+      - name: C03 bounded diagnostic evidence
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-processing-diagnostics
+          path: |
+            .runtime/c03-diagnostics/*.jsonl
+            .runtime/c03-triage/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c03-restart:
+    if: github.ref == 'refs/heads/marketplace/c04-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Frozen Task 13 environment
+        run: uv sync --frozen --group dev
+      - name: Task 13 actual derivative crash and service restarts
+        run: uv run --frozen python docker/c03_asset_restart_probe.py run
+      - name: Task 13 metadata-only restart evidence
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-task13-restart
+          path: |
+            .runtime/c03-triage/*.jsonl
+            .runtime/c03-diagnostics/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c03-evidence-audit:
+    if: github.ref == 'refs/heads/marketplace/c04-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Frozen evidence audit environment
+        run: uv sync --frozen --group dev
+      - name: Verify every earlier completed exact-source service execution
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: timeout -k 10s 480s uv run --frozen python docker/c03_asset_restart_probe.py audit
+      - name: Task 13 metadata-only historical evidence
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-task13-history
+          path: .runtime/c03-triage/task13.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c03-task14-native:
+    if: github.ref == 'refs/heads/marketplace/c04-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+          path: .runtime/c02
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/c01
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/c02/.runtime/c01
+          persist-credentials: false
+      - run: uv sync --frozen --group dev
+      - name: Task 14 real native processing diagnostic only
+        run: sh docker/verify_c03.sh --native-processing-diagnostic
+      - name: Task 14 finite historical HTTP diagnostic only
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: timeout -k 5s 120s uv run --frozen python docker/c03_upgrade_probe.py history-http-diagnostic unused
+      - name: Task 14 metadata-only diagnostic stages
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-task14-native-diagnostic
+          path: .runtime/c03-task14-native-evidence/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c03-final:
+    if: github.ref == 'refs/heads/marketplace/c04-cloud'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Exact original C02 fixture
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+          path: .runtime/c02
+          persist-credentials: false
+      - name: Separate immutable C01 fixture
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/c01
+          persist-credentials: false
+      - name: Exact C01 fixture at the original C02 runtime path
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/c02/.runtime/c01
+          persist-credentials: false
+      - name: Immutable C03 source fixture for C04 unit controls
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+          path: .runtime/c03
+          persist-credentials: false
+      - name: Frozen Task 14 environment
+        run: uv sync --frozen --group dev
+      - name: Task 14 exact C02 source and tamper negatives
+        run: |
+          python docker/c03_baseline.py .runtime/c02
+          python docker/c02_baseline.py .runtime/c01
+          uv run --frozen pytest tests/unit/c03/test_exact_baseline.py -q --strict-markers --tb=short --show-capture=no
+      - name: Exact original C02 and populated same-database upgrade rehearsal
+        run: sh docker/verify_c03.sh
+      - name: Task 14 metadata-only stage exit evidence
+        if: always() && github.ref == 'refs/heads/marketplace/c04-cloud'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: c03-task14-final
+          path: |
+            .runtime/c03-task14-evidence/*.jsonl
+            .runtime/c03-foundation-evidence/*.jsonl
+          include-hidden-files: true
+          if-no-files-found: error
+  c04-baseline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+      with:
+        version: 0.12.19
+        python-version: 3.13.15
+        enable-cache: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+        path: .runtime/c03
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/c02
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c01
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c02/.runtime/c01
+        persist-credentials: false
+    - name: Verify exact immutable C03 before runtime setup
+      run: python docker/c04_baseline.py .runtime/c03
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      with:
+        node-version-file: .runtime/c03/.node-version
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/c03/.runtime/c02
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c03/.runtime/c01
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c03/.runtime/c02/.runtime/c01
+        persist-credentials: false
+    - name: Install frozen original C03 environment
+      working-directory: .runtime/c03
+      run: 'uv sync --frozen --group dev
+
+        npm ci'
+    - name: Original full C03 acceptance on immutable handoff
+      working-directory: .runtime/c03
+      run: sh docker/verify_c03.sh
+  c04-postgresql:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+        env:
+          POSTGRES_DB: fitlink
+          POSTGRES_USER: fitlink
+          POSTGRES_PASSWORD: ci-migration-only
+        ports:
+        - 5432:5432
+        options: --health-cmd "pg_isready -U fitlink -d fitlink" --health-interval 3s
+          --health-timeout 3s --health-retries 30
+      redis:
+        image: redis@sha256:c6eabf748fc7a61dbb5a705c78bcf3d6377b1127a97d0ce965c11c44ba46896f
+        ports:
+        - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 3s --health-timeout
+          3s --health-retries 30
+    env:
+      OTP_RATE_REDIS_URL: redis://127.0.0.1:6379/4
+      CELERY_BROKER_URL: redis://127.0.0.1:6379/1
+      CELERY_RESULT_BACKEND: redis://127.0.0.1:6379/2
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: fitlink
+      POSTGRES_USER: fitlink
+      POSTGRES_PASSWORD: ci-migration-only
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+      with:
+        version: 0.12.19
+        python-version: 3.13.15
+        enable-cache: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+        path: .runtime/c03
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/c02
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c01
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c02/.runtime/c01
+        persist-credentials: false
+    - run: uv sync --frozen --group dev
+    - name: Cumulative required C04 unit and PostgreSQL tests, zero skips
+      run: sh docker/verify_c04_incremental.sh --task 1
+  c04-final:
+    if: always()
+    needs:
+    - foundation
+    - c03-owner
+    - c03-staff
+    - c02-migrations
+    - c03-storage
+    - c03-timeout-probe
+    - c03-processing
+    - c03-restart
+    - c03-evidence-audit
+    - c03-task14-native
+    - c03-final
+    - c04-baseline
+    - c04-postgresql
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+        env:
+          POSTGRES_DB: fitlink
+          POSTGRES_USER: fitlink
+          POSTGRES_PASSWORD: ci-migration-only
+        ports:
+        - 5432:5432
+        options: --health-cmd "pg_isready -U fitlink -d fitlink" --health-interval 3s
+          --health-timeout 3s --health-retries 30
+      redis:
+        image: redis@sha256:c6eabf748fc7a61dbb5a705c78bcf3d6377b1127a97d0ce965c11c44ba46896f
+        ports:
+        - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 3s --health-timeout
+          3s --health-retries 30
+    env:
+      OTP_RATE_REDIS_URL: redis://127.0.0.1:6379/4
+      CELERY_BROKER_URL: redis://127.0.0.1:6379/1
+      CELERY_RESULT_BACKEND: redis://127.0.0.1:6379/2
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: fitlink
+      POSTGRES_USER: fitlink
+      POSTGRES_PASSWORD: ci-migration-only
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+      with:
+        version: 0.12.19
+        python-version: 3.13.15
+        enable-cache: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+        path: .runtime/c03
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/c02
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c01
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c02/.runtime/c01
+        persist-credentials: false
+    - name: Reject skipped failed or omitted upstream jobs
+      env:
+        C04_UPSTREAM: ${{ toJSON(needs) }}
+      run: python docker/c04_acceptance.py --task 1 --upstream "$C04_UPSTREAM"
+    - run: uv sync --frozen --group dev
+    - name: Installed cumulative C04 acceptance and migration drift
+      run: sh docker/verify_c04.sh
