@@ -491,7 +491,17 @@ services:
        "worker", "--loglevel=WARNING", "--concurrency=1", "--hostname=foundation@%h",
        "-I", "docker.c03_asset_restart_probe"]
 CLEAN_COMPOSE
+# The owner/staff E2E flows process private uploaded images from the browser
+# harness and require scan-private network access. The inherited C02/Foundation
+# browser instead requires web's trustworthy localhost origin.
+cat > "$private/clean-isolated-browser-compose.yml" <<'CLEAN_ISOLATED_BROWSER'
+services:
+  browser:
+    network_mode: !reset null
+    networks: [default, scan-private]
+CLEAN_ISOLATED_BROWSER
 clean() { timeout -k 10s 900s docker compose -p "$clean_project" -f "$root/compose.yaml" -f "$private/clean-compose.yml" --env-file "$clean_env" --profile test "$@"; }
+clean_isolated_browser() { timeout -k 10s 900s docker compose -p "$clean_project" -f "$root/compose.yaml" -f "$private/clean-compose.yml" -f "$private/clean-isolated-browser-compose.yml" --env-file "$clean_env" --profile test "$@"; }
 clean_cleanup() {
   result=0
   clean down --remove-orphans >>"$private/cleanup.log" 2>&1 || result=$?
@@ -640,7 +650,7 @@ browser_gate() {
     *) return 1 ;;
   esac
   # Only these literal installed selections are split into separate arguments.
-  clean run --rm --no-deps browser uv run --frozen pytest $selection -q --strict-markers --tracing=off --screenshot=off --video=off
+  clean_isolated_browser run --rm --no-deps browser uv run --frozen pytest $selection -q --strict-markers --tracing=off --screenshot=off --video=off
 }
 run_step clean_owner_browser browser_gate --task11-owner
 run_step clean_staff_browser browser_gate --task12-staff
