@@ -59,6 +59,9 @@ def evidence():
         "status": "completed",
         "conclusion": "success",
         "run_attempt": 1,
+        "path": ".github/workflows/c04.yml",
+        "event": "push",
+        "head_commit": {"id": sha, "tree_id": "c" * 40},
     }
     jobs = [
         {
@@ -73,7 +76,13 @@ def evidence():
         for i, name in enumerate(sorted(REQUIRED))
     ]
     return (
-        {"task": 1, "implementation_sha": sha, "run_id": 123, "run_attempt": 1},
+        {
+            "task": 1,
+            "implementation_sha": sha,
+            "implementation_tree": "c" * 40,
+            "run_id": 123,
+            "run_attempt": 1,
+        },
         run,
         jobs,
     )
@@ -187,3 +196,47 @@ def test_aggregate_rejects_skipped_upstream_before_completion():
     assert module.validate_upstream(1, needs)
     needs["c03-final"]["result"] = "skipped"
     assert not module.validate_upstream(1, needs)
+
+
+def test_acceptance_binds_workflow_path_event_and_source_tree():
+    module = validator()
+    entry, run, jobs = evidence()
+    entry["implementation_tree"] = "c" * 40
+    run.update(
+        {
+            "path": ".github/workflows/c04.yml",
+            "event": "push",
+            "head_commit": {"id": entry["implementation_sha"], "tree_id": "c" * 40},
+        }
+    )
+    assert module.validate_completed_task_evidence(entry, run, jobs)
+    run["path"] = ".github/workflows/fake.yml"
+    assert not module.validate_completed_task_evidence(entry, run, jobs)
+
+
+@pytest.mark.parametrize("field", ["event", "tree_id", "commit_id"])
+def test_acceptance_rejects_wrong_source_envelope(field):
+    module = validator()
+    entry, run, jobs = evidence()
+    assert module.validate_completed_task_evidence(entry, run, jobs)
+    if field == "event":
+        run["event"] = "workflow_dispatch"
+    elif field == "tree_id":
+        run["head_commit"]["tree_id"] = "d" * 40
+    else:
+        run["head_commit"]["id"] = "d" * 40
+    assert not module.validate_completed_task_evidence(entry, run, jobs)
+
+
+def test_checkpoint_schema_cannot_claim_incomplete_acceptance():
+    import json
+
+    module = validator()
+    validate = getattr(module, "validate_checkpoint", None)
+    assert callable(validate), "Missing durable checkpoint schema validation"
+    payload = json.loads(
+        (ROOT / "docs/implementation/c04/checkpoints/task01-start.json").read_text()
+    )
+    assert validate(payload)
+    payload["state"] = "COMPLETE"
+    assert not validate(payload)

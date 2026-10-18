@@ -47,6 +47,13 @@ def validate_completed_task_evidence(
         )
         if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
             return False
+        tree = entry["implementation_tree"]
+        if not isinstance(tree, str) or not re.fullmatch(r"[0-9a-f]{40}", tree):
+            return False
+        if workflow.get("head_commit", {}).get("id") != sha:
+            return False
+        if workflow.get("head_commit", {}).get("tree_id") != tree:
+            return False
         if (
             type(run_id) is not int
             or run_id < 1
@@ -61,6 +68,8 @@ def validate_completed_task_evidence(
                 "head_sha": sha,
                 "run_attempt": attempt,
                 "head_branch": "marketplace/c04-cloud",
+                "path": ".github/workflows/c04.yml",
+                "event": "push",
                 "status": "completed",
                 "conclusion": "success",
             }.items()
@@ -85,6 +94,56 @@ def validate_completed_task_evidence(
             for job in jobs
         )
     except (KeyError, TypeError, ValueError):
+        return False
+
+
+def validate_checkpoint(payload: dict) -> bool:
+    """Validate durable finite metadata before a checkpoint can claim completion."""
+    try:
+        if (
+            type(payload.get("schema_version")) is not int
+            or payload["schema_version"] != 1
+        ):
+            return False
+        required_jobs(payload["task"])
+        if payload["state"] not in {
+            "NOT_STARTED",
+            "RED",
+            "IN_PROGRESS",
+            "BLOCKED",
+            "GREEN",
+            "COMPLETE",
+        }:
+            return False
+        for field, expected in {
+            "approved_plan_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+            "approved_plan_tree": "1478d691b2a60d95f6c0d2ce5e561d34f59a61c0",
+            "approved_plan_blob": "f1225196c95a203e440afc4da362b74806e84f20",
+            "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+            "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+        }.items():
+            if payload.get(field) != expected:
+                return False
+        if payload["state"] != "COMPLETE":
+            return True
+        hosted = payload["hosted_acceptance"]
+        if not isinstance(hosted, dict) or not validate_completed_task_evidence(
+            hosted["entry"], hosted["workflow"], hosted["jobs"]
+        ):
+            return False
+        if hosted["entry"]["task"] != payload["task"]:
+            return False
+        runtime = payload["runtime_evidence"]
+        if set(runtime) != required_jobs(payload["task"]):
+            return False
+        return all(
+            item.get("exit_code") == 0
+            and item.get("failed") == 0
+            and item.get("skipped") == 0
+            and item.get("cleanup_complete") is True
+            for item in runtime.values()
+        )
+    except (KeyError, TypeError, ValueError, AttributeError):
         return False
 
 

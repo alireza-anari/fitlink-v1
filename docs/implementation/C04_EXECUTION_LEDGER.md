@@ -99,3 +99,32 @@ historical verifier Path/PurePosixPath annotation errors, so no historical code
 was edited to satisfy an unrelated expanded typing scope. Task-generated mutated
 fixture copies were moved into ignored .runtime before whole-tree lint, without
 changing their bytes. Original baseline sources were not modified.
+
+### Task 1 forward source-binding correction — still IN_PROGRESS
+
+Shell push had no GitHub credentials; the authorized GitHub connector published
+identical source tree `9398bb402f37e9e8682a21acbcddbfb1ced4d9be` as remote
+`b0ac843fc32366a001f7601e922670e9bb9daa0d`, parent exactly the approved planning
+commit. Local source commit `6cf2780a610f2fb9de2b95864e3267f19174b6d1` was preserved
+on local/c04-task01-source; actual remote ancestry was fetched and checked out
+without overwrite or synthetic history. No completed/planning ref changed.
+
+Hosted run `39158759787`, attempt 1, is the first candidate run on b0ac843/tree
+9398bb4. At review time c04-postgresql, c03-timeout-probe and c03-evidence-audit
+were SUCCESS; remaining required jobs were still running. No task acceptance
+is inferred from these partial results.
+
+Distinct Task 1 review found an Important evidence-validation gap: a successful
+job set could match SHA/branch but not the intended workflow path/event/tree.
+Actual RED `test_acceptance_binds_workflow_path_event_and_source_tree` showed the
+wrong workflow path was accepted. Fix binds the official run path, push event,
+head_commit.id and tree_id to the exact implementation SHA/tree. Added negative
+wrong-event/tree/commit tests. Actual GitHub run metadata confirms all fields
+exist; no fabricated API shape was assumed. Checkpoint schema validation also
+rejects COMPLETE with absent hosted/runtime/cleanup evidence; initial missing
+schema-validator RED was observed before its implementation.
+
+Corrected focused GREEN: 29 C04 controls plus 2 inherited static tests = 31
+passed, zero failed/skipped. Whole-tree Ruff, focused new-helper mypy and format
+pass. A fresh complete hosted manifest is required on the corrected source;
+previous-run PASS cannot accept this change. Task 2 remains NOT_STARTED.
