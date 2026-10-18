@@ -485,9 +485,6 @@ clean_env=$root/.env.c03-task14-clean
 python docker/generate_env.py "$clean_env"
 cat > "$private/clean-compose.yml" <<'CLEAN_COMPOSE'
 services:
-  browser:
-    network_mode: !reset null
-    networks: [default, scan-private]
   worker:
     command:
       ["uv", "run", "--frozen", "celery", "--quiet", "-A", "config.celery:app",
@@ -844,7 +841,7 @@ PY
   esac
 }
 run_step clean_c02_browser_diagnostic clean_c02_browser_diagnostic
-run_step clean_c02_browser clean run --rm --no-deps -e E2E_BASE_URL=http://web:8000 browser uv run --frozen pytest tests/e2e/c02 tests/e2e/test_foundation_smoke.py -q --strict-markers --tracing=off --screenshot=off --video=off
+run_step clean_c02_browser clean run --rm --no-deps browser uv run --frozen pytest tests/e2e/c02 tests/e2e/test_foundation_smoke.py -q --strict-markers --tracing=off --screenshot=off --video=off
 restart_probe() { clean run --rm --no-deps checks timeout -k 5s 60s uv run --frozen python docker/c03_asset_restart_probe.py "$@"; }
 mkdir -p "$root/.runtime/c03-triage"
 chmod 777 "$root/.runtime/c03-triage"
