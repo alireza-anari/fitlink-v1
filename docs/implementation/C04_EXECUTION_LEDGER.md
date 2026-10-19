@@ -754,3 +754,62 @@ locked-runtime verification remains mandatory in the complete hosted manifest.
 No full local regression or Ruff pass is claimed. New-head CI must independently
 execute these tests and every inherited/current/baseline job. Task1 IN_PROGRESS;
 Tasks2–11 NOT_STARTED. No public functionality, C05 work, merge or release.
+
+### Task 1 COMPLETE — exact-source hosted acceptance
+
+Accepted implementation: f2cebc3a08352eafeab84dff4470970161c45bc2, tree
+8acd1b9a83c88d423a9672baebc5f8fdde157bfd. Hosted run39252751752 attempt1
+completed SUCCESS on that exact head/tree, branch marketplace/c04-cloud,
+push event and .github/workflows/c04.yml. All14 mandatory jobs SUCCESS;
+every job and step was inspected, with zero skipped steps. The actual
+validate_completed_task_evidence call accepts freshly retrieved provider metadata.
+No retry or cancellation was requested for this SHA.
+
+| Mandatory job | Exact job ID | Runtime evidence inspected |
+|---|---:|---|
+| foundation | 118060342226 | Natural command0 in1345.5s, reported1883 passed/0 failed/0 skipped, complete host/container cleanup; locked quality/static/unit/production checks also pass |
+| c02-migrations | 118060342037 | Account269, focused38, cumulative C03 task8/9/10:108/89/86; natural0 in291.5s, complete cleanup, no skips |
+| c03-final | 118060342516 |127 outer stages all0, backend1783 passed, no failed/skipped phases, final_rehearsal_passed and clean_cleanup0 |
+| c03-owner | 118060341978 |75 passed/0 failed/0 skipped, natural0 in485.8s, complete cleanup |
+| c03-staff | 118060342287 |67 passed/0 failed/0 skipped, natural0 in534.6s, complete cleanup |
+| c03-storage | 118060342414 |91 actual passed call reports/0 failed/0 skipped, natural0 in182.2s, complete cleanup |
+| c03-processing | 118060342292 |62 actual passed call reports/0 failed/0 skipped, natural0 in297.7s, complete cleanup |
+| c03-restart | 118060342164 |Actual owned worker SIGKILL and scanner/storage/broker outage/recovery, durable receipt, single effect and stale-delivery denial; natural0 in351.4s and cleanup |
+| c03-timeout-probe | 118060342327 |Expected deadline negative control; owned container removed, detached child terminated, supervisor_contract_satisfied true; the intentional child exit1 is not represented as a successful service execution |
+| c03-task14-native | 118060342184 |Actual native runtime/decoder/isolation checks and diagnostic_cleanup all exit0 |
+| c03-evidence-audit | 118060341660 |All12 earlier C03 task records verify their real hosted selections, provenance, positive counts, exit0 and zero skips; read-only audit, not new execution of those historical tests |
+| c04-baseline | 118060342190 |Exact immutable handoff full verifier:127 stages all0, backend1692 passed, no failed/skipped phases, clean_cleanup0/final_rehearsal_passed |
+| c04-postgresql | 118060342111 |92 passed, zero error/failed/skipped/xfail/xpass/deselected, actual0; hosted service cleanup succeeds |
+| c04-final | 118079191777 |Exact upstream manifest accepted,92 passed with all non-pass counts0, actual0, no migration drift; hosted service cleanup succeeds |
+
+Foundation count1883 is the existing reporter's aggregate, not a claim of1883
+distinct test functions. Its host unit phase separately reports800 passed and4
+successful subtests. Preserve the observed counts without deduplicating or
+relabeling executions. Intentional timeout/native fault controls remain clearly
+separate from natural successful service gates.
+
+Current final artifact12189070584 was downloaded and its provider SHA256
+0a7a16278906382486ecdac762bd0029775bcf3e0574b11a7c69d089fded2d76 independently
+matched. Its142 metadata rows all have exit0, including all13 original_c02_*
+prerequisites and final clean_cleanup0. The original058 failure remains
+historical/unexplained; it did not recur here. No unsupported root cause or
+successful retry is claimed. Original baseline logs independently establish the
+unchanged full verifier's positive execution; that job has no artifact upload
+step and none is invented.
+
+Distinct author manual Task1 review completed after the runtime inspections:
+verified approved plan blob f1225196c95a203e440afc4da362b74806e84f20, exact
+baseline trees, inherited ci.yml, all11 current job counterparts, missing/fake/
+wrong-head/skip rejection controls, diagnostic privacy/failure propagation,
+isolated historical migration ownership and absence of C04 application/schema
+changes. No unresolved Critical or Important Task1 finding. No independent
+reviewer or whole-C04 final review is claimed. Retained limitation: local
+Python3.13/Docker remained unavailable after maintenance; the locked real-service
+and browser proofs above were actually executed on hosted runners instead.
+
+Rechecked all live refs: main, C01/C02/C03 completed/planning/diagnostic refs and
+approved C04 planning ref remain unchanged. validate_checkpoint accepts the new
+task01-complete.json with exact14-job metadata and per-job runtime evidence.
+task01-start.json remains the original historical start record. This completion
+checkpoint changes documentation only and preserves f2cebc3 as the tested
+implementation authority separately. Task1 COMPLETE; next Task2, in strict order.

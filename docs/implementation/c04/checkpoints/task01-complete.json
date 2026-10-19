@@ -1,0 +1,346 @@
+{
+  "schema_version": 1,
+  "task": 1,
+  "state": "COMPLETE",
+  "approved_plan_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+  "approved_plan_tree": "1478d691b2a60d95f6c0d2ce5e561d34f59a61c0",
+  "approved_plan_blob": "f1225196c95a203e440afc4da362b74806e84f20",
+  "base_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+  "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+  "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+  "red": {
+    "test": "test_c04_ref_runs_every_inherited_gate",
+    "failed": 1
+  },
+  "focused_green": {
+    "passed": 92,
+    "failed": 0,
+    "skipped": 0,
+    "error": 0,
+    "xfailed": 0,
+    "xpassed": 0,
+    "deselected": 0
+  },
+  "hosted_acceptance": {
+    "entry": {
+      "task": 1,
+      "implementation_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+      "implementation_tree": "8acd1b9a83c88d423a9672baebc5f8fdde157bfd",
+      "run_id": 39252751752,
+      "run_attempt": 1
+    },
+    "workflow": {
+      "id": 39252751752,
+      "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+      "run_attempt": 1,
+      "head_branch": "marketplace/c04-cloud",
+      "path": ".github/workflows/c04.yml",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_commit": {
+        "id": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "tree_id": "8acd1b9a83c88d423a9672baebc5f8fdde157bfd"
+      }
+    },
+    "jobs": [
+      {
+        "id": 118060341660,
+        "name": "c03-evidence-audit",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060341978,
+        "name": "c03-owner",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342037,
+        "name": "c02-migrations",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342111,
+        "name": "c04-postgresql",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342164,
+        "name": "c03-restart",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342184,
+        "name": "c03-task14-native",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342190,
+        "name": "c04-baseline",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342226,
+        "name": "foundation",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342287,
+        "name": "c03-staff",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342292,
+        "name": "c03-processing",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342327,
+        "name": "c03-timeout-probe",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342414,
+        "name": "c03-storage",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118060342516,
+        "name": "c03-final",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118079191777,
+        "name": "c04-final",
+        "run_id": 39252751752,
+        "run_attempt": 1,
+        "head_sha": "f2cebc3a08352eafeab84dff4470970161c45bc2",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "next_task": 2,
+  "runtime_evidence": {
+    "c03-evidence-audit": {
+      "job_id": 118060341660,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "audited_prior_c03_tasks": 12,
+      "proof": "all recorded historical actual executions verified, no skipped selections",
+      "cleanup_basis": "read-only auditor, no service ownership; completed host job"
+    },
+    "c03-owner": {
+      "job_id": 118060341978,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "passed": 75,
+      "reason": "command_exited",
+      "elapsed_seconds": 485.8
+    },
+    "c02-migrations": {
+      "job_id": 118060342037,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "account_passed": 269,
+      "focused_passed": 38,
+      "c03_task8_passed": 108,
+      "c03_task9_passed": 89,
+      "c03_task10_passed": 86,
+      "reason": "command_exited",
+      "elapsed_seconds": 291.5,
+      "service_cleanup": "Stop containers success"
+    },
+    "c04-postgresql": {
+      "job_id": 118060342111,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "passed": 92,
+      "error": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0,
+      "service_cleanup": "Stop containers success"
+    },
+    "c03-restart": {
+      "job_id": 118060342164,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "reason": "command_exited",
+      "elapsed_seconds": 351.4,
+      "proof": "actual scanner/storage/broker outage and SIGKILL recovery; one effect and stale-delivery denial"
+    },
+    "c03-task14-native": {
+      "job_id": 118060342184,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "proof": "all native runtime/decoder/isolation stages exit0 including diagnostic_cleanup"
+    },
+    "c04-baseline": {
+      "job_id": 118060342190,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "outer_stages": 127,
+      "backend_passed": 1692,
+      "all_stage_exits_zero": true,
+      "clean_cleanup_exit": 0,
+      "final_rehearsal_passed": true,
+      "fixture_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+      "fixture_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7"
+    },
+    "foundation": {
+      "job_id": 118060342226,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "reported_passed": 1883,
+      "elapsed_seconds": 1345.5,
+      "reason": "command_exited",
+      "host_cleanup_complete": true,
+      "container_cleanup_complete": true
+    },
+    "c03-staff": {
+      "job_id": 118060342287,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "passed": 67,
+      "reason": "command_exited",
+      "elapsed_seconds": 534.6
+    },
+    "c03-processing": {
+      "job_id": 118060342292,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "passed": 62,
+      "reason": "command_exited",
+      "elapsed_seconds": 297.7
+    },
+    "c03-timeout-probe": {
+      "job_id": 118060342327,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "proof": "intentional deadline contract; owned container removed and detached child terminated; supervisor_contract_satisfied true",
+      "intentional_child_exit": 1,
+      "cleanup_basis": "positive supervisor contract, not a successful timed-out service"
+    },
+    "c03-storage": {
+      "job_id": 118060342414,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "passed": 91,
+      "reason": "command_exited",
+      "elapsed_seconds": 182.2
+    },
+    "c03-final": {
+      "job_id": 118060342516,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "outer_stages": 127,
+      "backend_passed": 1783,
+      "all_stage_exits_zero": true,
+      "clean_cleanup_exit": 0,
+      "final_rehearsal_passed": true,
+      "artifact_id": 12189070584,
+      "artifact_sha256": "0a7a16278906382486ecdac762bd0029775bcf3e0574b11a7c69d089fded2d76",
+      "verified_metadata_rows": 142,
+      "original_c02_subphases": 13
+    },
+    "c04-final": {
+      "job_id": 118079191777,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "passed": 92,
+      "error": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0,
+      "service_cleanup": "Stop containers success",
+      "migration_drift": false
+    }
+  },
+  "review": {
+    "method": "distinct author manual Task1 source/security/CI review",
+    "critical": 0,
+    "important": 0,
+    "independent_reviewer": false
+  }
+}
