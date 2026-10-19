@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "task": 1,
+  "state": "IN_PROGRESS",
+  "approved_plan_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+  "approved_plan_tree": "1478d691b2a60d95f6c0d2ce5e561d34f59a61c0",
+  "approved_plan_blob": "f1225196c95a203e440afc4da362b74806e84f20",
+  "base_commit": "cd583d95d5994618f0dd83e51da5a209579e0427",
+  "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+  "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+  "red": {
+    "test": "test_complete_command_can_exit_naturally_within_reviewed_budget",
+    "failed": 2,
+    "negative_controls_passed": 4
+  },
+  "focused_green": {
+    "passed": 120,
+    "failed": 0,
+    "skipped": 0
+  },
+  "hosted_acceptance": null,
+  "next_task": 1,
+  "recovery": {
+    "observed_sha": "cd583d95d5994618f0dd83e51da5a209579e0427",
+    "observed_tree": "c2638774bac91b2d6bd91edd12940127bded655a",
+    "run_id": 39201568257,
+    "run_attempt": 1,
+    "foundation_job": 117895445550,
+    "reason": "observation_deadline",
+    "passed": 1784,
+    "failed": 0,
+    "skipped": 0,
+    "cleanup_complete": true,
+    "active_command": "tests/integration/c03/test_c03_failure_recovery.py",
+    "active_command_timeout_seconds": 180,
+    "consolidation_timeout_seconds": 600,
+    "previous_outer_seconds": 1200,
+    "current_source_outer_seconds": 1800,
+    "immutable_c03_outer_seconds": 1200
+  }
+}

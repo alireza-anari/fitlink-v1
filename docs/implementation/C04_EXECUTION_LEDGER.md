@@ -269,3 +269,55 @@ timeout ownership, PostgreSQL, native, owner and staff GREEN. Owner actual
 runtime: 75 passed, zero failed/skipped, command exit 0 and complete cleanup.
 Foundation and both full rehearsals remain active; their results are not inferred.
 These diagnostics are not Task 1 acceptance. Tasks 2–11 remain NOT_STARTED.
+
+### Task 1 measured outer-observer budget correction — 2026-10-19 UTC
+
+Published build triage at `cd583d95d5994618f0dd83e51da5a209579e0427`, tree
+`c2638774bac91b2d6bd91edd12940127bded655a`; preserved same-tree local authoring
+commit `bacd671aad1cc735a6e020a8772abbf65bf737f1` on
+`local/c04-task01-build-diagnostic`. New complete run `39201568257` attempt 1
+has ten successful jobs: real processing62, owner75, staff67, PostgreSQL44,
+plus storage/migrations/restart/native/timeout/evidence-audit. These are actual
+current-source executions, not carried-forward results. Processing/owner/staff
+have zero failed/skipped cases, natural exit 0 and complete cleanup. The previous
+build failures did not repeat; their underlying cause remains undetermined.
+
+Foundation `117895445550` failed at 1,202.1s with observation_deadline,
+1,784 passed / 0 failed / 0 skipped, cleanup complete. Earlier diagnostic source
+Foundation `117892652519` similarly hit 1,201.8s with 1,776/0/0. Latest source
+finished its full backend in 513.739s and C02 browser in 215.438s (exit0 each).
+The final 1,198.5s snapshot proves the active command was
+`tests/integration/c03/test_c03_failure_recovery.py` inside its existing180s
+child timeout, within the appended `--task13-foundation`600s consolidation.
+This is progressing nested work cut off by the outer observer, not an observed
+assertion failure. Both full original/current rehearsals are still pending.
+
+Engineering ruling under approved §6's prohibition on *blind* timeout growth:
+use a FIXED 1,800s current-source Foundation observation budget. The measured
+backend/browser alone consumes729.177s; builds, immutable C01 proof, same-DB
+upgrade and service restarts precede the independent600s C03 consolidation.
+The old1,200s cap repeatedly cuts the latter off before its own bound. Adding
+600s gives that EXISTING final stage its budget without changing any test or
+inner timeout. This revises the earlier preservation decision using newly
+observed phase evidence. It is a current-source CI execution-budget correction,
+not a change to permissions, architecture, production behavior or test outcomes.
+No further blind budget growth is authorized by this ruling.
+
+Original `.github/workflows/ci.yml`, `verify_c02.sh`, `verify_foundation.sh`,
+incremental scripts, all eleven job definitions, 60-minute hosted Foundation
+limit, skip rejection, ownership, non-TTY execution, child timeouts, kill/reap,
+container cleanup and natural-exit acceptance are preserved. The immutable
+C03 fixture retains its exact1200s helper and complete original source tree.
+Storage600s/PostgreSQL330s windows are unchanged. Deadline/error/cancellation
+still cannot return PASS. This does not permit a diagnostic PASS or partial test
+count to become acceptance. A COMPLETE NEW-HEAD manifest remains mandatory.
+
+Behavioral RED: actual observer rejected complete commands configured with
+1300s/1800s outer budgets (2 failed; 4 invalid-budget controls passed).
+GREEN: 120 C04/observer/inherited-CI controls passed, including actual short
+child natural exits; NaN/infinity/negative/>1800 budgets reject. Metadata and
+cleanup adapters in those units are explicitly synthetic, not real-service
+acceptance. Existing forced-cutoff/ownership/failure tests pass. Ruff all446
+files, whitespace and immutable C03 tree verification pass. Durable recovery
+JSON validates with state IN_PROGRESS and null hosted acceptance. Task 1 is
+not COMPLETE. Tasks 2–11 remain NOT_STARTED.
