@@ -30,9 +30,7 @@ def test_optional_profiles_not_created():
     assert connection.vendor == "postgresql"
     parent_name = connection.settings_dict["NAME"]
     parent_history = MigrationRecorder(connection).applied_migrations()
-    anchor = apps.get_model("accounts", "User").objects.create_user(
-        "+989123456789", password="synthetic-migration-anchor"
-    )
+    anchor = apps.get_model("accounts", "User").objects.create_user("+989123456789")
     anchor_before = (anchor.pk, anchor.public_id, anchor.password, anchor.auth_version)
     latest = MigrationExecutor(connection).loader.graph.leaf_nodes()
     c02 = historical_c02_targets()

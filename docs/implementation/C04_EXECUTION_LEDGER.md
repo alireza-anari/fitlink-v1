@@ -644,3 +644,25 @@ rehearsals have127 zero stages, clean_cleanup0/final_rehearsal_passed; original
 backend1692, current1757, no failed/skipped phases; final C04 job117913426045
 executes65 cases and drift check successfully. This is historical authority only,
 not acceptance of later legitimate recovery source changes.
+
+### Task 1 OTP-only parent-anchor fixture correction
+
+Private-evidence checkpoint52ac877dddfb261185b0355eb87cd9124a49cd44 /
+`be0450f29273ef5b8b0f62b4b8e111aeb645fd33`, run39210185737 attempt1,
+C04 PostgreSQL117921604583 now exposes the exact static cause safely:
+C03 historical test line33 → apps/accounts/managers.py create_user line22,
+ValueError. Actual runner counts87 passed/1 failed, no error/skip/xfail/xpass/
+deselection, actual exit1. No private exception payload is emitted.
+
+The new parent anchor incorrectly supplied a password to create_user. This was
+an implementation mistake in the new TEST FIXTURE: C01 deliberately rejects
+password provisioning for OTP-only accounts. Correct ONLY the fixture call to
+create_user(phone), preserving its generated unusable-password value in the
+unchanged anchor comparison. No manager, account policy, legacy historical
+password preservation, SQL assertion or privacy boundary is weakened. Hosted
+RED above independently confirms the identified call/guard.
+
+Focused GREEN after correction:86 C04 units and the separate10 user-contract/
+runner-privacy controls pass, zero failed/skipped. Existing C01 password rejection
+stays tested. REAL PostgreSQL probe and complete new-head manifest remain PENDING.
+Task1 is not accepted; no Task2 code has started.
