@@ -230,3 +230,42 @@ change. GREEN: all 35 C04 unit controls pass, Ruff check/format pass. A fresh
 forward diagnostic commit requires the COMPLETE new-head hosted manifest;
 passing diagnostics alone cannot accept Task 1. This is not another same-SHA
 blind retry. Task 1 remains unaccepted; Tasks 2–11 remain NOT_STARTED.
+
+### Task 1 diagnostic checkpoint and build boundary — 2026-10-19 UTC
+
+Published bounded browser triage as nonforced forward commit
+`4a1a3f113ff516ca08740429b77ce54815eb1be8`, exact tree
+`3c3a65c2f76731ed6b4e6a2638c005737282216b`, parent `76160937...`.
+Local authoring commit `a619e0d27ef32a193eae3b01cd0567ed9c9b18be` has the same tree
+and is preserved on `local/c04-task01-browser-diagnostic`. Local focused current
+C03 CI/scope plus C04 controls: 133 passed, zero failed/skipped. Full hosted run
+`39200620956` attempt 1 is bound to this source. All completed-stage, planning
+and diagnostics branch heads were rechecked unchanged before publication.
+Immutable C03 verifier independently returned the exact `5c294cb3...` tree.
+
+Two terminal inherited jobs fail before tests/services: restart `117892652554`
+exits 1 after 130.9 seconds; processing `117892652598` exits 1 after 218.3 seconds.
+Their snapshots show `docker compose build`/BuildKit active and no service
+containers; command exits naturally and host/container cleanup is complete.
+The actual build error is suppressed by the original metadata-only observer.
+Do not label this a proved network failure or retry blindly. Other current-head
+jobs successfully build/run; that alone cannot establish these failures' cause.
+
+A second bounded metadata change adds only finite infrastructure categories to
+`docker/c03_gate_diagnostics.py::progress_lines`, emitted to the existing journal
+through `watch::read_progress::record`. No raw child output or interpolated
+capture is emitted. Categories never authorize success or change child exits.
+Behavioral RED: six category/privacy cases failed before implementation, one
+unrecognized-output control passed. GREEN: 53 combined C04/observer controls
+pass, including an actual failing subprocess whose exit 17 is preserved and
+whose secret-bearing build message is absent from journal/stdout. Local host
+cleanup observability is unknown in this restricted environment; the subprocess
+unit does not claim Docker cleanup. Hosted real-service cleanup remains mandatory.
+Ruff check/format and git whitespace checks pass. No immutable fixture, original
+CI, gate selection/deadline or production code changed.
+
+Latest observed current-head results: storage, evidence audit, migrations,
+timeout ownership, PostgreSQL, native, owner and staff GREEN. Owner actual
+runtime: 75 passed, zero failed/skipped, command exit 0 and complete cleanup.
+Foundation and both full rehearsals remain active; their results are not inferred.
+These diagnostics are not Task 1 acceptance. Tasks 2–11 remain NOT_STARTED.

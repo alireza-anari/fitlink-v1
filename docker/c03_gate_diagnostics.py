@@ -443,6 +443,18 @@ def terminate_owned(child, marker):
 
 def progress_lines(text):
     """Only finite code/progress names; never relay raw child stdout/stderr."""
+    # No captures from external build output: even error lines can include
+    # credentials or private paths. These labels are evidence, never verdicts.
+    for marker, category in (
+        ("failed to solve:", "build_failed"),
+        ("429 Too Many Requests", "rate_limited"),
+        ("TLS handshake timeout", "tls_timeout"),
+        ("no space left on device", "disk_full"),
+        ("Temporary failure in name resolution", "dns_failure"),
+        ("connection refused", "connection_refused"),
+    ):
+        if marker in text:
+            yield {"kind": "infrastructure_error", "category": category}
     for match in re.finditer(
         r"(?m)^C03_STORAGE_PHASE (migrate|probe|pytest) "
         r"(?:(start|success)|(failure) ([0-9]{1,3}))$",
@@ -599,7 +611,11 @@ def watch(phase, command, *, acceptance=False):
             def record(text):
                 for progress in progress_lines(text):
                     progress_state["last"] = progress
-                    if progress["kind"] in {"storage_phase", "storage_error"}:
+                    if progress["kind"] in {
+                        "storage_phase",
+                        "storage_error",
+                        "infrastructure_error",
+                    }:
                         emit(progress["kind"], progress=progress)
 
             while True:
