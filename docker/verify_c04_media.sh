@@ -31,7 +31,7 @@ dc run --rm --no-deps checks uv run --frozen python manage.py migrate --noinput
 stage=scanner_health
 dc exec -T scanner clamdscan --config-file=/etc/clamav/clamd.c03.conf --ping=1
 stage=behavioral_tests
-dc run --rm --no-deps checks timeout -k 10s 180s uv run --frozen python docker/c04_gate.py tests/unit/c04/test_public_copy_contract.py tests/integration/c04/test_public_media_services.py -q --strict-markers --tb=short --show-capture=no
+dc run --rm --no-deps checks timeout -k 10s 180s uv run --frozen python docker/c04_gate.py tests/unit/c04/test_public_copy_contract.py tests/integration/c04/test_public_media_services.py --ds=config.settings.development -q --strict-markers --tb=short --show-capture=no
 dc run --rm --no-deps checks timeout -k 5s 60s uv run --frozen python docker/c04_media_probe.py worker-prepare
 COMPOSE_FILE="${COMPOSE_FILE:-compose.yaml}:docker/compose.c04-media-worker.yml" dc up -d --wait worker
 dc run --rm --no-deps checks timeout -k 5s 40s uv run --frozen python docker/c04_media_probe.py worker-written
