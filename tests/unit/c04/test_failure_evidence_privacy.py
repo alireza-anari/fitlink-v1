@@ -75,3 +75,40 @@ def test_deselected_required_cases_cannot_be_reported_as_runtime_acceptance(tmp_
         timeout=20,
     )
     assert result.returncode != 0
+
+
+def test_readonly_checkout_uses_private_writable_evidence(monkeypatch, tmp_path):
+    import tempfile
+
+    from docker.c04_gate import evidence_folder
+
+    checkout = tmp_path / "readonly-checkout"
+    checkout.mkdir()
+    original = Path.mkdir
+
+    def denied(path, *args, **kwargs):
+        if path.is_relative_to(checkout):
+            raise PermissionError("Readonly synthetic checkout")
+        return original(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "mkdir", denied)
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
+    folder = evidence_folder(checkout)
+    assert folder.is_dir() and not folder.is_relative_to(checkout)
+    assert folder.stat().st_mode & 0o777 == 0o700
+    assert list(checkout.iterdir()) == []
+
+
+def test_evidence_collision_never_overwrites_existing_work(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+
+    from docker import c04_gate
+
+    monkeypatch.setattr(c04_gate, "uuid4", lambda: SimpleNamespace(hex="a" * 32))
+    existing = tmp_path / ".runtime/c04-gate-evidence" / ("a" * 32)
+    existing.mkdir(parents=True)
+    note = existing / "preserved.txt"
+    note.write_text("legitimate-work")
+    with pytest.raises(FileExistsError):
+        c04_gate.evidence_folder(tmp_path)
+    assert note.read_text() == "legitimate-work"

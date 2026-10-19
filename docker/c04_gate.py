@@ -1,5 +1,6 @@
 """Fail a C04 pytest command on required skips or expected failures."""
 
+import errno
 import importlib
 import json
 import os
@@ -9,6 +10,19 @@ from pathlib import Path
 from uuid import uuid4
 
 import pytest
+
+
+def evidence_folder(root):
+    folder = root / ".runtime/c04-gate-evidence" / uuid4().hex
+    try:
+        folder.mkdir(parents=True, mode=0o700)
+    except OSError as error:
+        if not isinstance(error, PermissionError) and error.errno != errno.EROFS:
+            raise
+        # Non-root checks use a host-owned bind mount. Keep checkout permissions
+        # intact and create a private, atomically unique folder in writable tmp.
+        folder = Path(tempfile.mkdtemp(prefix="fitlink-c04-gate-"))
+    return folder
 
 
 class RequiredEvidence:
@@ -50,8 +64,7 @@ class RequiredEvidence:
 if __name__ == "__main__":
     root = Path(__file__).resolve().parents[1]
     sys.path.insert(0, str(root))
-    folder = root / ".runtime/c04-gate-evidence" / uuid4().hex
-    folder.mkdir(parents=True, mode=0o700)
+    folder = evidence_folder(root)
     os.environ["C03_FOUNDATION_TRIAGE"] = "1"
     os.environ["C03_TRIAGE_EVIDENCE_FILE"] = str(folder / "reports.jsonl")
     triage = importlib.import_module("docker.c03_pytest_triage")

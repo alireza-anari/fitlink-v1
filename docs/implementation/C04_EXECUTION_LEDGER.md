@@ -666,3 +666,35 @@ Focused GREEN after correction:86 C04 units and the separate10 user-contract/
 runner-privacy controls pass, zero failed/skipped. Existing C01 password rejection
 stays tested. REAL PostgreSQL probe and complete new-head manifest remain PENDING.
 Task1 is not accepted; no Task2 code has started.
+
+### Task 1 non-root evidence-directory compatibility review
+
+OTP-anchor correction published87be4460b54fddbdfe41244d43c379ee0b793177 /
+`359ead16855a2c5f0132733627bbbffc09ba9542`, run39210570676 attempt1.
+REAL focused PostgreSQL117922788459 now88 passed/0 errors/0 failed/0 skipped/
+0 xfailed/0 xpassed/0 deselected, actual exit0, including the dedicated historical
+migration flow and unchanged parent anchor. Ten jobs currently succeed; Foundation
+and both full rehearsals remain active. No complete latest-source acceptance yet.
+
+Review-discovered compatibility issue, not claimed as an observed Docker failure:
+the inherited checks container runs app UID1000 against the host checkout bind
+mount. The new reporter initially required writes below that checkout's.runtime,
+which can be owned by the host runner with nonwritable permissions. Do not chmod
+the checkout or weaken source permissions. Extracted the existing folder creation
+unchanged; behavioral RED then injects PermissionError for the checkout and the
+actual creation helper fails rather than providing writable evidence storage.
+
+Correction: retain preferred fresh UUID runtime folder when writable; on ONLY
+permission/read-only-filesystem errors use standard atomically-created private
+system temp (0700) under the executing user. Other errors/collisions still fail.
+Fresh basetemp/raw unlinked file/finite JSON rules remain. A collision control
+proves existing legitimate evidence work is neither reused nor overwritten.
+No public storage, environment/credential bypass, original fixture mutation or
+broader filesystem permission change. Standard container/tmp is used only when
+checkout writes are denied; local allowed-workspace output remains preferred.
+
+GREEN:167 C04/current inherited-CI/observer/final-rehearsal controls, zero failed/
+skipped, including all5 runner privacy/selection/unwritable-root/collision controls.
+Ruff450 files/format/whitespace and immutable C03 exact tree pass. Full non-root
+Docker/current/original browser/service acceptance still belongs to the complete
+next exact-head hosted manifest. Task1 IN_PROGRESS; Tasks2–11 NOT_STARTED.
