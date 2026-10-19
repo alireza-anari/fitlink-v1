@@ -894,3 +894,19 @@ trusted configuration supplies an approved version/text. No real legal policy,
 new consent purpose or implicit publication is invented. C03 stored type_code
 is used verbatim as the selected qualification type label; there is no approved
 credential-label catalogue to invent.
+
+Task2 test-harness correction: matrix checkpointb5d2ae706fb267ae12e838714116bb8f5180968f,
+run39262148010/PostgreSQL118092294156 had3 collection errors and0 executed tests.
+This is NOT accepted as behavioral RED. Local locked-runtime collection reproduces
+exactly3 ImportError instances: attempted relative import with no known parent
+package. C04 tests use namespace directories without __init__.py; replaced the
+three files' relative helper imports with existing project-style absolute imports.
+GREEN collect-only finds all17 intended PostgreSQL cases with exit0 and no
+collection errors; this is collection proof, not a real DB test pass. Re-run the
+real PostgreSQL matrix before crediting additional feature RED. Initial6 actual
+hosted behavior failures from a9ee450 remain valid separately.
+
+New models and generated0018 migration are currently local drafts; no database
+migration or SQL guard has been executed locally. Django5.2.17 generation and
+state drift check pass with the explicit expected local PostgreSQL connection
+warning. Do not describe that as an applied/validated real migration.

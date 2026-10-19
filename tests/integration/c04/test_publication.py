@@ -10,8 +10,7 @@ from django.db import connection
 from django.utils import timezone
 
 from tests.integration.c03.test_verification_decisions import approved
-
-from .publication_helpers import configure
+from tests.integration.c04.publication_helpers import configure
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
 
@@ -78,8 +77,7 @@ def test_confirm_requires_explicit_exact_revision_and_current_owner(settings):
 
 def test_changed_source_requires_reconfirmation(settings):
     from tests.integration.c03.test_professional_setup import save
-
-    from .publication_helpers import confirm, effective, prepare
+    from tests.integration.c04.publication_helpers import confirm, effective, prepare
 
     configure(settings)
     subject = approved(settings)
@@ -96,8 +94,7 @@ def test_changed_source_requires_reconfirmation(settings):
 
 def test_coach_only_release_excludes_private_nutritionist(settings):
     from tests.integration.c03.test_verification_decisions import decision, review
-
-    from .publication_helpers import confirm, effective, prepare
+    from tests.integration.c04.publication_helpers import confirm, effective, prepare
 
     configure(settings)
     subject = review(settings)
@@ -120,8 +117,7 @@ def test_coach_only_release_excludes_private_nutritionist(settings):
 def test_identity_credentials_and_foreign_media_rejected(settings):
     from tests.integration.c03.test_credential_revisions import ready
     from tests.integration.c03.test_professional_setup import owner
-
-    from .publication_helpers import module, prepare
+    from tests.integration.c04.publication_helpers import module, prepare
 
     configure(settings)
     subject = approved(settings)
@@ -141,8 +137,7 @@ def test_identity_credentials_and_foreign_media_rejected(settings):
 
 def test_qualification_summary_exact_revision_only(settings):
     from tests.integration.c03.test_verification_decisions import mutate_evidence
-
-    from .publication_helpers import confirm, effective, prepare
+    from tests.integration.c04.publication_helpers import confirm, effective, prepare
 
     configure(settings)
     subject = approved(settings)
@@ -168,8 +163,7 @@ def test_cross_account_confirmation_and_stale_session_denied(settings):
     from apps.accounts.sessions import revoke_sessions
     from apps.governance.audit import append_event
     from tests.integration.c03.profile_helpers import make_actor
-
-    from .publication_helpers import confirm, prepare
+    from tests.integration.c04.publication_helpers import confirm, prepare
 
     configure(settings)
     subject = approved(settings)
@@ -189,8 +183,7 @@ def test_cross_account_confirmation_and_stale_session_denied(settings):
 def test_duplicate_confirm_single_effect_changed_payload_conflict(settings):
     from apps.governance.audit_models import AuditEvent
     from apps.governance.outbox_models import OutboxEvent
-
-    from .publication_helpers import confirm, module, prepare
+    from tests.integration.c04.publication_helpers import confirm, module, prepare
 
     configure(settings)
     subject = approved(settings)
@@ -216,8 +209,12 @@ def test_expiry_withdrawal_and_flag_off_are_fail_closed(settings):
     from datetime import timedelta
 
     from apps.governance.flag_models import FeatureFlag
-
-    from .publication_helpers import confirm, effective, module, prepare
+    from tests.integration.c04.publication_helpers import (
+        confirm,
+        effective,
+        module,
+        prepare,
+    )
 
     configure(settings)
     subject = approved(settings)
@@ -238,8 +235,12 @@ def test_selected_private_media_waits_for_separate_public_copy(settings):
     from apps.assets.models import AssetDerivative
     from tests.integration.c03.test_credential_revisions import ready
     from tests.integration.c03.test_professional_setup import save
-
-    from .publication_helpers import confirm, effective, module, prepare
+    from tests.integration.c04.publication_helpers import (
+        confirm,
+        effective,
+        module,
+        prepare,
+    )
 
     configure(settings)
     subject = approved(settings)

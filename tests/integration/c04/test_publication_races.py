@@ -5,8 +5,12 @@ import pytest
 from tests.integration.c03.test_verification_decision_races import ordered_connections
 from tests.integration.c03.test_verification_decisions import approved
 from tests.integration.c03.test_verification_revocation import revoke
-
-from .publication_helpers import configure, confirm, effective, prepare
+from tests.integration.c04.publication_helpers import (
+    configure,
+    confirm,
+    effective,
+    prepare,
+)
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
 

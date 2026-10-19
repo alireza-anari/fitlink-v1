@@ -5,8 +5,7 @@ from django.db import DatabaseError, connection, transaction
 
 from tests.integration.c03.test_professional_setup import owner
 from tests.integration.c03.test_verification_decisions import approved
-
-from .publication_helpers import configure, confirm, model, prepare
+from tests.integration.c04.publication_helpers import configure, confirm, model, prepare
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
 
