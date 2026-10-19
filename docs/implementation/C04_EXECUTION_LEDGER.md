@@ -1139,3 +1139,38 @@ source reference becoming public. The unique release/source/purpose/processing
 effect remains one copy row; each generation gets a distinct publication key.
 This follows the approved generation/crash/idempotence/cleanup contract and C03's
 existing attempt pattern, without another infrastructure or authorization system.
+
+Task3 expanded hosted matrix at275a4cefbe2064eb0b5fc6602b744613235abbe9,
+treea70cc669669156599ff96fe66a37ca189fb8ed79, run39315118465,
+PostgreSQL118274449849:156 passed/16 expected missing-inventory/command assertion
+failures,0 error/skipped/xfail/xpass/deselected, actual exit1. All16 failure
+nodes/phases/classes inspected. Only then source-bound copy schema and prepare
+command were written. Worker result contract additionally first fails with
+missing CopyResult, then all21 pure tests pass with its frozen finite metadata.
+
+Current partial implementation adds copy/attempt tables and frozen SQL identity/
+source guards in unpublished assets0010, depending on accepted professionals0018.
+No existing migration is edited. Copy source includes exact private derivative
+identity/version, and each generation's immutable key/output metadata is retained.
+Preparation validates current owner/account, exact confirmation, C03 eligibility,
+private branding purpose and source generation through mandatory trusted
+composition, then commits inventory without I/O. A shared professional selector
+handles confirmed media preparation; the existing effective_publication default
+still only returns an activated current revision, so pending copies do not become
+public. No assets Python import of professionals is added.
+
+Local partial verification: whole-tree Ruff/format478 files clean,134 C04 tests
+plus37 subtests pass, required mypy98 source files pass, Django check0 issues.
+Django-generated migration state check says no changes detected, with the expected
+local PostgreSQL-unavailable warning. SQL has NOT been compiled/applied on a real
+service yet; hosted migration/source-binding results are required. Scan/process/
+read/activation/cleanup and actual media gate/probe are still unimplemented, and
+Task3 is not accepted. A further SQL test now requires publication promotion to
+fail before selected copy outputs exist; its actual negative behavior must be
+observed before adding the new readiness guard. No public route/release exists.
+
+Held-copy and buffered-read tests are present before cleanup/read implementation.
+Source holds inherit existing profile_media/avatar-cover-logo retention policy;
+no new hold kind or consent purpose is introduced. Cleanup must reuse committed
+reservation semantics outside I/O and prove a hold-vs-copy-deletion race, including
+new holds during reservation and late old writer cleanup, before acceptance.

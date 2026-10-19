@@ -54,3 +54,10 @@ class PublicCopyDTO:
     id: UUID
     generation: int
     state: str
+
+
+@dataclass(frozen=True)
+class CopyResult:
+    copy_uuid: UUID
+    generation: int
+    status: str

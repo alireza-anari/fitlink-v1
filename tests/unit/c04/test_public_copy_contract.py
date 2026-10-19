@@ -117,3 +117,15 @@ def test_publication_adapter_rejects_private_keys_and_never_exposes_signer():
     assert set(backend.objects) == {key}
     with pytest.raises(ValueError):
         boundary.put(key, b"active", "image/svg+xml")
+
+
+def test_worker_result_contains_only_bounded_workflow_metadata():
+    result_type = module("publication_contracts").CopyResult
+    assert {f.name for f in fields(result_type)} == {
+        "copy_uuid",
+        "generation",
+        "status",
+    }
+    result = result_type(uuid4(), 1, "denied")
+    with pytest.raises(FrozenInstanceError):
+        result.status = "ready"

@@ -116,6 +116,7 @@ def test_duplicate_prepare_is_one_effect_and_never_changes_private_derivative(se
 @pytest.mark.parametrize("change", ["owner", "revision", "ready_without_output"])
 def test_copy_sql_binding_cannot_be_forged(settings, change):
     from django.db import DatabaseError, transaction
+    from django.db.models import F
 
     from tests.integration.c03.test_professional_setup import owner
     from tests.integration.c04.copy_helpers import copy_model, pending
@@ -127,4 +128,22 @@ def test_copy_sql_binding_cannot_be_forged(settings, change):
         "ready_without_output": {"state": "ready"},
     }
     with pytest.raises(DatabaseError), transaction.atomic():
-        copy_model().objects.filter(pk=dto.id).update(**values[change])
+        copy_model().objects.filter(pk=dto.id).update(
+            **values[change], version=F("version") + 1
+        )
+
+
+def test_publication_sql_cannot_promote_media_before_outputs_ready(settings):
+    from django.db import DatabaseError, transaction
+    from django.db.models import F
+
+    from apps.professionals.publication_models import ProfessionalPublication
+
+    person, asset, draft = selected(settings)
+    with pytest.raises(DatabaseError), transaction.atomic():
+        ProfessionalPublication.objects.filter(pk=draft.publication_id).update(
+            state="published",
+            current_revision_id=draft.revision_id,
+            requested_revision_id=None,
+            version=F("version") + 1,
+        )

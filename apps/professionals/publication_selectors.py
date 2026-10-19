@@ -160,7 +160,7 @@ def source_is_current(profile, revision):
     return source_snapshot(profile, selection, qualifications) == revision.snapshot
 
 
-def effective_publication(profile_uuid: UUID, at: datetime):
+def _confirmed_publication(profile_uuid: UUID, at: datetime, media_revision=None):
     if (
         not isinstance(profile_uuid, UUID)
         or not isinstance(at, datetime)
@@ -181,18 +181,28 @@ def effective_publication(profile_uuid: UUID, at: datetime):
                 ProfessionalPublication.objects.select_for_update(of=("self",))
                 .filter(
                     profile=profile,
-                    state="published",
+                    state__in=(
+                        ["published"]
+                        if media_revision is None
+                        else ["published", "publication_requested"]
+                    ),
                     withdrawn_at__isnull=True,
                     hidden_at__isnull=True,
                     hidden_case_uuid__isnull=True,
                 )
-                .select_related("current_revision")
+                .select_related("current_revision", "requested_revision")
                 .first()
             )
-            if publication is None or publication.current_revision_id is None:
+            if publication is None:
                 return None
-            revision = publication.current_revision
-            if revision is None:
+            revision = (
+                publication.current_revision
+                if publication.state == "published"
+                else publication.requested_revision
+            )
+            if revision is None or (
+                media_revision is not None and revision.id != media_revision
+            ):
                 return None
             if (
                 revision.publication_id != publication.id
@@ -236,3 +246,15 @@ def effective_publication(profile_uuid: UUID, at: datetime):
             )
         except (ProfileNotFound, ValueError, LookupError):
             return None
+
+
+def effective_publication(profile_uuid: UUID, at: datetime):
+    """Only an activated current revision can reach later public readers."""
+    return _confirmed_publication(profile_uuid, at)
+
+
+def confirmed_media_publication(profile_uuid: UUID, revision_uuid: UUID, at: datetime):
+    """Same authority for preparing exact confirmed media, including pending copies."""
+    if not isinstance(revision_uuid, UUID):
+        raise ValueError("Invalid media release revision")
+    return _confirmed_publication(profile_uuid, at, revision_uuid)

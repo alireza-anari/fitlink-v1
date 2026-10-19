@@ -111,3 +111,41 @@ def test_withdraw_before_buffered_release_denies_existing_bytes(settings):
             dto.id, timezone.now(), authorize=authorize, publication_store=wrapped
         )
     assert effective(subject) is None
+
+
+def test_held_copy_never_remains_public(settings):
+    from apps.assets.contracts import AssetNotFound
+    from tests.integration.c03.test_asset_holds import hold, policy
+    from tests.integration.c03.test_asset_holds import subject as record
+
+    person, asset, draft, derivative, store, dto, job = pending(settings)
+    assert process(store, job).status == "ready"
+    attempt = copy_model("PublicCopyAttempt").objects.get(
+        copy_id=dto.id, generation=job[1]
+    )
+    rule = policy(person, asset)
+    hold(settings, person, record(asset))
+    withdraw(person, draft)
+    service = api()
+    at = timezone.now()
+    service.reconcile_public_copy_lifetime(dto.id, at)
+    wrapped = module("apps.assets.public_storage").PublicationObjectStore(store)
+    assert (
+        service.cleanup_public_copy(
+            dto.id,
+            job[1],
+            rule.id,
+            at + timedelta(seconds=2),
+            publication_store=wrapped,
+        )
+        == "held"
+    )
+    assert attempt.key in store.objects
+    with pytest.raises((AssetNotFound, PermissionError)):
+        module("apps.assets.public_copies").read_public_copy(
+            dto.id,
+            at,
+            authorize=service.validate_public_copy_read,
+            publication_store=wrapped,
+        )
+    assert effective(person) is None

@@ -6,6 +6,8 @@ from django.utils import timezone
 
 from .derivative_models import AssetDerivative as AssetDerivative
 from .derivative_models import AssetProcessingAttempt as AssetProcessingAttempt
+from .publication_models import PublicAssetCopy as PublicAssetCopy
+from .publication_models import PublicCopyAttempt as PublicCopyAttempt
 
 
 class Asset(models.Model):
