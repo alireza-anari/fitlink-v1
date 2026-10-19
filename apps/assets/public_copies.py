@@ -11,7 +11,7 @@ from apps.accounts.policies import require_account_action
 
 from .contracts import AssetNotFound
 from .models import Asset, AssetDerivative, PublicAssetCopy, PublicCopyAttempt
-from .public_storage import publication_key
+from .public_storage import get_publication_store, publication_key
 from .publication_contracts import AuthorizedPublicMediaRelease, PublicCopyDTO
 
 
@@ -272,3 +272,314 @@ def scan_due_public_copies(at, batch_size=100, *, authorize=None, enqueue=None):
             # the committed lease; recovery always changes generation and key.
             continue
     return sent
+
+
+def fenced_copy(identifier, generation, lease, authorize, at):
+    user, row, derivative, digest = locked_copy(identifier, authorize, at)
+    attempt = (
+        PublicCopyAttempt.objects.select_for_update()
+        .filter(
+            copy=row,
+            generation=generation,
+            state="running",
+            lease_uuid=lease,
+            lease_until__gt=at,
+        )
+        .first()
+    )
+    if (
+        attempt is None
+        or row.generation != generation
+        or row.state != "running"
+        or row.owner_auth_version != user.auth_version
+        or attempt.authority_hash != digest
+    ):
+        raise AssetNotFound("Publication media unavailable")
+    return row, attempt, derivative
+
+
+def copy_failure(identifier, generation, lease, code, at, *, fatal=False):
+    from datetime import timedelta
+
+    hint = PublicAssetCopy.objects.filter(pk=identifier).first()
+    if hint is None:
+        return
+    with transaction.atomic():
+        User.objects.select_for_update().get(pk=hint.owner_id)
+        row = PublicAssetCopy.objects.select_for_update().get(pk=identifier)
+        attempt = (
+            PublicCopyAttempt.objects.select_for_update()
+            .filter(
+                copy=row,
+                generation=generation,
+                state="running",
+                lease_uuid=lease,
+            )
+            .first()
+        )
+        if attempt is None or row.generation != generation or row.state != "running":
+            return
+        attempt.state, attempt.failure_code = "failed", code
+        attempt.lease_uuid = attempt.lease_until = None
+        attempt.next_attempt_at = at + timedelta(seconds=300)
+        attempt.updated_at = at
+        attempt.save()
+        if fatal:
+            row.state, row.revoked_at = "failed", at
+            row.version += 1
+            row.updated_at = at
+            row.save()
+
+
+def process_public_copy(
+    identifier,
+    generation,
+    lease,
+    at,
+    *,
+    authorize=None,
+    activate=None,
+    source_store=None,
+    publication_store=None,
+    scanner=None,
+    sanitize=None,
+):
+    from hashlib import sha256
+    from uuid import UUID
+
+    from django.conf import settings
+
+    from .images import sanitize as decode
+    from .publication_contracts import MAX_PUBLIC_IMAGE_BYTES, CopyResult
+    from .scanner import configured_scanner
+    from .storage import get_private_store
+
+    def result(status):
+        return CopyResult(identifier, generation, status)
+
+    if (
+        not isinstance(identifier, UUID)
+        or not isinstance(lease, UUID)
+        or type(generation) is not int
+        or not 1 <= generation <= 8
+        or not isinstance(at, datetime)
+        or not timezone.is_aware(at)
+        or not callable(authorize)
+        or not callable(activate)
+        or transaction.get_connection().in_atomic_block
+    ):
+        return result("denied")
+    if (
+        source_store is None or publication_store is None or scanner is None
+    ) and not settings.ASSET_PROCESSING_ENABLED:
+        return result("unavailable")
+
+    def now():
+        return max(at, timezone.now())
+
+    try:
+        with transaction.atomic():
+            row, attempt, derivative = fenced_copy(
+                identifier, generation, lease, authorize, now()
+            )
+            key, source_hash, mime, purpose = (
+                derivative.key,
+                derivative.sha256,
+                derivative.mime_type,
+                row.purpose,
+            )
+    except (PermissionError, LookupError, ValueError):
+        return result("denied")
+
+    def fail(code, *, fatal=False):
+        copy_failure(identifier, generation, lease, code, now(), fatal=fatal)
+        return result(code)
+
+    try:
+        source_store = source_store or get_private_store()
+        publication_store = publication_store or get_publication_store()
+        scanner = scanner or configured_scanner()
+        metadata = source_store.head(key)
+        source = source_store.read_limited(key, MAX_PUBLIC_IMAGE_BYTES)
+        if (
+            not 0 < metadata.size <= MAX_PUBLIC_IMAGE_BYTES
+            or metadata.size != len(source)
+            or metadata.content_type != mime
+            or sha256(source).hexdigest() != source_hash
+        ):
+            return fail("source_changed", fatal=True)
+    except Exception:
+        return fail("storage_unavailable")
+    try:
+        verdict = scanner.scan(source, now())
+        if verdict.status != "clean":
+            status = (
+                verdict.status
+                if verdict.status
+                in {"malicious", "limit", "unknown", "error", "timeout", "stale"}
+                else "unknown"
+            )
+            return fail("scan_" + status, fatal=status in {"malicious", "limit"})
+        if (
+            verdict.engine != "ClamAV 1.5.4"
+            or not isinstance(verdict.signature, str)
+            or not verdict.signature.isdecimal()
+            or len(verdict.signature) > 10
+            or not isinstance(verdict.expires_at, datetime)
+            or not timezone.is_aware(verdict.expires_at)
+            or verdict.expires_at <= now()
+        ):
+            return fail("scan_unknown")
+    except Exception:
+        return fail("scanner_unavailable")
+    image = (sanitize or decode)(source, mime, purpose)
+    if image.status != "clean":
+        return fail(
+            "decode_" + image.status
+            if image.status in {"invalid", "timeout", "unavailable"}
+            else "decode_unknown",
+            fatal=image.status == "invalid",
+        )
+    if (
+        not isinstance(image.data, bytes)
+        or not 0 < len(image.data) <= MAX_PUBLIC_IMAGE_BYTES
+        or not image.data.startswith(b"\x89PNG\r\n\x1a\n")
+        or image.mime_type != "image/png"
+        or type(image.width) is not int
+        or type(image.height) is not int
+        or not 1 <= image.width <= (1600 if purpose == "cover" else 512)
+        or not 1 <= image.height <= (1600 if purpose == "cover" else 512)
+    ):
+        return fail("decode_invalid", fatal=True)
+    digest = sha256(image.data).hexdigest()
+    try:
+        with transaction.atomic():
+            row, attempt, derivative = fenced_copy(
+                identifier, generation, lease, authorize, now()
+            )
+            attempt.sha256, attempt.mime_type = digest, image.mime_type
+            attempt.width, attempt.height, attempt.size = (
+                image.width,
+                image.height,
+                len(image.data),
+            )
+            attempt.scanner_engine, attempt.scanner_signature = (
+                verdict.engine,
+                verdict.signature,
+            )
+            attempt.signature_expires_at = verdict.expires_at
+            attempt.updated_at = now()
+            attempt.save()
+            output_key = attempt.key
+    except (PermissionError, LookupError, ValueError):
+        return result("denied")
+    try:
+        try:
+            publication_store.put(output_key, image.data, image.mime_type)
+        except ValueError:
+            if (
+                publication_store.read_limited(output_key, MAX_PUBLIC_IMAGE_BYTES)
+                != image.data
+            ):
+                raise
+        metadata = publication_store.head(output_key)
+        output = publication_store.read_limited(output_key, MAX_PUBLIC_IMAGE_BYTES)
+        if (
+            metadata.size != len(image.data)
+            or metadata.content_type != image.mime_type
+            or sha256(output).hexdigest() != digest
+            or sha256(
+                source_store.read_limited(key, MAX_PUBLIC_IMAGE_BYTES)
+            ).hexdigest()
+            != source_hash
+        ):
+            return fail("output_mismatch", fatal=True)
+    except Exception:
+        return fail("storage_unavailable")
+    try:
+        with transaction.atomic():
+            row, attempt, derivative = fenced_copy(
+                identifier, generation, lease, authorize, now()
+            )
+            if attempt.signature_expires_at <= now():
+                return result("denied")
+            attempt.state, attempt.lease_uuid, attempt.lease_until = "ready", None, None
+            attempt.updated_at = now()
+            attempt.save()
+            row.state = "ready"
+            row.version += 1
+            row.updated_at = now()
+            row.save()
+            activate(row, now())
+    except (PermissionError, LookupError, ValueError):
+        return result("denied")
+    return result("ready")
+
+
+def read_public_copy(identifier, at, *, authorize=None, store=None):
+    """Buffer outside locks, then reauthorize exact bytes before returning them."""
+    from hashlib import sha256
+    from uuid import UUID
+
+    from .contracts import AuthorizedAssetRead, UploadUnavailable
+    from .publication_contracts import MAX_PUBLIC_IMAGE_BYTES
+
+    if (
+        not isinstance(identifier, UUID)
+        or not isinstance(at, datetime)
+        or not timezone.is_aware(at)
+        or not callable(authorize)
+        or transaction.get_connection().in_atomic_block
+    ):
+        raise AssetNotFound("Publication media unavailable")
+
+    def capture():
+        now = max(at, timezone.now())
+        hint = (
+            PublicAssetCopy.objects.select_related("owner")
+            .filter(pk=identifier)
+            .first()
+        )
+        if hint is None:
+            raise AssetNotFound("Publication media unavailable")
+        User.objects.select_for_update().get(pk=hint.owner_id)
+        # Composition takes profile/source locks before this module's copy lock.
+        authorize(hint, now)
+        row = PublicAssetCopy.objects.select_for_update().get(pk=identifier)
+        if row.state != "ready" or row.revoked_at or row.version != hint.version:
+            raise AssetNotFound("Publication media unavailable")
+        attempt = (
+            PublicCopyAttempt.objects.select_for_update()
+            .filter(
+                copy=row,
+                generation=row.generation,
+                state="ready",
+            )
+            .first()
+        )
+        if attempt is None:
+            raise AssetNotFound("Publication media unavailable")
+        return (
+            row.version,
+            row.generation,
+            attempt.id,
+            attempt.key,
+            attempt.sha256,
+            attempt.mime_type,
+            attempt.size,
+        )
+
+    with transaction.atomic():
+        expected = capture()
+    try:
+        body = (store or get_publication_store()).read_limited(
+            expected[3], MAX_PUBLIC_IMAGE_BYTES
+        )
+        if len(body) != expected[6] or sha256(body).hexdigest() != expected[4]:
+            raise ValueError("Publication output mismatch")
+    except Exception:
+        raise UploadUnavailable("Publication media unavailable") from None
+    with transaction.atomic():
+        if capture() != expected:
+            raise AssetNotFound("Publication media unavailable")
+        return AuthorizedAssetRead(identifier, expected[2], expected[5], body)

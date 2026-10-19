@@ -147,3 +147,97 @@ def scan_due_public_copies(at, batch_size=100):
     if feature_enabled("marketplace") is not True:
         return 0
     return scan(at, batch_size, authorize=validate_release)
+
+
+def activate_publication_media(copy, at):
+    """Publish only a complete confirmed revision; caller holds the owner anchor."""
+    from apps.assets.models import PublicCopyAttempt
+    from apps.assets.public_copies import release_for
+    from apps.governance.outbox import append_outbox
+
+    if not transaction.get_connection().in_atomic_block:
+        raise AssetNotFound("Publication media unavailable")
+    user = User.objects.select_for_update().get(pk=copy.owner_id)
+    validate_release(user, release_for(copy), at)
+    publication = ProfessionalPublication.objects.select_for_update().get(
+        pk=copy.publication_uuid
+    )
+    if (
+        publication.state == "published"
+        and publication.current_revision_id == copy.release_revision_uuid
+    ):
+        return
+    if publication.requested_revision_id != copy.release_revision_uuid:
+        raise AssetNotFound("Publication media unavailable")
+    bindings = list(
+        PublicationMediaBinding.objects.filter(revision_id=copy.release_revision_uuid)
+    )
+    for binding in bindings:
+        candidate = (
+            PublicAssetCopy.objects.select_for_update()
+            .filter(
+                publication_uuid=publication.id,
+                release_revision_uuid=copy.release_revision_uuid,
+                source_asset_id=binding.asset_id,
+                purpose=binding.purpose,
+                source_version=binding.asset_version,
+                processing_version=binding.processing_version,
+                state="ready",
+                revoked_at__isnull=True,
+            )
+            .first()
+        )
+        if candidate is None:
+            return
+        if not PublicCopyAttempt.objects.filter(
+            copy=candidate,
+            generation=candidate.generation,
+            state="ready",
+            signature_expires_at__gt=max(at, timezone.now()),
+        ).exists():
+            return
+        validate_release(user, release_for(candidate), max(at, timezone.now()))
+    publication.current_revision_id = copy.release_revision_uuid
+    publication.requested_revision = None
+    publication.state = "published"
+    publication.version += 1
+    publication.updated_at = max(at, timezone.now())
+    publication.save()
+    append_outbox(
+        "professional.publication_changed",
+        publication.id,
+        publication.version,
+        {"publication_uuid": str(publication.id), "user_uuid": str(user.public_id)},
+        f"professional.publication_changed:{publication.id}:{publication.version}",
+    )
+
+
+def process_public_copy(identifier, generation, lease, at):
+    from apps.assets.public_copies import process_public_copy as process
+
+    return process(
+        identifier,
+        generation,
+        lease,
+        at,
+        authorize=validate_release,
+        activate=activate_publication_media,
+    )
+
+
+def validate_public_copy_read(copy, at):
+    from apps.assets.public_copies import release_for
+    from apps.professionals.publication_selectors import effective_publication
+
+    user = User.objects.select_for_update().get(pk=copy.owner_id)
+    digest = validate_release(user, release_for(copy), max(at, timezone.now()))
+    facts = effective_publication(copy.profile_uuid, max(at, timezone.now()))
+    if (
+        facts is None
+        or facts.publication_id != copy.publication_uuid
+        or facts.revision_id != copy.release_revision_uuid
+        or copy.state != "ready"
+        or copy.revoked_at is not None
+    ):
+        raise AssetNotFound("Publication media unavailable")
+    return digest

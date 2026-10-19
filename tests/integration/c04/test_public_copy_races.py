@@ -149,3 +149,23 @@ def test_held_copy_never_remains_public(settings):
             publication_store=wrapped,
         )
     assert effective(person) is None
+
+
+def test_private_derivative_checksum_change_cannot_reauthorize_old_copy(settings):
+    from apps.assets.contracts import AssetNotFound
+
+    subject, asset, draft, derivative, store, dto, job = pending(settings)
+    assert process(store, job).status == "ready"
+    # C03's checksum constraint permits a different valid checksum without a
+    # derivative version bump. A ready public copy must retain its own binding.
+    derivative.sha256 = "0" * 64
+    derivative.save(update_fields=["sha256"])
+    boundary = module("apps.assets.public_copies")
+    wrapped = module("apps.assets.public_storage").PublicationObjectStore(store)
+    with pytest.raises(AssetNotFound):
+        boundary.read_public_copy(
+            dto.id,
+            timezone.now(),
+            store=wrapped,
+            authorize=api().validate_public_copy_read,
+        )
