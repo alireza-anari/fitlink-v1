@@ -39,17 +39,17 @@
     "immutable_c03_outer_seconds": 1200
   },
   "latest_diagnosis": {
-    "source_sha": "2ec28171038414fdefc7b86ceccc5dfc00296182",
-    "source_tree": "5e76a0b86512ec64a62313097ee385a6a1b5edc9",
-    "run_id": 39203522167,
+    "source_sha": "c9a475741e52459030c100311df01f51f054bb1c",
+    "source_tree": "4f8ceb525637e65e6d4cfe454a4e1a98859984d0",
+    "run_id": 39205168435,
     "run_attempt": 1,
     "state": "IN_PROGRESS",
-    "foundation": "service_startup_exit_1",
-    "processing": "minio_init_exit_1",
-    "storage": "minio_init_exit_1",
-    "c02_migrations": "cumulative_inner_300s_exit_124",
+    "staff_job": 117906314411,
+    "failed_case": "test_decision_reload_single_effect",
+    "location": "tests/e2e/c03/test_staff_verification.py:172",
+    "browser_category": "other",
     "root_cause": "not_established",
-    "focused_metadata_controls_passed": 135,
+    "focused_metadata_controls_passed": 145,
     "next_task": 1
   }
 }

@@ -433,3 +433,51 @@ Ruff447 files, format, shell syntax and whitespace pass; immutable C03 tree
 verified unchanged. A new complete exact-head hosted manifest, including actual
 MinIO/scanner/worker/browser/original baseline, is required before acceptance.
 Task1 remains IN_PROGRESS; Tasks2–11 remain NOT_STARTED.
+
+### Task 1 current bootstrap GREEN; browser reload remains unclassified
+
+Published delimiter fix `c9a475741e52459030c100311df01f51f054bb1c`, tree
+`4f8ceb525637e65e6d4cfe454a4e1a98859984d0`, run39205168435 attempt1;
+local same-tree434d58329d2f69b8cfb1250b49ef784f6bc04ea5 retained on
+local/c04-task01-minio-cli-fix. No later task has started.
+
+Current actual hosted evidence: PostgreSQL70; storage91/0/0 with bootstrap
+complete0, natural exit and cleanup; processing62/0/0 natural0 and cleanup;
+restart natural0 and cleanup; native/timeout/evidence-audit succeed. Migration
+job117906314481 passed269 account cases and the unchanged cumulative gate in
+285.4s, with Task8 108, Task9 89, Task10 86 all zero failed/skipped. No change to
+the cumulative300s cutoff was necessary or made. Owner browser also succeeds.
+
+STAFF FAILURE: job117906314411 reports66 passed/1 failed/0 skipped, natural
+command exit1 after458.4s with complete cleanup. The failed case is
+`tests/e2e/c03/test_staff_verification.py::test_decision_reload_single_effect`,
+line172 at page.reload, exception Error, browser_failure_category=other. This
+is an ACTUAL test failure, not infrastructure absence or timeout; do not waive
+it or classify it as transient without evidence. Foundation and both full
+rehearsals remain active. Task1 cannot be accepted on this manifest.
+
+Further bounded current-source metadata diagnosis: failure_data now emits
+network codes ONLY when present in a finite266-code public Chromium allowlist.
+The source definition was independently fetched at exact upstream commit
+`405665065117459f6a72161b865c8244742b21c7`:
+https://github.com/chromium/chromium/blob/405665065117459f6a72161b865c8244742b21c7/net/base/net_error_list.h
+No network fetch is performed at application/test runtime. Unknown ERR_* tokens
+are omitted; fixed protocol/navigation/frame/connection/lifecycle flags contain
+no captures, messages, URLs, query values or private content. Generic protocol
+and known-network categories avoid repeated single-code guessing. This is
+instrumentation only; no browser helper, assertion, driver version or product
+behavior is modified, and previous `other` events are not retroactively assigned
+a guessed cause.
+
+Behavioral RED:3 known-code cases and protocol-flags case fail before metadata
+implementation; unknown-code privacy negative already passes. GREEN:145 combined
+C04/observer/inherited-CI controls pass, zero failed/skipped, plus21 focused
+browser-metadata cases. Ruff447/format/whitespace/immutable C03 tree pass.
+Attempted a separate local synthetic browser reproduction using the EXISTING
+pinned Playwright CLI and official headless-shell archive. Local browser install
+is unavailable: download is empty/truncated and cannot extract; initial missing
+/tmp was addressed only with an ignored workspace temporary directory. No
+unofficial mirror, dependency change, TLS bypass, baseline mutation, browser
+assertion fix or fake browser PASS is used. Hosted browser remains mandatory.
+The finite diagnostics require a fresh COMPLETE new-head hosted manifest.
+Task1 remains IN_PROGRESS/BLOCKED; Tasks2–11 NOT_STARTED.

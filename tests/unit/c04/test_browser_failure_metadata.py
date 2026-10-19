@@ -48,3 +48,50 @@ def test_non_browser_exception_has_no_browser_category():
     except ValueError:
         info = pytest.ExceptionInfo.from_current()
     assert "browser_failure_category" not in failure_data(info)
+
+
+@pytest.mark.parametrize(
+    "code",
+    ["ERR_CACHE_MISS", "ERR_HTTP_RESPONSE_CODE_FAILURE", "ERR_INSUFFICIENT_RESOURCES"],
+)
+def test_known_browser_network_code_is_finite_not_raw_message(code):
+    try:
+        raise Error(
+            "Page.reload: net::" + code + " https://private.invalid/token health-secret"
+        )
+    except Error:
+        info = pytest.ExceptionInfo.from_current()
+    metadata = failure_data(info)
+    assert metadata.get("browser_net_error") == code
+    assert "private.invalid" not in json.dumps(metadata)
+    assert "health-secret" not in json.dumps(metadata)
+
+
+def test_unknown_browser_code_cannot_smuggle_payload():
+    try:
+        raise Error(
+            "Page.reload: net::ERR_PRIVATE_HEALTH_SECRET https://private.invalid/token"
+        )
+    except Error:
+        info = pytest.ExceptionInfo.from_current()
+    metadata = failure_data(info)
+    assert "browser_net_error" not in metadata
+    assert "PRIVATE_HEALTH_SECRET" not in json.dumps(metadata)
+
+
+def test_browser_protocol_flags_retain_only_known_words():
+    try:
+        raise Error(
+            "Protocol error (Page.reload): Navigating frame was detached https://private.invalid/token"
+        )
+    except Error:
+        info = pytest.ExceptionInfo.from_current()
+    metadata = failure_data(info)
+    assert metadata.get("browser_failure_flags") == [
+        "protocol",
+        "navigation",
+        "frame",
+        "detached",
+    ]
+    assert metadata.get("browser_failure_category") == "protocol_error"
+    assert "private.invalid" not in json.dumps(metadata)
