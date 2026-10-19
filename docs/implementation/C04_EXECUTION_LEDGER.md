@@ -1112,3 +1112,30 @@ retain descendant copy bytes but never authorize a withdrawn copy's delivery.
 No new Consent purpose, legal wording, public bucket, image format or scheduler
 is introduced. Task3 has no public route; its final internal buffered-read
 callback is later composed with Task4's public authority.
+
+Task3 initial hosted RED independently observed at
+f8b1f5297e71ef35a1870c66637d1ad605f90fe7/treec4bd68b0f0335ffdab1113d1e14ff5924406a46a,
+run39314340099/PostgreSQL118271816278:136 prior tests pass,20 expected
+missing-copy-boundary assertion failures,0 error/skipped/xfail/xpass/deselected,
+actual exit1. Five failures use actual verified/confirmed C03 fixtures before
+calling the missing composition. Foundation118271816197 fails intended missing
+contract assertions too. No runtime absence/collection error is credited as RED.
+
+Expanded pure contract tests20/20 first fail before implementation, then20/20
+GREEN after frozen typed release/public DTO and exact publication-key adapter.
+This adds no model, migration, processor, public URL, signer or source ACL change.
+New fake-I/O/PostgreSQL tests for separate-object effect, withdrawal during write,
+crash inventory/new-generation recovery, scanner faults, final buffered release
+and direct-SQL cross-binding are written before those services/models exist;
+collection succeeds for the eight race/failure cases, real DB RED still pending.
+Fake adapters assert I/O occurs outside transactions; actual MinIO/scanner/worker
+and SIGKILL evidence remains independently mandatory, never replaced by them.
+
+Task3 Ruling: record a separate protected PublicCopyAttempt for each generation
+alongside PublicAssetCopy — an old writer can finish after a lease expires, so
+all prewritten generation keys must stay inventoried for policy cleanup — cost
+if wrong: bounded extra rows (existing eight-attempt ceiling), never a private
+source reference becoming public. The unique release/source/purpose/processing
+effect remains one copy row; each generation gets a distinct publication key.
+This follows the approved generation/crash/idempotence/cleanup contract and C03's
+existing attempt pattern, without another infrastructure or authorization system.

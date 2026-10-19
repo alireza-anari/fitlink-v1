@@ -111,3 +111,20 @@ def test_duplicate_prepare_is_one_effect_and_never_changes_private_derivative(se
     assert list(AssetDerivative.objects.filter(asset=asset).values()) == before
     asset.refresh_from_db()
     assert asset.classification == "private_source"
+
+
+@pytest.mark.parametrize("change", ["owner", "revision", "ready_without_output"])
+def test_copy_sql_binding_cannot_be_forged(settings, change):
+    from django.db import DatabaseError, transaction
+
+    from tests.integration.c03.test_professional_setup import owner
+    from tests.integration.c04.copy_helpers import copy_model, pending
+
+    subject, asset, draft, derivative, store, dto, job = pending(settings)
+    values = {
+        "owner": {"owner_id": owner("+989123456789").user.pk},
+        "revision": {"release_revision_uuid": uuid4()},
+        "ready_without_output": {"state": "ready"},
+    }
+    with pytest.raises(DatabaseError), transaction.atomic():
+        copy_model().objects.filter(pk=dto.id).update(**values[change])

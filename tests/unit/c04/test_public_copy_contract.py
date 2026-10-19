@@ -84,3 +84,36 @@ def test_publication_key_cannot_alias_private_storage():
     ):
         with pytest.raises(ValueError):
             storage.validate_publication_key(value)
+
+
+@pytest.mark.parametrize("value", [None, "not-a-uuid", [], 1])
+def test_release_identifiers_are_exact_uuids(value):
+    for name in (
+        "owner_uuid",
+        "profile_uuid",
+        "publication_uuid",
+        "revision_uuid",
+        "source_asset_uuid",
+    ):
+        with pytest.raises(ValueError):
+            replace(release(), **{name: value})
+
+
+def test_publication_adapter_rejects_private_keys_and_never_exposes_signer():
+    from apps.assets.storage import FakePrivateStore
+
+    storage = module("public_storage")
+    backend = FakePrivateStore()
+    boundary = storage.PublicationObjectStore(backend)
+    key = storage.publication_key(uuid4(), 1)
+    boundary.put(key, b"synthetic-output", "image/png")
+    assert boundary.read_limited(key, 1024) == b"synthetic-output"
+    assert not hasattr(boundary, "signed_read_url")
+    for forbidden in ("source/private", "derivative/private"):
+        with pytest.raises(ValueError):
+            boundary.put(forbidden, b"PRIVATE", "image/png")
+        with pytest.raises(ValueError):
+            boundary.read_limited(forbidden, 1024)
+    assert set(backend.objects) == {key}
+    with pytest.raises(ValueError):
+        boundary.put(key, b"active", "image/svg+xml")
