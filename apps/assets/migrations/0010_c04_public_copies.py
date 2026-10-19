@@ -147,9 +147,49 @@ $$;
 CREATE TRIGGER fitlink_c04_copy_attempt_identity
 BEFORE INSERT OR UPDATE OR DELETE ON assets_publiccopyattempt
 FOR EACH ROW EXECUTE FUNCTION fitlink_guard_c04_copy_attempt();
+CREATE FUNCTION fitlink_guard_c04_media_promotion() RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE binding record;
+BEGIN
+    IF NEW.current_revision_id IS NOT NULL AND
+       (NEW.current_revision_id IS DISTINCT FROM OLD.current_revision_id
+        OR NEW.state IS DISTINCT FROM OLD.state) THEN
+        FOR binding IN SELECT * FROM professionals_publicationmediabinding
+                       WHERE revision_id=NEW.current_revision_id LOOP
+            IF NOT EXISTS(
+                SELECT 1 FROM assets_publicassetcopy c
+                JOIN assets_publiccopyattempt a
+                    ON a.copy_id=c.id AND a.generation=c.generation
+                JOIN assets_assetderivative d ON d.id=c.source_derivative_id
+                WHERE c.publication_uuid=NEW.id
+                  AND c.profile_uuid=NEW.profile_id
+                  AND c.release_revision_uuid=NEW.current_revision_id
+                  AND c.source_asset_id=binding.asset_id
+                  AND c.purpose=binding.purpose
+                  AND c.source_version=binding.asset_version
+                  AND c.processing_version=binding.processing_version
+                  AND c.state='ready' AND a.state='ready'
+                  AND d.state='ready' AND d.purpose='owner_preview'
+                  AND d.version=c.source_derivative_version
+                  AND d.processing_version=c.processing_version
+            ) THEN
+                RAISE EXCEPTION 'Complete publication media required'
+                    USING ERRCODE='23514';
+            END IF;
+        END LOOP;
+    END IF;
+    RETURN NEW;
+END;
+$$;
+CREATE TRIGGER fitlink_c04_media_readiness
+BEFORE UPDATE ON professionals_professionalpublication
+FOR EACH ROW EXECUTE FUNCTION fitlink_guard_c04_media_promotion();
+
 """
 
 REVERSE_GUARDS = r"""
+DROP TRIGGER fitlink_c04_media_readiness ON professionals_professionalpublication;
+DROP FUNCTION fitlink_guard_c04_media_promotion();
 DROP TRIGGER fitlink_c04_copy_attempt_identity ON assets_publiccopyattempt;
 DROP FUNCTION fitlink_guard_c04_copy_attempt();
 DROP TRIGGER fitlink_c04_copy_identity ON assets_publicassetcopy;

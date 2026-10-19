@@ -121,7 +121,7 @@ def test_copy_sql_binding_cannot_be_forged(settings, change):
     from tests.integration.c03.test_professional_setup import owner
     from tests.integration.c04.copy_helpers import copy_model, pending
 
-    subject, asset, draft, derivative, store, dto, job = pending(settings)
+    subject, asset, draft, derivative, store, dto, job = pending(settings, claim=False)
     values = {
         "owner": {"owner_id": owner("+989123456789").user.pk},
         "revision": {"release_revision_uuid": uuid4()},

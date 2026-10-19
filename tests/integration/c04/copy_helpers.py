@@ -67,7 +67,7 @@ def clean(data, mime, purpose):
     return SanitizedImage("clean", data, "image/png", 64, 48)
 
 
-def pending(settings):
+def pending(settings, *, claim=True):
     copy_model()
     subject, asset, draft = selected(settings)
     derivative = asset.derivatives.get(purpose="owner_preview")
@@ -87,6 +87,8 @@ def pending(settings):
         release, timezone.now(), authorize=service.validate_release
     )
     queued = []
+    if not claim:
+        return subject, asset, draft, derivative, store, dto, None
     assert (
         boundary.scan_due_public_copies(
             timezone.now(),

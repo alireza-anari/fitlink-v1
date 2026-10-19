@@ -1174,3 +1174,26 @@ Source holds inherit existing profile_media/avatar-cover-logo retention policy;
 no new hold kind or consent purpose is introduced. Cleanup must reuse committed
 reservation semantics outside I/O and prove a hold-vs-copy-deletion race, including
 new holds during reservation and late old writer cleanup, before acceptance.
+
+Task3 partial schema/prepare head72f2d4c0048a38576d774795399e61b5bcd9f80d,
+treeb086002c3a78f024d0723fa85de32ecafbc621b7, run39317673095,
+PostgreSQL118283271209 applies assets0010 and reports162 passed/13 failures,
+0 error/skipped/xfail/xpass/deselected, actual exit1. Initial five source/prepare
+cases now pass. Twelve cases stop at the intentionally missing durable scanner
+interface; three of those SQL cases were unnecessarily coupled to claiming a
+worker lease. Split their fixture into prepare-only versus claim paths so the
+SQL identity/readiness probes exercise the actual guards independently.
+
+The thirteenth failure is decisive additional behavioral RED: direct SQL can
+promote a media-selected publication while outputs are absent; pytest's expected
+DatabaseError does not occur. Add a supplementary readiness trigger in Task3's
+initial migration: every selected media binding needs an exact ready copy/current
+ready attempt before a new current revision/state can activate. All Task2 guards
+remain installed unchanged; text-only publication and withdrawal retain their
+existing behavior. This new guard still requires real PostgreSQL GREEN.
+
+Ruling: evolve only the not-yet-accepted C04 initial0010 schema through forward
+commits before any deployment — its newly demonstrated readiness invariant must
+be present on a clean install — cost if wrong: replay this unaccepted initial
+schema in disposable CI. No C01/C02/C03 or accepted Task2 migration changes, no
+history rewrite, and each prior published SHA/tree/runtime record stays intact.
