@@ -565,8 +565,15 @@ jobs:
 
         npm ci'
     - name: Original full C03 acceptance on immutable handoff
-      working-directory: .runtime/c03
-      run: sh docker/verify_c03.sh
+      run: python docker/c04_baseline_runtime.py
+    - name: Immutable baseline finite outer diagnostics
+      if: always()
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: c04-baseline-metadata
+        path: .runtime/c04-baseline-evidence/*.json
+        include-hidden-files: true
+        if-no-files-found: error
   c04-postgresql:
     runs-on: ubuntu-24.04
     timeout-minutes: 15

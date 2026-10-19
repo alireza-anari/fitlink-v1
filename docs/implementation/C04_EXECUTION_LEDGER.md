@@ -984,3 +984,37 @@ exception/fatal exit, token-stripping redirect, bounds, timeout and audit checks
 Six synthetic HTTP failures first RED because metadata absent, then GREEN;
 no URL, header, response body or token emitted and no retry added. Immutable
 C03 baseline file unchanged. Need next hosted diagnostic before root-cause ruling.
+
+Task2 correction5a159a57e08fd799591b1a85e967e6fa4065070c,
+tree d17054e91ed2b572f78bfa48f17160de217fdc24, run39270379482 attempt1:
+PostgreSQL118120779600 SUCCESS133 passed,0 failed/error/skipped/xfail/xpass/
+deselected, actual exit0, C04_TASK_ACCEPTANCE task2. Both additive migrations and
+all installed SQL/source/ownership/rollback/revocation race contracts run for
+real; the nullable-lock defect is GREEN. No complete Task2 acceptance yet.
+
+Historical audit118120779431 reports finite HTTP503/actions after verifying
+Tasks1–4. Artifact12195531263 SHA25676f60c88ddb68ed6c5a0824e5ce698ec8da6f2eb78abfb66a0698adb352a10bd
+independently matched. This is evidence of external HTTP service failure. One
+same-SHA job rerun was requested under the approved policy; GitHub rejected the
+request403 because the containing workflow is still running. NO retry actually
+started, no permission failure inferred, no accepted evidence replaced.
+
+Separately immutable baseline118120779815 fails exact_original_c02 exit1;
+its original diagnostic has no exception/test/count/infrastructure category.
+The first causal command remains UNKNOWN. Do not label that failure transient
+or rerun it blindly. Original C03 source remains exactly0a/5c294; all original
+C01/C02/C03 source verifiers pass locally. Additional outer observation is needed.
+
+Task2 Ruling: add a C04-owned observer around the unchanged original command
+sh docker/verify_c03.sh with its exact original cwd/environment/timeout — the
+original private log survives but cannot safely be published — cost if wrong:
+extra finite metadata, never an altered baseline verdict. Verify the original
+source before launching, preserve its actual exit, read only the last bounded
+4MB of a known stage log, emit static categories/allowlisted npm error codes,
+and upload only newly generated finite metadata outside the baseline. No source,
+private log, URL, token, arbitrary message or baseline file is exported/modified.
+Three tests first RED for missing observer then GREEN, including exact child
+command/cwd/nonzero exit and unknown-error non-inference/privacy controls.
+Focused C04/current C03 CI174 passed+37 subtests, no failures/skips. All14 gates
+remain mandatory on the next exact head. No retry, timeout growth, baseline
+mutation, failed-job suppression or Task3 advancement is authorized by this change.
