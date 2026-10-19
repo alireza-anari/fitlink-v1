@@ -860,3 +860,14 @@ unchanged. Only clean interpreter/public site-packages are exported, before
 services, environment generation or tests; no source/credentials/test inputs.
 Artifact digests and the original uv.lock hash must match before local use.
 No dependency version or production infrastructure is added.
+
+Locked toolchain recovery run39260416591/job118086286813 succeeded; artifact
+12189966981 SHA25645a586780b28f2a7f0d9c4ae18d8c9a3a5e51db1f77141a58bb9f465def54df7
+matched independently, its internal archive digest and original uv.lock hash
+also matched. Extracted only20364 regular files/directories under controlled
+python/packages paths after bounded archive checks. Local interpreter3.13.15,
+Django5.2.17 and pytest9.1.1 execute successfully. This is tool recovery, not
+application acceptance. Packaging initially omitted venv/bin/ruff; one forward
+auxiliary workflow adjustment exports ONLY that locked public executable and
+its digest/version manifest, avoiding another full toolchain transfer. No
+application source, generated environment or test inputs are exported.
