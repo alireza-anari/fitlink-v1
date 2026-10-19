@@ -813,3 +813,25 @@ task01-complete.json with exact14-job metadata and per-job runtime evidence.
 task01-start.json remains the original historical start record. This completion
 checkpoint changes documentation only and preserves f2cebc3 as the tested
 implementation authority separately. Task1 COMPLETE; next Task2, in strict order.
+
+### Task 2 RED — deliberate source-domain publication
+
+Task1 prerequisite is COMPLETE at tested f2cebc3/source8acd1b9, run39252751752
+attempt1 all14 mandatory jobs green. Its documentation-only completion886cc5c
+contains the validated task01-complete record and preserves the tested SHA.
+Task2 starts from886cc5cd42b020f15315876df3197bda22526764.
+
+Read the Task2 brief and exact interfaces, existing C03 eligibility evidence
+bindings/role revisions, owner/session policies, receipts/privacy inventory and
+governance metadata/migration contracts before choosing interfaces. No parallel
+authorization or new Consent purpose is introduced.
+
+Initial behavioral RED: Python stdlib unittest on test_public_fields.py executes
+4 assertions and all4 fail because the explicit safe-field publication boundary
+does not exist. Tests demand immutable selection, reject private credential and
+identity media, reject private/fictional snapshot keys and limit qualification
+summary fields. PostgreSQL tests additionally use the actual C03 approved-role
+fixture to prove verification never publishes and false confirmation cannot
+activate a revision; hosted RED execution is pending. No production code or
+migration has yet been written for Task2. Remaining Task2 matrix will be added
+and demonstrated RED before the corresponding behavior is implemented.
