@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "task": 2,
+  "state": "COMPLETE",
+  "approved_plan_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+  "approved_plan_tree": "1478d691b2a60d95f6c0d2ce5e561d34f59a61c0",
+  "approved_plan_blob": "f1225196c95a203e440afc4da362b74806e84f20",
+  "base_commit": "886cc5cd42b020f15315876df3197bda22526764",
+  "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+  "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+  "red": {
+    "test": "full publication/source/SQL/revocation matrix",
+    "failed": 17,
+    "run_id": 39263037610,
+    "job_id": 118095380415,
+    "passed": 102,
+    "error": 0,
+    "skipped": 0
+  },
+  "focused_green": {
+    "passed": 136,
+    "failed": 0,
+    "error": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "xpassed": 0,
+    "deselected": 0
+  },
+  "hosted_acceptance": {
+    "entry": {
+      "task": 2,
+      "implementation_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+      "implementation_tree": "8ca53644566aab5ca48f639abe827b420dfc3de9",
+      "run_id": 39271586772,
+      "run_attempt": 2
+    },
+    "workflow": {
+      "id": 39271586772,
+      "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+      "run_attempt": 2,
+      "head_branch": "marketplace/c04-cloud",
+      "path": ".github/workflows/c04.yml",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_commit": {
+        "id": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "tree_id": "8ca53644566aab5ca48f639abe827b420dfc3de9"
+      }
+    },
+    "jobs": [
+      {
+        "id": 118267274381,
+        "name": "c03-evidence-audit",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267275738,
+        "name": "c03-owner",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267276179,
+        "name": "c03-processing",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267276877,
+        "name": "c03-staff",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267322558,
+        "name": "c04-baseline",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267324107,
+        "name": "c03-timeout-probe",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267327503,
+        "name": "c03-storage",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267328729,
+        "name": "c03-final",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267340581,
+        "name": "c03-restart",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267343616,
+        "name": "c03-task14-native",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267343926,
+        "name": "c02-migrations",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267351752,
+        "name": "foundation",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118267352485,
+        "name": "c04-postgresql",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118268335346,
+        "name": "c04-final",
+        "run_id": 39271586772,
+        "run_attempt": 2,
+        "head_sha": "86b354b63cd042f94712b9dfb9d9cf8cd71577da",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "runtime_evidence": {
+    "c03-evidence-audit": {
+      "job_id": 118267274381,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "verified_historical_tasks": 12,
+      "actual_historical_executions": true,
+      "retry_reason": "HTTP503/actions in attempt1; one permitted same-SHA retry",
+      "artifact_id": 12216373876,
+      "artifact_sha256": "13bee5a2fa78aaf26d50dce2ce17d2a5bac3d86cb8aa4d35f6fb51fe67b406e9"
+    },
+    "c03-owner": {
+      "job_id": 118267275738,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "elapsed_seconds": 430.8,
+      "reason": "command_exited",
+      "host_cleanup_complete": true,
+      "container_cleanup_complete": true,
+      "passed": 75
+    },
+    "c03-processing": {
+      "job_id": 118267276179,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "elapsed_seconds": 302,
+      "reason": "command_exited",
+      "host_cleanup_complete": true,
+      "container_cleanup_complete": true,
+      "passed": 62
+    },
+    "c03-staff": {
+      "job_id": 118267276877,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "elapsed_seconds": 542.2,
+      "reason": "command_exited",
+      "host_cleanup_complete": true,
+      "container_cleanup_complete": true,
+      "passed": 67
+    },
+    "c04-baseline": {
+      "job_id": 118267322558,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "outer_stages": 127,
+      "backend_passed": 1692,
+      "all_stage_exits_zero": true,
+      "clean_cleanup_exit": 0,
+      "final_rehearsal_passed": true,
+      "fixture_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+      "fixture_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+      "artifact_id": 12199965729,
+      "artifact_sha256": "08d9210edd4f031dcaffdc0dd5bc43b6c7a8677902b604e462edb0d1aa5e42ef"
+    },
+    "c03-timeout-probe": {
+      "job_id": 118267324107,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "intentional_child_exit": 1,
+      "proof": "owned container removed, detached child terminated, supervisor_contract_satisfied true; intentional deadline is not service success"
+    },
+    "c03-storage": {
+      "job_id": 118267327503,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "elapsed_seconds": 151.4,
+      "reason": "command_exited",
+      "host_cleanup_complete": true,
+      "container_cleanup_complete": true,
+      "passed": 91
+    },
+    "c03-final": {
+      "job_id": 118267328729,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "outer_stages": 129,
+      "backend_passed": 1827,
+      "all_stage_exits_zero": true,
+      "clean_cleanup_exit": 0,
+      "final_rehearsal_passed": true,
+      "artifact_id": 12198456239,
+      "artifact_sha256": "a36e7a999fb67f4705bbeb117a47792340b30b2c641228b967def7db9b6f2807",
+      "verified_stage_rows": 144,
+      "verified_total_rows": 11583,
+      "original_c02_subphases": 13
+    },
+    "c03-restart": {
+      "job_id": 118267340581,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "elapsed_seconds": 332.9,
+      "reason": "command_exited",
+      "host_cleanup_complete": true,
+      "container_cleanup_complete": true
+    },
+    "c03-task14-native": {
+      "job_id": 118267343616,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "stages": 10,
+      "all_stage_exits_zero": true,
+      "diagnostic_cleanup_exit": 0
+    },
+    "c02-migrations": {
+      "job_id": 118267343926,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "elapsed_seconds": 322.5,
+      "reason": "command_exited",
+      "host_cleanup_complete": true,
+      "container_cleanup_complete": true,
+      "task8_passed": 108,
+      "task9_passed": 89,
+      "task10_passed": 86
+    },
+    "foundation": {
+      "job_id": 118267351752,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "elapsed_seconds": 1463.5,
+      "reason": "command_exited",
+      "host_cleanup_complete": true,
+      "container_cleanup_complete": true,
+      "reported_passed": 1960,
+      "host_unit_passed": 823,
+      "host_subtests_passed": 37
+    },
+    "c04-postgresql": {
+      "job_id": 118267352485,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "passed": 136,
+      "error": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0,
+      "executed_task": 2,
+      "service_cleanup": "Stop containers success"
+    },
+    "c04-final": {
+      "job_id": 118268335346,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "passed": 136,
+      "error": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0,
+      "executed_task": 2,
+      "service_cleanup": "Stop containers success",
+      "migration_drift": false
+    }
+  },
+  "protected_refs": {
+    "main": "8ede9a451db6103f4e3ebf65784ee9f16b96feb2",
+    "foundation/c01-cloud": "75c551e5b9bbbfb7777ee52b09a1993b681e921a",
+    "profiles/c03-cloud": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+    "profiles/c03-plan": "79fd62e583cbe81f335bb08fce0eb43ff36b0167",
+    "marketplace/c04-plan": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+    "accounts/c02-cloud": "0905be6c6ca608d469fe33e87f514b22591132d1"
+  },
+  "review": {
+    "method": "distinct author manual Task2 source/security/CI review",
+    "critical": 0,
+    "important": 0,
+    "independent_reviewer": false
+  },
+  "next_task": 3
+}

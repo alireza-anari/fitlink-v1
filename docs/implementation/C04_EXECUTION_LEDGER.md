@@ -1018,3 +1018,68 @@ command/cwd/nonzero exit and unknown-error non-inference/privacy controls.
 Focused C04/current C03 CI174 passed+37 subtests, no failures/skips. All14 gates
 remain mandatory on the next exact head. No retry, timeout growth, baseline
 mutation, failed-job suppression or Task3 advancement is authorized by this change.
+
+### Task 2 COMPLETE — exact-head full hosted acceptance
+
+Tested implementation86b354b63cd042f94712b9dfb9d9cf8cd71577da,
+tree8ca53644566aab5ca48f639abe827b420dfc3de9, run39271586772 attempt2,
+all14 mandatory jobs SUCCESS, zero selected skipped jobs/steps. Provider exact
+head/tree/ref/path/push metadata freshly inspected; validate_checkpoint accepts
+new task02-complete.json. Historical task02-start.json stays unchanged.
+
+Attempt1 had12 green, historical audit118125000107 HTTP503/actions and final
+118147302398 correctly denied failed upstream. Its artifact12194868611 digest
+36f67832e018a7ce431716d4dd82cd32bad8641c0506434e0e4a17c9588581c4 independently
+matched. Once the run completed, the one permitted same-SHA audit retry actually
+started:118267274381, attempt2. All12 earlier completed C03 tasks' exact-source
+execution evidence verifies real executions/exit0/zero skipped. The retry succeeds;
+no second retry, audit bypass or invented transient explanation is used. Provider
+attempt2 job logs were inspected for all14 jobs. Unaffected inherited runtime
+records retain their original execution times; no new execution of unchanged
+successful jobs or original historical tests is claimed merely from retry IDs.
+
+| Mandatory job | Attempt2 job ID | Actual runtime evidence |
+| --- | --- | --- |
+| c03-evidence-audit | 118267274381 | 12 historical tasks verified, all real/exit0/zero skips |
+| c03-owner | 118267275738 | 75/0/0, natural0, elapsed430.8s, owned cleanup true |
+| c03-processing | 118267276179 | 62 passed call reports, natural0,302.0s, cleanup true |
+| c03-staff | 118267276877 | 67/0/0, natural0,542.2s, cleanup true |
+| c04-baseline | 118267322558 | immutable0a/5c294,127 stages0, backend1692, final cleanup0 |
+| c03-timeout-probe | 118267324107 | intentional deadline child1, positive supervisor/owned cleanup contract |
+| c03-storage | 118267327503 | 91 passed call reports, natural0,151.4s, cleanup true |
+| c03-final | 118267328729 | 129 stage markers0, backend1827, clean_cleanup0/final_rehearsal_passed |
+| c03-restart | 118267340581 | actual crash/service restart contract, natural0,332.9s, cleanup true |
+| c03-task14-native | 118267343616 | all10 native/isolation/runtime/cleanup stages0 |
+| c02-migrations | 118267343926 | inherited real PostgreSQL/Redis; Tasks8/9/10 counts108/89/86, natural0/cleanup true |
+| foundation | 118267351752 | host823 passed+37 subtests; aggregate1960/0/0, natural0,1463.5s, cleanup true |
+| c04-postgresql | 118267352485 | 136 passed,0 failed/error/skip/xfail/xpass/deselected, actual0, task2 |
+| c04-final | 118268335346 | upstream accepted,136 passed/all other counts0, actual0, task2, no migration drift |
+
+All full-service cleanup verdicts and final service Stop containers steps succeed.
+Foundation aggregate1960 is reporter aggregation, not1960 distinct test functions.
+Artifact12198456239 SHA256a36e7a999fb67f4705bbeb117a47792340b30b2c641228b967def7db9b6f2807
+independently matched:11583 finite rows,144 stage rows all0,13 original C02
+subphases all0, no failed/skipped/xfail/xpass reports. Baseline artifact12199965729
+SHA25608d9210edd4f031dcaffdc0dd5bc43b6c7a8677902b604e462edb0d1aa5e42ef
+matched and confirms exact original tree/exit0/empty failure categories. Retry
+audit artifact12216373876 SHA25613bee5a2fa78aaf26d50dce2ce17d2a5bac3d86cb8aa4d35f6fb51fe67b406e9
+matched with12 verified task rows. Prior5a159 baseline failure's causal command
+remains unknown; current immutable baseline success is fresh acceptance, not an
+invented diagnosis or a change to that historical failure record.
+
+Distinct author manual Task2 review after runtime inspection: exact frozen owner
+selection/confirmation, C03 User-first locks/fresh eligibility, partial role loss,
+source version reconfirmation, expiry/withdrawal, exact approved qualification
+membership, credential/identity/private media exclusions, disclosure default-deny,
+SQL immutability and cross-owner guards, receipt/audit/outbox atomicity, protected
+slug identity, privacy inventory, additive migrations, bounded diagnostic output
+and current-stage scope-test extensions checked against approved Task2/§3/§5.
+No unresolved Critical or Important Task2 finding. No independent reviewer or
+whole-C04 final review is claimed. Public delivery/search/posts remain absent;
+selected media remains pending until Task3. Real production disclosure and media
+rights wording remain the approved later release gate, not invented policy.
+
+Live main/C01/C02/C03 completed/planning heads and approved C04 plan/blob remain
+unchanged. New completion is documentation-only and preserves the tested SHA/tree
+above separately. Task2 COMPLETE. Next Task3 in strict order; no further approval
+needed for that already approved task.
