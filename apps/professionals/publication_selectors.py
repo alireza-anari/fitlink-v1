@@ -178,7 +178,7 @@ def effective_publication(profile_uuid: UUID, at: datetime):
                 pk=profile_uuid
             )
             publication = (
-                ProfessionalPublication.objects.select_for_update()
+                ProfessionalPublication.objects.select_for_update(of=("self",))
                 .filter(
                     profile=profile,
                     state="published",

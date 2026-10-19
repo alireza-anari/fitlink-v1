@@ -962,3 +962,25 @@ native-isolation and absent built CSS; mandatory hosted jobs retain those checks
 New PostgreSQL tests additionally require role degradation, audit/outbox rollback
 and immutable deletion after withdrawal, so FK protection alone cannot mask a
 missing revision-delete guard. Hosted GREEN on the implementation SHA is pending.
+
+Task2 first implementation e8e13edb7835c951790b04793888ac42a92dd560,
+tree0829114428be91345d0202159c278e6065c15176, run39269877496 attempt1.
+Real PostgreSQL118119048987 applies both new migrations and executes127 cases:
+118 passed/9 failed/0 error/skipped/xfail/xpass/deselected. Every failure is
+NotSupportedError at effective_publication's nullable current_revision join;
+PostgreSQL reports FOR UPDATE cannot be applied to nullable side of outer join.
+Direct SQL immutability, owner binding, explicit confirmation and rollback cases
+otherwise run; this is not Task2 GREEN. Restrict the read lock to publication
+itself with select_for_update(of=("self",)); existing User/profile/verification
+and asset locks from C03 eligibility remain, confirmed revisions are immutable.
+The same actual nine behavioral failures must pass on the next hosted head.
+
+Historical audit118119048635 independently fails after verifying Tasks1–4.
+Artifact12195121528 SHA256e8f60c0a8e3b51e23a865015f9dcf5ab5ca803b5b0350b5ddc1de9134dc65997
+matches and shows HTTPError, without status or endpoint. Do not infer transient,
+expired evidence or permission cause, and do not rerun/bless missing evidence.
+Add finite HTTP status/endpoint-family diagnostics only, preserving original
+exception/fatal exit, token-stripping redirect, bounds, timeout and audit checks.
+Six synthetic HTTP failures first RED because metadata absent, then GREEN;
+no URL, header, response body or token emitted and no retry added. Immutable
+C03 baseline file unchanged. Need next hosted diagnostic before root-cause ruling.

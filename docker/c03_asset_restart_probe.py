@@ -690,6 +690,7 @@ def log_evidence(name, log, selection_proof=None):
 
 
 def audit():
+    from urllib.error import HTTPError
     from urllib.parse import urlparse
     from urllib.request import HTTPRedirectHandler, Request, build_opener
 
@@ -713,8 +714,21 @@ def audit():
                 "User-Agent": "FitLink-C03-audit",
             },
         )
-        with opener.open(request, timeout=20) as response:
-            data = response.read(4_000_001)
+        try:
+            with opener.open(request, timeout=20) as response:
+                data = response.read(4_000_001)
+        except HTTPError as error:
+            family = path.split("/", 1)[0]
+            evidence(
+                "historical_http_error",
+                http_status=error.code,
+                endpoint_family=(
+                    family
+                    if family in {"actions", "git", "compare", "contents"}
+                    else "other"
+                ),
+            )
+            raise
         assert len(data) <= 4_000_000
         if binary:
             return data
