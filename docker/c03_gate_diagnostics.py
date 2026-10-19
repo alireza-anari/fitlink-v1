@@ -447,6 +447,19 @@ def terminate_owned(child, marker):
 
 def progress_lines(text):
     """Only finite code/progress names; never relay raw child stdout/stderr."""
+    for match in re.finditer(
+        r"(?m)^C04_STORAGE_BOOTSTRAP "
+        r"(alias|ready|mb|anonymous|policy|user|attach|cleanup|complete) "
+        r"(failure|success) ([0-9]{1,3})$",
+        text,
+    ):
+        if int(match[3]) <= 255:
+            yield {
+                "kind": "storage_bootstrap",
+                "phase": match[1],
+                "state": match[2],
+                "returncode": int(match[3]),
+            }
     # No captures from external build output: even error lines can include
     # credentials or private paths. These labels are evidence, never verdicts.
     for marker, category in (
@@ -619,6 +632,7 @@ def watch(phase, command, *, acceptance=False):
                         "storage_phase",
                         "storage_error",
                         "infrastructure_error",
+                        "storage_bootstrap",
                     }:
                         emit(progress["kind"], progress=progress)
 

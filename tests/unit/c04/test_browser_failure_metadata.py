@@ -17,6 +17,12 @@ pytestmark = pytest.mark.unit
         ("net::ERR_CONNECTION_REFUSED", "connection_refused"),
         ("net::ERR_ABORTED", "request_aborted"),
         ("Target page, context or browser has been closed", "target_closed"),
+        ("net::ERR_HTTP_RESPONSE_CODE_FAILURE", "http_response_failure"),
+        ("net::ERR_EMPTY_RESPONSE", "empty_response"),
+        ("net::ERR_CONNECTION_RESET", "connection_reset"),
+        ("net::ERR_CONNECTION_CLOSED", "connection_closed"),
+        ("Frame was detached", "frame_detached"),
+        ("Page crashed", "page_crashed"),
         ("unrecognized failure", "other"),
     ],
 )

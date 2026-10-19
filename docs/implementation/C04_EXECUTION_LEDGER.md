@@ -321,3 +321,67 @@ acceptance. Existing forced-cutoff/ownership/failure tests pass. Ruff all446
 files, whitespace and immutable C03 tree verification pass. Durable recovery
 JSON validates with state IN_PROGRESS and null hosted acceptance. Task 1 is
 not COMPLETE. Tasks 2–11 remain NOT_STARTED.
+
+### Task 1 bootstrap phase and unclassified-browser diagnosis — 2026-10-19 UTC
+
+Budget recovery published as `2ec28171038414fdefc7b86ceccc5dfc00296182`, tree
+`5e76a0b86512ec64a62313097ee385a6a1b5edc9`; local same-tree authoring
+`59937997d5f998e7689259edc79dbbdaca9dac1c` retained on
+`local/c04-task01-foundation-budget`. Full run `39203522167` attempt1 has NOT
+accepted Task1. PostgreSQL50 and several inherited gates pass, but Foundation
+`117901330238` exits1 naturally after187.8s with0 runtime tests and complete
+cleanup; processing `117901330277` exits1 after231.8s; storage `117901330460`
+exits1 after200.0s. No new budget success is claimed: Foundation failed before
+reaching the revised limit. Last snapshots place Foundation at service startup
+and processing/storage at `docker compose run --rm minio-init` before tests.
+
+CORRECTION: earlier “build failure” descriptions exceeded the evidence. A stale
+snapshot showed BuildKit active, not the exact failing command. These later
+snapshots locate service startup/bootstrap; the original cause remains unknown.
+No build/network/credential hypothesis is treated as proven or fixed.
+
+Current c02-migrations `117901330430` additionally exits124 after301.3s: the
+existing INNER300s cumulative shell cutoff, not the330s observer limit. Recorded
+Task8 108, Task9 89 and Task10 6 cases pass without failures/skips; the final
+observed case belongs to source non-delivery controls. This is incomplete
+acceptance. No change to that inner timeout, test selection or baseline is made.
+Full current/original rehearsals on this head are still pending.
+
+Historical diagnostic run `39200620956` is terminal: both full rehearsals each
+have127 zero stage exits, natural final_rehearsal_passed and clean_cleanup0;
+overall FAILED because Foundation/startup jobs failed and aggregate denied.
+Later `cd583d9` run39201568257 current full job117895445583 failed at
+clean_owner_browser:9 passed/1 failed; the SAME owner optional-consent browser
+case failed at page.reload line53. Downloaded its REDACTED artifact12164354759
+and independently verified SHA256
+`5f50d68f80387aa6b775ee51cb715cb4a033bde78276e730fb7dcff08a5053de`.
+The artifact records browser_failure_category=other, so navigation-race and HTTP
+error hypotheses remain UNPROVEN. No browser assertion or application fix is
+made on the basis of that label.
+
+Bounded next diagnosis changes only CURRENT-source instrumentation:
+- `docker/minio-init.sh`: finite phase markers on original exit statuses;
+  alias/readiness split into an equivalent function with the SAME30 attempts,
+ 2s sleeps, original mc commands/arguments, bucket ACL and policy. No credentials,
+  raw client errors, URLs or policy payload are emitted. Existing immutable
+  C01/C02/C03 copies remain unchanged. `progress_lines` recognizes only exact
+  finite phase/state/integer-code markers; no arbitrary captures are relayed.
+- `failure_data`: six more fixed browser-error categories, never raw message,
+  URL, body, token or values. This improves an observed unclassified exception;
+  it does not claim the next failure's category in advance.
+
+Behavioral RED: after relocating ONLY the unit's ephemeral policy-file path
+(the host lacks /tmp), all7 bootstrap cases failed for missing phase metadata
+with correct original exits. The initial /tmp unit-harness failure is NOT claimed
+as product RED. Six browser-category cases failed before adding their enums.
+GREEN:135 combined C04/observer/inherited-CI controls pass, including successful
+bootstrap, all7 failure phases, exact30 attempts, exit1/7 propagation, no secret
+output and unknown/tainted/>255 marker rejection. These instrumentation units
+use fake mc/sleep only; they cannot substitute for real MinIO/scanner/Celery
+acceptance. Ruff all447 files, formatting, shell syntax, whitespace and immutable
+C03 tree verification pass. No inherited job or workflow byte is changed here.
+
+This forward diagnostic source requires another complete exact-head hosted
+manifest. No same-SHA job retry has been used on cd583d9 or2ec2817; do not use
+retries blindly without identifying the causal bootstrap failure. Task1 remains
+IN_PROGRESS/BLOCKED on full acceptance; Tasks2–11 remain NOT_STARTED.

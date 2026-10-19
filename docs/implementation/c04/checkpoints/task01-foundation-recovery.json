@@ -37,5 +37,19 @@
     "previous_outer_seconds": 1200,
     "current_source_outer_seconds": 1800,
     "immutable_c03_outer_seconds": 1200
+  },
+  "latest_diagnosis": {
+    "source_sha": "2ec28171038414fdefc7b86ceccc5dfc00296182",
+    "source_tree": "5e76a0b86512ec64a62313097ee385a6a1b5edc9",
+    "run_id": 39203522167,
+    "run_attempt": 1,
+    "state": "IN_PROGRESS",
+    "foundation": "service_startup_exit_1",
+    "processing": "minio_init_exit_1",
+    "storage": "minio_init_exit_1",
+    "c02_migrations": "cumulative_inner_300s_exit_124",
+    "root_cause": "not_established",
+    "focused_metadata_controls_passed": 135,
+    "next_task": 1
   }
 }

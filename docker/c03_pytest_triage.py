@@ -214,6 +214,12 @@ def failure_data(info):
                     ("interrupted by another navigation", "navigation_interrupted"),
                     ("ERR_CONNECTION_REFUSED", "connection_refused"),
                     ("ERR_ABORTED", "request_aborted"),
+                    ("ERR_HTTP_RESPONSE_CODE_FAILURE", "http_response_failure"),
+                    ("ERR_EMPTY_RESPONSE", "empty_response"),
+                    ("ERR_CONNECTION_RESET", "connection_reset"),
+                    ("ERR_CONNECTION_CLOSED", "connection_closed"),
+                    ("Frame was detached", "frame_detached"),
+                    ("Page crashed", "page_crashed"),
                     ("has been closed", "target_closed"),
                     ("Timeout", "timeout"),
                 )
