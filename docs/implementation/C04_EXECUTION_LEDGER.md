@@ -595,3 +595,52 @@ that head's1200s cutoff would truncate otherwise successful existing work and
 supports the fixed1800s correction; it does not accept another SHA or all Task1.
 Latest source/complete manifest still controls advancement. Task1 remains
 IN_PROGRESS; Tasks2–11 remain NOT_STARTED.
+
+### Task 1 focused historical probe and private failure evidence
+
+Published combined recovery351db4b1b1c82d6bd42f277167449a8c9b5cc24a / tree
+`c88f3286566e60486a850b733becccff51e55632`, run39208190000 attempt1;
+local same-treefde455fb9e1eafdc9c29b70f279ee1520032c438 preserved on
+local/c04-task01-rehearsal-fix. Real owner117915510439 now75/0/0 and
+staff117915510343 now67/0/0; both natural0 and complete cleanup. Thus the first
+focused real-browser GREEN supports the explicit form-load barrier hypothesis;
+all broader latest-source browser repetitions and full manifest remain required.
+
+Migration job117915510192 now fails naturally after63.9s with ValueError and
+cleanup, not a timeout. It occurs before later Task8/9/10 selections. The new
+history harness is NOT claimed GREEN or complete: existing inherited output
+redaction lacks its failing line. No fixture assertion is waived. Add the EXACT
+historical test node to C04's real PostgreSQL gate so it is directly required and
+can report its static traceback through the existing redacted reporter.
+
+Distinct author review of C04 required runner found Important gaps (no separate
+reviewer claimed): raw pytest failure payload could reach CI output, and
+collect-only/filtered execution could return0. Actual RED controls demonstrated
+synthetic-private-health-token in old runner output, --collect-only returning0
+with0 passed, and -k selecting only one of two cases returning0. The initial
+absolute --deselect probe did not deselect anything and is NOT claimed as RED;
+it was corrected to an actual -k deselection before implementation.
+
+Current-source correction reuses docker.c03_pytest_triage as a pytest plugin.
+Raw stdout/stderr (including low-level FD writes) stays in an unlinked mode600
+TemporaryFile; only finite failure metadata and actual counts/exit are printed.
+Fail on zero passes, errors/failures, skipped/xfailed/xpassed/deselected cases,
+including a final post-pytest guard; no failure can be hidden by output redaction.
+Every run owns a fresh UUID runtime folder and fresh --basetemp underneath it.
+Local default-temp artifacts from a host without/tmp were moved INTACT under
+.runtime/c04-task1/runner-default-temp-20261019; no legitimate work deleted.
+No app authorization, original baseline, inherited job or service substitute added.
+
+GREEN:165 C04/current inherited-CI/observer/final-rehearsal controls pass, zero
+failed/skipped; direct required runner executes86 C04 units with all error,
+skip, expected-failure and deselection counts zero and actual exit0. Privacy and
+incomplete-selection negatives pass. Ruff450 files, format, shell syntax and
+whitespace pass. Real PostgreSQL history probe GREEN is PENDING_CI. No new
+acceptance or Task2 start is recorded.
+
+Historical complete evidence kept separate: run39204677988/a52ba33 exact source
+and tree pass validate_completed_task_evidence for all14 jobs, attempt1. Both full
+rehearsals have127 zero stages, clean_cleanup0/final_rehearsal_passed; original
+backend1692, current1757, no failed/skipped phases; final C04 job117913426045
+executes65 cases and drift check successfully. This is historical authority only,
+not acceptance of later legitimate recovery source changes.
