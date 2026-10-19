@@ -8,9 +8,13 @@ from .models import (
     CredentialRevision,
     ProfessionalLocation,
     ProfessionalProfile,
+    ProfessionalPublication,
     ProfessionalRole,
     ProfessionalRoleRestriction,
     ProfileCommandReceipt,
+    PublicationMediaBinding,
+    PublicationQualification,
+    PublicationRevision,
     RoleRestrictionHistory,
     Verification,
     VerificationAssignment,
@@ -25,6 +29,36 @@ def enumerate_professional_inventory(owner_uuid):
     records = []
     # This fixed installed set is internal lifetime metadata, not a subject registry.
     queries = (
+        (
+            ProfessionalPublication.objects.filter(profile__user__public_id=owner_uuid),
+            "professional_publication",
+            "professional_profile",
+            "profile_id",
+        ),
+        (
+            PublicationRevision.objects.filter(
+                publication__profile__user__public_id=owner_uuid
+            ),
+            "publication_revision",
+            "professional_profile",
+            "publication_id",
+        ),
+        (
+            PublicationQualification.objects.filter(
+                revision__publication__profile__user__public_id=owner_uuid
+            ),
+            "publication_qualification",
+            "professional_profile",
+            "revision_id",
+        ),
+        (
+            PublicationMediaBinding.objects.filter(
+                revision__publication__profile__user__public_id=owner_uuid
+            ),
+            "publication_media_binding",
+            "professional_profile",
+            "revision_id",
+        ),
         (
             ProfessionalProfile.objects.filter(user__public_id=owner_uuid),
             "professional_profile",
@@ -133,6 +167,27 @@ def enumerate_professional_inventory(owner_uuid):
     for query, kind, data_class, parent in queries:
         for row in bounded_rows(query):
             assets = ()
+            if isinstance(row, PublicationQualification):
+                source = row.credential_revision
+                if (
+                    source.category != "qualification"
+                    or source.credential.profile_id
+                    != row.revision.publication.profile_id
+                    or not revision_asset_valid(source)
+                ):
+                    raise PermissionError("Inventory subject denied")
+                assets = (source.source_asset_id,)
+            if isinstance(row, PublicationMediaBinding):
+                profile = row.revision.publication.profile
+                if (
+                    row.asset.owner_id != profile.user_id
+                    or row.asset.classification != "private_source"
+                    or row.asset.subject_kind != "professional_profile"
+                    or row.asset.subject_uuid != profile.id
+                    or row.asset.purpose != row.purpose
+                ):
+                    raise PermissionError("Inventory subject denied")
+                assets = (row.asset_id,)
             if isinstance(row, Credential) and (
                 row.role_id is not None
                 and row.role.profile_id != row.profile_id

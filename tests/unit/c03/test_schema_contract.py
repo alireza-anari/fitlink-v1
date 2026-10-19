@@ -33,6 +33,12 @@ EXPECTED = {
     },
     "assets": {"Asset", "AssetDerivative", "AssetProcessingAttempt"},
 }
+C04_PUBLICATION_MODELS = {
+    "ProfessionalPublication",
+    "PublicationRevision",
+    "PublicationQualification",
+    "PublicationMediaBinding",
+}
 
 
 def test_private_relational_schema_registered_without_future_models():
@@ -40,12 +46,15 @@ def test_private_relational_schema_registered_without_future_models():
         installed = {
             m.__name__ for m in apps.get_models() if m._meta.app_label == label
         }
-        assert installed == names, f"Missing bounded {label} metadata"
-        for name in names:
+        current = names | (
+            C04_PUBLICATION_MODELS if label == "professionals" else set()
+        )
+        assert installed == current, f"Missing bounded {label} metadata"
+        for name in current:
             model = apps.get_model(label, name)
             assert isinstance(model._meta.pk, models.UUIDField)
             for field in model._meta.local_fields:
-                assert field.name not in {
+                forbidden = {
                     "slug",
                     "is_public",
                     "is_verified",
@@ -57,12 +66,18 @@ def test_private_relational_schema_registered_without_future_models():
                     "injuries",
                     "medications",
                 }
+                if label == "professionals" and name == "ProfessionalPublication":
+                    forbidden.remove("slug")
+                assert field.name not in forbidden
                 if isinstance(field, models.ForeignKey):
                     assert field.remote_field.on_delete is models.PROTECT
 
 
 def test_c03_metadata_records_have_utc_creation_and_update_fields():
-    for label, names in EXPECTED.items():
+    for label, original in EXPECTED.items():
+        names = original | (
+            C04_PUBLICATION_MODELS if label == "professionals" else set()
+        )
         for name in names:
             model = apps.get_model(label, name)
             fields = {field.name: field for field in model._meta.local_fields}

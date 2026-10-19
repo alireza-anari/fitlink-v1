@@ -2,8 +2,8 @@
 
 import json
 import re
-from dataclasses import dataclass
-from datetime import date, datetime
+from dataclasses import dataclass, field
+from datetime import UTC, date, datetime
 from uuid import UUID
 
 from .contracts import ProfessionalStepInput
@@ -27,7 +27,11 @@ PUBLIC_MEDIA = frozenset({"avatar", "cover", "logo"})
 SUMMARY_FIELDS = frozenset(
     {"role", "title", "issuer", "type_label", "issued_on", "expires_on"}
 )
-MAX_PUBLIC_BYTES = 16 * 1024
+MAX_SELECTION_BYTES = 16 * 1024
+# UUID-only bounded selections expand into bounded source qualification text.
+# Accommodate that expansion without weakening any individual field limit.
+MAX_QUALIFICATIONS = MAX_SELECTION_BYTES // 36
+MAX_PUBLIC_BYTES = 1024 * 1024
 RESERVED_SLUGS = frozenset(
     {
         "admin",
@@ -53,6 +57,74 @@ RESERVED_SLUGS = frozenset(
 )
 
 
+class PublicationUnavailable(RuntimeError):
+    pass
+
+
+@dataclass(frozen=True)
+class PublicationDisclosure:
+    version: str
+    text: str = field(repr=False)
+
+    def __post_init__(self):
+        if not isinstance(self.version, str) or not re.fullmatch(
+            r"[a-zA-Z0-9._-]{1,64}", self.version
+        ):
+            raise ValueError("Invalid publication disclosure version")
+        plain(self.text, MAX_SELECTION_BYTES, required=True)
+
+    @property
+    def digest(self):
+        from hashlib import sha256
+
+        return sha256((self.version + "\0" + self.text).encode()).hexdigest()
+
+
+@dataclass(frozen=True)
+class PublicationDTO:
+    publication_id: UUID
+    profile_id: UUID
+    slug: str
+    version: int
+    state: str
+    current_revision_id: UUID | None
+    requested_revision_id: UUID | None
+
+
+@dataclass(frozen=True)
+class PublicationDraftDTO:
+    publication_id: UUID
+    revision_id: UUID
+    version: int
+    source_profile_version: int
+    slug: str
+    disclosure_version: str
+    disclosure_hash: str
+    disclosure_text: str = field(repr=False)
+    valid_until: datetime | None
+    _snapshot_json: str = field(repr=False)
+
+    @property
+    def snapshot(self):
+        return json.loads(self._snapshot_json)
+
+
+@dataclass(frozen=True)
+class EffectivePublication:
+    publication_id: UUID
+    revision_id: UUID
+    profile_id: UUID
+    slug: str
+    version: int
+    source_profile_version: int
+    valid_until: datetime | None
+    _snapshot_json: str = field(repr=False)
+
+    @property
+    def snapshot(self):
+        return json.loads(self._snapshot_json)
+
+
 def canonical_slug(profile_uuid: UUID, requested: str | None) -> str:
     if not isinstance(profile_uuid, UUID):
         raise ValueError("Invalid public profile identifier")
@@ -67,18 +139,18 @@ def canonical_slug(profile_uuid: UUID, requested: str | None) -> str:
     return requested
 
 
-def bounded_json(value) -> bytes:
+def bounded_json(value, *, limit=MAX_PUBLIC_BYTES) -> bytes:
     try:
         body = json.dumps(
             value,
             ensure_ascii=False,
             sort_keys=True,
-            separators=(",", ":"),
+            separators=(", ", ": "),
             allow_nan=False,
         ).encode()
     except (TypeError, ValueError, UnicodeError):
         raise ValueError("Invalid publication data") from None
-    if len(body) > MAX_PUBLIC_BYTES:
+    if len(body) > limit:
         raise ValueError("Publication data exceeds bound")
     return body
 
@@ -139,18 +211,25 @@ class PublicationSelection:
             or self.valid_until.utcoffset() is None
         ):
             raise ValueError("Publication expiry requires an aware time")
-        bounded_json(
-            {
-                "fields": self.fields,
-                "roles": self.roles,
-                "qualifications": [str(v) for v in revisions],
-                "media": [(v.purpose, str(v.asset_uuid)) for v in self.media],
-                "slug": self.slug,
-                "valid_until": self.valid_until.isoformat()
-                if self.valid_until
-                else None,
-            }
-        )
+        bounded_json(self.as_selection_dict(), limit=MAX_SELECTION_BYTES)
+
+    def as_selection_dict(self):
+        """Restricted source binding, never a public DTO or search snapshot."""
+        return {
+            "fields": list(self.fields),
+            "roles": list(self.roles),
+            "qualification_revision_ids": [
+                str(v) for v in self.qualification_revision_ids
+            ],
+            "media": [
+                {"purpose": v.purpose, "asset_uuid": str(v.asset_uuid)}
+                for v in self.media
+            ],
+            "slug": self.slug,
+            "valid_until": self.valid_until.astimezone(UTC).isoformat()
+            if self.valid_until
+            else None,
+        }
 
 
 @dataclass(frozen=True)
@@ -244,7 +323,7 @@ def validate_public_snapshot(snapshot: dict) -> None:
     if "locations" in snapshot:
         locations(snapshot["locations"])
     summaries = snapshot.get("qualification_summaries", [])
-    if not isinstance(summaries, list):
+    if not isinstance(summaries, list) or len(summaries) > MAX_QUALIFICATIONS:
         raise ValueError("Invalid public qualification summaries")
     for value in summaries:
         _summary(value, roles)

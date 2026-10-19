@@ -24,6 +24,68 @@ INHERITED = {
 REQUIRED = INHERITED | {"c04-baseline", "c04-postgresql", "c04-final"}
 
 
+def test_current_publication_checkpoint_executes_task2_and_real_sql_rendering():
+    import re
+
+    data = workflow()
+    postgres = "\n".join(
+        s.get("run", "") for s in data["jobs"]["c04-postgresql"]["steps"]
+    )
+    final = "\n".join(s.get("run", "") for s in data["jobs"]["c04-final"]["steps"])
+    wrapper = (ROOT / "docker/verify_c04.sh").read_text()
+    match = re.search(r"verify_c04_incremental.sh --task ([0-9]+)", wrapper)
+    assert match is not None
+    stage = int(match[1])
+    assert 2 <= stage <= 11
+    assert f"sh docker/verify_c04_incremental.sh --task {stage}" in postgres
+    assert (
+        f'python docker/c04_acceptance.py --task {stage} --upstream "$C04_UPSTREAM"'
+        in final
+    )
+    source = (ROOT / "docker/verify_c04_incremental.sh").read_text()
+    for domain, number in (("professionals", "0018"), ("governance", "0015")):
+        line = (
+            f"uv run --frozen python manage.py sqlmigrate {domain} {number}"
+            " --settings=config.settings.test"
+        )
+        assert line in source.splitlines()
+
+
+def test_task2_checkpoint_rejects_prior_stage_runtime_even_with_same_job_names():
+    import json
+    from copy import deepcopy
+
+    validate = validator().validate_checkpoint
+    payload = json.loads(
+        (ROOT / "docs/implementation/c04/checkpoints/task02-start.json").read_text()
+    )
+    entry, run, jobs = evidence()
+    entry["task"] = 2
+    payload.update(
+        state="COMPLETE",
+        task=2,
+        hosted_acceptance={"entry": entry, "workflow": run, "jobs": jobs},
+        runtime_evidence={
+            name: {
+                "exit_code": 0,
+                "failed": 0,
+                "skipped": 0,
+                "cleanup_complete": True,
+                "executed_task": 2,
+            }
+            for name in REQUIRED
+        },
+    )
+    assert validate(payload)
+    for name in ("c04-postgresql", "c04-final"):
+        old = deepcopy(payload)
+        for invalid in (1, 2.0, True, "2"):
+            old["runtime_evidence"][name]["executed_task"] = invalid
+            assert not validate(old)
+        del old["runtime_evidence"][name]["executed_task"]
+        assert not validate(old)
+
+
 def workflow():
     path = ROOT / ".github/workflows/c04.yml"
     # RED observes actual existing trigger behavior before the C04 workflow exists.

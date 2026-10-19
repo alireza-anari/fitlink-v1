@@ -62,6 +62,9 @@ ACTIONS = (
     "professional.role_released",
     "assistant.defined",
     "assistant.revoked",
+    "publication.prepared",
+    "publication.confirmed",
+    "publication.withdrawn",
 )
 RESULTS = ("accepted", "denied", "failed", "succeeded", "throttled", "unavailable")
 CHANGED_FIELDS = frozenset(

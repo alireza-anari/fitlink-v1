@@ -41,6 +41,9 @@ class ProfileCommandReceipt(models.Model):
                         "role.release_restriction",
                         "assistant.define",
                         "assistant.revoke",
+                        "publication.prepare",
+                        "publication.confirm",
+                        "publication.unpublish",
                     ]
                 ),
                 name="professionals_receipt_command",

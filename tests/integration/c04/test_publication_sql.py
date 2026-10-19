@@ -16,8 +16,25 @@ def test_confirmed_revision_is_sql_immutable(settings, change):
     configure(settings)
     subject = approved(settings)
     draft = prepare(subject)
-    confirm(subject, draft)
+    published = confirm(subject, draft)
     revision = model("PublicationRevision").objects.get(pk=draft.revision_id)
+    if change == "delete":
+        from uuid import uuid4
+
+        from django.utils import timezone
+
+        from config.use_cases.publication import unpublish_profile
+
+        unpublish_profile(
+            subject.actor,
+            draft.publication_id,
+            published.version,
+            uuid4(),
+            timezone.now(),
+        )
+        publication = model().objects.get(pk=draft.publication_id)
+        assert publication.current_revision_id is None
+        assert publication.requested_revision_id is None
     with pytest.raises(DatabaseError), transaction.atomic():
         with connection.cursor() as cursor:
             table = connection.ops.quote_name(revision._meta.db_table)

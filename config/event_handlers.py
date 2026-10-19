@@ -14,6 +14,7 @@ from config.c03_event_handlers import (
     request_processing,
     verification_metadata,
 )
+from config.c04_event_handlers import professional_publication_metadata
 
 
 def account_security(event, at):
@@ -76,5 +77,6 @@ HANDLERS = MappingProxyType(
         "asset.processing_requested": request_processing,
         "asset.cleanup_requested": cleanup_metadata,
         "verification.changed": verification_metadata,
+        "professional.publication_changed": professional_publication_metadata,
     }
 )

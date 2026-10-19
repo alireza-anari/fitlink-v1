@@ -415,12 +415,20 @@ def test_every_installed_mandatory_c03_test_selected():
 
 def test_task1_sql_evidence_covers_all_installed_migrations():
     source = ENTRY.read_text()
+    c04_source = (ROOT / "docker/verify_c04_incremental.sh").read_text()
+    c04_migrations = {
+        ("professionals", "0018_c04_publication"),
+        ("governance", "0015_c04_publication_metadata"),
+    }
     for label in ("athletes", "professionals", "assets", "governance"):
         for migration in (ROOT / "apps" / label / "migrations").glob("[0-9]*.py"):
             number = migration.name.split("_", 1)[0]
             if label == "governance" and int(number) <= 10:
                 continue
-            assert f"sqlmigrate {label} {number}" in source
+            if (label, migration.stem) in c04_migrations:
+                assert f"sqlmigrate {label} {number}" in c04_source
+            else:
+                assert f"sqlmigrate {label} {number}" in source
 
 
 def test_task2_profile_authority_and_races_are_mandatory():

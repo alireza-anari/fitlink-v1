@@ -910,3 +910,55 @@ New models and generated0018 migration are currently local drafts; no database
 migration or SQL guard has been executed locally. Django5.2.17 generation and
 state drift check pass with the explicit expected local PostgreSQL connection
 warning. Do not describe that as an applied/validated real migration.
+
+Task2 full matrix behavioral RED:4efe4ae736171051a89732eb2aace8cf477f7963,
+tree d4a5e7e67900b47c2108962caa0b64050710df06, run39263037610 attempt1,
+PostgreSQL118095380415 executes102 passed/17 intended missing-feature assertion
+failures,0 error/skipped/xfail/xpass/deselected, actual exit1. All17 matrix cases
+were collected and executed against real PostgreSQL before source-domain command
+and SQL guard implementation; collection errors from the previous head are not
+credited. Task2 remains IN_PROGRESS, Tasks3–11 NOT_STARTED.
+
+Implemented draft source-domain intent, exact immutable revision/qualification
+and private-branding selection, current-owner/version confirmation, withdrawal,
+receipts, fresh C03 eligibility and atomic UUID-only governance metadata. No
+public route, public blob, search, new consent purpose or production disclosure
+is added. Selected media stays requested with no current pointer until Task3.
+Current verified role loss filters that role; identity loss hides everything.
+
+Task2 Ruling: keep the request-selection bound16KiB but permit its derived public
+snapshot up to1MiB within unchanged individual C03 field limits —20 valid selected
+qualifications expand beyond16KiB, observed by a failing unit assertion before
+the correction — cost if wrong: bounded additional storage, never extra public
+fields. Explicit selection remains finite and private references never enter
+snapshots. A non-UTC aware expiry also produced a failing canonical-binding test;
+canonical UTC serialization now preserves equality with PostgreSQL timestamps.
+
+Task2 Ruling: extend CURRENT source stage-absence tests by exactly the four named
+publication models, their protected UUID relations and one confirmation reverse
+relation; retain exact legacy model sets/field exclusions everywhere else — C04
+adds approved schema while immutable C03 fixtures must remain byte-identical —
+cost if wrong: a narrowly added model could be overlooked, so UUID/FK/timestamp
+checks cover the new rows as well. Only ProfessionalPublication may have slug.
+Current C03 SQL-rendering coverage delegates only0018/0015 to the cumulative C04
+runner; original historical SQL commands and all11 inherited job counterparts
+remain mandatory. No native-decoder or CSS-build assertion is relaxed.
+
+Task2 Ruling: register a finite publication metadata outbox handler now — committed
+source-domain commands must not enqueue unknown events before Task4 — cost if
+wrong: no projection until Task4 initial reconciliation; handler performs only
+current owner/version checks and no publication or external delivery.
+
+Cumulative C04 runners and checkpoint validation advance to task2. New controls
+first failed with the prior task1 runner and with prior-stage runtime accepted;
+now exact integer executed_task must match each post-Task1 checkpoint, with bool,
+float, string and prior-stage values rejected. Task1 historical record is intact.
+Local locked-runtime checks:212 passed plus37 subtests across C04, current C03
+schema/scope/CI and foundation scope; Ruff check/format pass, required mypy97
+source files pass, Django check0 issues, migration state no changes detected.
+Local migration consistency probe warns PostgreSQL unavailable: no real migration
+or PostgreSQL GREEN is claimed. Full local unit run also encounters sandbox
+native-isolation and absent built CSS; mandatory hosted jobs retain those checks.
+New PostgreSQL tests additionally require role degradation, audit/outbox rollback
+and immutable deletion after withdrawal, so FK protection alone cannot mask a
+missing revision-delete guard. Hosted GREEN on the implementation SHA is pending.

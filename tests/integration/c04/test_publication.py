@@ -256,3 +256,58 @@ def test_selected_private_media_waits_for_separate_public_copy(settings):
     media.refresh_from_db()
     assert media.classification == "private_source"
     assert AssetDerivative.objects.count() == before
+
+
+@pytest.mark.parametrize("kind", ["coach", "identity"])
+def test_current_role_loss_filters_only_affected_facts(settings, kind):
+    from tests.integration.c03.test_verification_revocation import revoke
+    from tests.integration.c04.publication_helpers import confirm, effective, prepare
+
+    configure(settings)
+    subject = approved(settings)
+    draft = prepare(
+        subject,
+        roles=("coach", "nutritionist"),
+        qualifications=tuple(
+            subject.assets[role][1].current_revision_id
+            for role in ("coach", "nutritionist")
+        ),
+    )
+    confirm(subject, draft)
+    revoke(subject, kind)
+    current = effective(subject)
+    if kind == "identity":
+        assert current is None
+    else:
+        assert current.snapshot["verified_roles"] == ["nutritionist"]
+        assert {r["role"] for r in current.snapshot["qualification_summaries"]} == {
+            "nutritionist"
+        }
+
+
+@pytest.mark.parametrize("hook", ["append_event", "append_outbox"])
+def test_confirmation_governance_failure_rolls_back(settings, monkeypatch, hook):
+    from django.db import DatabaseError
+
+    from tests.integration.c04.publication_helpers import (
+        confirm,
+        model,
+        module,
+        prepare,
+    )
+
+    configure(settings)
+    subject = approved(settings)
+    draft = prepare(subject)
+
+    def fail(*args, **kwargs):
+        raise DatabaseError("Synthetic metadata failure")
+
+    monkeypatch.setattr(module("config.use_cases.publication"), hook, fail)
+    with pytest.raises(DatabaseError):
+        confirm(subject, draft)
+    publication = model().objects.get(pk=draft.publication_id)
+    revision = model("PublicationRevision").objects.get(pk=draft.revision_id)
+    assert publication.version == draft.version
+    assert publication.current_revision_id is None
+    assert revision.confirmed_at is None and revision.confirmed_by_id is None

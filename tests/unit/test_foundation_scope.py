@@ -138,8 +138,14 @@ def test_only_foundation_routes_and_identity_model():
         "RoleRestrictionHistory",
         "AssistantMembership",
     }
-    # C03 may add only its approved profile/asset/verification models.
-    assert own_models == c02_models | c03_models
+    c04_models = {
+        "ProfessionalPublication",
+        "PublicationRevision",
+        "PublicationQualification",
+        "PublicationMediaBinding",
+    }
+    # Exact approved models only; C03 profile/identity boundaries remain intact.
+    assert own_models == c02_models | c03_models | c04_models
     user = apps.get_model("accounts", "User")
     assert {field.name for field in user._meta.get_fields()} == {
         "id",
@@ -161,6 +167,7 @@ def test_only_foundation_routes_and_identity_model():
         "state",
         "state_version",
         "auth_version",
+        "confirmed_publication_revisions",
         "otpchallenge",
         "accountsessioncontrol",
         "staff_capabilities",

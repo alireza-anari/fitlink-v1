@@ -15,6 +15,7 @@ EVENT_TYPES = (
     "asset.processing_requested",
     "asset.cleanup_requested",
     "assistant.membership_changed",
+    "professional.publication_changed",
 )
 
 

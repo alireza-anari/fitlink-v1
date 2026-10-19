@@ -9,6 +9,10 @@ from .credential_models import Credential as Credential
 from .credential_models import CredentialRevision as CredentialRevision
 from .profile_models import ProfessionalLocation as ProfessionalLocation
 from .profile_models import ProfessionalRole as ProfessionalRole
+from .publication_models import ProfessionalPublication as ProfessionalPublication
+from .publication_models import PublicationMediaBinding as PublicationMediaBinding
+from .publication_models import PublicationQualification as PublicationQualification
+from .publication_models import PublicationRevision as PublicationRevision
 from .receipt_models import ProfileCommandReceipt as ProfileCommandReceipt
 from .restriction_models import (
     ProfessionalRoleRestriction as ProfessionalRoleRestriction,

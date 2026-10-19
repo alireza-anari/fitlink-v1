@@ -136,6 +136,12 @@ def validate_checkpoint(payload: dict) -> bool:
         runtime = payload["runtime_evidence"]
         if set(runtime) != required_jobs(payload["task"]):
             return False
+        if payload["task"] >= 2 and any(
+            type(runtime[name].get("executed_task")) is not int
+            or runtime[name]["executed_task"] != payload["task"]
+            for name in ("c04-postgresql", "c04-final")
+        ):
+            return False
         return all(
             item.get("exit_code") == 0
             and item.get("failed") == 0

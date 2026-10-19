@@ -8,6 +8,19 @@ from tests.unit.c04.test_public_fields import contract
 
 
 class PublicationContractTests(unittest.TestCase):
+    def test_expiry_storage_binding_is_canonical_utc(self):
+        from datetime import timedelta, timezone
+
+        module = contract()
+        value = datetime(2027, 1, 1, tzinfo=timezone(timedelta(hours=3, minutes=30)))
+        selection = module.PublicationSelection(
+            fields=("display_name",), roles=("coach",), valid_until=value
+        )
+        self.assertEqual(
+            selection.as_selection_dict()["valid_until"],
+            value.astimezone(UTC).isoformat(),
+        )
+
     def test_default_slug_uses_only_public_profile_uuid(self):
         module = contract()
         identifier = uuid4()
@@ -103,6 +116,36 @@ class PublicationContractTests(unittest.TestCase):
         for biography in ("x" * 2001, "<script>PRIVATE</script>", "PRIVATE\x00"):
             with self.subTest(length=len(biography)), self.assertRaises(ValueError):
                 module.validate_public_snapshot({**snapshot, "biography": biography})
+
+    def test_small_selection_may_expand_to_larger_valid_source_summary(self):
+        module = contract()
+        module.PublicationSelection(
+            fields=("display_name",),
+            roles=("coach",),
+            qualification_revision_ids=tuple(uuid4() for _ in range(20)),
+        )
+        summary = {
+            "role": "coach",
+            "title": "گ" * 160,
+            "issuer": "گ" * 160,
+            "type_label": "گ" * 64,
+            "issued_on": None,
+            "expires_on": None,
+        }
+        error = None
+        try:
+            module.validate_public_snapshot(
+                {
+                    "display_name": "Synthetic",
+                    "verified_roles": ["coach"],
+                    "qualification_summaries": [summary] * 20,
+                }
+            )
+        except ValueError as caught:
+            error = caught
+        self.assertIsNone(
+            error, "Request byte limit must not truncate selected source facts"
+        )
 
 
 if __name__ == "__main__":

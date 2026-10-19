@@ -85,17 +85,26 @@ def test_no_c04_route_index_projection_or_c09_fields():
             assert not future_imports(path.read_text(), package), path.relative_to(ROOT)
     for label in ("athletes", "professionals"):
         for model in apps.get_app_config(label).get_models():
+            allowed = (
+                {"slug"}
+                if label == "professionals"
+                and model.__name__ == "ProfessionalPublication"
+                else set()
+            )
             assert not (
-                {
-                    "slug",
-                    "is_public",
-                    "published_at",
-                    "health_history",
-                    "injuries",
-                    "medications",
-                    "allergies",
-                    "client_id",
-                }
+                (
+                    {
+                        "slug",
+                        "is_public",
+                        "published_at",
+                        "health_history",
+                        "injuries",
+                        "medications",
+                        "allergies",
+                        "client_id",
+                    }
+                    - allowed
+                )
                 & {field.name for field in model._meta.fields}
             )
 
