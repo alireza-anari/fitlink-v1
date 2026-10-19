@@ -12,7 +12,15 @@ class PublicationContractTests(unittest.TestCase):
         module = contract()
         identifier = uuid4()
         self.assertEqual(module.canonical_slug(identifier, None), "p-" + identifier.hex)
-        for slug in ("admin", "api", "search", "media", "../private", "PRIVATE", "x" * 81):
+        for slug in (
+            "admin",
+            "api",
+            "search",
+            "media",
+            "../private",
+            "PRIVATE",
+            "x" * 81,
+        ):
             with self.subTest(slug=slug), self.assertRaises(ValueError):
                 module.canonical_slug(identifier, slug)
 
@@ -24,15 +32,20 @@ class PublicationContractTests(unittest.TestCase):
             (("display_name",), ()),
             (("display_name",), ("both",)),
         ):
-            with self.subTest(fields=fields, roles=roles), self.assertRaises(ValueError):
+            with (
+                self.subTest(fields=fields, roles=roles),
+                self.assertRaises(ValueError),
+            ):
                 module.PublicationSelection(fields=fields, roles=roles)
         with self.assertRaises(ValueError):
             module.PublicationSelection(
-                fields=("display_name",), roles=("coach",),
+                fields=("display_name",),
+                roles=("coach",),
                 valid_until=datetime(2027, 1, 1),
             )
         module.PublicationSelection(
-            fields=("display_name",), roles=("coach",),
+            fields=("display_name",),
+            roles=("coach",),
             valid_until=datetime(2027, 1, 1, tzinfo=UTC),
         )
 
@@ -41,10 +54,16 @@ class PublicationContractTests(unittest.TestCase):
         snapshot = {
             "display_name": "Synthetic",
             "verified_roles": ["coach"],
-            "qualification_summaries": [{
-                "role": "nutritionist", "title": "Synthetic", "issuer": "Synthetic",
-                "type_label": "Synthetic", "issued_on": None, "expires_on": None,
-            }],
+            "qualification_summaries": [
+                {
+                    "role": "nutritionist",
+                    "title": "Synthetic",
+                    "issuer": "Synthetic",
+                    "type_label": "Synthetic",
+                    "issued_on": None,
+                    "expires_on": None,
+                }
+            ],
         }
         with self.assertRaises(ValueError):
             module.validate_public_snapshot(snapshot)
@@ -57,10 +76,17 @@ class PublicationContractTests(unittest.TestCase):
     def test_truthful_unknown_experience_and_broad_location_only(self):
         module = contract()
         snapshot = {
-            "display_name": "Synthetic", "verified_roles": ["coach"],
+            "display_name": "Synthetic",
+            "verified_roles": ["coach"],
             "experience_years": None,
-            "locations": [{"country_code": "IR", "region": "نمونه", "city": "نمونه",
-                           "modes": ["in_person"]}],
+            "locations": [
+                {
+                    "country_code": "IR",
+                    "region": "نمونه",
+                    "city": "نمونه",
+                    "modes": ["in_person"],
+                }
+            ],
         }
         module.validate_public_snapshot(snapshot)
         snapshot["experience_years"] = True

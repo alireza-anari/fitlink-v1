@@ -43,6 +43,23 @@ class PublicFieldsTests(unittest.TestCase):
             with self.subTest(purpose=purpose), self.assertRaises(ValueError):
                 module.PublicationMediaSelection(purpose, uuid4())
 
+    def test_malformed_media_and_role_types_have_bounded_validation_errors(self):
+        module = contract()
+        module.PublicationMediaSelection("avatar", uuid4())
+        for value in ([], {}, None):
+            for action in (
+                lambda value=value: module.PublicationMediaSelection(value, uuid4()),
+                lambda value=value: module.PublicCredentialSummary(
+                    value, "Synthetic", "Synthetic", "Synthetic", None, None
+                ),
+            ):
+                error = None
+                try:
+                    action()
+                except (ValueError, TypeError) as caught:
+                    error = caught
+                self.assertIsInstance(error, ValueError)
+
     def test_snapshot_rejects_extra_keys_and_unverified_or_fictional_facts(self):
         module = contract()
         valid = {"display_name": "مربی نمونه", "verified_roles": ["coach"]}

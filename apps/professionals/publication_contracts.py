@@ -30,9 +30,25 @@ SUMMARY_FIELDS = frozenset(
 MAX_PUBLIC_BYTES = 16 * 1024
 RESERVED_SLUGS = frozenset(
     {
-        "admin", "api", "assets", "athletes", "comparison", "favorites",
-        "health", "login", "logout", "marketplace", "media", "owner", "posts",
-        "professionals", "publication", "search", "sitemap", "staff", "static",
+        "admin",
+        "api",
+        "assets",
+        "athletes",
+        "comparison",
+        "favorites",
+        "health",
+        "login",
+        "logout",
+        "marketplace",
+        "media",
+        "owner",
+        "posts",
+        "professionals",
+        "publication",
+        "search",
+        "sitemap",
+        "staff",
+        "static",
     }
 )
 
@@ -54,7 +70,10 @@ def canonical_slug(profile_uuid: UUID, requested: str | None) -> str:
 def bounded_json(value) -> bytes:
     try:
         body = json.dumps(
-            value, ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+            value,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
             allow_nan=False,
         ).encode()
     except (TypeError, ValueError, UnicodeError):
@@ -70,7 +89,11 @@ class PublicationMediaSelection:
     asset_uuid: UUID
 
     def __post_init__(self):
-        if self.purpose not in PUBLIC_MEDIA or not isinstance(self.asset_uuid, UUID):
+        if (
+            not isinstance(self.purpose, str)
+            or self.purpose not in PUBLIC_MEDIA
+            or not isinstance(self.asset_uuid, UUID)
+        ):
             raise ValueError("Invalid selected public media")
 
 
@@ -123,7 +146,9 @@ class PublicationSelection:
                 "qualifications": [str(v) for v in revisions],
                 "media": [(v.purpose, str(v.asset_uuid)) for v in self.media],
                 "slug": self.slug,
-                "valid_until": self.valid_until.isoformat() if self.valid_until else None,
+                "valid_until": self.valid_until.isoformat()
+                if self.valid_until
+                else None,
             }
         )
 
@@ -138,11 +163,19 @@ class PublicCredentialSummary:
     expires_on: date | None
 
     def __post_init__(self):
-        if self.role not in PUBLIC_ROLES:
+        if not isinstance(self.role, str) or self.role not in PUBLIC_ROLES:
             raise ValueError("Invalid public qualification role")
-        for value, limit in ((self.title, 160), (self.issuer, 160), (self.type_label, 64)):
+        for value, limit in (
+            (self.title, 160),
+            (self.issuer, 160),
+            (self.type_label, 64),
+        ):
             plain(value, limit, required=True)
-        if any(type(v) is not date for v in (self.issued_on, self.expires_on) if v is not None):
+        if any(
+            type(v) is not date
+            for v in (self.issued_on, self.expires_on)
+            if v is not None
+        ):
             raise ValueError("Invalid public qualification date")
         if self.issued_on and self.expires_on and self.expires_on < self.issued_on:
             raise ValueError("Invalid public qualification dates")

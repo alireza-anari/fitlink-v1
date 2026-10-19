@@ -871,3 +871,26 @@ application acceptance. Packaging initially omitted venv/bin/ruff; one forward
 auxiliary workflow adjustment exports ONLY that locked public executable and
 its digest/version manifest, avoiding another full toolchain transfer. No
 application source, generated environment or test inputs are exported.
+
+Ruff recovery run39261286147 succeeded; artifact12191861109/provider SHA256
+82ec354cee6c73b86b583507b2839b78b3a688b2fec55fec42d8cdcc7a7d794b matched, as
+did the native executable digest, Ruff0.16.10 version and original uv.lock hash.
+Temporary auxiliary workflow is now removed; no recovery job is acceptance.
+
+Current locked local runtime3.13.15 executes both contract files:10 passed plus33
+subtests, no failures/skips. Review found mutable/unhashable malformed media/role
+values raised TypeError rather than bounded ValueError. New behavioral assertion
+RED observes that exact TypeError, then strict string guards GREEN it. Ruff
+format/check passes after correction. Full installed C04 unit selection now100
+passed plus37 successful subtests,0 failed/skipped in6.37s. PostgreSQL ownership,
+source-edit/reconfirmation, exact summaries, revocation ordering, private-media
+pending and direct-SQL immutability tests were written before model/service/SQL
+implementation; no Task2 schema or command implementation is present yet.
+
+Ruling: source-domain release disclosure is absent by default, with only explicit
+versioned synthetic wording injected by tests — the plan defers real informed
+wording to release sign-off — cost if wrong: publication stays unavailable until
+trusted configuration supplies an approved version/text. No real legal policy,
+new consent purpose or implicit publication is invented. C03 stored type_code
+is used verbatim as the selected qualification type label; there is no approved
+credential-label catalogue to invent.
