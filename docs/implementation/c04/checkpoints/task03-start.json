@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "task": 3,
+  "state": "RED",
+  "approved_plan_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+  "approved_plan_tree": "1478d691b2a60d95f6c0d2ce5e561d34f59a61c0",
+  "approved_plan_blob": "f1225196c95a203e440afc4da362b74806e84f20",
+  "base_commit": "35e6b7920b46177bd093c490e663fae0baebfcea",
+  "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+  "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+  "red": {
+    "test": "tests/unit/c04/test_public_copy_contract.py",
+    "failed": 15,
+    "reason": "missing immutable publication release and distinct storage namespace; actual assertion failures"
+  },
+  "focused_green": null,
+  "hosted_acceptance": null,
+  "next_task": 3
+}

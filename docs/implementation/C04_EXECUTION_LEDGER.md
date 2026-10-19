@@ -1083,3 +1083,32 @@ Live main/C01/C02/C03 completed/planning heads and approved C04 plan/blob remain
 unchanged. New completion is documentation-only and preserves the tested SHA/tree
 above separately. Task2 COMPLETE. Next Task3 in strict order; no further approval
 needed for that already approved task.
+
+### Task 3 RED — separate sanitized publication copies
+
+Task2 prerequisite COMPLETE at tested86b354b63cd042f94712b9dfb9d9cf8cd71577da,
+tree8ca53644566aab5ca48f639abe827b420dfc3de9, run39271586772 attempt2 all14.
+Documentation-only35e6b7920b46177bd093c490e663fae0baebfcea/treeb42b7bd132ed03f5225ec5af1d90dd64ac46f58b
+preserves that acceptance separately; Task3 starts from35e6b79. Read exact Task3
+brief/§3/§5 and current assets processing/scanner/isolated sanitizer/store,
+privacy/cleanup/worker composition and professional source-selection contracts.
+
+Local behavioral RED:15 actual assertions in test_public_copy_contract fail for
+missing frozen release/copy DTO and separate publication namespace. No Task3
+production code exists. New five PostgreSQL tests collect without errors and
+exercise real C03 verified/confirmed branding fixtures before missing copy
+command assertions; real hosted RED is pending, never inferred from collection.
+Remaining scan/re-encode/crash/revocation/hold/real-service cases must be written
+and fail behaviorally before their corresponding implementation. No Task3 service
+or complete acceptance is claimed. Tasks4–11 remain NOT_STARTED.
+
+Task3 engineering direction follows approved boundaries: reuse private origin
+ACL and existing bucket through an exact isolated publication namespace adapter,
+never change Asset/AssetDerivative classification or URLs; reuse isolated pixel
+decoder, actual scanner, existing Celery worker and private reconciliation Beat.
+Assets receives server-validated typed release callbacks; it must not import
+professional models. Source holds and the existing profile_media/purpose policy
+retain descendant copy bytes but never authorize a withdrawn copy's delivery.
+No new Consent purpose, legal wording, public bucket, image format or scheduler
+is introduced. Task3 has no public route; its final internal buffered-read
+callback is later composed with Task4's public authority.
