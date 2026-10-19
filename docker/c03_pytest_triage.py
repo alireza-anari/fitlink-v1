@@ -203,6 +203,24 @@ def pytest_runtest_teardown(item, nextitem):
 
 def failure_data(info):
     data = {"exception": info.type.__name__}
+    # Only finite labels leave the process: browser messages may contain private
+    # URLs, submitted values or tokens. Never emit the message or call log.
+    if info.type.__module__.startswith("playwright."):
+        message = str(info.value)
+        data["browser_failure_category"] = next(
+            (
+                label
+                for marker, label in (
+                    ("interrupted by another navigation", "navigation_interrupted"),
+                    ("ERR_CONNECTION_REFUSED", "connection_refused"),
+                    ("ERR_ABORTED", "request_aborted"),
+                    ("has been closed", "target_closed"),
+                    ("Timeout", "timeout"),
+                )
+                if marker in message
+            ),
+            "other",
+        )
     data["traceback"] = [
         location(str(e.path), e.frame.code.name, e.lineno + 1) for e in info.traceback
     ]
