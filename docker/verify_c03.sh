@@ -363,24 +363,36 @@ if [ "${1:-}" = --native-processing-diagnostic ]; then
   trap - EXIT
   exit
 fi
+original_c02_step() {
+  c02_observed_stage=$1
+  shift
+  c02_observed_result=0
+  # Capture only a constant phase and its actual exit. All command output stays
+  # inside the existing private parent log; never export argv or error text.
+  "$@" &
+  c02_observed_pid=$!
+  wait "$c02_observed_pid" || c02_observed_result=$?
+  printf '{"stage":"%s","exit_code":%s}\n' "$c02_observed_stage" "$c02_observed_result" >>"$evidence/upgrade.jsonl"
+  return "$c02_observed_result"
+}
 original_c02() (
   cd "$baseline"
   # Original public static/dependency outputs must remain readable by the
   # immutable nonroot containers. The outer captured log stays mode0600.
   umask 022
-  uv lock --check
-  uv sync --frozen --group dev
-  npm ci
-  npm run build:css
-  npm run check:js
-  uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build --ignore=src/styles.css
-  uv run --frozen ruff check .
-  uv run --frozen ruff format --check .
-  uv run --frozen mypy config/settings/env.py config/health.py apps/assets/storage.py apps/accounts apps/governance config/use_cases config/account_middleware.py config/authentication.py config/permissions.py
-  uv run --frozen python manage.py check --settings=config.settings.test
-  uv run --frozen pytest tests/unit -q --strict-markers --tb=short --show-capture=no
-  uv run --frozen python docker/production_check.py
-  C02_BASELINE_DIR="$baseline/.runtime/c01" sh docker/verify_c02.sh
+  original_c02_step original_c02_lock uv lock --check
+  original_c02_step original_c02_sync uv sync --frozen --group dev
+  original_c02_step original_c02_npm npm ci
+  original_c02_step original_c02_css npm run build:css
+  original_c02_step original_c02_js npm run check:js
+  original_c02_step original_c02_static uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build --ignore=src/styles.css
+  original_c02_step original_c02_lint uv run --frozen ruff check .
+  original_c02_step original_c02_format uv run --frozen ruff format --check .
+  original_c02_step original_c02_types uv run --frozen mypy config/settings/env.py config/health.py apps/assets/storage.py apps/accounts apps/governance config/use_cases config/account_middleware.py config/authentication.py config/permissions.py
+  original_c02_step original_c02_check uv run --frozen python manage.py check --settings=config.settings.test
+  original_c02_step original_c02_units uv run --frozen pytest tests/unit -q --strict-markers --tb=short --show-capture=no
+  original_c02_step original_c02_production uv run --frozen python docker/production_check.py
+  C02_BASELINE_DIR="$baseline/.runtime/c01" original_c02_step original_c02_runtime sh docker/verify_c02.sh
 )
 # Invoke the immutable complete original, including its separate C01 proof.
 run_step exact_original_c02 original_c02

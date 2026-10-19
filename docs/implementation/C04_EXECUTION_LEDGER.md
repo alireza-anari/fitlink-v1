@@ -698,3 +698,59 @@ skipped, including all5 runner privacy/selection/unwritable-root/collision contr
 Ruff450 files/format/whitespace and immutable C03 exact tree pass. Full non-root
 Docker/current/original browser/service acceptance still belongs to the complete
 next exact-head hosted manifest. Task1 IN_PROGRESS; Tasks2–11 NOT_STARTED.
+
+### Task 1 workspace recovery and bounded original-C02 phase diagnosis
+
+Live refs rechecked on 2026-10-19: execution head remains
+058c51599ce3155bdc58a6e876e77fab03f57273, tree
+0a77382cd2d4dd980bdfe69d0070f6dc85380d68; approved planning ref/tree and
+all completed-stage/diagnostic refs remain unchanged. Run39212222210 attempt1
+finished with12/14 successes: c03-final117927953855 failed at
+exact_original_c02 exit1; c04-final117942482298 failed its upstream guard.
+No test exception, test name, count or infrastructure cause was recorded in the
+failed stage's finite diagnostic. Artifact12167199899 ZIP SHA256
+3c9431ec34f48cc1eaeee5a460ac269afed17b911bd6188e3401543853e2e979
+contains only upgrade.jsonl with that single failure. The cause is UNKNOWN.
+Do not infer a transient network, runner, MinIO or application defect.
+
+Same-head immutable baseline117927953860 completed its full rehearsal, including
+exact_original_c02 exit0, clean_cleanup0 and final_rehearsal_passed. Foundation
+117927953856 completed naturally with1877 passed/0 failed/0 skipped and complete
+cleanup; C04 PostgreSQL117927953991 completed90/0. Parallel baseline success
+alone does not satisfy the approved transient-failure retry condition. No
+same-SHA retry was requested for058c515; Task1 is still not accepted.
+
+Automated workspace maintenance left a partial source directory without Git
+metadata or the usable Python3.13 environment. Preserved that directory. Rebuilt
+a separate checkout from the GitHub connector: all511 original file blobs and
+modes independently match their Git object hashes; git write-tree exactly equals
+0a77382cd2d4dd980bdfe69d0070f6dc85380d68. Recovered the exact hash-matching head
+commit and13 ancestor commit objects through the C03 handoff; the repository is
+explicitly shallow at that handoff. Approved planning ancestry was checked with
+git merge-base. This recovers published state, not any deleted unpublished bytes.
+No claim of byte-for-byte recovery of missing local-only state is made.
+
+Ruling: add finite prerequisite results to the CURRENT C03 replay wrapper under
+Task1 diagnostics authority, without changing any immutable C02/C03 fixture —
+the existing single aggregate cannot locate this failure — cost if wrong: the
+extra wrapper could change command failure propagation, requiring RED/GREEN
+subprocess controls and complete new-head hosted acceptance before advancement.
+
+Behavioral RED: simulated failures in commands1,3,11,13 retain only the aggregate
+result; all four phase-evidence assertions fail, and the successful-chain control
+also fails its expected per-command evidence. GREEN: current wrapper records each
+constant original_c02_* stage and actual exit in the existing metadata-only JSONL.
+All13 original commands, argument order, working directory, umask, environment,
+frozen dependencies and immutable verifier remain. No command is skipped/retried,
+no raw stdout/stderr/argv is exported and an early nonzero command stops the chain.
+
+Verification in recovered environment: Python3.12 stdlib unittest runs both new
+tests (four failure subcases plus successful-chain control), zero failures/skips;
+three existing final-rehearsal source-contract functions execute successfully via
+stdlib AST extraction. Shell syntax and git diff --check pass. These are bounded
+harness checks, NOT the required Python3.13/Django/PostgreSQL/browser suite.
+Python3.13, pytest and Docker are unavailable locally after maintenance; full
+locked-runtime verification remains mandatory in the complete hosted manifest.
+No full local regression or Ruff pass is claimed. New-head CI must independently
+execute these tests and every inherited/current/baseline job. Task1 IN_PROGRESS;
+Tasks2–11 NOT_STARTED. No public functionality, C05 work, merge or release.
