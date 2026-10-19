@@ -28,6 +28,7 @@ class PublicAssetCopy(models.Model):
     purpose = models.CharField(max_length=16)
     source_version = models.PositiveBigIntegerField()
     source_derivative_version = models.PositiveBigIntegerField()
+    source_derivative_sha256 = models.CharField(max_length=64)
     processing_version = models.PositiveBigIntegerField()
     publication_version = models.PositiveBigIntegerField()
     owner_auth_version = models.PositiveBigIntegerField()
@@ -43,6 +44,10 @@ class PublicAssetCopy(models.Model):
             models.Index(fields=["state", "updated_at", "id"], name="public_copy_due")
         ]
         constraints = [
+            models.CheckConstraint(
+                condition=models.Q(source_derivative_sha256__regex=r"^[0-9a-f]{64}$"),
+                name="public_copy_source_checksum",
+            ),
             models.UniqueConstraint(
                 fields=[
                     "release_revision_uuid",

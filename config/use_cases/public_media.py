@@ -20,14 +20,14 @@ from apps.professionals.publication_models import (
 from apps.professionals.publication_selectors import confirmed_media_publication
 
 
-def _binding(user, publication_uuid, revision_uuid, purpose, at):
+def _binding(user, publication_uuid, revision_uuid, purpose, at, *, require_flag=True):
     if (
         not all(isinstance(v, UUID) for v in (publication_uuid, revision_uuid))
         or not isinstance(purpose, str)
         or purpose not in {"avatar", "cover", "logo"}
         or not isinstance(at, datetime)
         or not timezone.is_aware(at)
-        or feature_enabled("marketplace") is not True
+        or (require_flag and feature_enabled("marketplace") is not True)
     ):
         raise AssetNotFound("Publication media unavailable")
     at = max(at, timezone.now())
@@ -82,6 +82,8 @@ def _binding(user, publication_uuid, revision_uuid, purpose, at):
         source_asset=source,
         processing_version=source.processing_version,
     ).first()
+    if old is not None and old.source_derivative_sha256 != derivative.sha256:
+        raise AssetNotFound("Publication media unavailable")
     release = AuthorizedPublicMediaRelease(
         user.public_id,
         publication.profile_id,
@@ -241,3 +243,23 @@ def validate_public_copy_read(copy, at):
     ):
         raise AssetNotFound("Publication media unavailable")
     return digest
+
+
+def reconcile_public_copy_lifetime(identifier, at):
+    from apps.assets.public_copies import reconcile_public_copy_lifetime as reconcile
+
+    def current(user, copy, now):
+        try:
+            _binding(
+                user,
+                copy.publication_uuid,
+                copy.release_revision_uuid,
+                copy.purpose,
+                now,
+                require_flag=False,
+            )
+            return True
+        except (PermissionError, ValueError, LookupError):
+            return False
+
+    return reconcile(identifier, at, authorize=current)

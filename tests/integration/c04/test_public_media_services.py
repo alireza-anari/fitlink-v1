@@ -52,7 +52,13 @@ def prepared_real(settings, monkeypatch, *, malicious=False, wrong_mime=False):
     assert scanner.scan(health.getvalue(), timezone.now()).status == "clean"
     person, asset, draft = selected(settings)
     derivative = asset.derivatives.get(purpose="owner_preview")
-    body = raster(eicar=malicious)
+    body = (
+        b"X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"
+        if malicious
+        else raster()
+    )
+    if malicious:
+        assert scanner.scan(body, timezone.now()).status == "malicious"
     derivative.sha256 = sha256(body).hexdigest()
     derivative.mime_type = "image/jpeg" if wrong_mime else "image/png"
     derivative.save(update_fields=["sha256", "mime_type"])

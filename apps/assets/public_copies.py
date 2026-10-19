@@ -96,6 +96,7 @@ def prepare_public_copy(release: AuthorizedPublicMediaRelease, at, *, authorize=
                 source_asset=asset,
                 source_derivative=derivative,
                 source_derivative_version=derivative.version,
+                source_derivative_sha256=derivative.sha256,
                 profile_uuid=release.profile_uuid,
                 publication_uuid=release.publication_uuid,
                 release_revision_uuid=release.revision_uuid,
@@ -122,6 +123,7 @@ def prepare_public_copy(release: AuthorizedPublicMediaRelease, at, *, authorize=
             or row.source_version != release.source_version
             or row.source_derivative_id != derivative.id
             or row.source_derivative_version != derivative.version
+            or row.source_derivative_sha256 != derivative.sha256
             or row.publication_version != release.publication_version
             or row.generation != release.generation
             or row.state not in {"pending", "running", "ready"}
@@ -157,6 +159,7 @@ def locked_copy(identifier, authorize, at):
         or row.source_asset_id != asset.id
         or row.source_derivative_id != derivative.id
         or row.source_derivative_version != derivative.version
+        or row.source_derivative_sha256 != derivative.sha256
         or row.state not in {"pending", "running", "ready"}
     ):
         raise AssetNotFound("Publication media unavailable")
@@ -516,7 +519,7 @@ def process_public_copy(
     return result("ready")
 
 
-def read_public_copy(identifier, at, *, authorize=None, store=None):
+def read_public_copy(identifier, at, *, authorize=None, publication_store=None):
     """Buffer outside locks, then reauthorize exact bytes before returning them."""
     from hashlib import sha256
     from uuid import UUID
@@ -572,7 +575,7 @@ def read_public_copy(identifier, at, *, authorize=None, store=None):
     with transaction.atomic():
         expected = capture()
     try:
-        body = (store or get_publication_store()).read_limited(
+        body = (publication_store or get_publication_store()).read_limited(
             expected[3], MAX_PUBLIC_IMAGE_BYTES
         )
         if len(body) != expected[6] or sha256(body).hexdigest() != expected[4]:
@@ -583,3 +586,41 @@ def read_public_copy(identifier, at, *, authorize=None, store=None):
         if capture() != expected:
             raise AssetNotFound("Publication media unavailable")
         return AuthorizedAssetRead(identifier, expected[2], expected[5], body)
+
+
+def reconcile_public_copy_lifetime(identifier, at, *, authorize=None):
+    from uuid import UUID
+
+    if (
+        not isinstance(identifier, UUID)
+        or not isinstance(at, datetime)
+        or not timezone.is_aware(at)
+        or not callable(authorize)
+    ):
+        return "denied"
+    with transaction.atomic():
+        hint = PublicAssetCopy.objects.filter(pk=identifier).first()
+        if hint is None:
+            return "denied"
+        user = User.objects.select_for_update().get(pk=hint.owner_id)
+        valid = authorize(user, hint, max(at, timezone.now()))
+        row = PublicAssetCopy.objects.select_for_update().get(pk=identifier)
+        if row.state not in {"pending", "running", "ready"}:
+            return row.state
+        if valid is True:
+            return row.state
+        if valid is not False:
+            return "denied"
+        row.state, row.revoked_at = "revoked", max(at, timezone.now())
+        row.updated_at = row.revoked_at
+        row.version += 1
+        row.save()
+        for attempt in PublicCopyAttempt.objects.select_for_update().filter(
+            copy=row,
+            state__in=["pending", "running"],
+        ):
+            attempt.state, attempt.failure_code = "failed", "authority_lost"
+            attempt.lease_uuid = attempt.lease_until = None
+            attempt.updated_at = row.updated_at
+            attempt.save()
+        return "revoked"

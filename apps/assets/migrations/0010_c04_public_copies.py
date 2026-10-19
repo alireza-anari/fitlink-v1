@@ -45,6 +45,7 @@ BEGIN
           AND a.processing_version=value.processing_version
           AND d.id=value.source_derivative_id AND d.state='ready'
           AND d.version=value.source_derivative_version
+          AND d.sha256=value.source_derivative_sha256
           AND d.purpose='owner_preview'
           AND d.processing_version=value.processing_version
     );
@@ -171,6 +172,7 @@ BEGIN
                   AND c.state='ready' AND a.state='ready'
                   AND d.state='ready' AND d.purpose='owner_preview'
                   AND d.version=c.source_derivative_version
+                  AND d.sha256=c.source_derivative_sha256
                   AND d.processing_version=c.processing_version
             ) THEN
                 RAISE EXCEPTION 'Complete publication media required'
@@ -224,6 +226,7 @@ class Migration(migrations.Migration):
                 ("purpose", models.CharField(max_length=16)),
                 ("source_version", models.PositiveBigIntegerField()),
                 ("source_derivative_version", models.PositiveBigIntegerField()),
+                ("source_derivative_sha256", models.CharField(max_length=64)),
                 ("processing_version", models.PositiveBigIntegerField()),
                 ("publication_version", models.PositiveBigIntegerField()),
                 ("owner_auth_version", models.PositiveBigIntegerField()),
@@ -307,6 +310,13 @@ class Migration(migrations.Migration):
             model_name="publicassetcopy",
             index=models.Index(
                 fields=["state", "updated_at", "id"], name="public_copy_due"
+            ),
+        ),
+        migrations.AddConstraint(
+            model_name="publicassetcopy",
+            constraint=models.CheckConstraint(
+                condition=models.Q(source_derivative_sha256__regex=r"^[0-9a-f]{64}$"),
+                name="public_copy_source_checksum",
             ),
         ),
         migrations.AddConstraint(

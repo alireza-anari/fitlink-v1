@@ -166,6 +166,49 @@ def test_private_derivative_checksum_change_cannot_reauthorize_old_copy(settings
         boundary.read_public_copy(
             dto.id,
             timezone.now(),
-            store=wrapped,
+            publication_store=wrapped,
             authorize=api().validate_public_copy_read,
         )
+
+
+def test_public_read_requires_positive_current_authority_digest(settings):
+    from apps.assets.contracts import AssetNotFound
+
+    person, asset, draft, derivative, store, dto, job = pending(settings)
+    assert process(store, job).status == "ready"
+    wrapped = module("apps.assets.public_storage").PublicationObjectStore(store)
+    with pytest.raises(AssetNotFound):
+        module("apps.assets.public_copies").read_public_copy(
+            dto.id,
+            timezone.now(),
+            authorize=lambda copy, at: None,
+            publication_store=wrapped,
+        )
+
+
+def test_source_hold_denied_after_committed_public_copy_delete_reservation(settings):
+    from django.core.exceptions import PermissionDenied
+
+    from tests.integration.c03.test_asset_holds import hold
+    from tests.integration.c03.test_asset_holds import subject as record
+
+    person, asset, draft, derivative, store, dto, job = pending(settings, claim=False)
+    row = copy_model().objects.get(pk=dto.id)
+    row.state, row.revoked_at = "deletion_pending", timezone.now()
+    row.updated_at = row.revoked_at
+    row.version += 1
+    row.save()
+    with pytest.raises((PermissionError, PermissionDenied)):
+        hold(settings, person, record(asset))
+
+
+def test_public_copy_inventory_is_owned_bounded_metadata_without_storage_keys(settings):
+    from apps.assets.privacy import enumerate_asset_inventory
+
+    person, asset, draft, derivative, store, dto, job = pending(settings, claim=False)
+    records = enumerate_asset_inventory(person.user.public_id, timezone.now())
+    found = [r for r in records if r.record_uuid == dto.id]
+    assert len(found) == 1, "Public copy missing from owner privacy inventory"
+    assert found[0].parent_uuid == asset.id
+    assert found[0].owner_uuid == person.user.public_id
+    assert "publication/" not in repr(found[0])
