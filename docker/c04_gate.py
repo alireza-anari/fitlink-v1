@@ -132,4 +132,26 @@ if __name__ == "__main__":
         + json.dumps({"counts": evidence.counts, "exit_code": code}, sort_keys=True),
         flush=True,
     )
+    if os.environ.get("C04_MEDIA_GATE") == "1":
+        # Existing triage already strips captures, values and exception text.
+        # The outer supervisor discards arbitrary stdout; persist only these
+        # finite records to the dedicated, non-secret evidence directory.
+        target = root / ".runtime/c03-triage/c04-media.jsonl"
+        with target.open("a") as destination:
+            for source in folder.glob("*.jsonl"):
+                for line in source.read_text().splitlines():
+                    record = json.loads(line)
+                    if record.get("event") in {"test_report", "pytest_internalerror"}:
+                        destination.write(json.dumps(record, sort_keys=True) + "\n")
+            destination.write(
+                json.dumps(
+                    {
+                        "event": "required_counts",
+                        "counts": evidence.counts,
+                        "exit_code": code,
+                    },
+                    sort_keys=True,
+                )
+                + "\n"
+            )
     raise SystemExit(code)

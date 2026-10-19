@@ -1,5 +1,6 @@
 services:
   checks:
     environment:
+      C04_MEDIA_GATE: "1"
       PYTEST_PLUGINS: docker.c03_pytest_triage
       C03_TRIAGE_EVIDENCE_FILE: /app/.runtime/c03-triage/c04-media.jsonl

@@ -139,3 +139,11 @@ def validate_release(user, release, at):
     if release != expected:
         raise AssetNotFound("Publication media unavailable")
     return digest
+
+
+def scan_due_public_copies(at, batch_size=100):
+    from apps.assets.public_copies import scan_due_public_copies as scan
+
+    if feature_enabled("marketplace") is not True:
+        return 0
+    return scan(at, batch_size, authorize=validate_release)
