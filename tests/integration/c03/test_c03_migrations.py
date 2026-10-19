@@ -7,7 +7,14 @@ import pytest
 from django.apps import apps
 from django.db import IntegrityError, connection, transaction
 from django.db.migrations.executor import MigrationExecutor
+from django.db.migrations.recorder import MigrationRecorder
 from django.utils import timezone
+
+from tests.integration.c04.migration_history import (
+    historical_c02_targets,
+    historical_unapply_targets,
+    isolated_history_database,
+)
 
 from .conftest import require_model
 
@@ -21,30 +28,36 @@ def reject(model, **values):
 
 def test_optional_profiles_not_created():
     assert connection.vendor == "postgresql"
-    executor = MigrationExecutor(connection)
-    latest = executor.loader.graph.leaf_nodes()
-    domains = {"athletes", "professionals", "assets"}
-    c02 = [
-        (label, "0010_outboxdeliveryreceipt" if label == "governance" else name)
-        for label, name in latest
-        if label not in domains
-    ]
-    try:
+    parent_name = connection.settings_dict["NAME"]
+    parent_history = MigrationRecorder(connection).applied_migrations()
+    anchor = apps.get_model("accounts", "User").objects.create_user(
+        "+989123456789", password="synthetic-migration-anchor"
+    )
+    anchor_before = (anchor.pk, anchor.public_id, anchor.password, anchor.auth_version)
+    latest = MigrationExecutor(connection).loader.graph.leaf_nodes()
+    c02 = historical_c02_targets()
+    with isolated_history_database(connection) as probe:
+        assert probe.settings_dict["NAME"] != parent_name
+        executor = MigrationExecutor(probe)
         # Populate the actual C02 historical schema before installing any C03 table.
-        executor.migrate(c02 + [(label, None) for label in sorted(domains)])
+        executor.migrate(c02 + historical_unapply_targets(latest))
         historical = executor.loader.project_state(c02).apps
         User = historical.get_model("accounts", "User")
-        user = User.objects.create(
+        user = User.objects.using(probe.alias).create(
             phone="+989123456780",
             password="!legacy",
             auth_version=3,
         )
         before = (user.pk, user.public_id, user.phone, user.password, user.auth_version)
-        tables = connection.introspection.table_names()
+        tables = probe.introspection.table_names()
         assert "athletes_athleteprofile" not in tables
         assert "professionals_professionalprofile" not in tables
-        MigrationExecutor(connection).migrate(latest)
-        current = apps.get_model("accounts", "User").objects.get(pk=user.pk)
+        MigrationExecutor(probe).migrate(latest)
+        current = (
+            apps.get_model("accounts", "User")
+            .objects.using(probe.alias)
+            .get(pk=user.pk)
+        )
         assert before == (
             current.pk,
             current.public_id,
@@ -54,10 +67,21 @@ def test_optional_profiles_not_created():
         )
         Athlete = require_model("AthleteProfile", "athletes")
         Professional = require_model("ProfessionalProfile")
-        assert Athlete.objects.count() == Professional.objects.count() == 0
-        assert "auth_user" not in connection.introspection.table_names()
-    finally:
-        MigrationExecutor(connection).migrate(latest)
+        assert (
+            Athlete.objects.using(probe.alias).count()
+            == Professional.objects.using(probe.alias).count()
+            == 0
+        )
+        assert "auth_user" not in probe.introspection.table_names()
+    assert connection.settings_dict["NAME"] == parent_name
+    assert MigrationRecorder(connection).applied_migrations() == parent_history
+    anchor.refresh_from_db()
+    assert anchor_before == (
+        anchor.pk,
+        anchor.public_id,
+        anchor.password,
+        anchor.auth_version,
+    )
 
 
 def test_c03_timestamp_columns_are_nonnull_utc_storage():

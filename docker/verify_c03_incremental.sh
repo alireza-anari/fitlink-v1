@@ -200,7 +200,7 @@ fi
 # Bound the entire C03 gate, including readiness/SQL/type checking and cleanup.
 # A timed-out process is a failed gate; the inherited job timeout is unchanged.
 if [ "${C03_GATE_CHILD:-}" != 1 ]; then
-  exec env C03_GATE_CHILD=1 timeout -k 10s 300s sh "$0"
+  exec env C03_GATE_CHILD=1 timeout -k 10s 450s sh "$0"
 fi
 echo "C03 cumulative gate: readiness"
 

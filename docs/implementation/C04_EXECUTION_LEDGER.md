@@ -481,3 +481,117 @@ unofficial mirror, dependency change, TLS bypass, baseline mutation, browser
 assertion fix or fake browser PASS is used. Hosted browser remains mandatory.
 The finite diagnostics require a fresh COMPLETE new-head hosted manifest.
 Task1 remains IN_PROGRESS/BLOCKED; Tasks2–11 NOT_STARTED.
+
+### Task 1 reload attachment failure — before changing current harness
+
+Latest diagnostic head8cf9b116572c74762a002d1aa7eab19b4133933d /
+`ea5da51939e79915cc0006ebae799c79059328a8`, run39206463844 attempt1:
+owner job117910270983 failed74/1/0, with browser_failure_category=protocol_error
+and flags[protocol,navigation,not_attached] at owner optional-consent line53
+page.reload. Actual command exits1 naturally with complete cleanup. This now
+locates the failure at DevTools page attachment during navigation; no net:: code
+was emitted. Chromium's public content/browser/devtools/protocol/page_handler.cc
+was inspected: PageHandler::Reload first calls AssureTopLevelActiveFrame, which
+rejects absent/inactive page attachments. This is consistent with reload issued
+while the form's redirect changes document/frame attachment, not a demonstrated
+application authorization or persistence failure.
+
+Scoped RED is the ACTUAL hosted owner reload failure above and earlier staff
+single-effect reload failure117906314411. BEFORE EDITING: only current-source
+`test_owner_dual_context_resume_optional_consent` and
+`test_decision_reload_single_effect` will explicitly bind their immediately
+preceding successful form submission to a completed load navigation and assert
+that navigation's final GET/status200 before calling the existing reload(s).
+All persisted-value, privacy, layout, no-cache, subsequent preview/athlete
+separation and single decision count==1 assertions stay unchanged. No retries,
+sleeps, test suppression, browser-version change, application mutation or
+immutable fixture edits. This tests the minimal synchronization hypothesis;
+only actual hosted GREEN can establish it works.
+
+### Task 1 historical migration preparation — before editing current test
+
+Revisited the initial deferral: approved §6 explicitly assigns migration-selection
+preparation to Task1, with new schema proof in Tasks2/4. Finish that preparation
+now rather than calling Task1 complete with it outstanding. No C04 schema is added.
+Actual behavioral RED: evaluating the CURRENT trusted test's historical-target
+expression with future leaves selects accounts9999 and marketplace0001 instead
+of exact C02. test_historical_test_selects_c02_even_when_future_apps_depend_on_c03
+fails for those wrong selections (not missing infrastructure/imports).
+
+BEFORE EDITING `test_c03_migrations::test_optional_profiles_not_created` only:
+replace dynamic non-C03 leaves with the exact five C02 app targets from the
+immutable source; explicitly unapply only known post-C02 domains including an
+installed marketplace dependent. Run this history rehearsal in a freshly CREATED
+owned UUID-named PostgreSQL test database, not the populated parent/acceptance DB.
+Django's copied connection and separate test alias keep model operations on that
+probe; cleanup closes/removes only its owned alias/database after creation.
+Preserve the exact legacy PK/public ID/phone/password/auth-version tuple and
+zero automatic Athlete/Professional/auth_user assertions. Strengthen isolation
+with a parent DB user/migration-history anchor that must remain unchanged.
+Original C03 fixture test is unchanged and still runs on c04-baseline. This
+changes test harness selection/isolation, no behavioral permission assertion.
+Real PostgreSQL GREEN is mandatory in the next complete hosted manifest.
+
+### Task 1 cumulative PostgreSQL budget — before current-source correction
+
+A second actual inner300s timeout is now proved: run39206463844,
+c02-migrations117910270999, natural command exit124 after301.3s, cleanup complete.
+Task8 108/0/0 and Task9 89/0/0 completed; Task10 recorded47 passed and no failures
+before cutoff (not its full86 cases). Previous current-source run39203522167
+similarly cut off301.3s with Task10 only6 passes. In contrast identical inherited
+selection on c9a4757 completed285.4s with all86 Task10 cases. These are repeated
+total-budget cutoffs of progressing suites, not evidence permitting a skipped
+suite or a passing timeout. Individual suite bounds remain180s.
+
+Evidence-based fixed-budget correction: CURRENT cumulative shell wrapper300→450s;
+PostgreSQL observer330→480s, leaving the existing10s kill grace and finite cleanup
+margin. Both still fit well inside unchanged hosted job limits. No future auto
+budget increase, assertions, selections, child-suite deadlines, cleanup ownership
+or natural-exit guarantee change. Immutable original C03 retains300/330 and exact
+source. Behavioral RED: actual observer rejects configured460/480s (2 failed,
+6 existing controls pass). As with Foundation, only complete hosted natural
+success on the new source can accept this correction. This is not another blind
+same-SHA retry or permission to relax runtime verdicts.
+
+### Current-source pin reconciliation for the measured cumulative budget
+
+The focused regression correctly caught the sanctioned shell-budget change:
+`test_existing_c02_gates_not_removed` and `test_every_incremental_gate_still_installed`
+fail because task13_installed hashes the complete inherited entry prefix. BEFORE
+EDITING that helper: retain original TASK13_ENTRY_SHA256 and every block/job pin;
+require exactly ONE current450s wrapper line and zero old300s wrapper lines,
+then normalize ONLY that exact literal back to300s for the original prefix hash.
+Any other command/selection/timeout/cleanup mutation remains rejected. Add
+negative controls for300/900/true replacements and changed individual180s suite
+limits. The original immutable C03 test/helper is unchanged and validates its
+actual300s source. This is explicit current-stage reconciliation, not a new digest
+that blesses arbitrary changed behavior.
+
+### Task 1 combined recovery candidate — local verification only
+
+Current recovery candidate includes the two explicit successful-navigation
+barriers, fixed450/480 cumulative budgets with strict original-prefix
+normalization, and the approved historical C02 migration-harness preparation.
+Local focused GREEN:162 C04/observer/current inherited-CI/final-rehearsal controls,
+zero failed/skipped. Ruff449 files and formatting, shell syntax and whitespace
+pass. Individual runtime suites still use their original180s bounds; restart,
+scanner/native, staff/owner job deadlines and test counts stay intact.
+
+Dedicated history helper has a UUID-only freshly CREATED database name, refuses
+non-PostgreSQL/atomic/non-autocommit administration, and drops only that exact
+owned database after closing/removing its separate alias. It does not modify
+parent connection settings or migrate parent data backwards. Existing historical
+RunPython migrations were inspected: both account-state mapping and flag seeding
+explicitly use schema_editor.connection.alias. All original legacy-user and
+zero-profile assertions remain, with an additional unchanged parent user/history
+anchor. Pure selection/guard units pass; REAL PostgreSQL proof is PENDING_CI.
+No fake DB or local browser result is claimed. The browser archive remains
+unavailable locally; actual hosted failing cases are the RED evidence and hosted
+successful navigation/reload/single-effect/privacy cases are required GREEN.
+
+Earlier a52ba33 Foundation job117904827509 completed NATURALLY after1404.9s,
+1,853 passed/0 failed/0 skipped, host/container cleanup complete. This proves
+that head's1200s cutoff would truncate otherwise successful existing work and
+supports the fixed1800s correction; it does not accept another SHA or all Task1.
+Latest source/complete manifest still controls advancement. Task1 remains
+IN_PROGRESS; Tasks2–11 remain NOT_STARTED.

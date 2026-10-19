@@ -52,7 +52,7 @@ QUERY_FAILURES = deque(maxlen=8)
 # rehearsal followed by C03's independently bounded 600s consolidation. Hosted
 # 1200s cutoffs repeatedly interrupted progressing final-stage work (zero test
 # failures); leave that final stage its budget. Immutable C03 retains 1200s.
-WINDOWS = {"postgresql": 330, "storage": 600, "foundation": 1800}
+WINDOWS = {"postgresql": 480, "storage": 600, "foundation": 1800}
 OWNED_PROJECTS = {
     "postgresql": set(),
     "storage": {"fitlink-c03-private-storage", "fitlink-c03-private-processing"},

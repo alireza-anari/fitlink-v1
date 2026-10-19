@@ -168,7 +168,10 @@ async def test_decision_reload_single_effect(
     from apps.professionals.models import VerificationDecision
 
     await open_case(page, live_server, auth_runtime, staff_review, viewport)
-    await decide(page, "coach")
+    async with page.expect_navigation(wait_until="load") as decided:
+        await decide(page, "coach")
+    decided_response = await decided.value
+    assert decided_response.status == 200 and decided_response.request.method == "GET"
     await page.reload()
     await page.reload()
     assert (

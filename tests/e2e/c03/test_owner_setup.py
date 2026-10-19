@@ -49,7 +49,10 @@ async def test_owner_dual_context_resume_optional_consent(
     await page.get_by_label("نام نمایشی").fill("نام حرفه‌ای")
     await page.get_by_label("نام هویتی خصوصی").fill("نام خصوصی")
     await page.get_by_label("نقش‌های اعلام‌شده").select_option("coach")
-    await page.get_by_role("button", name="ذخیرهٔ مرحله", exact=True).click()
+    async with page.expect_navigation(wait_until="load") as saved:
+        await page.get_by_role("button", name="ذخیرهٔ مرحله", exact=True).click()
+    saved_response = await saved.value
+    assert saved_response.status == 200 and saved_response.request.method == "GET"
     response = await page.reload()
     await quality(page, response)
     await expect(page.get_by_label("نام نمایشی")).to_have_value("نام حرفه‌ای")

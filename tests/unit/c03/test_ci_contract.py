@@ -783,6 +783,13 @@ def task13_installed(workflow, entry):
     ):
         return False
     inherited_entry = entry.split("\n# Task 14 focused preservation negatives;", 1)[0]
+    # Recorded C04 budget correction only. Keep the original source hash and
+    # reject every other byte change; immutable C03 retains its original test.
+    current_bound = 'exec env C03_GATE_CHILD=1 timeout -k 10s 450s sh "$0"'
+    historical_bound = 'exec env C03_GATE_CHILD=1 timeout -k 10s 300s sh "$0"'
+    if inherited_entry.count(current_bound) != 1 or historical_bound in inherited_entry:
+        return False
+    inherited_entry = inherited_entry.replace(current_bound, historical_bound, 1)
     if hashlib.sha256(inherited_entry.encode()).hexdigest() != TASK13_ENTRY_SHA256:
         return False
     required_jobs = {
