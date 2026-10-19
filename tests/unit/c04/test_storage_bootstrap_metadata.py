@@ -11,7 +11,18 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 @pytest.mark.parametrize(
-    "failure", ["alias", "ready", "mb", "anonymous", "policy", "user", "attach", "none"]
+    "failure",
+    [
+        "alias",
+        "ready",
+        "mb",
+        "anonymous",
+        "policy",
+        "user",
+        "attach",
+        "none",
+        "option_password",
+    ],
 )
 def test_bootstrap_emits_only_failed_phase_and_preserves_exit(tmp_path, failure):
     bin_dir = tmp_path / "bin"
@@ -29,6 +40,10 @@ def test_bootstrap_emits_only_failed_phase_and_preserves_exit(tmp_path, failure)
         ' "admin user") phase=user;;\n'
         " *) exit 93;;\n"
         "esac\n"
+        'if [ "$FAILURE" = option_password ]; then\n'
+        ' case "$phase" in alias) [ "$3" = -- ] || exit 73;;\n'
+        ' user) [ "$4" = -- ] || exit 73;; esac\n'
+        "fi\n"
         'printf "%s\\n" "$phase" >>"$BOOTSTRAP_TEST_LOG"\n'
         '[ "$phase" != "$FAILURE" ] || exit 7\n'
     )
@@ -42,9 +57,9 @@ def test_bootstrap_emits_only_failed_phase_and_preserves_exit(tmp_path, failure)
         "FAILURE": failure,
         "BOOTSTRAP_TEST_LOG": str(tmp_path / "commands"),
         "MINIO_ROOT_USER": "private-root-user",
-        "MINIO_ROOT_PASSWORD": "private-root-secret",
+        "MINIO_ROOT_PASSWORD": "-private-root-secret",
         "MINIO_APP_ACCESS_KEY": "private-access-key",
-        "MINIO_APP_SECRET_KEY": "private-app-secret",
+        "MINIO_APP_SECRET_KEY": "-private-app-secret",
     }
     # Relocate only the ephemeral policy file for this restricted-host unit.
     source = (ROOT / "docker/minio-init.sh").read_text()
@@ -59,9 +74,13 @@ def test_bootstrap_emits_only_failed_phase_and_preserves_exit(tmp_path, failure)
         timeout=5,
     )
     assert result.returncode == (
-        0 if failure == "none" else 1 if failure in {"alias", "ready"} else 7
+        0
+        if failure in {"none", "option_password"}
+        else 1
+        if failure in {"alias", "ready"}
+        else 7
     )
-    if failure == "none":
+    if failure in {"none", "option_password"}:
         assert "C04_STORAGE_BOOTSTRAP complete success 0" in result.stdout
     else:
         assert f"C04_STORAGE_BOOTSTRAP {failure} failure" in result.stdout

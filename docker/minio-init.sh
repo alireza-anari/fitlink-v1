@@ -5,7 +5,7 @@ trap 'status=$?; if [ "$status" -ne 0 ]; then printf "C04_STORAGE_BOOTSTRAP %s f
 # No xtrace; mc configuration and policy live only in this ephemeral container.
 bootstrap_ready() {
   bootstrap_phase=alias
-  mc alias set local http://minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null 2>&1 || return 1
+  mc alias set -- local http://minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null 2>&1 || return 1
   bootstrap_phase=ready
   mc ready local >/dev/null 2>&1 || return 1
 }
@@ -24,7 +24,7 @@ cat >/tmp/policy.json <<'JSON'
 JSON
 mc admin policy create local foundation-private /tmp/policy.json >/dev/null
 bootstrap_phase=user
-mc admin user add local "$MINIO_APP_ACCESS_KEY" "$MINIO_APP_SECRET_KEY" >/dev/null
+mc admin user add -- local "$MINIO_APP_ACCESS_KEY" "$MINIO_APP_SECRET_KEY" >/dev/null
 bootstrap_phase=attach
 mc admin policy attach local foundation-private --user "$MINIO_APP_ACCESS_KEY" >/dev/null
 bootstrap_phase=cleanup

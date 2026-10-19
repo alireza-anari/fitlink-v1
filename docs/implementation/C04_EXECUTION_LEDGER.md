@@ -385,3 +385,51 @@ This forward diagnostic source requires another complete exact-head hosted
 manifest. No same-SHA job retry has been used on cd583d9 or2ec2817; do not use
 retries blindly without identifying the causal bootstrap failure. Task1 remains
 IN_PROGRESS/BLOCKED on full acceptance; Tasks2–11 remain NOT_STARTED.
+
+### Task 1 pinned-client option-prefix defect reproduced and corrected
+
+Published phase diagnostics at `a52ba33af976b82ad2243e8d872c5cd5430f9c49`, tree
+`0aa7c8405b6668f1effabcf48968aa3c672dfb4e`, full run39204677988 attempt1.
+Local same-tree authoring55b64ea2eea9d20c1ddf0a06bfaffe6eb5a00cc5 is preserved
+on local/c04-task01-bootstrap-diagnostic. All protected/completed/planning refs
+were rechecked unchanged before publication; no force update occurred.
+
+A controlled REAL pinned-client experiment now establishes a bootstrap input
+handling defect, independently of mocks. Downloaded the EXACT official mc binary
+already pinned by docker/Minio.Dockerfile, release2025-08-13T08-35-41Z; verified
+SHA256 `01f866e9c5f9b87c2b09116fa5d7c06695b106242d829a8bb32990c00312e891`
+BEFORE execution. Only synthetic users/passwords, isolated ignored config and
+loopback127.0.0.1:1 were used; MC_/MINIO_/AWS_ environment inputs excluded.
+No real credentials, remote private store or health data were read by the probe.
+
+Observed actual client outcomes (exit1 is expected for the absent loopback server):
+- Ordinary synthetic alias password: reaches connection attempt.
+- Leading `-` and `--` synthetic passwords: argument_rejected before connection.
+- `alias set -- ...` with leading-dash password: reaches connection attempt.
+- `admin user add ...` with leading-dash password: argument_rejected.
+- `admin user add -- ...`: reaches configuration lookup, beyond option parsing.
+
+The existing token_urlsafe generator may legitimately produce a leading hyphen;
+both root-password and application-secret positional arguments were passed to
+mc without an option delimiter. This is a reproduced causal INPUT defect. It
+does NOT prove that every historical initialization failure had this cause,
+which remains unclassified where original evidence suppressed the error.
+
+Narrow current-source fix: add standard `--` after `alias set` and `admin user add`
+before positional values. No credential alphabet/entropy, access policy, bucket
+ACL, retries, expiry, private source protection or other mc command is changed.
+No immutable C01/C02/C03 script or generator is mutated. Complete original
+baseline verification remains mandatory and may not be patched to hide defects.
+
+Behavioral RED: instrumented shell regression with option-prefixed synthetic
+passwords fails at alias (exit1). After alias delimiter alone it fails at user
+creation (exit73). Both delimiters produce complete success with unchanged
+commands/retry/privacy controls. Fake client units model the independently
+observed parser contract; they are NOT real MinIO acceptance. Four extra finite
+network error labels also first failed their metadata controls, then passed;
+no browser behavior/assertion is changed and previous `other` is not relabeled
+retroactively. GREEN:140 C04/observer/inherited-CI controls, zero failed/skipped;
+Ruff447 files, format, shell syntax and whitespace pass; immutable C03 tree
+verified unchanged. A new complete exact-head hosted manifest, including actual
+MinIO/scanner/worker/browser/original baseline, is required before acceptance.
+Task1 remains IN_PROGRESS; Tasks2–11 remain NOT_STARTED.
