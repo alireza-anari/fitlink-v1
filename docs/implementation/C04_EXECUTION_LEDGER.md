@@ -835,3 +835,28 @@ fixture to prove verification never publishes and false confirmation cannot
 activate a revision; hosted RED execution is pending. No production code or
 migration has yet been written for Task2. Remaining Task2 matrix will be added
 and demonstrated RED before the corresponding behavior is implemented.
+
+Task2 hosted RED independently observed: published a9ee450cbf8a4fe4a86062e6bd08060f4956777e,
+tree fe95e6f1def26fc01327a6e0601c071e1e776afe, run39259243564 attempt1,
+C04 PostgreSQL118082293031 executes real C03 approved-role fixtures and reports
+92 passed/6 expected missing-feature assertion failures,0 error/skipped/xfail/
+xpass/deselected, actual exit1. Failures are the four field-boundary unit tests
+and both deliberate-publication integration cases. No missing service is used
+as RED. Foundation118082292686 also fails the intended missing-contract tests.
+Task2 is not accepted; full next-head acceptance remains mandatory.
+
+Additional local RED: both planned public contract files execute9 tests and all9
+fail before publication_contracts exists. Initial GREEN after implementing only
+the safe immutable selection/summary/slug/snapshot contract:9 tests pass using
+stdlib Python3.12, no skips. This is not a complete Task2 or real-service GREEN.
+
+Task2 Ruling: restore the existing locked development toolchain through a
+temporary auxiliary CI workflow because maintenance removed Python3.13, Django,
+pytest and Ruff locally — generating/reviewing additive migrations and running
+focused controls requires those same existing tools — cost if wrong: extra CI
+compute/artifact bytes; the auxiliary workflow is not acceptance and is removed
+after recovery. The14 mandatory acceptance jobs and immutable fixtures remain
+unchanged. Only clean interpreter/public site-packages are exported, before
+services, environment generation or tests; no source/credentials/test inputs.
+Artifact digests and the original uv.lock hash must match before local use.
+No dependency version or production infrastructure is added.
