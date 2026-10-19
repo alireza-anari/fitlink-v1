@@ -444,6 +444,21 @@ def validate_c03_hold_case(subject, case_uuid, acting_user, *, at=None):
         ):
             return False
     asset_ids = _subject_assets(subject, case_uuid)
+    # The same owner anchor serializes holds with committed C04 object-erasure
+    # reservations. This adds descendants, not a new hold kind or read grant.
+    from apps.assets.models import PublicAssetCopy, PublicCopyAttempt
+
+    if (
+        PublicAssetCopy.objects.filter(
+            source_asset_id__in=asset_ids,
+            state="deletion_pending",
+        ).exists()
+        or PublicCopyAttempt.objects.filter(
+            copy__source_asset_id__in=asset_ids,
+            state="deletion_pending",
+        ).exists()
+    ):
+        return False
     return (
         not Asset.objects.filter(pk__in=asset_ids)
         .filter(state__in=["deletion_pending", "deleted"])

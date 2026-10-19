@@ -50,7 +50,7 @@ def prepared_real(settings, monkeypatch, *, malicious=False, wrong_mime=False):
     health = BytesIO()
     Image.new("RGB", (8, 8)).save(health, format="PNG")
     assert scanner.scan(health.getvalue(), timezone.now()).status == "clean"
-    person, asset, draft = selected(settings)
+    person, asset, draft = selected(settings, confirmed=False)
     derivative = asset.derivatives.get(purpose="owner_preview")
     body = (
         b"X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"
@@ -64,6 +64,9 @@ def prepared_real(settings, monkeypatch, *, malicious=False, wrong_mime=False):
     derivative.save(update_fields=["sha256", "mime_type"])
     store.put(derivative.key, body, derivative.mime_type)
     assert store.head(derivative.key).size == len(body)
+    from tests.integration.c04.publication_helpers import confirm
+
+    confirm(person, draft)
     service = api()
     release = service.authorize_public_media(
         draft.publication_id, draft.revision_id, "avatar", timezone.now()
@@ -133,6 +136,36 @@ def test_exif_gps_active_payload_removed_in_new_real_private_origin_object(
     assert effective(person) is not None
     unsigned_denied(settings, key)
     unsigned_denied(settings, derivative.key)
+    from datetime import timedelta
+    from uuid import uuid4
+
+    from apps.assets.models import PublicAssetCopy
+    from apps.assets.public_storage import get_publication_store
+    from apps.professionals.publication_models import ProfessionalPublication
+    from config.use_cases.publication import unpublish_profile
+    from tests.integration.c03.test_asset_holds import policy
+
+    copy = PublicAssetCopy.objects.get(pk=dto.id)
+    publication = ProfessionalPublication.objects.get(pk=copy.publication_uuid)
+    rule = policy(person, asset)
+    unpublish_profile(
+        person.actor, publication.id, publication.version, uuid4(), timezone.now()
+    )
+    at = timezone.now()
+    assert api().reconcile_public_copy_lifetime(copy.id, at) == "revoked"
+    assert (
+        api().cleanup_public_copy(
+            copy.id,
+            copy.generation,
+            rule.id,
+            at + timedelta(seconds=2),
+            publication_store=get_publication_store(),
+        )
+        == "deleted"
+    )
+    with pytest.raises(FileNotFoundError):
+        store.head(key)
+    assert store.read_limited(derivative.key, 10_000_000) == original
 
 
 @pytest.mark.parametrize("malicious,wrong_mime", [(True, False), (False, True)])

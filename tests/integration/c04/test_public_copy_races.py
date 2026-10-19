@@ -212,3 +212,146 @@ def test_public_copy_inventory_is_owned_bounded_metadata_without_storage_keys(se
     assert found[0].parent_uuid == asset.id
     assert found[0].owner_uuid == person.user.public_id
     assert "publication/" not in repr(found[0])
+
+
+def erase_ready_copy(settings):
+    from tests.integration.c03.test_asset_holds import policy
+
+    person, asset, draft, derivative, store, dto, job = pending(settings)
+    assert process(store, job).status == "ready"
+    row = copy_model().objects.get(pk=dto.id)
+    attempt = row.attempts.get(generation=row.generation)
+    rule = policy(person, asset)
+    withdraw(person, draft)
+    at = timezone.now()
+    assert api().reconcile_public_copy_lifetime(row.id, at) == "revoked"
+    wrapped = module("apps.assets.public_storage").PublicationObjectStore(store)
+    return person, asset, derivative, store, row, attempt, rule, at, wrapped
+
+
+def test_policy_cleanup_erases_public_copy_only_and_reerases_late_writer(settings):
+    person, asset, derivative, store, row, attempt, rule, at, wrapped = (
+        erase_ready_copy(settings)
+    )
+    original = store.read_limited(derivative.key, 10_000_000)
+    pixels = store.read_limited(attempt.key, 10_000_000)
+    assert (
+        api().cleanup_public_copy(
+            row.id,
+            row.generation,
+            rule.id,
+            at + timedelta(seconds=2),
+            publication_store=wrapped,
+        )
+        == "deleted"
+    )
+    assert attempt.key not in store.objects
+    assert store.read_limited(derivative.key, 10_000_000) == original
+    row.refresh_from_db()
+    assert row.state == "deleted"
+    # An expired writer cannot restore read authority. Retained inventory lets
+    # a later cleanup remove its object again, rather than losing the key.
+    store.put(attempt.key, pixels, "image/png")
+    assert (
+        api().cleanup_public_copy(
+            row.id,
+            row.generation,
+            rule.id,
+            at + timedelta(seconds=3),
+            publication_store=wrapped,
+        )
+        == "deleted"
+    )
+    assert attempt.key not in store.objects
+    assert store.read_limited(derivative.key, 10_000_000) == original
+
+
+def test_cleanup_audit_failure_retains_reservation_and_retries(settings, monkeypatch):
+    from apps.assets import cleanup
+
+    person, asset, derivative, store, row, attempt, rule, at, wrapped = (
+        erase_ready_copy(settings)
+    )
+    original = cleanup.append_event
+
+    def fail(*args, **kwargs):
+        raise RuntimeError("PRIVATE-AUDIT-SENTINEL")
+
+    monkeypatch.setattr(cleanup, "append_event", fail)
+    assert (
+        api().cleanup_public_copy(
+            row.id,
+            row.generation,
+            rule.id,
+            at + timedelta(seconds=2),
+            publication_store=wrapped,
+        )
+        == "retry"
+    )
+    row.refresh_from_db()
+    assert row.state == "deletion_pending"
+    assert row.attempts.get(pk=attempt.id).state == "deletion_pending"
+    monkeypatch.setattr(cleanup, "append_event", original)
+    assert (
+        api().cleanup_public_copy(
+            row.id,
+            row.generation,
+            rule.id,
+            at + timedelta(seconds=3),
+            publication_store=wrapped,
+        )
+        == "deleted"
+    )
+
+
+def test_old_generation_cleanup_preserves_current_ready_copy(settings):
+    from tests.integration.c03.test_asset_holds import policy
+
+    person, asset, draft, derivative, store, dto, job = pending(settings)
+
+    class Crash(BaseException):
+        pass
+
+    def crash():
+        raise Crash
+
+    store.after_write = crash
+    with pytest.raises(Crash):
+        process(store, job)
+    first = copy_model("PublicCopyAttempt").objects.get(copy_id=dto.id, generation=1)
+    later = first.lease_until + timedelta(seconds=1)
+    store.after_write = None
+    queue = []
+    assert (
+        module("apps.assets.public_copies").scan_due_public_copies(
+            later,
+            100,
+            authorize=api().validate_release,
+            enqueue=lambda *args: queue.append(args),
+        )
+        == 1
+    )
+    assert process(store, queue[0], at=later).status == "ready"
+    row = copy_model().objects.get(pk=dto.id)
+    rule = policy(person, asset)
+    wrapped = module("apps.assets.public_storage").PublicationObjectStore(store)
+    assert (
+        api().cleanup_public_copy(
+            row.id, 1, rule.id, later + timedelta(seconds=2), publication_store=wrapped
+        )
+        == "deleted"
+    )
+    assert first.key not in store.objects
+    row.refresh_from_db()
+    assert row.state == "ready" and row.generation == 2
+    assert effective(person, at=later + timedelta(seconds=2)) is not None
+    assert (
+        module("apps.assets.public_copies")
+        .read_public_copy(
+            row.id,
+            later + timedelta(seconds=2),
+            authorize=api().validate_public_copy_read,
+            publication_store=wrapped,
+        )
+        .content
+    )

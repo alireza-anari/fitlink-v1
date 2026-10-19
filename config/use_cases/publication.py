@@ -29,6 +29,26 @@ def _hooks(actor):
         append_event(outcome, actor_uuid=actor.user_uuid, subject_type="professional")
 
     def emit(row):
+        # Confirmation commits selected-copy inventory atomically with receipt,
+        # audit and outbox. No provider or broker call occurs under these locks.
+        if row.state == "publication_requested" and row.requested_revision_id:
+            from django.utils import timezone
+
+            from apps.assets.public_copies import prepare_public_copy
+            from apps.professionals.publication_models import PublicationRevision
+            from config.use_cases.public_media import (
+                authorize_public_media,
+                validate_release,
+            )
+
+            revision = PublicationRevision.objects.get(pk=row.requested_revision_id)
+            if revision.confirmed_at is not None:
+                for binding in revision.selected_media.order_by("purpose"):
+                    at = timezone.now()
+                    release = authorize_public_media(
+                        row.id, revision.id, binding.purpose, at
+                    )
+                    prepare_public_copy(release, at, authorize=validate_release)
         append_outbox(
             "professional.publication_changed",
             row.id,

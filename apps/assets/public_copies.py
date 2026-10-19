@@ -225,6 +225,7 @@ def scan_due_public_copies(at, batch_size=100, *, authorize=None, enqueue=None):
                     if row.generation >= 8:
                         attempt.state, attempt.failure_code = "failed", "attempt_limit"
                         attempt.lease_uuid = attempt.lease_until = None
+                        attempt.retired_at = attempt.retired_at or now
                         attempt.updated_at = now
                         attempt.save()
                         row.state, row.revoked_at = "failed", now
@@ -234,6 +235,7 @@ def scan_due_public_copies(at, batch_size=100, *, authorize=None, enqueue=None):
                         continue
                     attempt.state, attempt.failure_code = "failed", "lease_expired"
                     attempt.lease_uuid = attempt.lease_until = None
+                    attempt.retired_at = attempt.retired_at or now
                     attempt.updated_at = now
                     attempt.save()
                     attempt = PublicCopyAttempt.objects.create(
@@ -324,6 +326,7 @@ def copy_failure(identifier, generation, lease, code, at, *, fatal=False):
             return
         attempt.state, attempt.failure_code = "failed", code
         attempt.lease_uuid = attempt.lease_until = None
+        attempt.retired_at = attempt.retired_at or at
         attempt.next_attempt_at = at + timedelta(seconds=300)
         attempt.updated_at = at
         attempt.save()
@@ -547,7 +550,9 @@ def read_public_copy(identifier, at, *, authorize=None, publication_store=None):
             raise AssetNotFound("Publication media unavailable")
         User.objects.select_for_update().get(pk=hint.owner_id)
         # Composition takes profile/source locks before this module's copy lock.
-        authorize(hint, now)
+        digest = authorize(hint, now)
+        if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+            raise AssetNotFound("Publication media unavailable")
         row = PublicAssetCopy.objects.select_for_update().get(pk=identifier)
         if row.state != "ready" or row.revoked_at or row.version != hint.version:
             raise AssetNotFound("Publication media unavailable")
@@ -621,6 +626,7 @@ def reconcile_public_copy_lifetime(identifier, at, *, authorize=None):
         ):
             attempt.state, attempt.failure_code = "failed", "authority_lost"
             attempt.lease_uuid = attempt.lease_until = None
+            attempt.retired_at = attempt.retired_at or row.updated_at
             attempt.updated_at = row.updated_at
             attempt.save()
         return "revoked"

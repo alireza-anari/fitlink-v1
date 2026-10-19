@@ -231,3 +231,173 @@ def cleanup_asset(
         # The committed reservation is durable. Provider/audit failures leave a
         # bounded retry result; exception text, keys, URLs and bytes never escape.
         return "retry"
+
+
+def cleanup_public_copy(
+    identifier,
+    generation,
+    policy_uuid,
+    at,
+    *,
+    subject_validator=None,
+    hold_validator=None,
+    publication_store=None,
+):
+    """Erase one inventoried generation after a committed owner-serialized reservation.
+
+    Old generation keys remain tombstones. Repeating cleanup re-reserves before
+    removing a late writer, allowing a hold committed after earlier erasure to win.
+    """
+    from .models import PublicAssetCopy, PublicCopyAttempt
+    from .public_storage import get_publication_store, publication_key
+
+    if (
+        not isinstance(identifier, UUID)
+        or not isinstance(policy_uuid, UUID)
+        or type(generation) is not int
+        or not 1 <= generation <= 8
+        or not isinstance(at, datetime)
+        or not timezone.is_aware(at)
+        or not callable(subject_validator)
+        or not callable(hold_validator)
+        or transaction.get_connection().in_atomic_block
+    ):
+        return "denied"
+
+    def current():
+        now = max(at, timezone.now())
+        hint = PublicAssetCopy.objects.filter(pk=identifier).first()
+        if hint is None:
+            return "denied", None
+        owner = User.objects.select_for_update().get(pk=hint.owner_id)
+        source = Asset.objects.select_related("owner").get(pk=hint.source_asset_id)
+        source.owner = owner
+        if subject_validator(source) is not True:
+            return "denied", None
+        source = Asset.objects.select_for_update().get(pk=source.id)
+        source.owner = owner
+        row = PublicAssetCopy.objects.select_for_update().get(pk=identifier)
+        attempt = (
+            PublicCopyAttempt.objects.select_for_update()
+            .filter(
+                copy=row,
+                generation=generation,
+            )
+            .first()
+        )
+        if (
+            source.owner_id != owner.pk
+            or row.owner_id != owner.pk
+            or attempt is None
+            or generation > row.generation
+            or attempt.key != publication_key(row.id, generation)
+        ):
+            return "denied", None
+        inactive = row.state in {"failed", "revoked", "deletion_pending", "deleted"}
+        if not inactive and generation == row.generation:
+            return "in_use", None
+        if attempt.state in {"running", "pending"}:
+            return "in_use", None
+        rule = _policy(source, policy_uuid, now)
+        if rule is None:
+            return "policy_required", None
+        stopped = row.revoked_at if inactive else attempt.retired_at
+        if stopped is None or (now - stopped).total_seconds() < rule.duration_seconds:
+            return "not_due", None
+        if hold_validator(source, now) is not False:
+            return "held", None
+        return "eligible", (row, attempt, rule, now)
+
+    try:
+        with transaction.atomic():
+            status, values = current()
+            if status != "eligible":
+                return status
+            row, attempt, rule, now = values
+            if row.state in {"failed", "revoked", "deleted"}:
+                row.state = "deletion_pending"
+                row.version += 1
+                row.updated_at = now
+                row.save()
+            attempt.state = "deletion_pending"
+            attempt.lease_uuid = attempt.lease_until = None
+            attempt.updated_at = now
+            attempt.save()
+            expected = (
+                row.version,
+                row.generation,
+                attempt.id,
+                attempt.key,
+                rule.version,
+            )
+        with transaction.atomic():
+            status, values = current()
+            if status != "eligible":
+                return status
+            row, attempt, rule, now = values
+            if (
+                row.version,
+                row.generation,
+                attempt.id,
+                attempt.key,
+                rule.version,
+            ) != expected:
+                return "conflict"
+            if attempt.state != "deletion_pending":
+                return "conflict"
+        if publication_store is None and settings.STORAGE_BACKEND == "fake":
+            return "retry"
+        store = publication_store or get_publication_store()
+        try:
+            store.delete(expected[3])
+        except FileNotFoundError:
+            pass
+        try:
+            store.head(expected[3])
+        except FileNotFoundError:
+            pass
+        else:
+            return "retry"
+        with transaction.atomic():
+            status, values = current()
+            if status != "eligible":
+                return status
+            row, attempt, rule, now = values
+            if (
+                row.version,
+                row.generation,
+                attempt.id,
+                attempt.key,
+                rule.version,
+            ) != expected:
+                return "conflict"
+            if attempt.state != "deletion_pending":
+                return "conflict"
+            attempt.state, attempt.deleted_at, attempt.updated_at = "deleted", now, now
+            attempt.save()
+            if (
+                row.state == "deletion_pending"
+                and not PublicCopyAttempt.objects.filter(copy=row)
+                .exclude(state="deleted")
+                .exists()
+            ):
+                row.state = "deleted"
+                row.version += 1
+                row.updated_at = now
+                row.save()
+            append_event(
+                SecurityOutcome(
+                    "asset.deleted",
+                    "succeeded",
+                    attempt.id,
+                    uuid4(),
+                    ("state",),
+                    "retention_due",
+                ),
+                subject_type="asset",
+            )
+        return "deleted"
+    except (PermissionError, ValueError, LookupError):
+        return "denied"
+    except Exception:
+        return "retry"

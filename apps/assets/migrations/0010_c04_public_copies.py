@@ -131,10 +131,12 @@ BEGIN
            (OLD.sha256,OLD.mime_type,OLD.width,OLD.height,OLD.size,
             OLD.scanner_engine,OLD.scanner_signature,OLD.signature_expires_at))
        OR (OLD.authority_hash<>'' AND NEW.authority_hash<>OLD.authority_hash)
+       OR (OLD.retired_at IS NOT NULL
+           AND NEW.retired_at IS DISTINCT FROM OLD.retired_at)
     THEN
         RAISE EXCEPTION 'Publication attempt identity denied' USING ERRCODE='23514';
     END IF;
-    IF NEW.state='ready' AND (
+    IF NEW.state='ready' AND OLD.state<>'ready' AND (
         parent.generation<>NEW.generation
         OR NOT fitlink_c04_copy_source(parent)
         OR NEW.signature_expires_at<=clock_timestamp()
@@ -276,7 +278,7 @@ class Migration(migrations.Migration):
                 ),
                 ("generation", models.PositiveSmallIntegerField()),
                 ("key", models.CharField(max_length=255)),
-                ("state", models.CharField(default="pending", max_length=12)),
+                ("state", models.CharField(default="pending", max_length=20)),
                 ("lease_uuid", models.UUIDField(null=True)),
                 ("lease_until", models.DateTimeField(null=True)),
                 (
@@ -293,6 +295,7 @@ class Migration(migrations.Migration):
                 ("scanner_signature", models.CharField(blank=True, max_length=10)),
                 ("signature_expires_at", models.DateTimeField(null=True)),
                 ("failure_code", models.CharField(blank=True, max_length=32)),
+                ("retired_at", models.DateTimeField(null=True)),
                 ("deleted_at", models.DateTimeField(null=True)),
                 ("created_at", models.DateTimeField(default=django.utils.timezone.now)),
                 ("updated_at", models.DateTimeField(default=django.utils.timezone.now)),
@@ -431,7 +434,15 @@ class Migration(migrations.Migration):
                 condition=models.Q(
                     (
                         "state__in",
-                        ["pending", "running", "ready", "failed", "stale", "deleted"],
+                        [
+                            "pending",
+                            "running",
+                            "ready",
+                            "failed",
+                            "stale",
+                            "deletion_pending",
+                            "deleted",
+                        ],
                     )
                 ),
                 name="public_attempt_state",

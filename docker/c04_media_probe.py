@@ -142,7 +142,7 @@ def worker_prepare():
     )
     assert callable(getattr(public_copies, "scan_due_public_copies", None))
     assert not STATE.exists(), "Existing probe work preserved"
-    person, asset, draft = selected(settings)
+    person, asset, draft = selected(settings, confirmed=False)
     derivative = asset.derivatives.get(purpose="owner_preview")
     body = raster()
     from hashlib import sha256
@@ -150,6 +150,9 @@ def worker_prepare():
     derivative.sha256 = sha256(body).hexdigest()
     derivative.save(update_fields=["sha256"])
     S3PrivateStore().put(derivative.key, body, "image/png")
+    from tests.integration.c04.publication_helpers import confirm
+
+    confirm(person, draft)
     release = api().authorize_public_media(
         draft.publication_id, draft.revision_id, "avatar", timezone.now()
     )

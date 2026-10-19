@@ -3,7 +3,13 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from .models import Asset, AssetDerivative, AssetProcessingAttempt
+from .models import (
+    Asset,
+    AssetDerivative,
+    AssetProcessingAttempt,
+    PublicAssetCopy,
+    PublicCopyAttempt,
+)
 
 MAX_INVENTORY = 1000
 
@@ -123,6 +129,40 @@ def enumerate_asset_inventory(owner_uuid, at):
                 "asset_quarantine",
                 row.state,
                 row.asset_id,
+            )
+        )
+    for copy in bounded_rows(
+        PublicAssetCopy.objects.filter(owner__public_id=owner_uuid)
+    ):
+        records.append(
+            InventoryRecord(
+                "public_asset_copy",
+                copy.id,
+                owner_uuid,
+                copy.version,
+                "profile_media",
+                copy.state,
+                copy.source_asset_id,
+                classification="private_publication_copy",
+                policy_uuid=policies.get(("profile_media", copy.purpose)),
+                deletion_behavior="policy_cleanup",
+            )
+        )
+    for attempt in bounded_rows(
+        PublicCopyAttempt.objects.filter(copy__owner__public_id=owner_uuid)
+    ):
+        records.append(
+            InventoryRecord(
+                "public_copy_attempt",
+                attempt.id,
+                owner_uuid,
+                attempt.generation,
+                "profile_media",
+                attempt.state,
+                attempt.copy_id,
+                classification="private_publication_copy",
+                policy_uuid=policies.get(("profile_media", attempt.copy.purpose)),
+                deletion_behavior="source_cleanup",
             )
         )
     if len(records) > MAX_INVENTORY:

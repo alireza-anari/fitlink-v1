@@ -113,7 +113,7 @@ class PublicCopyAttempt(models.Model):
     )
     generation = models.PositiveSmallIntegerField()
     key = models.CharField(max_length=255)
-    state = models.CharField(max_length=12, default="pending")
+    state = models.CharField(max_length=20, default="pending")
     lease_uuid = models.UUIDField(null=True)
     lease_until = models.DateTimeField(null=True)
     next_attempt_at = models.DateTimeField(default=timezone.now)
@@ -127,6 +127,7 @@ class PublicCopyAttempt(models.Model):
     scanner_signature = models.CharField(max_length=10, blank=True)
     signature_expires_at = models.DateTimeField(null=True)
     failure_code = models.CharField(max_length=32, blank=True)
+    retired_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
@@ -155,6 +156,7 @@ class PublicCopyAttempt(models.Model):
                         "ready",
                         "failed",
                         "stale",
+                        "deletion_pending",
                         "deleted",
                     ]
                 ),

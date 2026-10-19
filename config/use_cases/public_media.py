@@ -263,3 +263,98 @@ def reconcile_public_copy_lifetime(identifier, at):
             return False
 
     return reconcile(identifier, at, authorize=current)
+
+
+def cleanup_public_copy(
+    identifier, generation, policy_uuid, at, *, publication_store=None
+):
+    from apps.assets.cleanup import cleanup_public_copy as cleanup
+    from config.use_cases.c03_privacy import _asset_held, _cleanup_subject
+
+    return cleanup(
+        identifier,
+        generation,
+        policy_uuid,
+        at,
+        subject_validator=_cleanup_subject,
+        hold_validator=_asset_held,
+        publication_store=publication_store,
+    )
+
+
+def reconcile_public_media(at, batch_size=100):
+    """Reuse attempt due timestamps; no second cursor or scheduler infrastructure."""
+    from datetime import timedelta
+
+    from django.db.models import F, Q
+
+    from apps.assets.models import PublicCopyAttempt
+
+    if (
+        not isinstance(at, datetime)
+        or not timezone.is_aware(at)
+        or type(batch_size) is not int
+        or not 1 <= batch_size <= 100
+        or transaction.get_connection().in_atomic_block
+    ):
+        return 0
+    ids = list(
+        PublicCopyAttempt.objects.filter(
+            next_attempt_at__lte=at,
+        )
+        .filter(
+            Q(state="ready", generation=F("copy__generation"))
+            | Q(copy__state__in=["revoked", "failed", "deletion_pending", "deleted"])
+            | Q(generation__lt=F("copy__generation")),
+        )
+        .exclude(state__in=["pending", "running"])
+        .order_by(
+            "next_attempt_at",
+            "id",
+        )
+        .values_list("id", flat=True)[:batch_size]
+    )
+    count = 0
+    for identifier in ids:
+        hint = (
+            PublicCopyAttempt.objects.select_related("copy")
+            .filter(pk=identifier)
+            .first()
+        )
+        if hint is None:
+            continue
+        reconcile_public_copy_lifetime(hint.copy_id, at)
+        row = PublicAssetCopy.objects.get(pk=hint.copy_id)
+        if (
+            row.state in {"failed", "revoked", "deletion_pending", "deleted"}
+            or hint.generation < row.generation
+        ):
+            # Same C03 policy lookup/binding and hold semantics; missing policy
+            # retains bytes. Only the private publication namespace is erasable.
+            from apps.governance.privacy_models import RetentionPolicy
+
+            policy_id = (
+                RetentionPolicy.objects.filter(
+                    data_class="profile_media",
+                    purpose=row.purpose,
+                    status="effective",
+                    approved_by__isnull=False,
+                    approved_at__lte=at,
+                    effective_at__lte=at,
+                    duration_seconds__gt=0,
+                )
+                .exclude(backup_reference="")
+                .order_by("id")
+                .values_list("id", flat=True)
+                .first()
+            )
+            if policy_id is not None:
+                cleanup_public_copy(row.id, hint.generation, policy_id, at)
+        with transaction.atomic():
+            User.objects.select_for_update().get(pk=row.owner_id)
+            attempt = PublicCopyAttempt.objects.select_for_update().get(pk=identifier)
+            attempt.next_attempt_at = max(at, timezone.now()) + timedelta(seconds=30)
+            attempt.updated_at = max(at, timezone.now())
+            attempt.save()
+        count += 1
+    return count

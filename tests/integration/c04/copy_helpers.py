@@ -46,6 +46,10 @@ class ObservedStore(FakePrivateStore):
         assert not connection.in_atomic_block
         return super().head(key)
 
+    def delete(self, key):
+        assert not connection.in_atomic_block
+        return super().delete(key)
+
     def signed_read_url(self, *args, **kwargs):
         self.signed_reads += 1
         raise AssertionError("Private signer must never be used")
@@ -69,7 +73,7 @@ def clean(data, mime, purpose):
 
 def pending(settings, *, claim=True):
     copy_model()
-    subject, asset, draft = selected(settings)
+    subject, asset, draft = selected(settings, confirmed=False)
     derivative = asset.derivatives.get(purpose="owner_preview")
     data = BytesIO()
     Image.new("RGB", (64, 48), (32, 96, 128)).save(data, format="PNG")
@@ -78,6 +82,9 @@ def pending(settings, *, claim=True):
     derivative.save(update_fields=["sha256"])
     store = ObservedStore()
     store.put(derivative.key, body, "image/png")
+    from tests.integration.c04.publication_helpers import confirm
+
+    confirm(subject, draft)
     service = api()
     release = service.authorize_public_media(
         draft.publication_id, draft.revision_id, "avatar", timezone.now()
