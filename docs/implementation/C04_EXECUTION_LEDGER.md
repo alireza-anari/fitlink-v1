@@ -1232,3 +1232,8 @@ find a copy with no explicit prompt. Worker SIGKILL and scanner outages are actu
 commands in the mandatory script; their successful execution is still pending.
 Probe diagnostics first RED for missing metadata boundary, then GREEN with only
 allowlisted phase/error class; exception text and private state never leave it.
+
+### Task 03 — first required real-media job diagnostic boundary
+
+- Published source `d141fc711c48287e9f29fa1340a8b38591b73011`, tree `53a3bb4b47af0d32e5b32cfb05df4cd6c0b7ab20`, run `39322305205`, media job `118299166893`: exit 1 at 155.1 seconds, natural exit and complete owned cleanup. PostgreSQL, MinIO, Redis and scanner bootstrap completed; new migration appeared in finite progress. No test case reports were produced. This is **not** credited as missing-feature RED: the exact shell boundary is not yet observable. Add finite static stage/exit metadata only; preserve all verification and timeout bounds. No raw output, environment, private identifiers or image bytes are exported.
+- The same run's staff job `118299166838` exited at 13.9 seconds before any test report (all counts zero); first cause remains unknown. It is not acceptance and no speculative retry or diagnosis is asserted.
