@@ -1197,3 +1197,38 @@ commits before any deployment — its newly demonstrated readiness invariant mus
 be present on a clean install — cost if wrong: replay this unaccepted initial
 schema in disposable CI. No C01/C02/C03 or accepted Task2 migration changes, no
 history rewrite, and each prior published SHA/tree/runtime record stays intact.
+
+Task3 readiness correction9a56476578fca972304aa45a4e13a0d2d012e6db,
+tree0eaf3944ebc2c4978b887edb68f236fef6e7ab3d, run39319110775,
+PostgreSQL118288212579:166 passed/9 expected missing scanner/worker command
+failures,0 error/skipped/xfail/xpass/deselected, actual exit1. All initial prepare,
+three direct-SQL copy binding and direct publication readiness probes now pass;
+all remaining failures stop at scan_due_public_copies, which is not implemented.
+The earlier unauthorized SQL promotion is behavioral RED→real PostgreSQL GREEN.
+
+Task3 mandatory real-service wiring test first RED because c04-public-media is
+absent. Add that exact already-planned required_jobs(3) job with pinned tooling,
+real private MinIO/ClamAV/isolated decoder and actual worker/crash/Beat/scanner
+outage probe commands; cumulative and aggregate runners advance to task3. The
+PostgreSQL-only selection explicitly ignores ONLY the real media service file;
+that file is mandatory in c04-public-media, not skipped/deselected or replaced
+with fake providers. Three actual-service cases collect locally; they have NOT
+run locally and no service GREEN is claimed. The new service job must establish
+its own real RED before production processing is implemented.
+
+Extend current schema scope by exactly assets.PublicAssetCopy/PublicCopyAttempt
+and the one User reverse relation; unchanged UUID/PROTECT/timestamp/forbidden-field
+checks still cover every old and new model. Current C03 migration coverage first
+fails for assets0010, then delegates only that exact new leaf to C04's real SQL
+rendering, preserving all historical commands. Immutable fixtures/pins are intact.
+
+Task3 Ruling: reuse the inherited observer's fitlink-c03-private-processing
+Compose label on the new job's separate fresh hosted runner — this keeps exact
+owned-process/cleanup supervision without modifying C03 observer infrastructure
+or sharing data between runners — cost if wrong: a preexisting project/volume
+causes non-destructive refusal before ownership; never cleanup another run's data.
+No scheduler process is added; the probe requires the existing asset-beat to
+find a copy with no explicit prompt. Worker SIGKILL and scanner outages are actual
+commands in the mandatory script; their successful execution is still pending.
+Probe diagnostics first RED for missing metadata boundary, then GREEN with only
+allowlisted phase/error class; exception text and private state never leave it.

@@ -1,0 +1,5 @@
+services:
+  worker:
+    command: ["uv", "run", "--frozen", "celery", "--quiet", "-A", "config.celery:app", "worker", "--loglevel=WARNING", "--concurrency=1", "--hostname=foundation@%h", "-I", "docker.c04_media_probe"]
+    environment:
+      C04_MEDIA_PROBE_WORKER: '1'

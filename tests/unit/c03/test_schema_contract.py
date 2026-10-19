@@ -40,6 +40,8 @@ C04_PUBLICATION_MODELS = {
     "PublicationMediaBinding",
 }
 
+C04_COPY_MODELS = {"PublicAssetCopy", "PublicCopyAttempt"}
+
 
 def test_private_relational_schema_registered_without_future_models():
     for label, names in EXPECTED.items():
@@ -47,7 +49,11 @@ def test_private_relational_schema_registered_without_future_models():
             m.__name__ for m in apps.get_models() if m._meta.app_label == label
         }
         current = names | (
-            C04_PUBLICATION_MODELS if label == "professionals" else set()
+            C04_PUBLICATION_MODELS
+            if label == "professionals"
+            else C04_COPY_MODELS
+            if label == "assets"
+            else set()
         )
         assert installed == current, f"Missing bounded {label} metadata"
         for name in current:
@@ -76,7 +82,11 @@ def test_private_relational_schema_registered_without_future_models():
 def test_c03_metadata_records_have_utc_creation_and_update_fields():
     for label, original in EXPECTED.items():
         names = original | (
-            C04_PUBLICATION_MODELS if label == "professionals" else set()
+            C04_PUBLICATION_MODELS
+            if label == "professionals"
+            else C04_COPY_MODELS
+            if label == "assets"
+            else set()
         )
         for name in names:
             model = apps.get_model(label, name)

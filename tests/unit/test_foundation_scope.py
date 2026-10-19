@@ -139,6 +139,8 @@ def test_only_foundation_routes_and_identity_model():
         "AssistantMembership",
     }
     c04_models = {
+        "PublicAssetCopy",
+        "PublicCopyAttempt",
         "ProfessionalPublication",
         "PublicationRevision",
         "PublicationQualification",
@@ -168,6 +170,7 @@ def test_only_foundation_routes_and_identity_model():
         "state_version",
         "auth_version",
         "confirmed_publication_revisions",
+        "public_asset_copies",
         "otpchallenge",
         "accountsessioncontrol",
         "staff_capabilities",

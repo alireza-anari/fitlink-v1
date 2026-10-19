@@ -102,8 +102,17 @@ def test_c04_ref_runs_every_inherited_gate():
     assert data["on"] == {"push": {"branches": ["marketplace/c04-cloud"]}}, (
         "C04 execution ref has no isolated hosted trigger"
     )
-    assert set(data["jobs"]) == REQUIRED
-    assert set(data["jobs"]["c04-final"]["needs"]) == REQUIRED - {"c04-final"}
+    import re
+
+    stage = int(
+        re.search(
+            r"verify_c04_incremental.sh --task ([0-9]+)",
+            (ROOT / "docker/verify_c04.sh").read_text(),
+        )[1]
+    )
+    expected = validator().required_jobs(stage)
+    assert set(data["jobs"]) == expected
+    assert set(data["jobs"]["c04-final"]["needs"]) == expected - {"c04-final"}
 
 
 def validator():
@@ -302,3 +311,26 @@ def test_checkpoint_schema_cannot_claim_incomplete_acceptance():
     assert validate(payload)
     payload["state"] = "COMPLETE"
     assert not validate(payload)
+
+
+def test_task3_installs_mandatory_real_public_media_gate():
+    data = workflow()
+    assert "c04-public-media" in data["jobs"], "Missing required real media gate"
+    assert "c04-public-media" in data["jobs"]["c04-final"]["needs"]
+    steps = "\n".join(
+        s.get("run", "") for s in data["jobs"]["c04-public-media"]["steps"]
+    )
+    assert "python docker/c04_media_probe.py run" in steps
+    source = (ROOT / "docker/verify_c04_media.sh").read_text()
+    for required in (
+        "minio",
+        "scanner",
+        "worker",
+        "asset-beat",
+        "tests/integration/c04/test_public_media_services.py",
+        "docker/c04_media_probe.py",
+    ):
+        assert required in source
+    incremental = (ROOT / "docker/verify_c04_incremental.sh").read_text()
+    assert "--ignore=tests/integration/c04/test_public_media_services.py" in incremental
+    assert "sqlmigrate assets 0010 --settings=config.settings.test" in incremental
