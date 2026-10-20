@@ -240,5 +240,43 @@
     },
     "local_environment": "exec-server transport disconnected; attempted write failed; no correction GREEN claimed",
     "pending": "Fresh exact-source hosted full15, actual complete_backend natural0 and cleanup; no retry/waiver"
+  },
+  "repeated_regression_deadline": {
+    "sha": "48eb911a9cd499649b39c0b4bab73d9b4fe6cba8",
+    "tree": "ceb8c63c8251946ac7ab75ea1d9a5f07fec5c0e4",
+    "run_id": 39451304085,
+    "run_attempt": 1,
+    "green_jobs": 13,
+    "failed_job": {
+      "id": 118726524934,
+      "stage": "complete_backend",
+      "deadline_seconds": 900,
+      "exit_code": 124,
+      "artifact_id": 12281581780,
+      "digest": "sha256:b12ff7e5d3b6fb8a90477b5853b60b400acb759ce9ca8ea1b99846e6f258f597"
+    },
+    "postgresql": {
+      "passed": 383,
+      "failed": 0,
+      "error": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0
+    },
+    "foundation": {
+      "unit_passed": 953,
+      "subtests": 37,
+      "regression_passed": 2210,
+      "failed": 0,
+      "skipped": 0
+    },
+    "baseline": {
+      "stages": 127,
+      "nonzero": 0
+    },
+    "next": "Bounded hosted reader verifies pinned artifact bytes and emits sanitized current case timings; diagnose before any retry or further fix",
+    "local_environment": "unavailable; no local diagnostic GREEN claimed",
+    "acceptance": "IN_PROGRESS; no waiver or Task7 advancement"
   }
 }

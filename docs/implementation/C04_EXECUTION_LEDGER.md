@@ -1873,3 +1873,45 @@ run39449624858 attempt1 (remaining jobs still running at this checkpoint):
   evidence remain preserved; no claim of recovering lost unpublished files.
 Task6 IN_PROGRESS; Task7+ not started. Fresh exact-source all15 jobs remain
 mandatory. No production publication, merge, deployment or C05.
+
+### Task 6 — repeated full-regression deadline; bounded hosted artifact diagnosis
+
+Exact48eb911a9cd499649b39c0b4bab73d9b4fe6cba8,
+treeceb8c63c8251946ac7ab75ea1d9a5f07fec5c0e4,
+run39451304085 attempt1:13 GREEN, c03-final118726524934 FAILED,
+c04-final118747460960 correctly FAILED on its failed upstream.
+- PostgreSQL118726524613:383 passed, all failed/error/skipped/xfail/xpass/
+  deselected0. New finite prerequisite diagnostic tests pass on real hosted
+  source. Actual30000-row plan2.869ms execution/0.453ms planning/441 blocks,
+  two index nodes and10 returned.
+- Foundation118726525152:953 unit+37 subtests;2210 inherited regressions,
+  failed/skipped0. Immutable C03 baseline118726524608:all127 stage exits0,
+  exact approved C03 tree and original backend1692. Owner75/staff67 and
+  migration108/89/86 GREEN. Real scanner/store/non-eager worker/SIGKILL/
+  restart/withdrawal/purge probes and cleanup pass.
+- All12 earlier artifacts' API digests match actual upload-log SHA256 records.
+  Method is metadata/upload-log cross-check, not an independent local ZIP
+  rehash: local execution server remains unavailable.
+- Current original C02 prerequisite and exact source/preservation/zero-state
+  controls passed this run. complete_backend again reached900s and exited124,
+  before any full-backend PASS/count. No same-SHA retry or timeout increase.
+  Failure artifact12281581780 SHA256
+  b12ff7e5d3b6fb8a90477b5853b60b400acb759ce9ca8ea1b99846e6f258f597.
+  Its stage logs prove the repeated budget failure. The full safe case journal
+  needs inspection to locate remaining costs; do not claim a hung case or a
+  successful fixture performance correction from focused GREEN.
+- Add a bounded hosted metadata reader, pinned to this exact artifact/run/SHA/
+  digest. It checks provenance and archive SHA256; accepts only bounded known
+  journal members; exports fixed counters/known static test names/finite timing
+  and known failed-stage exits. Parameters, stacks, payloads and arbitrary text
+  never leave it. No extraction or private-log upload. GitHub token is not
+  forwarded across the artifact redirect. Every result says acceptance:false.
+- Add only an after-tests C04 PostgreSQL metadata step,90s bounded, with scoped
+  contents/actions READ permissions. All15 required jobs, inherited executable
+  jobs, real test selections/services, deadlines and cleanup stay unchanged.
+  This is a diagnostic, not acceptance; a fresh complete manifest is still
+  required after the actual performance correction.
+- Three focused parser privacy/bounds tests accompany the reader. Existing
+  hosted900s failure is the performance RED. Local execution is unavailable:
+  no local syntax/static/GREEN claim for this diagnostic; actual hosted source
+  verification must run. Task6 remains IN_PROGRESS; Task7+ not started.

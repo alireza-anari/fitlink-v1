@@ -577,6 +577,9 @@ jobs:
         include-hidden-files: true
         if-no-files-found: error
   c04-postgresql:
+    permissions:
+      contents: read
+      actions: read
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     services:
@@ -637,6 +640,13 @@ jobs:
     - run: uv sync --frozen --group dev
     - name: Cumulative required C04 unit and PostgreSQL tests, zero skips
       run: sh docker/verify_c04_incremental.sh --task 6
+    - name: Pinned previous regression metadata only
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        timeout -k 5s 90s uv run --frozen python docker/c04_regression_metadata.py
+        timeout -k 5s 15s uv run --frozen ruff format --diff docker/c04_regression_metadata.py tests/unit/c04/test_regression_metadata_reader.py
+
   c04-public-media:
     if: github.ref == 'refs/heads/marketplace/c04-cloud'
     runs-on: ubuntu-24.04
