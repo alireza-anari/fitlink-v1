@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 import sys
+from collections import deque
 from pathlib import Path
 from uuid import uuid4
 
@@ -51,6 +52,56 @@ def classify_private_log(text):
     return {"npm_codes": sorted(codes), "categories": sorted(categories)}
 
 
+def classify_browser_private_log(text, known_files):
+    """Only fixed enums and known repository source locations may leave the host."""
+    error_classes = sorted(
+        name
+        for name in ("AssertionError", "Error", "TargetClosedError", "TimeoutError")
+        if re.search(r"\b" + name + r"\b", text)
+    )
+    operations = sorted(
+        name
+        for name in (
+            "Locator.click",
+            "Locator.fill",
+            "Locator.press",
+            "Locator.wait_for",
+            "Page.goto",
+            "Page.reload",
+            "Page.wait_for_load_state",
+            "Page.wait_for_url",
+            "expect(locator)",
+        )
+        if name in text
+    )
+    allowed_net_codes = {
+        "ERR_ABORTED",
+        "ERR_CONNECTION_REFUSED",
+        "ERR_CONNECTION_RESET",
+        "ERR_FAILED",
+        "ERR_HTTP_RESPONSE_CODE_FAILURE",
+        "ERR_INTERNET_DISCONNECTED",
+        "ERR_NAME_NOT_RESOLVED",
+        "ERR_NETWORK_CHANGED",
+        "ERR_TIMED_OUT",
+    }
+    net_codes = sorted(
+        set(re.findall(r"net::(ERR_[A-Z0-9_]+)", text)) & allowed_net_codes
+    )
+    locations = deque(maxlen=12)
+    pattern = r"((?:apps|config|tests)/[A-Za-z0-9_./-]+\.py):([0-9]{1,6})\b"
+    for match in re.finditer(pattern, text):
+        filename, line = match.groups()
+        if filename in known_files and 0 < int(line) <= 100000:
+            locations.append({"file": filename, "line": int(line)})
+    return {
+        "error_classes": error_classes,
+        "locations": list(locations),
+        "net_codes": net_codes,
+        "operations": operations,
+    }
+
+
 def run(root):
     baseline = root / ".runtime/c03"
     tree = verify_baseline(baseline)
@@ -64,6 +115,30 @@ def run(root):
                 stream.seek(max(0, path.stat().st_size - 4_000_000))
                 text = stream.read(4_000_000).decode("utf-8", errors="replace")
             record["logs"][stage] = classify_private_log(text)
+    known_files = {
+        path.relative_to(baseline).as_posix()
+        for name in ("apps", "config", "tests")
+        for path in (baseline / name).rglob("*.py")
+        if path.is_file() and not path.is_symlink()
+    }
+    for stage in (
+        "upgraded_c02_browser",
+        "clean_owner_browser",
+        "clean_staff_browser",
+        "clean_c02_browser",
+    ):
+        path = baseline / ".runtime/task14-private" / (stage + ".log")
+        if path.is_file() and not path.is_symlink():
+            try:
+                with path.open("rb") as stream:
+                    stream.seek(max(0, path.stat().st_size - 4_000_000))
+                    text = stream.read(4_000_000).decode("utf-8", errors="replace")
+            except OSError:
+                record["logs"][stage] = {"browser_metadata_unavailable": True}
+            else:
+                record["logs"][stage] = {
+                    "browser": classify_browser_private_log(text, known_files)
+                }
     folder = root / ".runtime/c04-baseline-evidence"
     folder.mkdir(mode=0o700, parents=True, exist_ok=True)
     path = folder / (uuid4().hex + ".json")

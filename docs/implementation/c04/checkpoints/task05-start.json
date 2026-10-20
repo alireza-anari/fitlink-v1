@@ -65,7 +65,7 @@
       "behavior": "current reader preserves Coach at Nutritionist UTC expiry; cached row cutoff incorrectly removes Coach search result"
     }
   ],
-  "current_pending_requirement": "Bounded browser diagnostics RED, then fresh complete immutable baseline and exact-SHA full manifest",
+  "current_pending_requirement": "Fresh diagnostic GREEN, complete unchanged immutable browser/baseline, and exact-SHA full 15-job acceptance",
   "baseline_failures": [
     {
       "implementation_sha": "5040ec5052b6ce064e7306f82f4ad9fb0d250966",
@@ -81,5 +81,15 @@
       "artifact_id": 12253842855,
       "github_artifact_sha256": "a334b8fe91d68e653bfdba263913486ed48260e4169687c5dbb1b0396090a2a7"
     }
-  ]
+  ],
+  "diagnostic_red": {
+    "implementation_sha": "9ffe8efb30cab33152b0616ae7e30d9d6dd42fd1",
+    "implementation_tree": "73f0c00c58278267212c8df8deedb03aaf883757",
+    "run_id": 39401186561,
+    "job_id": 118556008893,
+    "passed": 924,
+    "subtests_passed": 37,
+    "failed": 2,
+    "reason": "missing bounded immutable-browser failure classifier; explicit assertion failures"
+  }
 }
