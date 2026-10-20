@@ -51,5 +51,19 @@
         "underlying_inventory_failure_or_collision": "not distinguishable from original finite diagnostic; not classified transient or waived"
       }
     }
-  ]
+  ],
+  "additional_reds": [
+    {
+      "implementation_sha": "c7b8944dddc655852d66d1267fa9dbc80d6e3937",
+      "implementation_tree": "fab53895507e95a41176a02f7eb8d2da9a867031",
+      "run_id": 39396025416,
+      "job_id": 118538855244,
+      "passed": 333,
+      "failed": 1,
+      "error": 0,
+      "skipped": 0,
+      "behavior": "current reader preserves Coach at Nutritionist UTC expiry; cached row cutoff incorrectly removes Coach search result"
+    }
+  ],
+  "current_pending_requirement": "Fresh hosted exact-SHA full manifest and surviving-role expiry GREEN"
 }

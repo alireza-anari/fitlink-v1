@@ -20,10 +20,12 @@ class ProjectionRefreshRequired(MarketplaceUnavailable):
 
 
 def candidate_query(criteria, key, at):
+    # The cached earliest boundary may belong to only one selected role.
+    # Fresh source reads decide expiry; surviving roles remain discoverable.
     rows = PublicProfessionalProjection.objects.filter(
         state="active",
         normalization_version=NORMALIZATION_VERSION,
-    ).filter(Q(next_expiry__isnull=True) | Q(next_expiry__gt=at))
+    )
     if criteria.role:
         rows = rows.filter(snapshot__verified_roles__contains=[criteria.role])
     if criteria.country:
