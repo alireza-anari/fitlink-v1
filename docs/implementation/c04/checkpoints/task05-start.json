@@ -28,5 +28,28 @@
     "skipped": 0
   },
   "hosted_acceptance": null,
-  "next_task": 5
+  "next_task": 5,
+  "candidate_failures": [
+    {
+      "implementation_sha": "4dca2b50da9b33bcddca5efab9debeee1edde1a6",
+      "implementation_tree": "953ad54c23ca0ad1604d150b35099fc0f8854b0e",
+      "run_id": 39394356100,
+      "postgresql": {
+        "job_id": 118533271788,
+        "passed": 0,
+        "failed": 0,
+        "error": 1,
+        "skipped": 0,
+        "exit_code": 1,
+        "diagnosis": "duplicate unit/integration test_search_limiter module basename; reproduced in local combined collection"
+      },
+      "restart": {
+        "job_id": 118533271529,
+        "reason": "fresh_runner_ownership_unavailable",
+        "artifact_id": 12251091240,
+        "artifact_sha256": "03882912e83598ab1b67994bd8b70710dabe6878e84f57efb64e2965a0a43fb8",
+        "underlying_inventory_failure_or_collision": "not distinguishable from original finite diagnostic; not classified transient or waived"
+      }
+    }
+  ]
 }

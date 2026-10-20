@@ -215,10 +215,24 @@ def query(argv, seconds=2):
                 start_new_session=True,
             )
         except OSError:
+            QUERY_FAILURES.append(
+                {
+                    "command": safe_command(argv),
+                    "returncode": None,
+                    "category": "metadata_command_unavailable",
+                }
+            )
             return None
         try:
             child.wait(timeout=seconds)
         except subprocess.TimeoutExpired:
+            QUERY_FAILURES.append(
+                {
+                    "command": safe_command(argv),
+                    "returncode": None,
+                    "category": "metadata_command_timeout",
+                }
+            )
             try:
                 os.killpg(child.pid, signal.SIGKILL)
                 child.wait(timeout=1)
@@ -592,6 +606,15 @@ def watch(phase, command, *, acceptance=False):
                 "diagnostic_finished",
                 reason="fresh_runner_ownership_unavailable",
                 expected_diagnostic_failure=not acceptance,
+                baseline_available=baseline_rows is not None,
+                conflicting_projects=sorted(
+                    {
+                        row["project"]
+                        for row in (baseline_rows or [])
+                        if row["project"] in OWNED_PROJECTS[phase]
+                    }
+                ),
+                metadata_failures=list(QUERY_FAILURES),
             )
             return 1
         subreaper = enable_subreaper()
