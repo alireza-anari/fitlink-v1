@@ -269,6 +269,83 @@ def test_projection_sql_requires_owner_confirmed_immutable_release(settings):
         )
 
 
+@pytest.mark.parametrize(
+    "defect", ["unselected_field", "unselected_role", "unselected_summary"]
+)
+def test_projection_sql_stays_within_the_confirmed_selection(settings, defect):
+    from django.db import DatabaseError, transaction
+
+    from apps.marketplace.models import PublicProfessionalProjection
+
+    subject, draft = published(settings)
+    api().refresh_public_projection(subject.profile.id, timezone.now())
+    row = PublicProfessionalProjection.objects.get(pk=subject.profile.id)
+    value = row.snapshot
+    if defect == "unselected_field":
+        assert "experience_years" not in value
+        value["experience_years"] = 17
+    elif defect == "unselected_role":
+        assert value["verified_roles"] == ["coach"]
+        value["verified_roles"] = ["coach", "nutritionist"]
+    else:
+        assert value["qualification_summaries"] == []
+        value["qualification_summaries"] = [
+            {
+                "role": "coach",
+                "title": "Unselected summary",
+                "issuer": "Synthetic issuer",
+                "type_label": "qualification",
+                "issued_on": None,
+                "expires_on": None,
+            }
+        ]
+    with pytest.raises(DatabaseError), transaction.atomic():
+        PublicProfessionalProjection.objects.filter(pk=row.pk).update(snapshot=value)
+
+
+@pytest.mark.parametrize(
+    "defect", ["private_modes", "unselected_city", "other_projection"]
+)
+def test_projection_location_filters_require_public_parent_and_exact_broad_tuple(
+    settings, defect
+):
+    from django.db import DatabaseError, transaction
+
+    from apps.marketplace.models import PublicLocation
+    from tests.integration.c03.test_professional_setup import owner, save
+
+    configure(settings)
+    subject = approved(settings)
+    save(
+        subject,
+        "locations",
+        {
+            "locations": [
+                {
+                    "country_code": "IR",
+                    "region": "Tehran",
+                    "city": "Tehran",
+                    "modes": ["online"],
+                }
+            ]
+        },
+    )
+    draft = prepare(subject, fields=("display_name", "locations"))
+    confirm(subject, draft)
+    api().refresh_public_projection(subject.profile.id, timezone.now())
+    row = PublicLocation.objects.get(projection_id=subject.profile.id)
+    if defect == "private_modes":
+        values = {"modes": {"private": "PRIVATE_SENTINEL"}}
+    elif defect == "unselected_city":
+        values = {"city": "UNSELECTED_CITY"}
+    else:
+        foreign = owner("+989123456789")
+        api().refresh_public_projection(foreign.profile.id, timezone.now())
+        values = {"projection_id": foreign.profile.id}
+    with pytest.raises(DatabaseError), transaction.atomic():
+        PublicLocation.objects.filter(pk=row.pk).update(**values)
+
+
 @pytest.mark.parametrize("defect", ["state_zero", "cursor_zero", "state_rebind"])
 def test_durable_projection_metadata_rejects_invalid_identity_or_version(
     settings, defect
