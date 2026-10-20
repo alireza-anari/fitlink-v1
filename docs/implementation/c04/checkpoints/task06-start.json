@@ -20,14 +20,14 @@
     "behavior": "17 missing selection-contract and 9 missing owned/session-service assertions"
   },
   "focused_green": {
-    "unit_passed": 247,
+    "unit_passed": 254,
     "subtests_passed": 37,
     "failed": 0,
     "skipped": 0,
-    "seconds": 8.06
+    "seconds": 7.78
   },
   "hosted_acceptance": null,
-  "current_pending_requirement": "Fresh current-stage exact nine-table guard and complete new-head 15-job hosted acceptance, cleanup and source/security review",
+  "current_pending_requirement": "Bounded outer prerequisite diagnostics and complete unchanged immutable baseline natural success; full exact-new-head 15-job acceptance; no unclassified-failure retry or waiver",
   "next_task": 6,
   "first_candidate": {
     "implementation_sha": "e4d94129ad5796293960b5994bb365687e8cefdf",
@@ -98,5 +98,58 @@
     "task10_failed": 1,
     "reason": "current-stage exact marketplace table allowlist names only four Task4 tables; five approved Task6 tables now installed",
     "accepted": false
+  },
+  "schema_green": {
+    "implementation_sha": "5b9d4c638dc5076d0fca381150cd3363e9bfdfc8",
+    "implementation_tree": "66ec32d3a29025df7ce03a762e2cfaf474874c63",
+    "run_id": 39439640428,
+    "postgresql_job_id": 118685792325,
+    "passed": 374,
+    "failed": 0,
+    "error": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "migrations_job_id": 118685792113,
+    "inherited_task_counts": {
+      "task8": 108,
+      "task9": 89,
+      "task10": 86
+    }
+  },
+  "mandatory_failures": [
+    {
+      "implementation_sha": "5b9d4c638dc5076d0fca381150cd3363e9bfdfc8",
+      "run_id": 39439640428,
+      "job_id": 118685792206,
+      "name": "c03-evidence-audit",
+      "kind": "external_http_error",
+      "http_status": 502,
+      "endpoint_family": "actions",
+      "historical_tasks_verified": 10,
+      "artifact_id": 12272969991,
+      "artifact_sha256": "c55ba26edc416bbeb00925e6e638519fbd127546a5f1af48792a65ceaefe4d25",
+      "artifact_digest_matched": true,
+      "same_sha_retry_used": false
+    },
+    {
+      "implementation_sha": "5b9d4c638dc5076d0fca381150cd3363e9bfdfc8",
+      "run_id": 39439640428,
+      "job_id": 118685792403,
+      "name": "c04-baseline",
+      "stage": "exact_original_c02",
+      "exit_code": 1,
+      "cause": "unclassified in original finite metadata; no private raw log available after runner",
+      "artifact_id": 12274616510,
+      "artifact_sha256": "aab4dfc7a7aeb2d09e32a1be480c4b0e2ac32c2483ad432658fd248239ff6bda",
+      "artifact_digest_matched": true,
+      "retry_authorized": false
+    }
+  ],
+  "diagnostic_red": {
+    "test": "tests/unit/c04/test_prerequisite_failure_metadata.py",
+    "failed": 7,
+    "error": 0,
+    "skipped": 0,
+    "reason": "explicit missing finite immutable-prerequisite metadata assertions"
   }
 }

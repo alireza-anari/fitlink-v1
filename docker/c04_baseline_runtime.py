@@ -102,11 +102,76 @@ def classify_browser_private_log(text, known_files):
     }
 
 
+def classify_prerequisite_private_log(text, known_files):
+    """Finite prerequisite stages/errors only; marker presence is not a verdict."""
+    result = classify_private_log(text)
+    categories = set(result["categories"])
+    for marker, name in (
+        ("dependency failed to start", "service_start_failed"),
+        ("is unhealthy", "service_unhealthy"),
+        ("Error response from daemon:", "docker_daemon_error"),
+        ("Cannot connect to the Docker daemon", "docker_unavailable"),
+        ("failed to resolve source metadata", "image_metadata_failed"),
+        ("pull access denied", "image_access_denied"),
+        ("429 Too Many Requests", "rate_limited"),
+        ("TLS handshake timeout", "tls_timeout"),
+        ("context deadline exceeded", "provider_deadline"),
+        ("connection reset by peer", "connection_reset"),
+        ("no space left on device", "disk_full"),
+        ("Temporary failure in name resolution", "dns_failure"),
+        ("port is already allocated", "port_collision"),
+        ("Choose a new isolated verification project", "existing_project_retained"),
+        ("Exact upgrade requires new isolated volumes", "existing_project_retained"),
+    ):
+        if marker in text:
+            categories.add(name)
+    phases = [
+        (text.rfind(marker), name)
+        for marker, name in (
+            ("load metadata for ", "image_metadata"),
+            ("transferring context:", "build_context"),
+            ("RUN uv sync", "dependency_sync"),
+            ("RUN npm ci", "dependency_npm"),
+            ("exporting to image", "image_export"),
+            ("Running migrations:", "migrations"),
+            ("collected ", "test_collection"),
+        )
+        if marker in text
+    ]
+    failure = classify_browser_private_log(text, known_files)
+    classes = set(failure["error_classes"])
+    for name in (
+        "OperationalError",
+        "IntegrityError",
+        "ConnectionError",
+        "PermissionError",
+        "FileNotFoundError",
+        "ValueError",
+        "RuntimeError",
+        "HTTPError",
+    ):
+        if re.search(r"\b" + name + r"\b", text):
+            classes.add(name)
+    failure["error_classes"] = sorted(classes)
+    return {
+        "npm_codes": result["npm_codes"],
+        "categories": sorted(categories),
+        "last_phase": max(phases)[1] if phases else "unknown",
+        "failure_metadata": failure,
+    }
+
+
 def run(root):
     baseline = root / ".runtime/c03"
     tree = verify_baseline(baseline)
     result = subprocess.run(["sh", "docker/verify_c03.sh"], cwd=baseline)
     record = {"baseline_tree": tree, "exit_code": result.returncode, "logs": {}}
+    known_files = {
+        path.relative_to(baseline).as_posix()
+        for name in ("apps", "config", "tests")
+        for path in (baseline / name).rglob("*.py")
+        if path.is_file() and not path.is_symlink()
+    }
     # Read only known private stage logs, never upload them or reproduce text.
     for stage in ("exact_original_c02",):
         path = baseline / ".runtime/task14-private" / (stage + ".log")
@@ -114,13 +179,7 @@ def run(root):
             with path.open("rb") as stream:
                 stream.seek(max(0, path.stat().st_size - 4_000_000))
                 text = stream.read(4_000_000).decode("utf-8", errors="replace")
-            record["logs"][stage] = classify_private_log(text)
-    known_files = {
-        path.relative_to(baseline).as_posix()
-        for name in ("apps", "config", "tests")
-        for path in (baseline / name).rglob("*.py")
-        if path.is_file() and not path.is_symlink()
-    }
+            record["logs"][stage] = classify_prerequisite_private_log(text, known_files)
     for stage in (
         "upgraded_c02_browser",
         "clean_owner_browser",

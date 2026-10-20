@@ -1753,3 +1753,46 @@ suite is being inspected, and cannot substitute for real service evidence.
   Ruff/format532 files pass. No migration or production code changes in this
   correction. New-head inherited SQL and all15 hosted gates remain mandatory.
 Task6 IN_PROGRESS; no Task7 or later implementation. No merge/deploy/C05/live release.
+
+
+### Task 6 — schema GREEN; mandatory immutable prerequisite failure diagnostics
+
+- Source5b9d4c638dc5076d0fca381150cd3363e9bfdfc8/tree66ec32d3a29025df7ce03a762e2cfaf474874c63,
+  run39439640428: PostgreSQL118685792325 **374 passed**, all other categories0,
+  exit0/Task6. Measured30000-row plan10 results/2 indexes/4.86ms/441 blocks.
+  Inherited migrations118685792113 naturally0/cleanup, Tasks8/9/10 counts
+  108/89/86 all0failed/0skipped; exact nine-table correction is real SQL GREEN.
+- Mandatory historical audit118685792206 verified ten earlier tasks then recorded
+  historical_http_error HTTP502, endpoint_family=actions, and HTTPError failure.
+  Artifact12272969991 digestc55ba26edc416bbeb00925e6e638519fbd127546a5f1af48792a65ceaefe4d25
+  independently downloaded/matched. This is observed external API failure, not
+  acceptance. No same-SHA retry used; policy would allow one evidence-backed retry
+  after terminal status, but the separate unknown baseline failure does not
+  justify a retry-to-pass of the whole run.
+- Mandatory immutable baseline118685792403 failed exact_original_c02 exit1.
+  Original C03 tree5c294cb330cf08b297cc01c8baa27adb1e6b93b7 verifies; its finite
+  original diagnostic has no exception/count/location/infrastructure detail.
+  Outer original-C02 metadata also has empty npm/categories. Artifact12274616510
+  digestaab4dfc7a7aeb2d09e32a1be480c4b0e2ac32c2483ad432658fd248239ff6bda
+  independently downloaded/matched. Private raw logs ended with that runner;
+  none are recovered or invented. No transient classification, blind retry,
+  assertion waiver or claim of original-baseline success.
+- Actual local diagnostic RED7 asserts missing finite prerequisite classifier.
+  GREEN12 includes those privacy/category/location bounds plus unchanged observer
+  exact-invocation/single-execution/exit17 propagation and browser privacy tests.
+  Current outer observer now inspects only the existing exact_original_c02 private
+  log, bounded4MB tail, with fixed infrastructure categories/last-phase enums and
+  twelve known-original-repository source locations/finite error/browser enums.
+  It prints no provider text, commands, locators, URLs, credentials, payloads,
+  private paths or raw logs. Marker presence is diagnostic evidence, not a causal
+  verdict or success condition. Existing npm classifier semantics are unchanged.
+- The original subprocess.run(["sh", "docker/verify_c03.sh"], cwd=baseline),
+  one execution, return code, immutable source, tests/assertions, timeouts, service
+  list and cleanup remain unchanged. No fixture or original verifier was edited.
+  This is an authorized bounded observability correction after a mandatory
+  evidence failure; new-head full original acceptance remains required.
+- Local focused254+37 subtests passes with zero failures/skips7.78s; whole-tree
+  Ruff/format533 files pass. No production selection/schema changes in this
+  diagnostic checkpoint. If the prerequisite fails again, inspect its finite
+  evidence before any further action; no automatic retry of an unclassified cause.
+Task6 IN_PROGRESS. Task7+ NOT_STARTED. No merge/deploy/C05/production publication.
