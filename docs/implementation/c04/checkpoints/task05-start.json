@@ -65,5 +65,21 @@
       "behavior": "current reader preserves Coach at Nutritionist UTC expiry; cached row cutoff incorrectly removes Coach search result"
     }
   ],
-  "current_pending_requirement": "Fresh hosted exact-SHA full manifest and surviving-role expiry GREEN"
+  "current_pending_requirement": "Bounded browser diagnostics RED, then fresh complete immutable baseline and exact-SHA full manifest",
+  "baseline_failures": [
+    {
+      "implementation_sha": "5040ec5052b6ce064e7306f82f4ad9fb0d250966",
+      "implementation_tree": "15027a986697a0daa565f79b7e911dbc0b522dd3",
+      "run_id": 39396940944,
+      "job_id": 118541883751,
+      "stage": "clean_staff_browser",
+      "passed": 27,
+      "failed": 1,
+      "skipped": 0,
+      "node": "tests/e2e/c03/test_staff_verification.py::test_decision_reload_single_effect",
+      "underlying_exception_detail": "not available in original published finite diagnostic; not classified transient or waived",
+      "artifact_id": 12253842855,
+      "github_artifact_sha256": "a334b8fe91d68e653bfdba263913486ed48260e4169687c5dbb1b0396090a2a7"
+    }
+  ]
 }
