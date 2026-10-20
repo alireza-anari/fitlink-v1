@@ -447,6 +447,10 @@ def terminate_owned(child, marker):
 
 def progress_lines(text):
     """Only finite code/progress names; never relay raw child stdout/stderr."""
+    from docker.c04_baseline_runtime import classify_private_log
+
+    for code in classify_private_log(text)["npm_codes"]:
+        yield {"kind": "infrastructure_error", "category": "npm_" + code}
     for match in re.finditer(
         r"(?m)^C04_STORAGE_BOOTSTRAP "
         r"(alias|ready|mb|anonymous|policy|user|attach|cleanup|complete) "

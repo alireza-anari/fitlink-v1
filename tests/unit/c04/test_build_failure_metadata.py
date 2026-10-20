@@ -18,6 +18,8 @@ pytestmark = pytest.mark.unit
         ("no space left on device", "disk_full"),
         ("Temporary failure in name resolution", "dns_failure"),
         ("connection refused", "connection_refused"),
+        ("npm error code E503", "npm_E503"),
+        ("npm ERR! code ECONNRESET", "npm_ECONNRESET"),
     ],
 )
 def test_build_failure_metadata_excludes_arbitrary_child_output(message, category):
@@ -30,6 +32,20 @@ def test_build_failure_metadata_excludes_arbitrary_child_output(message, categor
 
 def test_unrecognized_child_output_is_not_relayed():
     assert list(progress_lines("private-source-url health-data secret-token")) == []
+
+
+def test_private_prerequisite_log_classifies_only_allowlisted_npm_codes(tmp_path):
+    from docker.c03_upgrade_probe import private_log_metadata
+
+    path = tmp_path / "private.log"
+    path.write_text(
+        "npm error code E503\nnpm error code PRIVATE_TOKEN\n"
+        "npm error private-source-url health-data secret-token\n"
+    )
+    metadata = private_log_metadata(path)
+    assert metadata["infrastructure"] == ["npm_E503"]
+    assert "PRIVATE_TOKEN" not in json.dumps(metadata)
+    assert "secret-token" not in json.dumps(metadata)
 
 
 def test_build_error_is_journaled_without_replacing_real_failure(tmp_path):

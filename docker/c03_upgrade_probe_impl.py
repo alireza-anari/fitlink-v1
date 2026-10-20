@@ -12,6 +12,8 @@ from uuid import uuid4
 
 def private_log_metadata(path):
     """Bounded static diagnostics only; private error text never leaves the host."""
+    from docker.c04_baseline_runtime import classify_private_log
+
     with Path(path).open("rb") as stream:
         stream.seek(0, 2)
         stream.seek(max(0, stream.tell() - 65536))
@@ -67,6 +69,9 @@ def private_log_metadata(path):
         )
         if re.search(pattern, text)
     ]
+    infrastructure.extend(
+        "npm_" + code for code in classify_private_log(text)["npm_codes"]
+    )
     return {
         "exceptions": sorted(exceptions),
         "tests": sorted(tests)[-24:],
