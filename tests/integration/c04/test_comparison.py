@@ -80,3 +80,47 @@ def test_off_flag_clear_and_hidden_target_revalidation(corpus):
     current = require("read_comparison")(scope(person), timezone.now())
     assert current.items == () and current.version == selected.version
     assert change(person, "clear", None, current.version).items == ()
+
+
+def test_session_expiry_during_buffered_read_denies_release(corpus):
+    from datetime import timedelta
+
+    from django.contrib.sessions.models import Session
+
+    person = visitor()
+    target, _ = corpus()
+    selected_scope = scope(person)
+    first = require("read_comparison")(selected_scope, timezone.now())
+    change(person, "add", target.profile.id, first.version)
+
+    def expire(value):
+        assert len(value.items) == 1
+        Session.objects.filter(session_key=person.request.session.session_key).update(
+            expire_date=timezone.now() - timedelta(seconds=1)
+        )
+        return value
+
+    with pytest.raises(PermissionError):
+        require("read_comparison")(selected_scope, timezone.now(), release=expire)
+
+
+def test_actual_login_and_account_switch_do_not_merge_visitor_selections(corpus):
+    from django.db import transaction
+
+    from apps.accounts.sessions import issue_session
+    from apps.governance.audit import append_event
+
+    person = visitor()
+    target, _ = corpus()
+    old_scope = scope(person)
+    first = require("read_comparison")(old_scope, timezone.now())
+    change(person, "add", target.profile.id, first.version)
+    for phone in ("+989155550006", "+989155550007"):
+        owner = athlete(phone)
+        with transaction.atomic():
+            issue_session(
+                person.request, owner.user, "normal", timezone.now(), append_event
+            )
+        assert require("read_comparison")(scope(person), timezone.now()).items == ()
+    with pytest.raises(PermissionError):
+        require("read_comparison")(old_scope, timezone.now())

@@ -1591,3 +1591,52 @@ RED, not Task6 acceptance. Full hosted Task6 acceptance will require installed
 Task6 entrypoints, real PostgreSQL concurrency and all fifteen mandatory jobs.
 Next implement only approved owned/session selection boundaries after RED.
 No Task7, public adapters, merge, deployment or production enablement.
+
+
+### Task 6 — hosted behavioral RED; first bounded owned-selection candidate
+
+- Test-only9b6779a0fff06282150b9e74f576228ddc07e6fe, run39433356334,
+  PostgreSQL118663865773:336 passed/26 failed, error/skip/xfail/xpass/deselection0,
+  exit1. Seventeen contract assertions and nine owned/session-boundary assertions
+  identify missing behavior; actual PostgreSQL existing cases and fixtures pass.
+  Foundation expected missing-contract failures are not an inherited waiver.
+  Native job failure in the RED run still needs finite evidence classification;
+  no cause or transient classification is inferred.
+- Candidate introduces private Favorite/ComparisonCollection/ComparisonEntry and
+  separate immutable operation receipts, no stored public names/media. SQL enforces
+  unique favorite, collection owner XOR session digest, unique target/slot and
+  slot1..3, immutable ownership/receipt/entry identity, positive collection version.
+  New0003 additive migration only; historical migrations unchanged.
+- Marketplace services receive trusted composition callbacks. Current AccountActor
+  and existing own-athlete selector are required, without profile activation.
+  Visitor scope derives from server DB session secret plus HMAC bound to session
+  key/key-id; every read/write checks current unexpired DB session. Invalid
+  authenticated sessions cannot become anonymous. Existing login/logout/session
+  flush separates visitor/account selections; no merge/client scope IDs.
+- Sorted caller/target User anchors precede collection locks; visitor session lock
+  precedes collection lock. Changed entry hints deny rather than lock a new owner
+  out of order. Collection row lock plus SQL slots enforce concurrency cap.
+  Current public readers revalidate every returned target; inactive targets
+  contribute no name/media/hidden count. Current caller/session authority is
+  checked again after buffered render to enforce timestamp expiry.
+- Remove/clear remain account/session-authorized with flag off; additions require
+  current public eligibility. Replayed receipts do not grant stale target content.
+  Anonymous CSRF enforcement and 30/min selection HTTP admission are installed
+  with actual adapters in approved Task8; no public route exists here.
+- Added actual PostgreSQL final-slot concurrency, direct SQL cap/XOR/ownership/
+  receipt tests and real DB-session expiry/login/account-switch tests. These are
+  awaiting first real-service execution, not claimed GREEN locally.
+- Local contract GREEN17; combined C04/current-scope/account-policy246+37 subtests,
+  no failures/skips. Whole-tree Ruff/format, Django check and mypy22 sources pass;
+  no migration drift. Local PostgreSQL/Docker unavailable, so no SQL/concurrency
+  GREEN claimed. Existing exact-scope/upgrade metadata controls initially failed
+  on precisely the five new models; narrowly extended their current-stage allowed
+  names only. All preservation/future-domain negatives and original baseline stay.
+- Installed cumulative runner/workflow now select Task6, render0003 SQL and retain
+  all15 inherited/media/full jobs. Full hosted exact-source proof, remaining
+  adversarial/privacy inventory and security review are mandatory before COMPLETE.
+- Ruling: private favorites listing bounds candidates to100 and fails closed on
+  larger lists, preserving private removal access — uses approved shared bounded
+  public-reader maximum; cost if wrong: paging must be added before large-list UX
+  acceptance. No record/content is silently truncated or deleted.
+Task6 IN_PROGRESS; Task7+ not started. No merge/deploy/production publication.

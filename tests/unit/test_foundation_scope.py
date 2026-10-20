@@ -139,6 +139,11 @@ def test_only_foundation_routes_and_identity_model():
         "AssistantMembership",
     }
     c04_models = {
+        "Favorite",
+        "FavoriteReceipt",
+        "ComparisonCollection",
+        "ComparisonEntry",
+        "ComparisonReceipt",
         "PublicProfessionalProjection",
         "PublicLocation",
         "ProjectionRefreshState",

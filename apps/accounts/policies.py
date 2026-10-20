@@ -61,6 +61,7 @@ NORMAL_ACTIONS = CONTROL_ACTIONS | frozenset(
         "professional.verify_submit",
         "asset.owner_read",
         "asset.owner_write",
+        "marketplace.selection",
     }
 )
 

@@ -201,6 +201,11 @@ def verify_preservation(previous, current):
             ("marketplace", "publiclocation"),
             ("marketplace", "projectionrefreshstate"),
             ("marketplace", "publicationscancursor"),
+            ("marketplace", "favorite"),
+            ("marketplace", "favoritereceipt"),
+            ("marketplace", "comparisoncollection"),
+            ("marketplace", "comparisonentry"),
+            ("marketplace", "comparisonreceipt"),
         }
     }
     types = [json.loads(row) for row in before["django_content_type"]["rows"]]

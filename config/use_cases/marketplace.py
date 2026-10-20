@@ -260,3 +260,33 @@ def search_public_professionals(criteria, cursor, at, *, release=None):
         )
     except DatabaseError:
         raise MarketplaceUnavailable("Marketplace temporarily unavailable") from None
+
+
+def comparison_scope(request, at):
+    from .marketplace_selections import comparison_scope as derive
+
+    return derive(request, at)
+
+
+def set_favorite(actor, identifier, selected, operation, at):
+    from .marketplace_selections import set_favorite as command
+
+    return command(actor, identifier, selected, operation, at)
+
+
+def list_favorites(actor, at, *, release=None):
+    from .marketplace_selections import list_favorites as read
+
+    return read(actor, at, release=release)
+
+
+def read_comparison(scope, at, *, release=None):
+    from .marketplace_selections import read_comparison as read
+
+    return read(scope, at, release=release)
+
+
+def change_comparison(scope, command, identifier, version, operation, at):
+    from .marketplace_selections import change_comparison as change
+
+    return change(scope, command, identifier, version, operation, at)

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "task": 6,
+  "state": "IN_PROGRESS",
+  "approved_plan_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+  "approved_plan_tree": "1478d691b2a60d95f6c0d2ce5e561d34f59a61c0",
+  "approved_plan_blob": "f1225196c95a203e440afc4da362b74806e84f20",
+  "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+  "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+  "base_commit": "edd6b30081a7b62ef1a38ec06721ccdba7829588",
+  "red": {
+    "implementation_sha": "9b6779a0fff06282150b9e74f576228ddc07e6fe",
+    "run_id": 39433356334,
+    "job_id": 118663865773,
+    "passed": 336,
+    "failed": 26,
+    "error": 0,
+    "skipped": 0,
+    "exit_code": 1,
+    "behavior": "17 missing selection-contract and 9 missing owned/session-service assertions"
+  },
+  "focused_green": {
+    "unit_passed": 246,
+    "subtests_passed": 37,
+    "failed": 0,
+    "skipped": 0
+  },
+  "hosted_acceptance": null,
+  "current_pending_requirement": "Actual SQL/session/concurrency GREEN, privacy/security review and full exact-SHA 15-job acceptance",
+  "next_task": 6
+}
