@@ -336,8 +336,35 @@ def scanner_restored():
     event("real_scanner_restore_recovers_current_copy")
 
 
+def projection_recovery_witness(
+    sender=None, task_id=None, retval=None, state=None, **kwargs
+):
+    if (
+        getattr(sender, "name", None) != "apps.marketplace.tasks.reconcile_publications"
+        or state != "SUCCESS"
+        or not isinstance(retval, dict)
+        or type(retval.get("failures")) is not int
+        or retval["failures"] != 0
+        or type(retval.get("processed")) is not int
+        or retval["processed"] < 0
+    ):
+        return
+    try:
+        identifier = str(UUID(task_id))
+        client = redis_client()
+        if client.exists("c04-projection-proof:" + identifier):
+            client.set("c04-projection-done:" + identifier, "1", ex=180)
+    except Exception:
+        # A witness failure cannot manufacture recovery or expose provider text.
+        return
+
+
 def install_worker_probe():
+    from celery.signals import task_postrun
+
     from apps.assets import public_copies
+
+    task_postrun.connect(projection_recovery_witness, weak=False)
 
     original = public_copies.get_publication_store
 
@@ -416,9 +443,15 @@ def projection_restored():
     from django.utils import timezone
 
     from apps.marketplace.models import PublicProfessionalProjection
-    from config.use_cases.marketplace import public_professional
+    from apps.marketplace.tasks import reconcile_publications
+    from config.use_cases.marketplace import mark_profile_due, public_professional
 
     identifier = UUID(state()["profile_uuid"])
+    # This executes only after the shell has restarted the actual broker.
+    # Remove only the disposable fixture index, so earlier completion cannot
+    # satisfy this post-restart write. Keep the durable generation/history.
+    PublicProfessionalProjection.objects.filter(pk=identifier).delete()
+    mark_profile_due(identifier, timezone.now())
     # Existing private Beat and reconnecting worker, with no direct refresh call.
     wait(
         lambda: PublicProfessionalProjection.objects.filter(
@@ -426,6 +459,13 @@ def projection_restored():
         ).exists()
     )
     assert public_professional(identifier, timezone.now()) is None
+    client = redis_client()
+    task_id = str(uuid4())
+    client.set("c04-projection-proof:" + task_id, "1", ex=180)
+    reconcile_publications.apply_async(task_id=task_id, retry=False)
+    wait(lambda: client.get("c04-projection-done:" + task_id) in {b"1", "1"})
+    assert public_professional(identifier, timezone.now()) is None
+    event("restored_broker_delivers_unique_projection_task")
     event("existing_beat_and_restored_broker_purge_withdrawn_projection")
 
 

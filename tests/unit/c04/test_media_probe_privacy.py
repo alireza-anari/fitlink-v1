@@ -5,6 +5,68 @@ import json
 from docker import c04_media_probe
 
 
+def test_projection_recovery_witness_requires_exact_fresh_successful_task(monkeypatch):
+    from types import SimpleNamespace
+    from uuid import uuid4
+
+    witness = getattr(c04_media_probe, "projection_recovery_witness", None)
+    assert callable(witness), "Missing unique post-restart projection task witness"
+
+    class WitnessStore:
+        def __init__(self):
+            self.values = {}
+
+        def exists(self, key):
+            return key in self.values
+
+        def set(self, key, value, *, ex):
+            assert ex == 180
+            self.values[key] = value
+
+    store = WitnessStore()
+    monkeypatch.setattr(c04_media_probe, "redis_client", lambda: store)
+    identifier = str(uuid4())
+    sender = SimpleNamespace(name="apps.marketplace.tasks.reconcile_publications")
+    proof = "c04-projection-proof:" + identifier
+    done = "c04-projection-done:" + identifier
+    witness(
+        sender=sender,
+        task_id=identifier,
+        retval={"processed": 1, "failures": 0},
+        state="SUCCESS",
+    )
+    assert done not in store.values
+    store.values[proof] = "1"
+    witness(
+        sender=sender,
+        task_id=identifier,
+        retval={"processed": 0, "failures": 1},
+        state="SUCCESS",
+    )
+    assert done not in store.values
+    witness(
+        sender=SimpleNamespace(name="other.task"),
+        task_id=identifier,
+        retval={"processed": 1, "failures": 0},
+        state="SUCCESS",
+    )
+    assert done not in store.values
+    witness(
+        sender=sender,
+        task_id=str(uuid4()),
+        retval={"processed": 1, "failures": 0},
+        state="SUCCESS",
+    )
+    assert done not in store.values
+    witness(
+        sender=sender,
+        task_id=identifier,
+        retval={"processed": 1, "failures": 0},
+        state="SUCCESS",
+    )
+    assert store.values[done] == "1"
+
+
 def test_probe_failure_metadata_excludes_private_exception_and_phase():
     error = RuntimeError("PRIVATE-SOURCE-SESSION-AND-GPS-SENTINEL")
     value = c04_media_probe.failure_metadata(error, "PRIVATE-PHASE-SENTINEL")
