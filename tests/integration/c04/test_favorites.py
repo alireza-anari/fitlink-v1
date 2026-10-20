@@ -79,3 +79,18 @@ def test_withdrawn_favorites_emit_no_name_media_or_hidden_count(corpus):
     row = ProfessionalPublication.objects.get(pk=draft.publication_id)
     unpublish_profile(target.actor, row.id, row.version, uuid4(), timezone.now())
     assert require("list_favorites")(person.actor, timezone.now()) == ()
+
+
+def test_forged_actor_denied_before_hidden_favorite_count_is_observed():
+    from dataclasses import replace
+
+    from apps.marketplace.selection_models import Favorite
+
+    victim = athlete()
+    unrelated = athlete("+989155550008")
+    Favorite.objects.bulk_create(
+        [Favorite(owner=victim.user, professional_uuid=uuid4()) for _ in range(101)]
+    )
+    forged = replace(unrelated.actor, user_uuid=victim.user.public_id)
+    with pytest.raises(PermissionError):
+        require("list_favorites")(forged, timezone.now())

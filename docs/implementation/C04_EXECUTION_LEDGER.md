@@ -1640,3 +1640,26 @@ No Task7, public adapters, merge, deployment or production enablement.
   public-reader maximum; cost if wrong: paging must be added before large-list UX
   acceptance. No record/content is silently truncated or deleted.
 Task6 IN_PROGRESS; Task7+ not started. No merge/deploy/production publication.
+
+
+### Task 6 — adversarial ownership/inventory review RED checkpoint
+
+Author review identified two further cases to prove before acceptance: all five
+new owned selection record kinds must appear in the private owner inventory
+without any visitor-session capability; a forged AccountActor must be rejected
+before a hidden favorite-candidate count can affect the response. Added actual
+PostgreSQL cases establishing these states through real selection commands/direct
+bounded synthetic rows. Production implementation is unchanged in this test-only
+checkpoint; neither defect is assumed proven before actual hosted execution.
+
+First implementation sourcee4d94129ad5796293960b5994bb365687e8cefdf,
+tree d2637fdb2c5b7396463ac64ef0c86909c177c2e8, run39434763002:
+owner118668746573 refused before child startup after2.0s; finite metadata proves
+baseline_available=false with docker ps -aq metadata_command_timeout, no reported
+conflicting project. No application/browser test ran. This is a mandatory failed
+gate, not a transient classification, retry-to-pass or waiver. PostgreSQL/full
+other candidate results remain pending at this checkpoint. No service assertion,
+ownership refusal, deadline or cleanup contract changed.
+
+Both review cases require actual behavioral RED then a bounded source correction
+and complete new-head acceptance; Task6 remains IN_PROGRESS. No Task7 start.

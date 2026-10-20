@@ -27,3 +27,36 @@ def test_projection_inventory_is_owned_and_contains_no_private_bindings(settings
         not hasattr(r, "authority_hash") and not hasattr(r, "snapshot") for r in derived
     )
     assert enumerate_marketplace_inventory(uuid4()) == ()
+
+
+def test_owned_selection_inventory_contains_all_records_without_session_capability(
+    corpus,
+):
+    from uuid import uuid4
+
+    from apps.marketplace.selection_models import ComparisonCollection
+    from config.use_cases.c04_privacy import enumerate_marketplace_inventory
+    from tests.integration.c04.selection_helpers import athlete, change, require, scope
+
+    owner = athlete()
+    target, _ = corpus()
+    require("set_favorite")(
+        owner.actor, target.profile.id, True, uuid4(), timezone.now()
+    )
+    state = require("read_comparison")(scope(owner), timezone.now())
+    change(owner, "add", target.profile.id, state.version)
+    collection = ComparisonCollection.objects.get(owner=owner.user)
+    rows = enumerate_marketplace_inventory(owner.user.public_id)
+    selected = [row for row in rows if row.kind.startswith("marketplace_selection")]
+    assert {row.kind for row in selected} == {
+        "marketplace_selection_favorite",
+        "marketplace_selection_favorite_receipt",
+        "marketplace_selection_collection",
+        "marketplace_selection_entry",
+        "marketplace_selection_comparison_receipt",
+    }, "Owned selection records are missing from the private inventory"
+    assert all(row.owner_uuid == owner.user.public_id for row in selected)
+    assert not any(
+        hasattr(row, "session_digest") or hasattr(row, "snapshot") for row in selected
+    )
+    assert str(collection.id) in repr(selected)
