@@ -200,5 +200,45 @@
     },
     "correction": "Single real transaction for 100 synthetic setup publications/withdrawals, committed before every existing search/reconciliation assertion. Commands, candidate cardinality, guards and deadline unchanged.",
     "pending": "Fresh hosted real PostgreSQL performance and all15 exact-source jobs; no waiver or retry."
+  },
+  "current_prerequisite_diagnostic": {
+    "sha": "2e8d23c834c646dbfaa109abf5b63fc28249e3e4",
+    "tree": "6b9c68123e86a71745e4ca42f9fd7744b8e7dad4",
+    "run_id": 39449624858,
+    "run_attempt": 1,
+    "postgresql": {
+      "job_id": 118720654346,
+      "passed": 381,
+      "failed": 0,
+      "error": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0,
+      "exit_code": 0
+    },
+    "failed_prerequisite": {
+      "job_id": 118720654354,
+      "stage": "original_c02_runtime",
+      "exit_code": 1,
+      "cause": "unknown",
+      "artifact_id": 12277806760,
+      "digest": "sha256:f201834739a13a35ed625958100c56c021f33798a075da6da6c8f5d7951f5036",
+      "digest_verified": true
+    },
+    "failed_audit": {
+      "job_id": 118720654450,
+      "http_status": 502,
+      "artifact_id": 12278550294,
+      "digest": "sha256:217eb763deb8079c60ba9739d6eb0f41bd8855cd8eb6942ee0fc3c6283aa4b3b",
+      "digest_verified": true
+    },
+    "diagnostic_red": {
+      "failed": 2,
+      "passed": 7,
+      "command": ".runtime/venv/bin/python -m pytest tests/unit/c04/test_prerequisite_failure_metadata.py -q --strict-markers --tb=short --show-capture=no"
+    },
+    "local_environment": "exec-server transport disconnected; attempted write failed; no correction GREEN claimed",
+    "pending": "Fresh exact-source hosted full15, actual complete_backend natural0 and cleanup; no retry/waiver"
   }
 }

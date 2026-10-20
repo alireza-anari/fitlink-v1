@@ -1838,3 +1838,38 @@ correctly FAILED. No retry/waiver or COMPLETE checkpoint.
   The52+4 local diagnostic tests passed for the discarded observer proposal;
   that result is not claimed as proof of this fixture correction.
 Task6 remains IN_PROGRESS; Task7+ not started. No production enablement.
+
+### Task 6 — batched fixture PostgreSQL GREEN; current prerequisite diagnosis
+
+Source2e8d23c834c646dbfaa109abf5b63fc28249e3e4,
+tree6b9c68123e86a71745e4ca42f9fd7744b8e7dad4,
+run39449624858 attempt1 (remaining jobs still running at this checkpoint):
+- PostgreSQL118720654346:381 passed; failed/error/skipped/xfailed/xpassed/
+  deselected0, natural0. The batched100-candidate test and all unchanged budget/
+  recovery assertions pass on real PostgreSQL. Full900s regression proof remains
+  pending; no performance success inferred from this focused gate.
+- Current c03-final118720654354 failed earlier, before full backend:
+  original_c02_lock/sync/npm/css/js/static/lint/format/types/check/units/production
+  all exit0, original_c02_runtime exit1; exact_original_c02 exit1. Cause unproven.
+  Verified artifact12277806760 SHA256
+  f201834739a13a35ed625958100c56c021f33798a075da6da6c8f5d7951f5036.
+  No classification as transient and no blind retry.
+- Audit118720654450 independently verified historical tasks1–7, then Actions
+  HTTP502/HTTPError. Verified artifact12278550294 SHA256
+  217eb763deb8079c60ba9739d6eb0f41bd8855cd8eb6942ee0fc3c6283aa4b3b.
+  A bounded evidence-backed same-SHA retry would be permitted for this external
+  failure, but no retry was used while another mandatory cause is unknown.
+- Current upgrade metadata still used only the old npm-focused classifier,
+  unlike the immutable baseline observer added at e750f26. Local RED2+7 passed
+  cases proves TLS/daemon category observations are absent at this current path.
+  Add the same reviewed finite classifier only for exact_original_c02.log,
+  using existing64KiB tail and known test paths. No raw text/values/URLs export,
+  no changes to original sources, test commands, services, timeouts or exits.
+- Local execution server disconnected during the correction. The attempted
+  source-file write failed; no local GREEN/static result claimed for this new
+  diagnostic. Reconstructed the intended small patch from exact fetched GitHub
+  source with unique-match checks, preserving all published content. Hosted
+  verification is authoritative. Accessible published work and all prior
+  evidence remain preserved; no claim of recovering lost unpublished files.
+Task6 IN_PROGRESS; Task7+ not started. Fresh exact-source all15 jobs remain
+mandatory. No production publication, merge, deployment or C05.

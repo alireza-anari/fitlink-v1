@@ -12,7 +12,10 @@ from uuid import uuid4
 
 def private_log_metadata(path):
     """Bounded static diagnostics only; private error text never leaves the host."""
-    from docker.c04_baseline_runtime import classify_private_log
+    from docker.c04_baseline_runtime import (
+        classify_prerequisite_private_log,
+        classify_private_log,
+    )
 
     with Path(path).open("rb") as stream:
         stream.seek(0, 2)
@@ -72,13 +75,16 @@ def private_log_metadata(path):
     infrastructure.extend(
         "npm_" + code for code in classify_private_log(text)["npm_codes"]
     )
-    return {
+    result = {
         "exceptions": sorted(exceptions),
         "tests": sorted(tests)[-24:],
         "locations": locations,
         "counts": counts,
         "infrastructure": infrastructure,
     }
+    if Path(path).name == "exact_original_c02.log":
+        result["prerequisite"] = classify_prerequisite_private_log(text, known_tests)
+    return result
 
 
 def snapshot(connection):

@@ -45,3 +45,25 @@ def test_prerequisite_failure_progress_and_locations_are_bounded():
     assert len(value["failure_metadata"]["locations"]) == 12
     assert "PRIVATE_" not in json.dumps(value)
     assert "customer.py" not in json.dumps(value)
+
+
+@pytest.mark.parametrize(
+    "message,category",
+    [
+        ("TLS handshake timeout PRIVATE_TOKEN", "tls_timeout"),
+        ("Error response from daemon: PRIVATE_VALUE", "docker_daemon_error"),
+    ],
+)
+def test_current_upgrade_prerequisite_exports_same_finite_categories(
+    tmp_path, message, category
+):
+    from docker.c03_upgrade_probe import private_log_metadata
+
+    path = tmp_path / "exact_original_c02.log"
+    path.write_text("load metadata for PRIVATE_URL\n" + message)
+    value = private_log_metadata(path)
+    assert category in value.get("prerequisite", {}).get("categories", []), (
+        "Current upgrade prerequisite loses finite failure categories"
+    )
+    assert value["prerequisite"]["last_phase"] == "image_metadata"
+    assert "PRIVATE_" not in json.dumps(value)
