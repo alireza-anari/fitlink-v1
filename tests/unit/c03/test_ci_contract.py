@@ -541,7 +541,11 @@ def test_private_reconciler_does_not_replace_inherited_beat():
         "private-assets": {
             "task": "apps.assets.tasks.reconcile_private_assets",
             "schedule": 30.0,
-        }
+        },
+        "public-projections": {
+            "task": "apps.marketplace.tasks.reconcile_publications",
+            "schedule": 30.0,
+        },
     }
     assert private.conf.task_always_eager is False
     assert '"config.c03_celery:app"' in (ROOT / "compose.yaml").read_text()

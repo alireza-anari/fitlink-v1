@@ -56,4 +56,14 @@ stage=scanner_restart
 dc up -d --wait scanner
 stage=scanner_restored
 dc run --rm --no-deps checks timeout -k 5s 60s uv run --frozen python docker/c04_media_probe.py scanner-restored
+stage=projection_worker
+dc run --rm --no-deps checks timeout -k 5s 90s uv run --frozen python docker/c04_media_probe.py projection-worker
+stage=projection_broker_stop
+dc stop redis
+stage=projection_broker_outage
+dc run --rm --no-deps checks timeout -k 5s 40s uv run --frozen python docker/c04_media_probe.py projection-outage
+stage=projection_broker_restart
+dc up -d --wait redis
+stage=projection_broker_recovery
+dc run --rm --no-deps checks timeout -k 5s 90s uv run --frozen python docker/c04_media_probe.py projection-restored
 stage=complete

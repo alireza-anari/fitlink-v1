@@ -139,6 +139,10 @@ def test_only_foundation_routes_and_identity_model():
         "AssistantMembership",
     }
     c04_models = {
+        "PublicProfessionalProjection",
+        "PublicLocation",
+        "ProjectionRefreshState",
+        "PublicationScanCursor",
         "PublicAssetCopy",
         "PublicCopyAttempt",
         "ProfessionalPublication",

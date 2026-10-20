@@ -153,3 +153,26 @@ def test_flag_repository_outage_returns_unavailable_without_content(
     with pytest.raises(MarketplaceUnavailable) as error:
         api().public_professional(subject.profile.id, timezone.now())
     assert "PRIVATE_PROVIDER_DETAIL" not in str(error.value)
+
+
+@pytest.mark.parametrize(
+    "defect", ["private_field", "foreign_release", "old_generation"]
+)
+def test_direct_sql_cannot_cross_bind_or_pollute_projection(settings, defect):
+    from django.db import DatabaseError, transaction
+
+    from apps.marketplace.models import PublicProfessionalProjection
+
+    subject, draft = published(settings)
+    api().refresh_public_projection(subject.profile.id, timezone.now())
+    api().refresh_public_projection(subject.profile.id, timezone.now())
+    row = PublicProfessionalProjection.objects.get(pk=subject.profile.id)
+    values = {
+        "private_field": {
+            "snapshot": {**row.snapshot, "identity_name": "PRIVATE_SENTINEL"}
+        },
+        "foreign_release": {"publication_uuid": uuid4()},
+        "old_generation": {"generation": row.generation - 1},
+    }[defect]
+    with pytest.raises(DatabaseError), transaction.atomic():
+        PublicProfessionalProjection.objects.filter(pk=row.pk).update(**values)

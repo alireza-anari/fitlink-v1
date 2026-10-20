@@ -65,7 +65,11 @@ def test_future_dependency_negative_mutations(domain):
 
 
 def test_no_c04_route_index_projection_or_c09_fields():
-    assert not (FUTURE & {config.label for config in apps.get_app_configs()})
+    # C04 Task4 installs only the approved derived marketplace app. Original
+    # C03 absence remains exercised by the exact immutable hosted fixture.
+    assert not (
+        (FUTURE - {"marketplace"}) & {config.label for config in apps.get_app_configs()}
+    )
     forbidden_models = {
         "PublicProfessionalProfile",
         "ProfessionalProjection",

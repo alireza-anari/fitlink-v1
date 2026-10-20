@@ -14,7 +14,10 @@ from config.c03_event_handlers import (
     request_processing,
     verification_metadata,
 )
-from config.c04_event_handlers import professional_publication_metadata
+from config.c04_event_handlers import (
+    professional_publication_metadata,
+    with_projection_due,
+)
 
 
 def account_security(event, at):
@@ -67,16 +70,20 @@ def flag_metadata(event, at):
 
 HANDLERS = MappingProxyType(
     {
-        "account.security_changed": account_security,
+        "account.security_changed": with_projection_due(account_security),
         "consent.granted": consent_metadata,
         "consent.revoked": consent_metadata,
-        "privacy.intake_recorded": privacy_metadata,
+        "privacy.intake_recorded": with_projection_due(privacy_metadata),
         "feature_flag.changed": flag_metadata,
-        "professional.profile_changed": professional_profile_metadata,
+        "professional.profile_changed": with_projection_due(
+            professional_profile_metadata
+        ),
         "athlete.baseline_changed": athlete_baseline_metadata,
         "asset.processing_requested": request_processing,
-        "asset.cleanup_requested": cleanup_metadata,
-        "verification.changed": verification_metadata,
-        "professional.publication_changed": professional_publication_metadata,
+        "asset.cleanup_requested": with_projection_due(cleanup_metadata),
+        "verification.changed": with_projection_due(verification_metadata),
+        "professional.publication_changed": with_projection_due(
+            professional_publication_metadata
+        ),
     }
 )

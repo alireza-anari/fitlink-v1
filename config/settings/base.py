@@ -86,6 +86,7 @@ INSTALLED_APPS += [
     "apps.assets.apps.AssetsConfig",
     "apps.athletes.apps.AthletesConfig",
     "apps.professionals.apps.ProfessionalsConfig",
+    "apps.marketplace.apps.MarketplaceConfig",
 ]
 AUTH_USER_MODEL = "accounts.User"
 
@@ -123,7 +124,12 @@ CELERY_TASK_ALWAYS_EAGER = False
 CELERY_BEAT_SCHEDULE: dict[str, Any] = {
     "c02-outbox-scan": {"task": "apps.governance.tasks.scan_pending", "schedule": 30.0},
 }
-CELERY_IMPORTS = ("config.tasks", "apps.governance.tasks", "apps.assets.tasks")
+CELERY_IMPORTS = (
+    "config.tasks",
+    "apps.governance.tasks",
+    "apps.assets.tasks",
+    "apps.marketplace.tasks",
+)
 # Cleanup is separately opt-in; effective approved policy rows are still mandatory.
 ASSET_CLEANUP_ENABLED = env.bool_value("ASSET_CLEANUP_ENABLED", False)
 ASSET_PROCESSING_ENABLED = env.bool_value("ASSET_PROCESSING_ENABLED", False)

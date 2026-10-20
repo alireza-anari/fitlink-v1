@@ -225,6 +225,14 @@ def inherited_jobs_unchanged(data):
     )
     for name in INHERITED:
         observed = deepcopy(data["jobs"][name])
+        if name == "foundation":
+            typed = {
+                "name": "Typed C04 marketplace boundaries",
+                "run": "uv run --frozen mypy apps/marketplace",
+            }
+            if observed["steps"].count(typed) != 1:
+                return False
+            observed["steps"].remove(typed)
         # Only this exact additive fixture is permitted in the current-source
         # unit/full-rehearsal jobs. All inherited executable steps stay exact.
         if name in {"foundation", "c03-final"}:

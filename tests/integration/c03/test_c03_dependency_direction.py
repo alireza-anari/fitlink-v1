@@ -42,8 +42,15 @@ def test_no_c04_or_c09_database_surface():
     assert connection.vendor == "postgresql"
     tables = connection.introspection.table_names()
     assert not any(
-        table.startswith(tuple(f"{name}_" for name in FUTURE)) for table in tables
+        table.startswith(tuple(f"{name}_" for name in FUTURE - {"marketplace"}))
+        for table in tables
     )
+    assert {table for table in tables if table.startswith("marketplace_")} == {
+        "marketplace_publicprofessionalprojection",
+        "marketplace_publiclocation",
+        "marketplace_projectionrefreshstate",
+        "marketplace_publicationscancursor",
+    }
     assert not any(
         "public_projection" in table or "search_index" in table for table in tables
     )

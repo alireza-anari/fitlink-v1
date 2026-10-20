@@ -28,6 +28,9 @@ def failure_metadata(error, phase):
         "periodic-verify",
         "scanner-outage",
         "scanner-restored",
+        "projection-worker",
+        "projection-outage",
+        "projection-restored",
     }
     frames = []
     for frame, line in list(traceback.walk_tb(error.__traceback__))[-16:]:
@@ -359,6 +362,73 @@ def install_worker_probe():
     public_copies.get_publication_store = ObservedPublicationStore
 
 
+def projection_worker():
+    from django.utils import timezone
+
+    from apps.marketplace.models import PublicProfessionalProjection
+    from apps.marketplace.tasks import reconcile_publications
+    from config.use_cases.marketplace import public_professional
+
+    identifier = UUID(state()["profile_uuid"])
+    PublicProfessionalProjection.objects.filter(pk=identifier).delete()
+    reconcile_publications.apply_async(retry=False)
+    wait(
+        lambda: PublicProfessionalProjection.objects.filter(
+            pk=identifier, state="active"
+        ).exists()
+    )
+    assert public_professional(identifier, timezone.now()) is not None
+    event("real_worker_refreshes_current_projection")
+
+
+def projection_outage():
+    from django.utils import timezone
+
+    from apps.accounts.sessions import AccountActor, SessionScope
+    from apps.professionals.publication_models import ProfessionalPublication
+    from config.use_cases.marketplace import public_professional
+    from config.use_cases.publication import unpublish_profile
+
+    try:
+        redis_client().ping()
+    except Exception:
+        pass
+    else:
+        raise AssertionError("Broker fault was not established")
+    value = state()
+    actor = value["actor"]
+    actor = AccountActor(
+        UUID(actor["user_uuid"]),
+        actor["auth_version"],
+        SessionScope(actor["scope"]),
+        UUID(actor["control_id"]),
+        datetime.fromisoformat(actor["authenticated_at"]),
+    )
+    publication = ProfessionalPublication.objects.get(profile_id=value["profile_uuid"])
+    unpublish_profile(
+        actor, publication.id, publication.version, uuid4(), timezone.now()
+    )
+    assert public_professional(UUID(value["profile_uuid"]), timezone.now()) is None
+    event("real_broker_outage_withdrawal_denies_current_read")
+
+
+def projection_restored():
+    from django.utils import timezone
+
+    from apps.marketplace.models import PublicProfessionalProjection
+    from config.use_cases.marketplace import public_professional
+
+    identifier = UUID(state()["profile_uuid"])
+    # Existing private Beat and reconnecting worker, with no direct refresh call.
+    wait(
+        lambda: PublicProfessionalProjection.objects.filter(
+            pk=identifier, state="tombstone", snapshot={}
+        ).exists()
+    )
+    assert public_professional(identifier, timezone.now()) is None
+    event("existing_beat_and_restored_broker_purge_withdrawn_projection")
+
+
 if os.environ.get("C04_MEDIA_PROBE_WORKER") == "1":
     install_worker_probe()
 
@@ -375,6 +445,9 @@ if __name__ == "__main__":
         "periodic-verify": periodic_verify,
         "scanner-outage": scanner_outage,
         "scanner-restored": scanner_restored,
+        "projection-worker": projection_worker,
+        "projection-outage": projection_outage,
+        "projection-restored": projection_restored,
     }
     try:
         phases[mode]()

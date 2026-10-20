@@ -569,6 +569,9 @@ def inventory_c03_owner(owner_uuid, at):
             + enumerate_professional_inventory(owner_uuid)
             + enumerate_asset_inventory(owner_uuid, at)
         )
+        from config.use_cases.c04_privacy import enumerate_marketplace_inventory
+
+        records += enumerate_marketplace_inventory(owner_uuid)
         if len(records) > MAX_INVENTORY:
             raise PermissionError("Inventory bound exceeded")
         return OwnerInventory(owner_uuid, records)

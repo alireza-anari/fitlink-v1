@@ -15,12 +15,16 @@ from .outbox import append_outbox
 from .staff import require_staff
 
 
-def feature_enabled(key: str) -> bool:
+def feature_enabled(key: str, *, raise_unavailable: bool = False) -> bool:
     if key not in FEATURE_KEYS:
         return False
     try:
         return FeatureFlag.objects.get(key=key).enabled is True
-    except (DatabaseError, FeatureFlag.DoesNotExist):
+    except DatabaseError:
+        if raise_unavailable:
+            raise
+        return False
+    except FeatureFlag.DoesNotExist:
         return False
 
 

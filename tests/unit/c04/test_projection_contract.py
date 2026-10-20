@@ -45,3 +45,49 @@ def test_projection_due_batches_have_finite_bounds():
     for limit in [0, 101, True, -1]:
         with pytest.raises(ValueError):
             reconcile(timezone.now(), limit)
+
+
+def test_actual_flag_repository_error_is_distinct_from_disabled(monkeypatch):
+    from django.db import OperationalError
+    from django.utils import timezone
+
+    from apps.governance.flag_models import FeatureFlag
+    from config.use_cases.marketplace import current_source
+
+    def unavailable(*args, **kwargs):
+        raise OperationalError("PRIVATE_PROVIDER_DETAIL")
+
+    monkeypatch.setattr(FeatureFlag.objects, "get", unavailable)
+    with pytest.raises(OperationalError):
+        current_source(uuid4(), timezone.now())
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("biography", {"source_key": "PRIVATE_SENTINEL"}),
+        ("specialties", [{"private": "PRIVATE_SENTINEL"}]),
+        (
+            "locations",
+            [
+                {
+                    "country_code": "IR",
+                    "region": "Broad",
+                    "city": "Broad",
+                    "modes": ["online"],
+                    "latitude": 1,
+                }
+            ],
+        ),
+        ("experience_years", True),
+    ],
+)
+def test_public_dto_rejects_nested_or_mistyped_fields(field, value):
+    dto = boundary("apps.marketplace.contracts").PublicProfessionalDTO
+    with pytest.raises(ValueError):
+        dto(
+            uuid4(),
+            "public-test",
+            {"display_name": "Public", "verified_roles": ["coach"], field: value},
+            (),
+        )

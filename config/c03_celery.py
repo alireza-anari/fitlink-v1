@@ -13,5 +13,9 @@ app.conf.update(
             "task": "apps.assets.tasks.reconcile_private_assets",
             "schedule": 30.0,
         },
+        "public-projections": {
+            "task": "apps.marketplace.tasks.reconcile_publications",
+            "schedule": 30.0,
+        },
     }
 )
