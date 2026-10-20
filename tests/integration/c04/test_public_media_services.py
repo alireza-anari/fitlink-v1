@@ -1,5 +1,6 @@
 """Mandatory real MinIO/ClamAV/isolated decoder; no fake-service substitution."""
 
+import os
 from hashlib import sha256
 from io import BytesIO
 from urllib.error import HTTPError
@@ -42,7 +43,17 @@ def raster(*, eicar=False):
     return out.getvalue()
 
 
+def real_service_settings(settings):
+    # The inherited pytest --ds=test default intentionally uses fake storage.
+    # Only explicitly provisioned real services can override that fixture value.
+    assert os.environ.get("STORAGE_BACKEND") == "s3"
+    assert os.environ.get("ASSET_PROCESSING_ENABLED", "").casefold() in {"true", "1"}
+    settings.STORAGE_BACKEND = "s3"
+    settings.ASSET_PROCESSING_ENABLED = True
+
+
 def prepared_real(settings, monkeypatch, *, malicious=False, wrong_mime=False):
+    real_service_settings(settings)
     assert settings.STORAGE_BACKEND == "s3"
     assert settings.ASSET_PROCESSING_ENABLED is True
     store = S3PrivateStore()

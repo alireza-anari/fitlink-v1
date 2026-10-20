@@ -2,8 +2,10 @@
 
 import json
 import os
+import re
 import sys
 import time
+import traceback
 from datetime import datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
@@ -25,9 +27,26 @@ def failure_metadata(error, phase):
         "scanner-outage",
         "scanner-restored",
     }
+    frames = []
+    for frame in traceback.extract_tb(error.__traceback__)[-16:]:
+        try:
+            path = Path(frame.filename).resolve().relative_to(ROOT)
+        except (ValueError, OSError):
+            continue
+        name = path.as_posix()
+        if (
+            name.startswith(("apps/", "config/", "docker/", "tests/"))
+            and re.fullmatch(r"[A-Za-z0-9_./-]+\.py", name)
+            and (ROOT / path).is_file()
+            and re.fullmatch(r"[A-Za-z0-9_<>]+", frame.name)
+            and type(frame.lineno) is int
+            and 0 < frame.lineno <= 100_000
+        ):
+            frames.append({"file": name, "function": frame.name, "line": frame.lineno})
     return {
         "phase": phase if phase in allowed else "unknown",
         "error_class": error_category(error),
+        "frames": frames[-8:],
     }
 
 
