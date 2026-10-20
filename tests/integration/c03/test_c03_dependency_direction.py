@@ -38,6 +38,21 @@ def test_upstream_domains_do_not_import_profile_authority():
             assert reverse_imports(source)
 
 
+def current_marketplace_surface(tables):
+    # Current C04 Task6 additions only; original immutable C03 retains its test.
+    return {table for table in tables if table.startswith("marketplace_")} == {
+        "marketplace_publicprofessionalprojection",
+        "marketplace_publiclocation",
+        "marketplace_projectionrefreshstate",
+        "marketplace_publicationscancursor",
+        "marketplace_favorite",
+        "marketplace_favoritereceipt",
+        "marketplace_comparisoncollection",
+        "marketplace_comparisonentry",
+        "marketplace_comparisonreceipt",
+    }
+
+
 def test_no_c04_or_c09_database_surface():
     assert connection.vendor == "postgresql"
     tables = connection.introspection.table_names()
@@ -45,12 +60,7 @@ def test_no_c04_or_c09_database_surface():
         table.startswith(tuple(f"{name}_" for name in FUTURE - {"marketplace"}))
         for table in tables
     )
-    assert {table for table in tables if table.startswith("marketplace_")} == {
-        "marketplace_publicprofessionalprojection",
-        "marketplace_publiclocation",
-        "marketplace_projectionrefreshstate",
-        "marketplace_publicationscancursor",
-    }
+    assert current_marketplace_surface(tables)
     assert not any(
         "public_projection" in table or "search_index" in table for table in tables
     )

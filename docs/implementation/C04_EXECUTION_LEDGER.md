@@ -1723,3 +1723,33 @@ suite is being inspected, and cannot substitute for real service evidence.
 - Task6 IN_PROGRESS until these corrections pass real PostgreSQL and the complete
   new-head15-job manifest, cleanup and distinct source/security review. Task7+
   remain NOT_STARTED. No merge, deployment, production enablement or C05 work.
+
+
+### Task 6 — real review GREEN; narrow current-stage schema correction
+
+- f5c903bdd5b96d319feeb5173dbe001a21e5154d/tree58842c727283757f8bc6141ee8f2aa791e8cbd73,
+  run39437434939 PostgreSQL118678080183:373 passed, failed/error/skip/xfail/
+  xpass/deselection0, actualexit0, Task6 marker. All three reproduced review
+  defects and additional scope/receipt/SQL negatives now GREEN on real PostgreSQL.
+  Actual plan30000 documents/10 returned/2 indexes/4.669ms execution/441 blocks.
+- Mandatory inherited migrations118678080091 failed naturally1 with cleanup.
+  Actual first assertion: current-stage test_no_c04_or_c09_database_surface,
+  test_c03_dependency_direction.py48. Its four-table Task4 exact set rejects
+  the five approved Task6 selection tables. Task8=108/0/0, Task9=89/0/0,
+  Task10=85passed/1failed/0skipped, focused38 pass. No service outage or product
+  selection failure is inferred; this is not complete task acceptance.
+- Ruling: extend only the current-stage marketplace table set by the exact five
+  approved Task6 names, retaining exact equality and every future-domain/import/
+  professional-index/no-auto-copy assertion — matches installed0003 schema and
+  approved narrow current-stage adaptation contract; cost if wrong: full inherited
+  migrations and immutable baseline gates must reject the candidate.
+- Added a pure schema-guard mutation control: actual local RED1 explicit
+  Missing exact current-stage selection schema guard assertion; GREEN accepts
+  exactly nine approved tables and rejects each missing member or an extra
+  marketplace_private_directory table. Existing actual PostgreSQL assertion still
+  introspects the real installed schema. Original immutable C03 bytes/tests and
+  inherited workflow commands are unchanged. No assertion was removed or skipped.
+- Local focused247+37 subtests passed, zero failures/skips8.06s; whole-tree
+  Ruff/format532 files pass. No migration or production code changes in this
+  correction. New-head inherited SQL and all15 hosted gates remain mandatory.
+Task6 IN_PROGRESS; no Task7 or later implementation. No merge/deploy/C05/live release.

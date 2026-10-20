@@ -20,14 +20,14 @@
     "behavior": "17 missing selection-contract and 9 missing owned/session-service assertions"
   },
   "focused_green": {
-    "unit_passed": 246,
+    "unit_passed": 247,
     "subtests_passed": 37,
     "failed": 0,
     "skipped": 0,
-    "seconds": 8.49
+    "seconds": 8.06
   },
   "hosted_acceptance": null,
-  "current_pending_requirement": "Fresh actual PostgreSQL GREEN for all three reproduced review defects and extra scope/receipt/SQL cases, then complete exact-SHA 15-job acceptance and final Task6 review",
+  "current_pending_requirement": "Fresh current-stage exact nine-table guard and complete new-head 15-job hosted acceptance, cleanup and source/security review",
   "next_task": 6,
   "first_candidate": {
     "implementation_sha": "e4d94129ad5796293960b5994bb365687e8cefdf",
@@ -76,5 +76,27 @@
       "exit_code": 1,
       "behavior": "same two review defects plus comparison read creates selection collections"
     }
-  ]
+  ],
+  "review_green": {
+    "implementation_sha": "f5c903bdd5b96d319feeb5173dbe001a21e5154d",
+    "implementation_tree": "58842c727283757f8bc6141ee8f2aa791e8cbd73",
+    "run_id": 39437434939,
+    "job_id": 118678080183,
+    "passed": 373,
+    "failed": 0,
+    "error": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "executed_task": 6
+  },
+  "current_stage_schema_failure": {
+    "run_id": 39437434939,
+    "job_id": 118678080091,
+    "test": "tests/integration/c03/test_c03_dependency_direction.py::test_no_c04_or_c09_database_surface",
+    "location": 48,
+    "task10_passed": 85,
+    "task10_failed": 1,
+    "reason": "current-stage exact marketplace table allowlist names only four Task4 tables; five approved Task6 tables now installed",
+    "accepted": false
+  }
 }
