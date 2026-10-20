@@ -31,7 +31,19 @@ def refresh_public_projection(identifier, at, *, lock_owners=None, current_sourc
             .filter(pk=identifier)
             .first()
         )
-        generation = row.generation + 1 if row else 1
+        metadata = (
+            ProjectionRefreshState.objects.select_for_update()
+            .filter(pk=identifier)
+            .first()
+        )
+        # The index is disposable; retained due state owns generation continuity.
+        generation = (
+            max(
+                row.generation if row else 0,
+                metadata.generation if metadata else 0,
+            )
+            + 1
+        )
         state = "active" if source is not None else "tombstone"
         defaults = dict(
             state=state,

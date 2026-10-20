@@ -216,3 +216,25 @@ def test_rebuilt_disposable_index_preserves_durable_generation(settings):
     PublicProfessionalProjection.objects.filter(pk=subject.profile.id).delete()
     rebuilt = api().refresh_public_projection(subject.profile.id, timezone.now())
     assert rebuilt.generation > previous.generation
+
+
+@pytest.mark.parametrize("defect", ["state_zero", "cursor_zero", "state_rebind"])
+def test_durable_projection_metadata_rejects_invalid_identity_or_version(
+    settings, defect
+):
+    from django.db import DatabaseError, transaction
+
+    from apps.marketplace.models import ProjectionRefreshState, PublicationScanCursor
+
+    subject, draft = published(settings)
+    api().reconcile_publications(timezone.now(), 100)
+    if defect == "cursor_zero":
+        query = PublicationScanCursor.objects.all()
+        values = {"version": 0}
+    else:
+        query = ProjectionRefreshState.objects.filter(pk=subject.profile.id)
+        values = (
+            {"generation": 0} if defect == "state_zero" else {"profile_uuid": uuid4()}
+        )
+    with pytest.raises(DatabaseError), transaction.atomic():
+        assert query.update(**values) == 1

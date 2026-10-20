@@ -1,5 +1,7 @@
 """Projections supply candidates; current server source exclusively authorizes."""
 
+from itertools import islice
+
 from django.db import transaction
 from django.utils import timezone
 
@@ -9,7 +11,7 @@ from .contracts import context
 def public_professionals(
     identifiers, at, *, lock_owners=None, current_source=None, release=None
 ):
-    identifiers = tuple(identifiers)
+    identifiers = tuple(islice(identifiers, 101))
     if (
         len(identifiers) > 100
         or len(set(identifiers)) != len(identifiers)

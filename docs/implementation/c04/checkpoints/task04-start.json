@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "task": 4,
+  "state": "IN_PROGRESS",
+  "approved_plan_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+  "approved_plan_tree": "1478d691b2a60d95f6c0d2ce5e561d34f59a61c0",
+  "approved_plan_blob": "f1225196c95a203e440afc4da362b74806e84f20",
+  "base_commit": "5458a2a2df6f19c6c9efbed2348ce6fdd0ca3532",
+  "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+  "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+  "prerequisite": {
+    "task": 3,
+    "implementation_sha": "c4ea69fd84c8a9dae37f4101ec651755f2084701",
+    "implementation_tree": "2a0bd56f12325aaed042d45aa0b33b3bf586a6eb",
+    "run_id": 39354826027,
+    "run_attempt": 1,
+    "checkpoint_commit": "5458a2a2df6f19c6c9efbed2348ce6fdd0ca3532"
+  },
+  "red": {
+    "implementation_sha": "91adce6c011d83fc988d127382dc213af344ba72",
+    "run_id": 39377389046,
+    "job_id": 118478481357,
+    "passed": 204,
+    "failed": 13,
+    "error": 0,
+    "skipped": 0,
+    "note": "ten explicit missing-boundary assertions; three absent module/model imports separately recorded"
+  },
+  "sql_red": {
+    "implementation_sha": "8edaaaf7bf31307dc661b55286ceacab311bc784",
+    "implementation_tree": "546c9b653d6e5e18cdaecec20b5b44a980cb2ac5",
+    "run_id": 39378882587,
+    "job_id": 118483144184,
+    "passed": 231,
+    "failed": 4,
+    "actual_sql_assertions_failed": 3,
+    "account_fixture_failures": 1,
+    "error": 0,
+    "skipped": 0
+  },
+  "hosted_acceptance": null,
+  "next_task": 4
+}

@@ -91,3 +91,35 @@ def test_public_dto_rejects_nested_or_mistyped_fields(field, value):
             {"display_name": "Public", "verified_roles": ["coach"], field: value},
             (),
         )
+
+
+def test_public_batch_bound_does_not_consume_an_unbounded_iterable():
+    from django.utils import timezone
+
+    from apps.marketplace.selectors import public_professionals
+
+    def identifiers():
+        for _ in range(101):
+            yield uuid4()
+        raise AssertionError("Public reader consumed beyond its declared bound")
+
+    with pytest.raises(ValueError):
+        public_professionals(
+            identifiers(),
+            timezone.now(),
+            lock_owners=lambda ids: None,
+            current_source=lambda identifier, at: None,
+        )
+
+
+def test_all_projection_metadata_primary_keys_are_uuid():
+    from django.apps import apps
+    from django.db.models import UUIDField
+
+    for name in [
+        "PublicProfessionalProjection",
+        "PublicLocation",
+        "ProjectionRefreshState",
+        "PublicationScanCursor",
+    ]:
+        assert isinstance(apps.get_model("marketplace", name)._meta.pk, UUIDField)

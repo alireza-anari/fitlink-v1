@@ -89,8 +89,17 @@ class Migration(migrations.Migration):
             name="PublicationScanCursor",
             fields=[
                 (
+                    "id",
+                    models.UUIDField(
+                        primary_key=True,
+                        default=uuid.uuid4,
+                        editable=False,
+                        serialize=False,
+                    ),
+                ),
+                (
                     "name",
-                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                    models.CharField(max_length=32, unique=True),
                 ),
                 ("after_uuid", models.UUIDField(null=True)),
                 ("lease_uuid", models.UUIDField(null=True)),
