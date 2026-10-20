@@ -72,6 +72,10 @@ def test_sql_cap_and_immutable_owner_receipt_keys(corpus):
             collection=row, professional_uuid=uuid4(), slot=4
         )
     with pytest.raises(IntegrityError), transaction.atomic():
+        ComparisonEntry.objects.create(
+            collection=row, professional_uuid=target.profile.id, slot=2
+        )
+    with pytest.raises(IntegrityError), transaction.atomic():
         ComparisonCollection.objects.filter(pk=row.pk).update(
             owner=None, session_digest="b" * 64
         )

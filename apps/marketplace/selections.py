@@ -113,19 +113,24 @@ def _ids(collection):
     )
 
 
-def _locked(scope, target, at, authorize):
+def _locked(scope, target, at, authorize, *, create=True):
     hint = _query(scope).first()
     expected = _ids(hint) if hint else ()
     identifiers = tuple(dict.fromkeys((*expected, *((target,) if target else ()))))
     owner = authorize(scope, identifiers, at)
     if hint is None:
-        hint, _ = ComparisonCollection.objects.get_or_create(
-            **(
-                {"owner": owner}
-                if owner is not None
-                else {"session_digest": scope.session_digest}
+        if not create:
+            hint = _query(scope).select_for_update().first()
+            if hint is None:
+                return None
+        else:
+            hint, _ = ComparisonCollection.objects.get_or_create(
+                **(
+                    {"owner": owner}
+                    if owner is not None
+                    else {"session_digest": scope.session_digest}
+                )
             )
-        )
     row = _query(scope).select_for_update().get(pk=hint.pk)
     if expected != _ids(row):
         raise SelectionConflict("Selection changed")
@@ -145,9 +150,13 @@ def _read(row, at, current, release=None):
 def read_comparison(scope, at, *, authorize, current, release=None):
     context(UUID(int=0), at)
     with transaction.atomic():
-        row = _locked(scope, None, max(at, timezone.now()), authorize)
-        result = _read(row, at, current, release)
-        authorize(scope, _ids(row), max(at, timezone.now()))
+        row = _locked(scope, None, max(at, timezone.now()), authorize, create=False)
+        if row is None:
+            empty = ComparisonDTO(1, ())
+            result = release(empty) if release else empty
+        else:
+            result = _read(row, at, current, release)
+        authorize(scope, _ids(row) if row is not None else (), max(at, timezone.now()))
         return result
 
 

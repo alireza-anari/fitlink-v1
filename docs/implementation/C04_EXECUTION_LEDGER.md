@@ -1674,3 +1674,52 @@ This test-only checkpoint leaves production unchanged and requires actual hosted
 RED before correction. Earlier ownership/inventory review probes remain selected.
 Task6 stays IN_PROGRESS; no Task7. Local static build succeeds; full local unit
 suite is being inspected, and cannot substitute for real service evidence.
+
+
+### Task 6 — actual review REDs and bounded corrections
+
+- Coree4d9412 run39434763002 PostgreSQL118668746868:368 passed, all non-pass
+  categories0, exit0, actual Task6 marker; measured30000-row plan10 results,
+  2 indexes,4.042ms execution/441 blocks. This proves initial SQL/session/
+  concurrency cases, not task acceptance: owner118668746573 failed its2s
+  Docker inventory boundary before application tests, as recorded.
+- Review-onlyac675a3fba61e786b8f07465680b675777b3c69b run39435124778,
+  PostgreSQL118670016882:368 passed/exactly2 failed, errors/skips/xfails/
+  xpasses/deselections0, exit1. Inventory test reaches real owned selection
+  creation and fails missing five selection kinds. Forged actor test reaches
+  _favorite_ids and raises MarketplaceUnavailable on101 private hints instead
+  of PermissionError, confirming authorization happened too late.
+- Read-onlydd3606497ac09bb77e0cfb34a4a356f438c67568 run39435506219,
+  PostgreSQL118671325597:368 passed/exactly3 failed, other categories0, exit1.
+  Same two defects plus empty comparison reader creates selection collections
+  (test_comparison.py135). These are actual behavior failures after successful
+  fixtures/current owned commands, not missing services or import errors.
+- Corrected inventory to include all five account-owned selection kinds through
+  bounded exact-owner queries, cumulative existing1000-record ceiling, no target
+  snapshots/session secrets/digests. Classified as private account-selection
+  metadata with existing retain-only default; no legal duration, new hold
+  authority or destructive erasure policy is invented.
+- Added nonlocking current AccountActor preflight before favorite hint inspection.
+  It grants nothing: sorted locks and current account/athlete checks still repeat
+  inside the authoritative domain transaction. Invalid actors now deny before
+  hidden hint bounds can affect output.
+- Reader no longer creates ComparisonCollection: an absent authorized collection
+  yields empty version1. It rechecks after owner/session locks; a concurrently
+  changed hinted set conflicts instead of rendering unlocked targets. Only
+  commands create/mutate selection records. Server session scope metadata is
+  separate from selection state. Existing final current-session/time checks stay.
+- Added characterization negatives for forged visitor digest/no collection
+  allocation, changed favorite payload/operation conflict and duplicate SQL target.
+  All assertions retained; new real-service GREEN is required on this source.
+- Local final focused246+37 subtests passes, zero failures/skips8.49s; whole-tree
+  Ruff/format531 files, mypy22 source files, Django checks pass. Full local unit
+  run additionally observed931+37 passed/12 failed: one inherited readiness
+  subprocess exceeded20s because uv lacked this isolated environment's path
+  variables; exact same test with correct environment passed1/0 in0.65s.
+  Eleven inherited native decoder/isolation cases remain unavailable locally
+  (ten clean raster parameter cases and isolation probe); images/decoder bytes
+  equal original C03. No local full GREEN or isolation PASS is claimed, and no
+  assertion/isolation/deadline was weakened. Mandatory hosted isolation remains.
+- Task6 IN_PROGRESS until these corrections pass real PostgreSQL and the complete
+  new-head15-job manifest, cleanup and distinct source/security review. Task7+
+  remain NOT_STARTED. No merge, deployment, production enablement or C05 work.

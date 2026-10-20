@@ -10,9 +10,15 @@ from django.contrib.sessions.models import Session
 from django.utils import timezone
 
 from apps.accounts.models import User
-from apps.accounts.sessions import AccountActor, locked_actor, resolve_session
+from apps.accounts.sessions import (
+    AccountActor,
+    actor_user,
+    locked_actor,
+    resolve_session,
+)
 from apps.athletes.selectors import own_athlete_profile
 from apps.marketplace import selections
+from apps.marketplace.contracts import context
 from apps.marketplace.selection_contracts import ComparisonScope
 from apps.professionals.models import ProfessionalProfile
 from config.use_cases.marketplace import public_professionals
@@ -127,6 +133,11 @@ def set_favorite(actor, identifier, selected, operation, at):
 def list_favorites(actor, at, *, release=None):
     if not isinstance(actor, AccountActor):
         raise PermissionError("Selection unavailable")
+    context(actor.user_uuid, at)
+    # Reject forged/revoked actors before even inspecting private hint counts.
+    # This preflight grants nothing: the domain still locks all owners in sorted
+    # order and repeats current actor/athlete authorization inside its transaction.
+    actor_user(actor, "marketplace.selection", max(at, timezone.now()))
     return selections.list_favorites(
         actor,
         at,

@@ -135,3 +135,21 @@ def test_read_of_empty_comparison_does_not_create_selection_collection():
     assert ComparisonCollection.objects.count() == 0, (
         "Read-only comparison cannot create selection records"
     )
+
+
+def test_forged_visitor_digest_never_creates_or_reads_a_collection(corpus):
+    from dataclasses import replace
+
+    from apps.marketplace.selection_models import ComparisonCollection
+
+    person = visitor()
+    target, _ = corpus()
+    original = scope(person)
+    first = require("read_comparison")(original, timezone.now())
+    change(person, "add", target.profile.id, first.version)
+    before = ComparisonCollection.objects.count()
+    with pytest.raises(PermissionError):
+        require("read_comparison")(
+            replace(original, session_digest="0" * 64), timezone.now()
+        )
+    assert ComparisonCollection.objects.count() == before

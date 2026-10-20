@@ -94,3 +94,19 @@ def test_forged_actor_denied_before_hidden_favorite_count_is_observed():
     forged = replace(unrelated.actor, user_uuid=victim.user.public_id)
     with pytest.raises(PermissionError):
         require("list_favorites")(forged, timezone.now())
+
+
+def test_changed_favorite_payload_cannot_reuse_operation_receipt(corpus):
+    from apps.marketplace.selection_contracts import SelectionConflict
+
+    person = athlete()
+    target, _ = corpus()
+    operation = uuid4()
+    require("set_favorite")(
+        person.actor, target.profile.id, True, operation, timezone.now()
+    )
+    with pytest.raises(SelectionConflict):
+        require("set_favorite")(
+            person.actor, target.profile.id, False, operation, timezone.now()
+        )
+    assert len(require("list_favorites")(person.actor, timezone.now())) == 1

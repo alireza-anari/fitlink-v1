@@ -47,6 +47,40 @@ def enumerate_marketplace_inventory(owner_uuid):
                 deletion_behavior="suppress_projection",
             )
         )
+    from apps.marketplace.selection_models import (
+        ComparisonCollection,
+        ComparisonEntry,
+        ComparisonReceipt,
+        Favorite,
+        FavoriteReceipt,
+    )
+
+    # Account-owned private choices are separate from professional projections.
+    # Visitor capabilities and target snapshots never enter an owner's inventory.
+    for model, kind, owner_filter in [
+        (Favorite, "favorite", {"owner__public_id": owner_uuid}),
+        (FavoriteReceipt, "favorite_receipt", {"owner__public_id": owner_uuid}),
+        (ComparisonCollection, "collection", {"owner__public_id": owner_uuid}),
+        (ComparisonEntry, "entry", {"collection__owner__public_id": owner_uuid}),
+        (
+            ComparisonReceipt,
+            "comparison_receipt",
+            {"collection__owner__public_id": owner_uuid},
+        ),
+    ]:
+        for row in bounded_rows(model.objects.filter(**owner_filter)):
+            result.append(
+                InventoryRecord(
+                    "marketplace_selection_" + kind,
+                    row.id,
+                    owner_uuid,
+                    getattr(row, "version", 1),
+                    "account_selection",
+                    parent_uuid=getattr(row, "collection_id", None),
+                    classification="private_selection",
+                    deletion_behavior="retain_only",
+                )
+            )
     if len(result) > MAX_INVENTORY:
         raise PermissionError("Inventory bound exceeded")
     return tuple(result)

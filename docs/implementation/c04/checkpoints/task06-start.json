@@ -23,9 +23,58 @@
     "unit_passed": 246,
     "subtests_passed": 37,
     "failed": 0,
-    "skipped": 0
+    "skipped": 0,
+    "seconds": 8.49
   },
   "hosted_acceptance": null,
-  "current_pending_requirement": "Actual SQL/session/concurrency GREEN, privacy/security review and full exact-SHA 15-job acceptance",
-  "next_task": 6
+  "current_pending_requirement": "Fresh actual PostgreSQL GREEN for all three reproduced review defects and extra scope/receipt/SQL cases, then complete exact-SHA 15-job acceptance and final Task6 review",
+  "next_task": 6,
+  "first_candidate": {
+    "implementation_sha": "e4d94129ad5796293960b5994bb365687e8cefdf",
+    "implementation_tree": "d2637fdb2c5b7396463ac64ef0c86909c177c2e8",
+    "run_id": 39434763002,
+    "postgresql": {
+      "job_id": 118668746868,
+      "passed": 368,
+      "failed": 0,
+      "error": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "executed_task": 6
+    },
+    "mandatory_failure": {
+      "job_id": 118668746573,
+      "name": "c03-owner",
+      "reason": "fresh_runner_ownership_unavailable",
+      "baseline_available": false,
+      "metadata_command_timeout": "docker ps -aq",
+      "seconds": 2,
+      "application_tests_executed": 0
+    },
+    "accepted": false
+  },
+  "additional_reds": [
+    {
+      "implementation_sha": "ac675a3fba61e786b8f07465680b675777b3c69b",
+      "run_id": 39435124778,
+      "job_id": 118670016882,
+      "passed": 368,
+      "failed": 2,
+      "error": 0,
+      "skipped": 0,
+      "exit_code": 1,
+      "behavior": "missing private selection inventory; forged actor reaches favorite count boundary"
+    },
+    {
+      "implementation_sha": "dd3606497ac09bb77e0cfb34a4a356f438c67568",
+      "run_id": 39435506219,
+      "job_id": 118671325597,
+      "passed": 368,
+      "failed": 3,
+      "error": 0,
+      "skipped": 0,
+      "exit_code": 1,
+      "behavior": "same two review defects plus comparison read creates selection collections"
+    }
+  ]
 }
