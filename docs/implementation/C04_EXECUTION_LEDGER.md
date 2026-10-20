@@ -1443,3 +1443,9 @@ allowlisted phase/error class; exception text and private state never leave it.
 - Durable finite evidence: `docs/implementation/c04/checkpoints/task04-complete.json`; actual attempt-specific workflow/job identity, all runtime log digests, counts/stages/cleanup and media artifact binding pass `docker.c04_acceptance.validate_checkpoint`.
 
 **Current durable state:** Tasks 1–4 COMPLETE. Tasks 5–11 pending, strict order. **Next action:** Task 5 behavioral RED for bounded Persian PostgreSQL search/filters and exact signed visible-only pagination; do not restart earlier accepted tasks.
+
+## Task 5 — IN_PROGRESS — behavioral RED checkpoint
+
+- Prerequisite Task 4 accepted implementation `0353c16bd8a4712134d27f19e3478ac9b385586c`, tree `88f5ab8e53f21caa90d923b645d6e21b3bf92bea`, run `39385613444` attempt 1; docs checkpoint `277b2f848b8269a2b861aa4d9fad1f0cd71c51eb`, tree `809fda9259f3beb10f807380c53196d166ada494`.
+- New behavioral RED: 31 actual assertion failures in Persian normalization and bounded search-input tests against the unchanged Task 4 production behavior. Assertions explicitly identify missing normalization/search contracts; no import or infrastructure error is counted. Added real PostgreSQL tests require actual pg_trgm/two GIN indexes, fresh empty browse and denial of withdrawn stale candidates. The inherited cumulative gate still identifies installed Task 4 until Task 5 implementation wiring arrives; this bounded RED is not acceptance or a Task 4 regression waiver.
+- Scope is exactly approved Task 5 normalization/FTS/trigram/filter/keyset/quota work. No public adapters/UI or Task 6 work. No new production dependency. PostgreSQL extension availability and realistic measured query plans remain mandatory; no local service substitution.
