@@ -1,0 +1,509 @@
+{
+  "schema_version": 1,
+  "task": 5,
+  "state": "COMPLETE",
+  "approved_plan_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+  "approved_plan_tree": "1478d691b2a60d95f6c0d2ce5e561d34f59a61c0",
+  "approved_plan_blob": "f1225196c95a203e440afc4da362b74806e84f20",
+  "base_commit": "277b2f848b8269a2b861aa4d9fad1f0cd71c51eb",
+  "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+  "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+  "prerequisite": {
+    "task": 4,
+    "implementation_sha": "0353c16bd8a4712134d27f19e3478ac9b385586c",
+    "implementation_tree": "88f5ab8e53f21caa90d923b645d6e21b3bf92bea",
+    "run_id": 39385613444,
+    "checkpoint_commit": "277b2f848b8269a2b861aa4d9fad1f0cd71c51eb"
+  },
+  "red": {
+    "implementation_sha": "edd25dbbaaf3b26347014c008e779932e642fd46",
+    "implementation_tree": "5ca4fa141a9497e00fee2549237f5c773791464d",
+    "run_id": 39391863193,
+    "job_id": 118525050430,
+    "passed": 261,
+    "failed": 34,
+    "actual_behavior_assertions": 33,
+    "fixture_failures": 1,
+    "error": 0,
+    "skipped": 0
+  },
+  "hosted_acceptance": {
+    "entry": {
+      "task": 5,
+      "implementation_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+      "implementation_tree": "9bcda8c22f9880bcb591cd49952e645145cd225f",
+      "run_id": 39402163393,
+      "run_attempt": 1
+    },
+    "workflow": {
+      "id": 39402163393,
+      "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+      "run_attempt": 1,
+      "head_branch": "marketplace/c04-cloud",
+      "path": ".github/workflows/c04.yml",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_commit": {
+        "id": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "tree_id": "9bcda8c22f9880bcb591cd49952e645145cd225f",
+        "message": "fix(c04): observe immutable browser failures without changing acceptance",
+        "timestamp": "2026-10-20T09:38:27Z",
+        "author": {
+          "name": "Alireza Anari",
+          "email": "111903956+alireza-anari@users.noreply.github.com"
+        },
+        "committer": {
+          "name": "Alireza Anari",
+          "email": "111903956+alireza-anari@users.noreply.github.com"
+        }
+      }
+    },
+    "jobs": [
+      {
+        "id": 118559260364,
+        "name": "c04-baseline",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260758,
+        "name": "c04-postgresql",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260762,
+        "name": "c03-timeout-probe",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260783,
+        "name": "c02-migrations",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260803,
+        "name": "c04-public-media",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260812,
+        "name": "foundation",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260829,
+        "name": "c03-restart",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260864,
+        "name": "c03-evidence-audit",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260898,
+        "name": "c03-storage",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260904,
+        "name": "c03-final",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260925,
+        "name": "c03-staff",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559260942,
+        "name": "c03-task14-native",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559261000,
+        "name": "c03-owner",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118559261050,
+        "name": "c03-processing",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118579216470,
+        "name": "c04-final",
+        "run_id": 39402163393,
+        "run_attempt": 1,
+        "head_sha": "9609f7a009a416100b67e1fde985b227900ecb7e",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "next_task": 6,
+  "candidate_failures": [
+    {
+      "implementation_sha": "4dca2b50da9b33bcddca5efab9debeee1edde1a6",
+      "implementation_tree": "953ad54c23ca0ad1604d150b35099fc0f8854b0e",
+      "run_id": 39394356100,
+      "postgresql": {
+        "job_id": 118533271788,
+        "passed": 0,
+        "failed": 0,
+        "error": 1,
+        "skipped": 0,
+        "exit_code": 1,
+        "diagnosis": "duplicate unit/integration test_search_limiter module basename; reproduced in local combined collection"
+      },
+      "restart": {
+        "job_id": 118533271529,
+        "reason": "fresh_runner_ownership_unavailable",
+        "artifact_id": 12251091240,
+        "artifact_sha256": "03882912e83598ab1b67994bd8b70710dabe6878e84f57efb64e2965a0a43fb8",
+        "underlying_inventory_failure_or_collision": "not distinguishable from original finite diagnostic; not classified transient or waived"
+      }
+    }
+  ],
+  "additional_reds": [
+    {
+      "implementation_sha": "c7b8944dddc655852d66d1267fa9dbc80d6e3937",
+      "implementation_tree": "fab53895507e95a41176a02f7eb8d2da9a867031",
+      "run_id": 39396025416,
+      "job_id": 118538855244,
+      "passed": 333,
+      "failed": 1,
+      "error": 0,
+      "skipped": 0,
+      "behavior": "current reader preserves Coach at Nutritionist UTC expiry; cached row cutoff incorrectly removes Coach search result"
+    }
+  ],
+  "current_pending_requirement": null,
+  "baseline_failures": [
+    {
+      "implementation_sha": "5040ec5052b6ce064e7306f82f4ad9fb0d250966",
+      "implementation_tree": "15027a986697a0daa565f79b7e911dbc0b522dd3",
+      "run_id": 39396940944,
+      "job_id": 118541883751,
+      "stage": "clean_staff_browser",
+      "passed": 27,
+      "failed": 1,
+      "skipped": 0,
+      "node": "tests/e2e/c03/test_staff_verification.py::test_decision_reload_single_effect",
+      "underlying_exception_detail": "not available in original published finite diagnostic; not classified transient or waived",
+      "artifact_id": 12253842855,
+      "github_artifact_sha256": "a334b8fe91d68e653bfdba263913486ed48260e4169687c5dbb1b0396090a2a7"
+    }
+  ],
+  "diagnostic_red": {
+    "implementation_sha": "9ffe8efb30cab33152b0616ae7e30d9d6dd42fd1",
+    "implementation_tree": "73f0c00c58278267212c8df8deedb03aaf883757",
+    "run_id": 39401186561,
+    "job_id": 118556008893,
+    "passed": 924,
+    "subtests_passed": 37,
+    "failed": 2,
+    "reason": "missing bounded immutable-browser failure classifier; explicit assertion failures"
+  },
+  "runtime_evidence": {
+    "c04-baseline": {
+      "job_id": 118559260364,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "65c37feaee67a42924268ae792ed1074f468dfd71d7c096f6775c122d3217c19",
+      "stage_count": 127
+    },
+    "c04-postgresql": {
+      "job_id": 118559260758,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "174401db5f0acc95d39ae655496e231083128cbf7695d2903064101beb798327",
+      "deselected": 0,
+      "error": 0,
+      "passed": 336,
+      "xfailed": 0,
+      "xpassed": 0,
+      "executed_task": 5,
+      "query_plan": {
+        "buffer_blocks": 441,
+        "execution_ms": 4.131,
+        "index_nodes": 2,
+        "planning_ms": 0.601,
+        "returned": 10,
+        "rows": 30000
+      }
+    },
+    "c03-timeout-probe": {
+      "job_id": 118559260762,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "d6297c335eba9cfc09ffc3f7e1561c7197f47097d7a9880e2eb47c3983e873bc",
+      "intentional_child_deadline": true
+    },
+    "c02-migrations": {
+      "job_id": 118559260783,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "9f7ccef5d4a7acbe882aa4671aa791c793fe0e0cf6037ce27fb3da240e82fac6"
+    },
+    "c04-public-media": {
+      "job_id": 118559260803,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "236688f319a6c8b000a6be8bfb531501136ea271e9ccf7699dc72ab2ea4acc9a"
+    },
+    "foundation": {
+      "job_id": 118559260812,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "c8f3df092b6efbd695e6cb18034c7c0b0b0fc98b7ceb745aa443df4f454ec857"
+    },
+    "c03-restart": {
+      "job_id": 118559260829,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "75b6c84536f97a62669f1a563cbaec77b1ff1db35c5bb739adaa13525ac427bc"
+    },
+    "c03-evidence-audit": {
+      "job_id": 118559260864,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "84662518f1d6d88ff55216786612794fc27f484ec6f4364c89870b083cfe3ca3"
+    },
+    "c03-storage": {
+      "job_id": 118559260898,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "30de8fe297916babb3ec26d41fd663a4819f52d56b8cd58d4b1370973e5cd75d"
+    },
+    "c03-final": {
+      "job_id": 118559260904,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "04492430496cc94217e5b1e4ad1d8ca3ad04449a4df148ae177b134560c0ed2b",
+      "stage_count": 130
+    },
+    "c03-staff": {
+      "job_id": 118559260925,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "fc7a1673ad1d89712e6d372dfeaed64efee2dea1322f0f701fa67cd05eead982"
+    },
+    "c03-task14-native": {
+      "job_id": 118559260942,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "7947323a0595294f912468e40e8d031d53baa4714ce0cb3bf70dd045eddb915b"
+    },
+    "c03-owner": {
+      "job_id": 118559261000,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "0c6b4c55b1ff272f8767349cc2d0eedea070af9a698a5ebff63863041bcaae6a"
+    },
+    "c03-processing": {
+      "job_id": 118559261050,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "6a750ccce8b9e77150d5c4d380379a2b8b2ae80a52551df41080227dd8fb6fa8"
+    },
+    "c04-final": {
+      "job_id": 118579216470,
+      "exit_code": 0,
+      "failed": 0,
+      "skipped": 0,
+      "cleanup_complete": true,
+      "log_sha256": "24fe934cdaff86fb14c76eb4d895610190c09b03b795dc20a959585f0a98ba24",
+      "deselected": 0,
+      "error": 0,
+      "passed": 336,
+      "xfailed": 0,
+      "xpassed": 0,
+      "executed_task": 5,
+      "query_plan": {
+        "buffer_blocks": 441,
+        "execution_ms": 5.025,
+        "index_nodes": 2,
+        "planning_ms": 0.633,
+        "returned": 10,
+        "rows": 30000
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "id": 12258052330,
+      "name": "c04-baseline-metadata",
+      "digest": "sha256:1052aacdddc573aa16646940ecb670afc310316eaadcdf00af55e7f6281a48ff",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12257669493,
+      "name": "c03-task14-final",
+      "digest": "sha256:de0260593a576c1a64348f92cdbd6e9c048ed7b905f949650e98015e2c8923c3",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12257215876,
+      "name": "c03-foundation-diagnostics",
+      "digest": "sha256:1c869b0e250f9b4df000cf08111ea6fb1de25f7960ad1c1ce4ff134a186ac1a7",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12256655546,
+      "name": "c03-storage-diagnostics",
+      "digest": "sha256:f8900bee45c2d4cce2a9a42eeaaaebc07d5680902df3d08a89b847b43b8e560e",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12256302067,
+      "name": "c03-staff-diagnostics",
+      "digest": "sha256:b23e5b052fa0b432a014db4c416e0fcb55d56b663502b651a6df385ba71e1916",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12256291284,
+      "name": "c03-task13-restart",
+      "digest": "sha256:4c4b5426b6a533a891a37e6c5fb7c11d2b634b66fb359e34707f9116906b90a7",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12256100455,
+      "name": "c03-task13-history",
+      "digest": "sha256:c7ed2cc63d363670f564fdc1c0386a0edbaa0edea072b4ca6b24c382c31f04c9",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12255891372,
+      "name": "c03-processing-diagnostics",
+      "digest": "sha256:e351445bf5a8c1a5ececfe7656f54285345e44a5f86fb15a79d627247207b81f",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12255805134,
+      "name": "c03-timeout-probe-diagnostics",
+      "digest": "sha256:d9fd0dfaad916f9bf24469faf8e178af269b4a805df7882286aafb3f0ae98469",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12255757148,
+      "name": "c03-postgresql-diagnostics",
+      "digest": "sha256:7e9a99bb3e2d8f0e59f482d0b17b95169a9815d674db69a5620a29530b170d50",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12255536160,
+      "name": "c04-public-media-evidence",
+      "digest": "sha256:9c5dfc5f98f20c7032baa8e526638126019b85f84c113169470eb312fdf4e0b1",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12255531802,
+      "name": "c03-owner-diagnostics",
+      "digest": "sha256:ec736c1db2c22a255c690b7d845c359eb306f46b179475e4170489a3ff47a0ae",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12255466165,
+      "name": "c03-task14-native-diagnostic",
+      "digest": "sha256:910945275c93376e4dbbbf4042029efc67d71d864daa37a018282cb8bd931fb8",
+      "downloaded_digest_matched": true
+    }
+  ],
+  "review": {
+    "method": "distinct takeover author source/security review",
+    "critical": 0,
+    "important": 0,
+    "independent_reviewer": false
+  },
+  "focused_green": {
+    "local_c04_unit_passed": 216,
+    "subtests_passed": 37,
+    "failed": 0,
+    "skipped": 0
+  }
+}

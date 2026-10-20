@@ -1498,3 +1498,74 @@ allowlisted phase/error class; exception text and private state never leave it.
 - The immutable fixture and original tests/assertions are untouched. The exact `subprocess.run(["sh", "docker/verify_c03.sh"], cwd=baseline)` invocation, single execution, source pin, exit propagation, timeouts, service selection, screenshots/tracing prohibition and cleanup remain unchanged. Existing exact-command/exit tests remain mandatory and unchanged. This is diagnosis, not a retry-to-pass or acceptance waiver.
 - Historical failure `118541883751` remains preserved and its underlying detail remains unknown. This candidate must pass new diagnostic checks and every original baseline case naturally; if failure recurs, inspect the newly available finite source/operation metadata before any further action. Full exact-SHA 15-job acceptance remains mandatory. No local execution is claimed while the local executor is unavailable.
 - Task 5 remains IN_PROGRESS; no Task 6 work.
+
+
+### Task 5 COMPLETE — exclusive takeover acceptance — 2026-10-20
+
+User confirmed the previous executor stopped and authorized this session as sole
+writer. Independently fetched live HEAD9609f7a009a416100b67e1fde985b227900ecb7e,
+tree9bcda8c22f9880bcb591cd49952e645145cd225f, approved unchanged plan/blob and
+actual ancestry; no later publication on repeated live reads. Separate recovery
+clone preserves published history. Automated pruning removed the earlier scratch
+checkout; no absent unpublished state is claimed recovered. Tasks1–4 checkpoints
+are preserved and were not restarted. Protected completed/planning refs match the
+recorded values. Further publication uses nonforced expected-head leases.
+
+Run39402163393 attempt1 independently read: exact push/ref/path/head/tree,
+all15 mandatory jobs and every listed step SUCCESS. All fifteen logs inspected,
+with log SHA256 and exact identities retained in task05-complete.json.
+- PostgreSQL118559260758 and final118579216470: each336 passed; failure/error/
+  skip/xfail/xpass/deselection all0, actual0, installed Task5 marker, no migration
+  drift. Real pg_trgm/Gin, corpus expected order/variants/weights, paired location,
+  OR/AND filters, private field denial, role restriction and unchanged-counter
+  expiry (including surviving Coach), visible cursor pagination and stale100-row
+  budget/catch-up, populated0001→0002 backfill and real Redis concurrency/TTL/
+  connection-loss/recovery cases executed.
+- Actual EXPLAIN ANALYZE/BUFFERS over30000 candidate index documents:
+  PostgreSQL10 returned/2 index nodes/0.601ms planning/4.131ms execution/441 blocks;
+  final10/2/0.633ms/5.025ms/441 blocks. These measure the indexed candidate query
+  on the documented temporary index relation, not30000 independently authorized
+  professionals or Task10 end-to-end load. Separate real-domain corpus proves
+  publication authority and expected ranking; no privacy substitute.
+- Real media118559260803:24 passing, all other counts0, ten actual media/projection/
+  broker/Beat/scanner/SIGKILL recovery markers, natural0/complete cleanup.
+- Foundation118559260812:host926+37 subtests, runtime aggregate2163/0/0,
+  natural0/owned cleanup. Counts are reporter aggregates, not distinct functions.
+- Original immutable baseline118559260364:127 stages all0, backend1692,
+  final_rehearsal_passed after cleanup. Current full118559260904:130 stages0,
+  backend2030, final_rehearsal_passed/cleanup. Original source/tests unchanged.
+- Owner118559261000:75; staff118559260925:67; inherited PostgreSQL118559260783
+  Tasks8/9/10 counts108/89/86; storage118559260898, processing118559261050,
+  restart118559260829 all natural0/cleanup. Native118559260942 recorded stages0.
+  Timeout118559260762 preserves intentional child deadline with successful
+  supervisor ownership/cleanup. Historical118559260864 verifies12 prior tasks.
+
+All13 available artifacts downloaded; every SHA256 independently matched provider.
+Finite reports contain no nonpassed test reports or nonzero pytest exits.
+Baseline12258052330 digest1052aacdddc573aa16646940ecb670afc310316eaadcdf00af55e7f6281a48ff;
+full12257669493 digestde0260593a576c1a64348f92cdbd6e9c048ed7b905f949650e98015e2c8923c3;
+media12255536160 digest9c5dfc5f98f20c7032baa8e526638126019b85f84c113169470eb312fdf4e0b1.
+Full artifact bindings are in the checkpoint. Historical baseline failure and
+ownership refusal remain unknown-cause failures as recorded; fresh complete
+current-head success does not retrospectively classify or erase them.
+
+Distinct takeover author source/security review of the seven Task5 commits and
+current implementation checked frozen normalization/versioned additive backfill,
+weighted simple/parameterized FTS+trigram/quantized deterministic keysets, bounded
+criteria and signed criteria/time/page-size cursor, current sorted owner-locked
+revalidation/role intersection/final time fence, no counts/private keys in paging,
+100-candidate/2s statement/1s lock bounds, committed refresh-required recovery,
+HMAC/atomic TTL/closed quota behavior, preserved OTP semantics, no I/O under domain
+locks, migration guards and narrow finite diagnostics. No unresolved Critical or
+Important Task5 finding; author review, not independent final whole-branch review.
+HTTP admission integration remains approved Task8 scope, no early adapter added.
+
+Local focused C04 unit recheck216 passed+37 subtests, zero failed/skipped,
+9.23s with exact immutable C03 fixture. Installed validate_checkpoint accepts the
+complete exact-source record. Docker unavailable locally: all mandatory real
+services are the independently inspected hosted executions above. No mock/skipped
+service substitutes or new implementation changes made during takeover acceptance.
+
+Task5 COMPLETE at tested9609f7a/tree9bcda8c above. Completion docs are separate
+from accepted implementation authority. Next Task6 already authorized, strict
+order; no Task7+ start before preceding acceptance, no merge/deploy/C05/live flag.
