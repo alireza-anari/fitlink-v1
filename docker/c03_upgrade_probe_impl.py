@@ -195,6 +195,13 @@ def verify_preservation(previous, current):
         (model._meta.app_label, model._meta.model_name): model
         for model in apps.get_models()
         if model._meta.app_label in {"assets", "athletes", "professionals"}
+        or (model._meta.app_label, model._meta.model_name)
+        in {
+            ("marketplace", "publicprofessionalprojection"),
+            ("marketplace", "publiclocation"),
+            ("marketplace", "projectionrefreshstate"),
+            ("marketplace", "publicationscancursor"),
+        }
     }
     types = [json.loads(row) for row in before["django_content_type"]["rows"]]
     old_models = {(row["app_label"], row["model"]) for row in types}
@@ -242,7 +249,9 @@ def verify_preservation(previous, current):
         all(
             table["count"] == 0
             for name, table in after.items()
-            if name.startswith(("assets_", "athletes_", "professionals_"))
+            if name.startswith(
+                ("assets_", "athletes_", "professionals_", "marketplace_")
+            )
         ),
         "no automatic C03 business rows",
     )

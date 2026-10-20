@@ -26,10 +26,20 @@ BEGIN
         OR NOT EXISTS(
             SELECT 1 FROM professionals_professionalpublication p
             JOIN professionals_publicationrevision r ON r.publication_id=p.id
+            JOIN professionals_professionalprofile profile ON profile.id=p.profile_id
             WHERE p.id=NEW.publication_uuid AND p.profile_id=NEW.profile_uuid
               AND r.id=NEW.revision_uuid AND p.slug=NEW.slug
               AND r.source_profile_version=NEW.source_version
               AND NEW.publication_version<=p.version
+              AND r.confirmed_by_id=profile.user_id
+              AND r.confirmed_at IS NOT NULL
+              AND r.confirmed_at<=clock_timestamp()
+              AND NEW.snapshot-ARRAY(SELECT jsonb_object_keys(r.snapshot))='{}'::jsonb
+              AND (SELECT count(*) FROM jsonb_object_keys(NEW.snapshot))=
+                  (SELECT count(*) FROM jsonb_object_keys(r.snapshot))
+              AND (NEW.snapshot->'verified_roles') <@ (r.snapshot->'verified_roles')
+              AND (NEW.snapshot->'qualification_summaries') <@
+                  (r.snapshot->'qualification_summaries')
         )
     ) THEN
         RAISE EXCEPTION 'Projection public binding denied' USING ERRCODE='23514';
@@ -60,9 +70,36 @@ $$;
 CREATE TRIGGER fitlink_c04_projection_state_binding
 BEFORE INSERT OR UPDATE ON marketplace_projectionrefreshstate
 FOR EACH ROW EXECUTE FUNCTION fitlink_guard_c04_projection_state();
+CREATE FUNCTION fitlink_guard_c04_public_location() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF TG_OP='UPDATE' AND
+       (NEW.id,NEW.projection_id,NEW.created_at) IS DISTINCT FROM
+       (OLD.id,OLD.projection_id,OLD.created_at) THEN
+        RAISE EXCEPTION 'Public filter identity denied' USING ERRCODE='23514';
+    END IF;
+    IF NOT EXISTS(
+        SELECT 1 FROM marketplace_publicprofessionalprojection p
+        CROSS JOIN LATERAL jsonb_array_elements(
+            coalesce(p.snapshot->'locations','[]'::jsonb)) AS location(value)
+        WHERE p.profile_uuid=NEW.projection_id AND p.state='active'
+          AND location.value=jsonb_build_object(
+              'country_code',NEW.country_code,'region',NEW.region,
+              'city',NEW.city,'modes',NEW.modes)
+    ) THEN
+        RAISE EXCEPTION 'Public filter source denied' USING ERRCODE='23514';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+CREATE TRIGGER fitlink_c04_public_location_binding
+BEFORE INSERT OR UPDATE ON marketplace_publiclocation
+FOR EACH ROW EXECUTE FUNCTION fitlink_guard_c04_public_location();
 """
 
 REVERSE_GUARDS = r"""
+DROP TRIGGER fitlink_c04_public_location_binding ON marketplace_publiclocation;
+DROP FUNCTION fitlink_guard_c04_public_location();
 DROP TRIGGER fitlink_c04_projection_state_binding ON marketplace_projectionrefreshstate;
 DROP FUNCTION fitlink_guard_c04_projection_state();
 DROP TRIGGER fitlink_c04_projection_binding ON marketplace_publicprofessionalprojection;
