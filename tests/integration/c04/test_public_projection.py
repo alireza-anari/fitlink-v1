@@ -88,6 +88,7 @@ def test_initial_scan_finds_already_receipted_profiles(settings):
         "flag_missing",
         "source_edit",
         "account_inactive",
+        "pending_deletion",
         "expiry",
         "identity_revoked",
     ],
@@ -107,9 +108,17 @@ def test_broker_and_beat_down_reads_still_deny(settings, failure):
         FeatureFlag.objects.filter(key="marketplace").delete()
     elif failure == "source_edit":
         save(subject, "description", {"biography": "Unconfirmed private edit"})
-    elif failure == "account_inactive":
-        subject.user.is_active = False
-        subject.user.save(update_fields=["is_active"])
+    elif failure in {"account_inactive", "pending_deletion"}:
+        from apps.accounts.state import transition_account_state
+        from apps.governance.audit import append_event
+
+        transition_account_state(
+            subject.user.public_id,
+            subject.user.auth_version,
+            "suspended" if failure == "account_inactive" else "pending_deletion",
+            at,
+            append_event,
+        )
     elif failure == "expiry":
         at = draft.valid_until
     else:
@@ -130,6 +139,25 @@ def test_old_event_cannot_restore_withdrawn_or_staff_hidden_release(settings):
     row.hidden_case_uuid = uuid4()
     row.version += 1
     row.save()
+    from types import SimpleNamespace
+
+    from django.db import transaction
+
+    from config.event_handlers import HANDLERS
+
+    old = SimpleNamespace(
+        aggregate_uuid=row.id,
+        aggregate_version=draft.version,
+        payload={
+            "publication_uuid": str(row.id),
+            "user_uuid": str(subject.user.public_id),
+        },
+    )
+    with transaction.atomic():
+        assert (
+            HANDLERS["professional.publication_changed"](old, timezone.now())
+            == "skipped"
+        )
     assert (
         api().refresh_public_projection(subject.profile.id, timezone.now()).state
         == "tombstone"
@@ -176,3 +204,15 @@ def test_direct_sql_cannot_cross_bind_or_pollute_projection(settings, defect):
     }[defect]
     with pytest.raises(DatabaseError), transaction.atomic():
         PublicProfessionalProjection.objects.filter(pk=row.pk).update(**values)
+
+
+def test_rebuilt_disposable_index_preserves_durable_generation(settings):
+    from apps.marketplace.models import PublicProfessionalProjection
+
+    subject, draft = published(settings)
+    first = api().refresh_public_projection(subject.profile.id, timezone.now())
+    previous = api().refresh_public_projection(subject.profile.id, timezone.now())
+    assert previous.generation > first.generation
+    PublicProfessionalProjection.objects.filter(pk=subject.profile.id).delete()
+    rebuilt = api().refresh_public_projection(subject.profile.id, timezone.now())
+    assert rebuilt.generation > previous.generation

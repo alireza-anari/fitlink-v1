@@ -6,6 +6,47 @@ import django.db.models.deletion
 import django.utils.timezone
 from django.db import migrations, models
 
+FORWARD_GUARDS = r"""
+CREATE FUNCTION fitlink_guard_c04_projection() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF TG_OP='UPDATE' AND (
+        NEW.profile_uuid IS DISTINCT FROM OLD.profile_uuid
+        OR NEW.created_at IS DISTINCT FROM OLD.created_at
+        OR NEW.generation<OLD.generation
+    ) THEN
+        RAISE EXCEPTION 'Projection identity denied' USING ERRCODE='23514';
+    END IF;
+    IF NOT EXISTS(SELECT 1 FROM professionals_professionalprofile
+                  WHERE id=NEW.profile_uuid) THEN
+        RAISE EXCEPTION 'Projection source denied' USING ERRCODE='23514';
+    END IF;
+    IF NEW.state='active' AND (
+        fitlink_valid_public_snapshot(NEW.snapshot) IS NOT TRUE
+        OR NOT EXISTS(
+            SELECT 1 FROM professionals_professionalpublication p
+            JOIN professionals_publicationrevision r ON r.publication_id=p.id
+            WHERE p.id=NEW.publication_uuid AND p.profile_id=NEW.profile_uuid
+              AND r.id=NEW.revision_uuid AND p.slug=NEW.slug
+              AND r.source_profile_version=NEW.source_version
+              AND NEW.publication_version<=p.version
+        )
+    ) THEN
+        RAISE EXCEPTION 'Projection public binding denied' USING ERRCODE='23514';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+CREATE TRIGGER fitlink_c04_projection_binding
+BEFORE INSERT OR UPDATE ON marketplace_publicprofessionalprojection
+FOR EACH ROW EXECUTE FUNCTION fitlink_guard_c04_projection();
+"""
+
+REVERSE_GUARDS = r"""
+DROP TRIGGER fitlink_c04_projection_binding ON marketplace_publicprofessionalprojection;
+DROP FUNCTION fitlink_guard_c04_projection();
+"""
+
 
 class Migration(migrations.Migration):
     initial = True
@@ -154,4 +195,5 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
+        migrations.RunSQL(FORWARD_GUARDS, REVERSE_GUARDS),
     ]

@@ -32,6 +32,31 @@ def test_temporary_role_release_restores_only_selected_current_role(settings):
     ).as_public_dict()["verified_roles"] == ["coach", "nutritionist"]
 
 
+def test_credential_date_expiry_without_counter_change_filters_only_that_role(settings):
+    from datetime import UTC, datetime, time, timedelta
+
+    from tests.integration.c03.test_verification_decisions import decision, review
+    from tests.integration.c04.publication_helpers import configure, confirm, prepare
+
+    configure(settings)
+    today = timezone.now().date()
+    subject = review(settings, nutritionist_expiry=today)
+    for kind in ("identity", "coach", "nutritionist"):
+        decision(subject, kind)
+    draft = prepare(subject, roles=("coach", "nutritionist"))
+    confirm(subject, draft)
+    before = subject.profile.version
+    assert api().public_professional(
+        subject.profile.id, timezone.now()
+    ).as_public_dict()["verified_roles"] == ["coach", "nutritionist"]
+    boundary = datetime.combine(today + timedelta(days=1), time.min, UTC)
+    assert api().public_professional(subject.profile.id, boundary).as_public_dict()[
+        "verified_roles"
+    ] == ["coach"]
+    subject.profile.refresh_from_db()
+    assert subject.profile.version == before
+
+
 def test_stale_copy_hides_whole_selected_release(settings):
     from tests.integration.c04.copy_helpers import pending, process
 
