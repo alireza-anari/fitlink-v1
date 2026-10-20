@@ -14,6 +14,7 @@ from apps.governance.flags import feature_enabled
 from apps.marketplace import projections, selectors
 from apps.marketplace.contracts import (
     MarketplaceUnavailable,
+    ProjectionMetrics,
     ProjectionSource,
     PublicMedia,
     ReconcileResult,
@@ -199,3 +200,28 @@ def reconcile_publications(at, batch_size=100):
 def mark_profile_due(identifier, at):
     context(identifier, at)
     projections.mark_projection_due(identifier, at)
+
+
+def projection_metrics(at, *, failures=0, purges=0):
+    """Private aggregate counters; failures/purges describe the current scan only."""
+    from apps.governance.outbox_models import OutboxEvent
+
+    context(uuid4(), at)
+    due = ProjectionRefreshState.objects.filter(due_at__lte=at)
+    missing = ProfessionalPublication.objects.exclude(
+        profile_id__in=ProjectionRefreshState.objects.values("profile_uuid")
+    )
+    times = [
+        due.order_by("due_at").values_list("due_at", flat=True).first(),
+        missing.order_by("created_at").values_list("created_at", flat=True).first(),
+    ]
+    oldest = min((value for value in times if value is not None), default=at)
+    events = OutboxEvent.objects.filter(event_type="professional.publication_changed")
+    return ProjectionMetrics(
+        backlog=due.count() + missing.count(),
+        oldest_age_seconds=max(0, int((at - oldest).total_seconds())),
+        failures=failures
+        + events.exclude(last_error_code="").exclude(state="sent").count(),
+        exhausted=events.filter(state="exhausted").count(),
+        purges=purges,
+    )

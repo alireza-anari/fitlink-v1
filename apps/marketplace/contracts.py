@@ -261,3 +261,31 @@ class ReconcileResult:
     processed: int
     tombstones: int
     failures: int
+
+
+@dataclass(frozen=True)
+class ProjectionMetrics:
+    backlog: int
+    oldest_age_seconds: int
+    failures: int
+    exhausted: int
+    purges: int
+
+    def __post_init__(self):
+        if any(
+            type(value) is not int or not 0 <= value <= 9_223_372_036_854_775_807
+            for value in self.as_dict().values()
+        ):
+            raise ValueError("Invalid projection metric")
+
+    def as_dict(self):
+        return {
+            name: getattr(self, name)
+            for name in (
+                "backlog",
+                "oldest_age_seconds",
+                "failures",
+                "exhausted",
+                "purges",
+            )
+        }

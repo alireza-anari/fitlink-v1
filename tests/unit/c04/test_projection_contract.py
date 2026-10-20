@@ -123,3 +123,38 @@ def test_all_projection_metadata_primary_keys_are_uuid():
         "PublicationScanCursor",
     ]:
         assert isinstance(apps.get_model("marketplace", name)._meta.pk, UUIDField)
+
+
+def test_projection_metrics_are_finite_content_free_counters():
+    contracts = boundary("apps.marketplace.contracts")
+    metrics = getattr(contracts, "ProjectionMetrics", None)
+    assert callable(metrics), "Missing finite projection backlog/exhaustion metrics"
+    result = metrics(
+        backlog=2, oldest_age_seconds=30, failures=1, exhausted=0, purges=3
+    )
+    assert result.as_dict() == {
+        "backlog": 2,
+        "oldest_age_seconds": 30,
+        "failures": 1,
+        "exhausted": 0,
+        "purges": 3,
+    }
+    for bad in [-1, True, "PRIVATE_SENTINEL"]:
+        with pytest.raises(ValueError):
+            metrics(
+                backlog=bad, oldest_age_seconds=0, failures=0, exhausted=0, purges=0
+            )
+
+
+def test_exhaustion_alert_uses_only_finite_event_metadata(caplog):
+    import logging
+
+    from apps.marketplace import tasks
+
+    alert = getattr(tasks, "alert_projection_exhaustion", None)
+    assert callable(alert), "Missing bounded projection exhaustion alert"
+    with caplog.at_level(logging.WARNING):
+        alert(boundary("apps.marketplace.contracts").ProjectionMetrics(0, 0, 1, 1, 0))
+    assert len(caplog.records) == 1
+    assert caplog.records[0].event == "marketplace.projection_exhausted"
+    assert caplog.records[0].dependency == "outbox"

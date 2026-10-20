@@ -40,9 +40,31 @@ $$;
 CREATE TRIGGER fitlink_c04_projection_binding
 BEFORE INSERT OR UPDATE ON marketplace_publicprofessionalprojection
 FOR EACH ROW EXECUTE FUNCTION fitlink_guard_c04_projection();
+CREATE FUNCTION fitlink_guard_c04_projection_state() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF TG_OP='UPDATE' AND (
+        NEW.profile_uuid IS DISTINCT FROM OLD.profile_uuid
+        OR NEW.created_at IS DISTINCT FROM OLD.created_at
+        OR NEW.generation<OLD.generation
+    ) THEN
+        RAISE EXCEPTION 'Projection refresh identity denied' USING ERRCODE='23514';
+    END IF;
+    IF NOT EXISTS(SELECT 1 FROM professionals_professionalprofile
+                  WHERE id=NEW.profile_uuid) THEN
+        RAISE EXCEPTION 'Projection refresh source denied' USING ERRCODE='23514';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+CREATE TRIGGER fitlink_c04_projection_state_binding
+BEFORE INSERT OR UPDATE ON marketplace_projectionrefreshstate
+FOR EACH ROW EXECUTE FUNCTION fitlink_guard_c04_projection_state();
 """
 
 REVERSE_GUARDS = r"""
+DROP TRIGGER fitlink_c04_projection_state_binding ON marketplace_projectionrefreshstate;
+DROP FUNCTION fitlink_guard_c04_projection_state();
 DROP TRIGGER fitlink_c04_projection_binding ON marketplace_publicprofessionalprojection;
 DROP FUNCTION fitlink_guard_c04_projection();
 """
@@ -203,6 +225,20 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
+        ),
+        migrations.AddConstraint(
+            model_name="projectionrefreshstate",
+            constraint=models.CheckConstraint(
+                condition=models.Q(generation__gte=1),
+                name="projection_refresh_positive_generation",
+            ),
+        ),
+        migrations.AddConstraint(
+            model_name="publicationscancursor",
+            constraint=models.CheckConstraint(
+                condition=models.Q(version__gte=1),
+                name="projection_cursor_positive_version",
+            ),
         ),
         migrations.RunSQL(FORWARD_GUARDS, REVERSE_GUARDS),
     ]

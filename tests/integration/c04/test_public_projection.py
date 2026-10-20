@@ -238,3 +238,77 @@ def test_durable_projection_metadata_rejects_invalid_identity_or_version(
         )
     with pytest.raises(DatabaseError), transaction.atomic():
         assert query.update(**values) == 1
+
+
+def test_projection_metrics_count_missing_due_and_exhausted_work_without_content(
+    settings,
+):
+    import json
+
+    from apps.governance.outbox_models import OutboxEvent
+    from apps.marketplace.models import ProjectionRefreshState
+
+    subject, draft = published(settings)
+    initial = api().projection_metrics(timezone.now()).as_dict()
+    assert initial["backlog"] == 1 and initial["exhausted"] == 0
+    api().refresh_public_projection(subject.profile.id, timezone.now())
+    now = timezone.now()
+    assert api().projection_metrics(now).backlog == 0
+    ProjectionRefreshState.objects.filter(pk=subject.profile.id).update(
+        due_at=now - timedelta(seconds=60)
+    )
+    # A constraint-valid exhausted metadata fixture, never a delivery PASS.
+    events = OutboxEvent.objects.filter(
+        event_type="professional.publication_changed",
+        aggregate_uuid=draft.publication_id,
+    )
+    count = events.count()
+    assert count > 0
+    events.update(
+        state="exhausted",
+        attempts=8,
+        exhausted_at=now,
+        lease_uuid=None,
+        lease_until=None,
+        last_error_code="attempts_exhausted",
+    )
+    metrics = api().projection_metrics(now, purges=2).as_dict()
+    assert metrics["backlog"] == 1 and metrics["oldest_age_seconds"] >= 60
+    assert (
+        metrics["exhausted"] == count
+        and metrics["failures"] == count
+        and metrics["purges"] == 2
+    )
+    assert all(type(value) is int for value in metrics.values())
+    assert "Private" not in json.dumps(metrics) and str(
+        subject.profile.id
+    ) not in json.dumps(metrics)
+
+
+def test_flag_event_requests_bounded_global_rescan_without_replacing_its_effect(
+    settings,
+):
+    from types import SimpleNamespace
+
+    from django.db import transaction
+
+    from apps.governance.flag_models import FeatureFlag
+    from apps.marketplace.models import PublicationScanCursor
+    from config.event_handlers import HANDLERS
+
+    subject, draft = published(settings)
+    api().reconcile_publications(timezone.now(), 100)
+    cursor = PublicationScanCursor.objects.get(name="publications")
+    assert cursor.after_uuid == subject.profile.id
+    previous = cursor.version
+    flag = FeatureFlag.objects.get(key="marketplace")
+    event = SimpleNamespace(
+        event_type="feature_flag.changed",
+        aggregate_uuid=flag.id,
+        aggregate_version=flag.version,
+        payload={"flag_uuid": str(flag.id)},
+    )
+    with transaction.atomic():
+        assert HANDLERS["feature_flag.changed"](event, timezone.now()) == "applied"
+    cursor.refresh_from_db()
+    assert cursor.after_uuid is None and cursor.version > previous

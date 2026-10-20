@@ -69,10 +69,14 @@ class ProjectionRefreshState(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
+                condition=models.Q(generation__gte=1),
+                name="projection_refresh_positive_generation",
+            ),
+            models.CheckConstraint(
                 condition=models.Q(authority_hash="")
                 | models.Q(authority_hash__regex=r"^[0-9a-f]{64}$"),
                 name="projection_private_hash",
-            )
+            ),
         ]
 
 
@@ -89,8 +93,12 @@ class PublicationScanCursor(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
+                condition=models.Q(version__gte=1),
+                name="projection_cursor_positive_version",
+            ),
+            models.CheckConstraint(
                 condition=models.Q(lease_uuid__isnull=True, lease_until__isnull=True)
                 | models.Q(lease_uuid__isnull=False, lease_until__isnull=False),
                 name="projection_cursor_lease_pair",
-            )
+            ),
         ]
