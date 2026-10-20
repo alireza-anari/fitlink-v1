@@ -74,7 +74,7 @@ HANDLERS = MappingProxyType(
         "consent.granted": consent_metadata,
         "consent.revoked": consent_metadata,
         "privacy.intake_recorded": with_projection_due(privacy_metadata),
-        "feature_flag.changed": flag_metadata,
+        "feature_flag.changed": with_projection_due(flag_metadata),
         "professional.profile_changed": with_projection_due(
             professional_profile_metadata
         ),

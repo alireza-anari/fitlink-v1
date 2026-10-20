@@ -20,8 +20,14 @@ def with_projection_due(handler):
             )
             if identifier is not None:
                 mark_profile_due(identifier, at)
-        # Flag events have no owner: the independent durable source scan keeps
-        # purging with the flag off, without an unbounded outbox transaction.
+        elif getattr(event, "event_type", None) == "feature_flag.changed":
+            from apps.governance.flag_models import FeatureFlag
+            from config.use_cases.marketplace import mark_publications_due
+
+            if FeatureFlag.objects.filter(
+                pk=event.aggregate_uuid, key="marketplace"
+            ).exists():
+                mark_publications_due(at)
         return result
 
     return composed

@@ -67,9 +67,39 @@ def test_index_eligible_bit_never_authorizes(settings):
     assert api().public_professional(subject.profile.id, timezone.now()) is None
 
 
-def test_initial_scan_finds_already_receipted_profiles(settings):
+def test_initial_scan_finds_already_receipted_profiles(settings, monkeypatch):
     subject, draft = published(settings)
+    from apps.governance.outbox import dispatch_event
+    from apps.governance.outbox_models import OutboxDeliveryReceipt, OutboxEvent
     from apps.marketplace.models import PublicProfessionalProjection
+    from config import event_handlers
+    from config.c03_event_handlers import professional_profile_metadata
+
+    # Run the actual dispatcher with the exact inherited C03 effect, representing
+    # a receipt completed before C04 was installed. No receipt is rewritten.
+    old = (
+        OutboxEvent.objects.filter(
+            event_type="professional.profile_changed", aggregate_uuid=subject.profile.id
+        )
+        .order_by("-aggregate_version")
+        .first()
+    )
+    assert old is not None
+    old.state, old.lease_uuid = "leased", uuid4()
+    old.lease_until = timezone.now() + timedelta(seconds=60)
+    old.attempts = 1
+    old.save()
+    with monkeypatch.context() as historical:
+        historical.setattr(
+            event_handlers,
+            "HANDLERS",
+            {"professional.profile_changed": professional_profile_metadata},
+        )
+        assert dispatch_event(old.id, timezone.now(), lease_uuid=old.lease_uuid) is True
+    old.refresh_from_db()
+    assert (
+        old.state == "sent" and OutboxDeliveryReceipt.objects.filter(event=old).exists()
+    )
 
     assert not PublicProfessionalProjection.objects.filter(
         pk=subject.profile.id

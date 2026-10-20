@@ -202,6 +202,21 @@ def mark_profile_due(identifier, at):
     projections.mark_projection_due(identifier, at)
 
 
+def mark_publications_due(at):
+    """One durable global rescan intent; no unbounded owner or projection lock."""
+    context(uuid4(), at)
+    with transaction.atomic():
+        row, _ = PublicationScanCursor.objects.get_or_create(name="publications")
+        row = PublicationScanCursor.objects.select_for_update().get(pk=row.pk)
+        row.after_uuid = None
+        # Invalidate the earlier scan's final cursor write. Its per-owner work
+        # still uses fresh source authority and cannot restore an old snapshot.
+        row.lease_uuid = row.lease_until = None
+        row.version += 1
+        row.updated_at = max(at, timezone.now())
+        row.save()
+
+
 def projection_metrics(at, *, failures=0, purges=0):
     """Private aggregate counters; failures/purges describe the current scan only."""
     from apps.governance.outbox_models import OutboxEvent
