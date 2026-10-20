@@ -1569,3 +1569,25 @@ service substitutes or new implementation changes made during takeover acceptanc
 Task5 COMPLETE at tested9609f7a/tree9bcda8c above. Completion docs are separate
 from accepted implementation authority. Next Task6 already authorized, strict
 order; no Task7+ start before preceding acceptance, no merge/deploy/C05/live flag.
+
+
+## Task 6 — IN_PROGRESS — selection behavioral RED
+
+BASE edd6b30081a7b62ef1a38ec06721ccdba7829588; prerequisite Task5 accepted at
+9609f7a/tree9bcda8c, run39402163393 attempt1. No prior task restarted.
+
+Actual local behavioral RED:17 assertion failures in test_selection_inputs.py,
+all explicitly Missing bounded selection contracts, not import/fixture/service
+errors. No production selection implementation exists in this checkpoint.
+New PostgreSQL/session tests cover current owned-athlete favorites, idempotent
+receipts, unrelated/revoked users, invisible favorites, three-item cap, duplicate
+entries/replay, separate visitor sessions, flush revocation, authenticated-session
+denial without visitor fallback, and flag-off private clear. Additional actual
+concurrency/SQL/session-switch proofs remain required before acceptance.
+
+Ruff/format pass on these four new test files. Existing cumulative runner still
+identifies installed Task5; its collection of these missing Task6 behaviors is
+RED, not Task6 acceptance. Full hosted Task6 acceptance will require installed
+Task6 entrypoints, real PostgreSQL concurrency and all fifteen mandatory jobs.
+Next implement only approved owned/session selection boundaries after RED.
+No Task7, public adapters, merge, deployment or production enablement.
