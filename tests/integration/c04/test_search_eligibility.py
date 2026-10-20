@@ -71,3 +71,28 @@ def test_flag_off_denies_search_without_claiming_empty_marketplace(corpus):
     FeatureFlag.objects.filter(key="marketplace").update(enabled=False)
     with pytest.raises(MarketplaceClosed):
         search()
+
+
+def test_expiring_one_role_without_worker_preserves_other_current_search(corpus):
+    from datetime import UTC, datetime, time
+
+    from apps.marketplace.contracts import SearchCriteria
+
+    today = timezone.now().date()
+    subject, _ = corpus(roles=("coach", "nutritionist"), nutritionist_expiry=today)
+    subject.profile.refresh_from_db()
+    version = subject.profile.version
+    boundary = datetime.combine(today + timedelta(days=1), time.min, UTC)
+    current = api().public_professional(subject.profile.id, boundary)
+    assert current.as_public_dict()["verified_roles"] == ["coach"]
+    coach = api().search_public_professionals(
+        SearchCriteria(role="coach"), None, boundary
+    )
+    assert [row.profile_uuid for row in coach.items] == [subject.profile.id]
+    assert coach.items[0].as_public_dict()["verified_roles"] == ["coach"]
+    nutritionist = api().search_public_professionals(
+        SearchCriteria(role="nutritionist"), None, boundary
+    )
+    assert nutritionist.items == ()
+    subject.profile.refresh_from_db()
+    assert subject.profile.version == version

@@ -8,7 +8,11 @@ from django.utils import timezone
 from tests.integration.c03 import verification_helpers
 from tests.integration.c03.profile_helpers import make_actor
 from tests.integration.c03.test_professional_setup import owner, save
-from tests.integration.c03.test_verification_decisions import approved
+from tests.integration.c03.test_verification_decisions import (
+    approved,
+    decision,
+    review,
+)
 from tests.integration.c04.publication_helpers import configure, confirm, prepare
 from tests.integration.c04.test_postgresql_search import search
 from tests.integration.c04.test_public_projection import api
@@ -37,6 +41,7 @@ def corpus(settings, monkeypatch):
         experience=8,
         roles=("coach",),
         valid_until=None,
+        nutritionist_expiry=None,
     ):
         def new_owner():
             s = owner(phone())
@@ -66,7 +71,12 @@ def corpus(settings, monkeypatch):
         with monkeypatch.context() as patch:
             patch.setattr(verification_helpers, "owner", new_owner)
             patch.setattr(verification_helpers, "save", configured_save)
-            subject = approved(settings)
+            if nutritionist_expiry is None:
+                subject = approved(settings)
+            else:
+                subject = review(settings, nutritionist_expiry=nutritionist_expiry)
+                for role in ("identity", "coach", "nutritionist"):
+                    decision(subject, role)
         configure(settings)
         draft = prepare(
             subject,
