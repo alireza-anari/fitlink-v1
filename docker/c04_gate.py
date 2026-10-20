@@ -3,6 +3,7 @@
 import errno
 import importlib
 import json
+import math
 import os
 import sys
 import tempfile
@@ -28,6 +29,53 @@ def evidence_folder(root):
 class RequiredEvidence:
     counts = None
 
+    def __init__(self):
+        self.query_plans = []
+        self.invalid_plan = False
+
+    def pytest_runtest_logreport(self, report):
+        if report.when != "call":
+            return
+        for name, value in report.user_properties:
+            if name != "c04_query_plan":
+                continue
+            expected = (
+                "tests/integration/c04/test_search_query_plans.py::"
+                "test_real_bounded_fts_trigram_query_plan"
+            )
+            fields = {
+                "rows",
+                "returned",
+                "index_nodes",
+                "planning_ms",
+                "execution_ms",
+                "buffer_blocks",
+            }
+            if (
+                report.nodeid != expected
+                or report.outcome != "passed"
+                or not isinstance(value, dict)
+                or set(value) != fields
+                or any(
+                    type(v) not in (int, float)
+                    or not math.isfinite(v)
+                    or not 0 <= v <= 1e9
+                    for v in value.values()
+                )
+                or any(
+                    type(value[k]) is not int
+                    for k in ("rows", "returned", "index_nodes", "buffer_blocks")
+                )
+                or value["rows"] < 30000
+                or value["returned"] > 100
+                or value["index_nodes"] < 2
+                or value["execution_ms"] >= 2000
+                or value["buffer_blocks"] > 2000
+            ):
+                self.invalid_plan = True
+            else:
+                self.query_plans.append(value)
+
     def pytest_sessionfinish(self, session):
         terminal = session.config.pluginmanager.get_plugin("terminalreporter")
         if terminal:
@@ -44,7 +92,12 @@ class RequiredEvidence:
                 )
             }
         if (
-            not terminal
+            self.invalid_plan
+            or (
+                os.environ.get("C04_SEARCH_EVIDENCE") == "1"
+                and len(self.query_plans) != 1
+            )
+            or not terminal
             or not terminal.stats.get("passed")
             or any(
                 terminal.stats.get(k)
@@ -101,6 +154,8 @@ if __name__ == "__main__":
     finally:
         os.close(saved[0])
         os.close(saved[1])
+    for metrics in evidence.query_plans:
+        print("C04_QUERY_PLAN " + json.dumps(metrics, sort_keys=True), flush=True)
     if runner_error:
         print("C04_RUNNER_ERROR " + json.dumps({"category": runner_error}), flush=True)
     if code == 0 and (

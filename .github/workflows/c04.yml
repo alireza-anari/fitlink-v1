@@ -636,7 +636,7 @@ jobs:
         persist-credentials: false
     - run: uv sync --frozen --group dev
     - name: Cumulative required C04 unit and PostgreSQL tests, zero skips
-      run: sh docker/verify_c04_incremental.sh --task 4
+      run: sh docker/verify_c04_incremental.sh --task 5
   c04-public-media:
     if: github.ref == 'refs/heads/marketplace/c04-cloud'
     runs-on: ubuntu-24.04
@@ -741,7 +741,7 @@ jobs:
     - name: Reject skipped failed or omitted upstream jobs
       env:
         C04_UPSTREAM: ${{ toJSON(needs) }}
-      run: python docker/c04_acceptance.py --task 4 --upstream "$C04_UPSTREAM"
+      run: python docker/c04_acceptance.py --task 5 --upstream "$C04_UPSTREAM"
     - run: uv sync --frozen --group dev
     - name: Installed cumulative C04 acceptance and migration drift
       run: sh docker/verify_c04.sh

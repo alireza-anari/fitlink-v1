@@ -31,6 +31,10 @@ class MarketplaceUnavailable(RuntimeError):
     pass
 
 
+class MarketplaceClosed(LookupError):
+    pass
+
+
 def context(identifier, at):
     if (
         not isinstance(identifier, UUID)
@@ -289,3 +293,8 @@ class ProjectionMetrics:
                 "purges",
             )
         }
+
+
+# Stable public service contracts; implementation remains in bounded modules.
+from .search_contracts import PublicPage as PublicPage  # noqa: E402
+from .search_contracts import SearchCriteria as SearchCriteria  # noqa: E402

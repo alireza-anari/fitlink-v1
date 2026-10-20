@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "task": 5,
+  "state": "IN_PROGRESS",
+  "approved_plan_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+  "approved_plan_tree": "1478d691b2a60d95f6c0d2ce5e561d34f59a61c0",
+  "approved_plan_blob": "f1225196c95a203e440afc4da362b74806e84f20",
+  "base_commit": "277b2f848b8269a2b861aa4d9fad1f0cd71c51eb",
+  "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+  "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+  "prerequisite": {
+    "task": 4,
+    "implementation_sha": "0353c16bd8a4712134d27f19e3478ac9b385586c",
+    "implementation_tree": "88f5ab8e53f21caa90d923b645d6e21b3bf92bea",
+    "run_id": 39385613444,
+    "checkpoint_commit": "277b2f848b8269a2b861aa4d9fad1f0cd71c51eb"
+  },
+  "red": {
+    "implementation_sha": "edd25dbbaaf3b26347014c008e779932e642fd46",
+    "implementation_tree": "5ca4fa141a9497e00fee2549237f5c773791464d",
+    "run_id": 39391863193,
+    "job_id": 118525050430,
+    "passed": 261,
+    "failed": 34,
+    "actual_behavior_assertions": 33,
+    "fixture_failures": 1,
+    "error": 0,
+    "skipped": 0
+  },
+  "hosted_acceptance": null,
+  "next_task": 5
+}

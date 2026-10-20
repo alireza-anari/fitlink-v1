@@ -240,3 +240,23 @@ def projection_metrics(at, *, failures=0, purges=0):
         exhausted=events.filter(state="exhausted").count(),
         purges=purges,
     )
+
+
+def search_public_professionals(criteria, cursor, at, *, release=None):
+    from apps.marketplace.contracts import MarketplaceClosed
+    from apps.marketplace.search import search_public_professionals as search
+
+    try:
+        if feature_enabled("marketplace", raise_unavailable=True) is not True:
+            raise MarketplaceClosed("Marketplace unavailable")
+        return search(
+            criteria,
+            cursor,
+            at,
+            lock_owners=lock_owners,
+            current_source=current_source,
+            request_refresh=mark_publications_due,
+            release=release,
+        )
+    except DatabaseError:
+        raise MarketplaceUnavailable("Marketplace temporarily unavailable") from None

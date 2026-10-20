@@ -8,6 +8,8 @@ from django.utils import timezone
 
 from .contracts import RefreshResult, context
 from .models import ProjectionRefreshState, PublicLocation, PublicProfessionalProjection
+from .normalization import normalize_persian
+from .search_index import index_values, search_vector
 
 
 def mark_projection_due(identifier, at):
@@ -66,14 +68,23 @@ def refresh_public_projection(identifier, at, *, lock_owners=None, current_sourc
                 snapshot=json.loads(source.snapshot_json),
                 next_expiry=source.next_expiry,
             )
+        defaults.update(index_values(defaults["snapshot"]))
         row, _ = PublicProfessionalProjection.objects.update_or_create(
             profile_uuid=identifier, defaults=defaults
+        )
+        PublicProfessionalProjection.objects.filter(pk=identifier).update(
+            search_vector=search_vector()
         )
         PublicLocation.objects.filter(projection=row).delete()
         if source is not None:
             PublicLocation.objects.bulk_create(
                 [
-                    PublicLocation(projection=row, **location)
+                    PublicLocation(
+                        projection=row,
+                        normalized_region=normalize_persian(location["region"]),
+                        normalized_city=normalize_persian(location["city"]),
+                        **location,
+                    )
                     for location in defaults["snapshot"].get("locations", [])
                 ]
             )
