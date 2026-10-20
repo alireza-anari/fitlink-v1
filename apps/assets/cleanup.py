@@ -373,7 +373,10 @@ def cleanup_public_copy(
                 return "conflict"
             if attempt.state != "deletion_pending":
                 return "conflict"
-            attempt.state, attempt.deleted_at, attempt.updated_at = "deleted", now, now
+            first_erasure = attempt.deleted_at is None
+            attempt.state = "deleted"
+            attempt.deleted_at = attempt.deleted_at or now
+            attempt.updated_at = now
             attempt.save()
             if (
                 row.state == "deletion_pending"
@@ -385,17 +388,20 @@ def cleanup_public_copy(
                 row.version += 1
                 row.updated_at = now
                 row.save()
-            append_event(
-                SecurityOutcome(
-                    "asset.deleted",
-                    "succeeded",
-                    attempt.id,
-                    uuid4(),
-                    ("state",),
-                    "retention_due",
-                ),
-                subject_type="asset",
-            )
+            # Retained tombstones still erase late writes, while preserving
+            # the first completed erasure and its single audit effect.
+            if first_erasure:
+                append_event(
+                    SecurityOutcome(
+                        "asset.deleted",
+                        "succeeded",
+                        attempt.id,
+                        uuid4(),
+                        ("state",),
+                        "retention_due",
+                    ),
+                    subject_type="asset",
+                )
         return "deleted"
     except (PermissionError, ValueError, LookupError):
         return "denied"

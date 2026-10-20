@@ -328,9 +328,7 @@ def test_cleanup_replay_preserves_first_erasure_metadata(
     )
     attempt.refresh_from_db()
     first_deleted_at = attempt.deleted_at
-    events = AuditEvent.objects.filter(
-        action="asset.deleted", subject_uuid=attempt.id
-    )
+    events = AuditEvent.objects.filter(action="asset.deleted", subject_uuid=attempt.id)
     assert events.count() == 1
     if late_writer:
         store.put(attempt.key, pixels, "image/png")
