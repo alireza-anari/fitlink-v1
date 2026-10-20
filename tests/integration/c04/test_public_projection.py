@@ -248,6 +248,27 @@ def test_rebuilt_disposable_index_preserves_durable_generation(settings):
     assert rebuilt.generation > previous.generation
 
 
+def test_projection_sql_requires_owner_confirmed_immutable_release(settings):
+    from django.db import DatabaseError, transaction
+
+    from apps.marketplace.models import PublicProfessionalProjection
+
+    subject, draft = published(settings)
+    api().refresh_public_projection(subject.profile.id, timezone.now())
+    unconfirmed = prepare(subject)
+    from apps.professionals.publication_models import PublicationRevision
+
+    revision = PublicationRevision.objects.get(pk=unconfirmed.revision_id)
+    assert revision.confirmed_at is None and revision.confirmed_by_id is None
+    with pytest.raises(DatabaseError), transaction.atomic():
+        PublicProfessionalProjection.objects.filter(pk=subject.profile.id).update(
+            revision_uuid=unconfirmed.revision_id,
+            publication_version=unconfirmed.version,
+            source_version=unconfirmed.source_profile_version,
+            snapshot=unconfirmed.snapshot,
+        )
+
+
 @pytest.mark.parametrize("defect", ["state_zero", "cursor_zero", "state_rebind"])
 def test_durable_projection_metadata_rejects_invalid_identity_or_version(
     settings, defect
