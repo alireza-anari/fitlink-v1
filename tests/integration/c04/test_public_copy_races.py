@@ -171,6 +171,45 @@ def test_private_derivative_checksum_change_cannot_reauthorize_old_copy(settings
         )
 
 
+@pytest.mark.parametrize("phase", ["before_read", "during_read", "reconcile"])
+def test_private_derivative_version_change_cannot_reauthorize_old_copy(settings, phase):
+    from apps.assets.contracts import AssetNotFound
+
+    person, asset, draft, derivative, store, dto, job = pending(settings)
+    assert process(store, job).status == "ready"
+    service = api()
+    boundary = module("apps.assets.public_copies")
+    wrapped = module("apps.assets.public_storage").PublicationObjectStore(store)
+
+    def change_version():
+        derivative.version += 1
+        derivative.save(update_fields=["version"])
+
+    if phase == "during_read":
+        original = store.read_limited
+
+        def change_after_read(key, maximum):
+            body = original(key, maximum)
+            if key.startswith("publication/"):
+                change_version()
+            return body
+
+        store.read_limited = change_after_read
+    else:
+        change_version()
+    if phase == "reconcile":
+        assert (
+            service.reconcile_public_copy_lifetime(dto.id, timezone.now()) == "revoked"
+        )
+    with pytest.raises(AssetNotFound):
+        boundary.read_public_copy(
+            dto.id,
+            timezone.now(),
+            publication_store=wrapped,
+            authorize=service.validate_public_copy_read,
+        )
+
+
 def test_public_read_requires_positive_current_authority_digest(settings):
     from apps.assets.contracts import AssetNotFound
 
