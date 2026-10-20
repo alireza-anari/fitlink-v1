@@ -9,11 +9,13 @@ import traceback
 from datetime import datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
-from uuid import UUID
+from uuid import UUID, uuid4
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-STATE = ROOT / ".runtime/c04-media-private.json"
+# This folder is explicitly writable by the existing non-root checks container.
+# Only *.jsonl is exported; the journal and atomic temporary files remain private.
+STATE = ROOT / ".runtime/c04-media-evidence/checkpoint-private.json"
 
 
 def failure_metadata(error, phase):
@@ -112,9 +114,21 @@ def state():
 
 
 def save(value):
-    with STATE.open("w") as stream:
-        json.dump(value, stream)
-    STATE.chmod(0o600)
+    temporary = STATE.with_name(".c04-private-" + uuid4().hex + ".tmp")
+    try:
+        descriptor = os.open(
+            temporary,
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0),
+            0o600,
+        )
+        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            json.dump(value, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, STATE)
+    except BaseException:
+        temporary.unlink(missing_ok=True)
+        raise
 
 
 def wait(predicate, seconds=35):
