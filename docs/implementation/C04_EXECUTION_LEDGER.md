@@ -1663,3 +1663,14 @@ ownership refusal, deadline or cleanup contract changed.
 
 Both review cases require actual behavioral RED then a bounded source correction
 and complete new-head acceptance; Task6 remains IN_PROGRESS. No Task7 start.
+
+
+### Task 6 — read-only selection contract review probe
+
+Added test_read_of_empty_comparison_does_not_create_selection_collection.
+Approved Task8 adapters cannot let GET mutate selections; the core reader must
+therefore return an empty version1 view without allocating a selection collection.
+This test-only checkpoint leaves production unchanged and requires actual hosted
+RED before correction. Earlier ownership/inventory review probes remain selected.
+Task6 stays IN_PROGRESS; no Task7. Local static build succeeds; full local unit
+suite is being inspected, and cannot substitute for real service evidence.

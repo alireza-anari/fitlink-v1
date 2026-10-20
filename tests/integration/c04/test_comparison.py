@@ -124,3 +124,14 @@ def test_actual_login_and_account_switch_do_not_merge_visitor_selections(corpus)
         assert require("read_comparison")(scope(person), timezone.now()).items == ()
     with pytest.raises(PermissionError):
         require("read_comparison")(old_scope, timezone.now())
+
+
+def test_read_of_empty_comparison_does_not_create_selection_collection():
+    from apps.marketplace.selection_models import ComparisonCollection
+
+    for person in (visitor(), athlete()):
+        result = require("read_comparison")(scope(person), timezone.now())
+        assert result.items == () and result.version == 1
+    assert ComparisonCollection.objects.count() == 0, (
+        "Read-only comparison cannot create selection records"
+    )
