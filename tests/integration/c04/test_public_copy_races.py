@@ -305,6 +305,53 @@ def test_policy_cleanup_erases_public_copy_only_and_reerases_late_writer(setting
     assert store.read_limited(derivative.key, 10_000_000) == original
 
 
+@pytest.mark.parametrize("late_writer", [False, True])
+@pytest.mark.parametrize("observation", ["deletion_time", "audit_effect"])
+def test_cleanup_replay_preserves_first_erasure_metadata(
+    settings, late_writer, observation
+):
+    from apps.governance.audit_models import AuditEvent
+
+    person, asset, derivative, store, row, attempt, rule, at, wrapped = (
+        erase_ready_copy(settings)
+    )
+    pixels = store.read_limited(attempt.key, 10_000_000)
+    assert (
+        api().cleanup_public_copy(
+            row.id,
+            row.generation,
+            rule.id,
+            at + timedelta(seconds=2),
+            publication_store=wrapped,
+        )
+        == "deleted"
+    )
+    attempt.refresh_from_db()
+    first_deleted_at = attempt.deleted_at
+    events = AuditEvent.objects.filter(
+        action="asset.deleted", subject_uuid=attempt.id
+    )
+    assert events.count() == 1
+    if late_writer:
+        store.put(attempt.key, pixels, "image/png")
+    assert (
+        api().cleanup_public_copy(
+            row.id,
+            row.generation,
+            rule.id,
+            at + timedelta(seconds=3),
+            publication_store=wrapped,
+        )
+        == "deleted"
+    )
+    assert attempt.key not in store.objects
+    attempt.refresh_from_db()
+    if observation == "deletion_time":
+        assert attempt.deleted_at == first_deleted_at
+    else:
+        assert events.count() == 1
+
+
 def test_cleanup_audit_failure_retains_reservation_and_retries(settings, monkeypatch):
     from apps.assets import cleanup
 
