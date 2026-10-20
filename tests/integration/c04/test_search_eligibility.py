@@ -35,7 +35,11 @@ def test_unselected_private_identity_never_searchable(corpus):
 
 
 def test_candidate_budget_fails_without_partial_output_and_recovers(corpus):
+    import json
+    from time import monotonic
     from uuid import uuid4
+
+    from django.db import transaction
 
     from apps.marketplace.models import (
         PublicationScanCursor,
@@ -45,12 +49,25 @@ def test_candidate_budget_fails_without_partial_output_and_recovers(corpus):
     from apps.professionals.publication_models import ProfessionalPublication
     from config.use_cases.publication import unpublish_profile
 
-    for _ in range(100):
-        subject, draft = corpus()
-        publication = ProfessionalPublication.objects.get(pk=draft.publication_id)
-        unpublish_profile(
-            subject.actor, publication.id, publication.version, uuid4(), timezone.now()
-        )
+    started = monotonic()
+    # Build synthetic fixtures with real commands and all database guards, then
+    # commit before exercising public reads/reconciliation. This avoids thousands
+    # of independent setup commits without changing the 100-candidate contract.
+    with transaction.atomic():
+        for _ in range(100):
+            subject, draft = corpus()
+            publication = ProfessionalPublication.objects.get(pk=draft.publication_id)
+            unpublish_profile(
+                subject.actor,
+                publication.id,
+                publication.version,
+                uuid4(),
+                timezone.now(),
+            )
+    print(
+        "C04_BUDGET_FIXTURE "
+        + json.dumps({"rows": 100, "setup_seconds": round(monotonic() - started, 3)})
+    )
     assert PublicProfessionalProjection.objects.filter(state="active").count() == 100
     with pytest.raises(
         ProjectionRefreshRequired, match="^projection_refresh_required$"

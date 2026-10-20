@@ -151,5 +151,54 @@
     "error": 0,
     "skipped": 0,
     "reason": "explicit missing finite immutable-prerequisite metadata assertions"
+  },
+  "full_regression_budget": {
+    "sha": "e750f26807c17d371a813cc776cda6514a344e6c",
+    "tree": "7ffa943e290791d1d760a78fce4a2753c5545acc",
+    "run_id": 39442164342,
+    "run_attempt": 1,
+    "green_jobs": 13,
+    "failed_jobs": [
+      {
+        "id": 118694553646,
+        "name": "c03-final",
+        "stage": "complete_backend",
+        "exit_code": 124,
+        "deadline_seconds": 900
+      },
+      {
+        "id": 118716425907,
+        "name": "c04-final",
+        "reason": "failed upstream rejected"
+      }
+    ],
+    "postgresql": {
+      "passed": 381,
+      "failed": 0,
+      "error": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0
+    },
+    "baseline": {
+      "job_id": 118694553938,
+      "stages": 127,
+      "nonzero": 0,
+      "artifact_id": 12277512119,
+      "digest": "sha256:8c674d66f684bb501fbfc21430de020888a61fec4d771884b7f8c5bf2a86c47b",
+      "digest_verified": true
+    },
+    "regression_artifact": {
+      "id": 12276713196,
+      "digest": "sha256:b564705e27ce4355015e1fa76e4ffa00c7588269ac4254572df2301fa4ff72e0",
+      "digest_verified": true,
+      "completed_cases": 1948,
+      "cumulative_case_seconds": 889.53,
+      "nonpassing_reports": 0,
+      "slowest_case_seconds": 124.73
+    },
+    "correction": "Single real transaction for 100 synthetic setup publications/withdrawals, committed before every existing search/reconciliation assertion. Commands, candidate cardinality, guards and deadline unchanged.",
+    "pending": "Fresh hosted real PostgreSQL performance and all15 exact-source jobs; no waiver or retry."
   }
 }

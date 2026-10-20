@@ -1796,3 +1796,45 @@ Task6 IN_PROGRESS; no Task7 or later implementation. No merge/deploy/C05/live re
   diagnostic checkpoint. If the prerequisite fails again, inspect its finite
   evidence before any further action; no automatic retry of an unclassified cause.
 Task6 IN_PROGRESS. Task7+ NOT_STARTED. No merge/deploy/C05/production publication.
+
+### Task 6 — immutable baseline GREEN; measured full-backend deadline RED
+
+Exact source e750f26807c17d371a813cc776cda6514a344e6c,
+tree7ffa943e290791d1d760a78fce4a2753c5545acc, run39442164342 attempt1:
+13 jobs GREEN; c03-final118694553646 FAILED and aggregate118716425907
+correctly FAILED. No retry/waiver or COMPLETE checkpoint.
+- C04 PostgreSQL118694553788:381 passed, failed/error/skipped/xfailed/xpassed/
+  deselected0, natural exit0. Real plan30000 documents/10 returned/2 index nodes,
+  5.103ms execution,0.586ms planning,441 buffers.
+- Foundation118694553810:951 unit+37 subtests, inherited2208 passed, zero skips/
+  failures. Owner75, staff67, migration108/89/86, all real media/restart/native/
+  private-storage/timeout/history gates naturally GREEN.
+- Immutable C03 baseline118694553938:127 stages, every exit0, exact tree
+  5c294cb330cf08b297cc01c8baa27adb1e6b93b7. Original backend1692 and all original
+  browser/service/cleanup stages GREEN. Metadata artifact12277512119 SHA256
+  8c674d66f684bb501fbfc21430de020888a61fec4d771884b7f8c5bf2a86c47b verified.
+- Current complete_backend reached the inherited900s deadline, exit124. Its
+  verified artifact12276713196 SHA256
+  b564705e27ce4355015e1fa76e4ffa00c7588269ac4254572df2301fa4ff72e0 already
+  contained the nonterminating Foundation observer:1948 completed cases,
+  889.530 cumulative case seconds, no nonpassing reports before termination.
+  Last started test_foundation_reporter_loads_after_console_bootstrap at895.039s.
+  Slowest case test_candidate_budget_fails_without_partial_output_and_recovers
+  completed in124.730s; query-plan case23.719s. Cause is cumulative deadline,
+  not a proven hung case or an external/transient failure; no same-SHA rerun.
+- Initial inspection missed those existing journals; an unpublished redundant
+  observer proposal/local RED1 was discarded after reading the verified ZIP.
+  No observer/manifest/deadline change is being published.
+- Bounded fixture performance correction: batch only the100 synthetic corpus
+  setup/publication/withdrawal operations in one actual PostgreSQL transaction,
+  committed before tested search/reconciliation. Every account/verification/
+  release/withdrawal still uses real commands and SQL guards. Keep100 distinct
+  candidates, all stale-budget503/no-partial-output/cursor/reconcile assertions,
+  original full test selections,900s deadline and all15 jobs unchanged. Emit
+  finite setup row/time metadata. This is not product behavior or fake service
+  acceptance. Actual observed900s timeout is the performance RED.
+- Local whole-tree Ruff/format533 and diff checks pass. No local PostgreSQL/Docker
+  exists, so fixture GREEN and full regression require fresh hosted proof.
+  The52+4 local diagnostic tests passed for the discarded observer proposal;
+  that result is not claimed as proof of this fixture correction.
+Task6 remains IN_PROGRESS; Task7+ not started. No production enablement.
