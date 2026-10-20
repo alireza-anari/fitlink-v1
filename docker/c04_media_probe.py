@@ -30,21 +30,34 @@ def failure_metadata(error, phase):
         "scanner-restored",
     }
     frames = []
-    for frame in traceback.extract_tb(error.__traceback__)[-16:]:
+    for frame, line in list(traceback.walk_tb(error.__traceback__))[-16:]:
         try:
-            path = Path(frame.filename).resolve().relative_to(ROOT)
+            path = Path(frame.f_code.co_filename).resolve().relative_to(ROOT)
         except (ValueError, OSError):
-            continue
+            # Rewritten pytest bytecode can retain its host compile-time path
+            # inside a container. Accept only this loaded module's existing
+            # repository file, with an identical relative filename suffix.
+            try:
+                origin = frame.f_globals.get("__file__")
+                if not isinstance(origin, str):
+                    continue
+                path = Path(origin).resolve().relative_to(ROOT)
+                if not frame.f_code.co_filename.endswith("/" + path.as_posix()):
+                    continue
+            except (ValueError, OSError):
+                continue
         name = path.as_posix()
         if (
             name.startswith(("apps/", "config/", "docker/", "tests/"))
             and re.fullmatch(r"[A-Za-z0-9_./-]+\.py", name)
             and (ROOT / path).is_file()
-            and re.fullmatch(r"[A-Za-z0-9_<>]+", frame.name)
-            and type(frame.lineno) is int
-            and 0 < frame.lineno <= 100_000
+            and re.fullmatch(r"[A-Za-z0-9_<>]+", frame.f_code.co_name)
+            and type(line) is int
+            and 0 < line <= 100_000
         ):
-            frames.append({"file": name, "function": frame.name, "line": frame.lineno})
+            frames.append(
+                {"file": name, "function": frame.f_code.co_name, "line": line}
+            )
     return {
         "phase": phase if phase in allowed else "unknown",
         "error_class": error_category(error),

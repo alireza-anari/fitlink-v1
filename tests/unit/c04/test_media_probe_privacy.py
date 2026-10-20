@@ -27,6 +27,28 @@ def test_probe_failure_metadata_reports_bounded_source_frames_only():
     assert "PRIVATE" not in json.dumps(value)
 
 
+def test_probe_failure_metadata_handles_relocated_compiled_source():
+    from pathlib import Path
+
+    relative = Path(__file__).resolve().relative_to(c04_media_probe.ROOT).as_posix()
+    filename = "/different-host-checkout/" + relative
+    namespace = {"__file__": __file__}
+    try:
+        exec(
+            compile(
+                'raise PermissionError("PRIVATE-COMPILED-SENTINEL")', filename, "exec"
+            ),
+            namespace,
+        )
+    except PermissionError as error:
+        value = c04_media_probe.failure_metadata(error, "worker-prepare")
+    assert any(
+        frame["file"] == relative and frame["line"] == 1 for frame in value["frames"]
+    ), "Missing relocated source frame"
+    assert "different-host-checkout" not in json.dumps(value)
+    assert "PRIVATE" not in json.dumps(value)
+
+
 def test_probe_journal_is_private_before_serialization(tmp_path, monkeypatch):
     import os
     import stat

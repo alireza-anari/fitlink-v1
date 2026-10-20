@@ -82,7 +82,11 @@ def _binding(user, publication_uuid, revision_uuid, purpose, at, *, require_flag
         source_asset=source,
         processing_version=source.processing_version,
     ).first()
-    if old is not None and old.source_derivative_sha256 != derivative.sha256:
+    if old is not None and (
+        old.source_derivative_id != derivative.id
+        or old.source_derivative_version != derivative.version
+        or old.source_derivative_sha256 != derivative.sha256
+    ):
         raise AssetNotFound("Publication media unavailable")
     release = AuthorizedPublicMediaRelease(
         user.public_id,
