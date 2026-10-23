@@ -1,0 +1,396 @@
+{
+  "diagnostic_only": true,
+  "acceptance": false,
+  "run_id": 39987116028,
+  "attempt": 1,
+  "job_id": 120529064364,
+  "diagnostic_sha": "feb5f0ad95d9d91740817d8f1d4030608ece43c1",
+  "diagnostic_tree": "6041a67091cc571946dca57abef6b734762a84d7",
+  "application_sha": "6c66199bd5ea3032d319fa6f727eb1d2e5e6e158",
+  "application_tree": "afef30b518af8229eeb19101fbb2246480249db8",
+  "artifact": {
+    "id": 12517791013,
+    "sha256": "0677b19b6497824b65a5f3835700028de15c83a1a0a97c19c5e66f444c69f677",
+    "runner_redownload_verified": true,
+    "independent_download_verified": true
+  },
+  "result": {
+    "acceptance": false,
+    "application_sha": "6c66199bd5ea3032d319fa6f727eb1d2e5e6e158",
+    "artifacts": [
+      {
+        "artifact_id": 12511439392,
+        "event_counts": {
+          "command_exited": 1,
+          "diagnostic_finished": 1,
+          "final_snapshot": 1,
+          "snapshot": 10,
+          "started": 1
+        },
+        "sha256": "2a0ccbdfe6a15dfeb4528203e6e88ccdfc6f33c24912e6160d45d739c08f63a2",
+        "state": "verified",
+        "terminal": [
+          {
+            "container_cleanup_complete": true,
+            "elapsed_seconds": 182.9,
+            "event": "diagnostic_finished",
+            "host_cleanup_complete": true,
+            "observed_returncode": 1
+          }
+        ]
+      },
+      {
+        "artifact_id": 12500689823,
+        "event_counts": {
+          "command_exited": 1,
+          "diagnostic_finished": 1,
+          "final_snapshot": 1,
+          "observer_finished": 9,
+          "pytest_exit": 9,
+          "safe_progress": 73,
+          "snapshot": 85,
+          "started": 1,
+          "test_end": 2206,
+          "test_report": 6655,
+          "test_start": 2206
+        },
+        "sha256": "99bdd654ab830501938a04bc12ab76df8dc36f23ae61f1230c7c3e9ad35e29fd",
+        "state": "verified",
+        "terminal": [
+          {
+            "container_cleanup_complete": true,
+            "elapsed_seconds": 1729.6,
+            "event": "diagnostic_finished",
+            "host_cleanup_complete": true,
+            "observed_returncode": 0
+          }
+        ]
+      }
+    ],
+    "diagnostic_only": true,
+    "elapsed_seconds": 1247.436062,
+    "exit_code": 1,
+    "fixture_source_exit_codes": {
+      "c01": 0,
+      "c02": 0
+    },
+    "instrumentation": "PATH delegates exact original executables, argv and stdin; piped stream forwarding adds process and scheduling overhead; no acceptance equivalence claimed",
+    "outer_limit": null,
+    "selfcheck_exit_preservation_and_redaction": true,
+    "source_unchanged": true,
+    "stage_bytes": 125987,
+    "stage_truncated": false,
+    "supervisor_window_seconds": 1800
+  },
+  "stage_records": 1042,
+  "selected_stages": [
+    {
+      "duration_seconds": 0.213319,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 13.853317,
+      "stage": "immutable_c01.compose_config"
+    },
+    {
+      "duration_seconds": 137.535787,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": true,
+      "seconds": 151.438883,
+      "stage": "immutable_c01.compose_build"
+    },
+    {
+      "duration_seconds": 11.593654,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 187.163561,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "duration_seconds": 2.15036,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 189.362666,
+      "stage": "immutable_c01.compose_minio_initialization"
+    },
+    {
+      "duration_seconds": 4.426711,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 193.838819,
+      "stage": "immutable_c01.compose_migrate"
+    },
+    {
+      "duration_seconds": 8.806654,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 202.69554,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "duration_seconds": 3.343354,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 206.090786,
+      "stage": "immutable_c01.compose_service_command"
+    },
+    {
+      "duration_seconds": 3.81238,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 209.952698,
+      "stage": "immutable_c01.compose_migration_drift"
+    },
+    {
+      "duration_seconds": 19.956697,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 229.959753,
+      "stage": "immutable_c01.compose_backend_tests"
+    },
+    {
+      "duration_seconds": 0.056765,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 230.073649,
+      "stage": "immutable_c01.compose_ps"
+    },
+    {
+      "duration_seconds": 1.480692,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 231.604849,
+      "stage": "immutable_c01.compose_exec"
+    },
+    {
+      "duration_seconds": 1.679694,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 233.335272,
+      "stage": "immutable_c01.compose_exec"
+    },
+    {
+      "duration_seconds": 6.190354,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 239.575196,
+      "stage": "immutable_c01.compose_service_command"
+    },
+    {
+      "duration_seconds": 0.427667,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 240.0537,
+      "stage": "immutable_c01.compose_restart"
+    },
+    {
+      "duration_seconds": 3.072656,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 243.178131,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "duration_seconds": 1.6494,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 244.880286,
+      "stage": "immutable_c01.compose_exec"
+    },
+    {
+      "duration_seconds": 4.201541,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 249.13201,
+      "stage": "immutable_c01.compose_backend_tests"
+    },
+    {
+      "duration_seconds": 0.359538,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 249.564588,
+      "stage": "immutable_c01.compose_restart"
+    },
+    {
+      "duration_seconds": 3.60285,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 253.239142,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "duration_seconds": 1.074767,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 254.364807,
+      "stage": "immutable_c01.compose_minio_initialization"
+    },
+    {
+      "duration_seconds": 4.623129,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 259.041773,
+      "stage": "immutable_c01.compose_backend_tests"
+    },
+    {
+      "duration_seconds": 6.027091,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 265.119943,
+      "stage": "immutable_c01.compose_service_command"
+    },
+    {
+      "duration_seconds": 2.865212,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 268.037276,
+      "stage": "immutable_c01.compose_down"
+    },
+    {
+      "duration_seconds": 254.585264,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": true,
+      "seconds": 268.045689,
+      "stage": "immutable_c01.foundation_verifier"
+    },
+    {
+      "duration_seconds": 2.901624,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 276.885803,
+      "stage": "same_database_upgrade.compose_migrate"
+    },
+    {
+      "duration_seconds": 8.285872,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 294.6921,
+      "stage": "same_database_upgrade.compose_migrate"
+    },
+    {
+      "duration_seconds": 2.871916,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 297.616249,
+      "stage": "same_database_upgrade.compose_verify"
+    },
+    {
+      "duration_seconds": 3.986833,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 301.653037,
+      "stage": "same_database_upgrade.compose_migration_drift"
+    },
+    {
+      "duration_seconds": 837.915282,
+      "event": "end",
+      "exit_code": 1,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 1241.626266,
+      "stage": "current_clean.compose_backend_tests"
+    },
+    {
+      "duration_seconds": 4.139297,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 1245.816156,
+      "stage": "current_clean.compose_down"
+    },
+    {
+      "duration_seconds": 1245.259568,
+      "event": "end",
+      "exit_code": 1,
+      "observed_markers": [],
+      "private_prefix_truncated": true,
+      "seconds": 1245.832851,
+      "stage": "c02_verifier"
+    }
+  ],
+  "historical_failure": {
+    "run": 39977996148,
+    "attempt": 1,
+    "job": 120497555911,
+    "seconds": 182.9,
+    "exit_code": 1,
+    "last_observed_command": "immutable C01 docker compose up -d --wait db redis minio",
+    "last_sample_seconds": 181.4,
+    "last_sample_health": "starting for all three services",
+    "actual_failed_subcommand": "unknown; a later unobserved command cannot be excluded",
+    "classification": "unresolved; original early failure not reproduced"
+  },
+  "decision": {
+    "repeatable_defect_proven": false,
+    "external_transient_proven": false,
+    "source_correction_justified": false,
+    "acceptance_retry_performed": false,
+    "verifier_diagnostic_executions": 1,
+    "task7_status": "BLOCKED / IN_PROGRESS",
+    "task8_authorized": false
+  },
+  "limits": [
+    "Observer PATH delegation introduces process/pipe overhead and may alter relative interleaving of stdout/stderr; not acceptance equivalence.",
+    "Zero historical pytest reports are not proof that no immutable tests ran.",
+    "Raw prefixes are bounded at65536 bytes and never exported; absent observed markers do not prove absent failures.",
+    "Other-docker observer/delegated calls have unclassified nonzero outcomes; no causal conclusion drawn.",
+    "The late current-backend failure is consistent with published Task7 REDs but this stage artifact alone does not identify its individual assertions.",
+    "Original supervisor terminal host-cleanup fields were kept private and are not present in the exported result; successful Compose down stages are observed, not a replacement for complete acceptance cleanup evidence."
+  ]
+}

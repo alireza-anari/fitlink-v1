@@ -2169,3 +2169,46 @@ New named integration modules exercise actual owner draft/version/receipt,
 append-only revision, exact-post ingress and evidence denial plus bounded reports
 and staff-flag denial. They require real PostgreSQL execution before domain
 implementation; no local database fallback/mocks or service PASS claimed.
+
+
+### Task 7 — bounded Foundation diagnostic; early failure remains unresolved
+
+Execution authority remains 6c66199bd5ea3032d319fa6f727eb1d2e5e6e158,
+tree afef30b518af8229eeb19101fbb2246480249db8. No implementation, mandatory
+workflow, historical source, lockfile or timeout change was published.
+One authorized verifier diagnostic: run39987116028 attempt1, job120529064364,
+diagnostic commitfeb5f0ad95d9d91740817d8f1d4030608ece43c1,
+tree6041a67091cc571946dca57abef6b734762a84d7, on a separate diagnostics branch.
+Diagnostic job success means observation completed, not acceptance success.
+
+Failed Foundation artifact12511439392 and accepted Task6 artifact12500689823
+were downloaded and SHA-256 checked on the runner. New artifact12517791013
+SHA-2560677b19b6497824b65a5f3835700028de15c83a1a0a97c19c5e66f444c69f677
+was re-downloaded/rehashed on the runner and independently from Work Cloud once
+its execution connection returned. No second hosted verifier or acceptance
+retry ran. The contemplated artifact-only reader was not published or executed.
+
+Historical job120497555911 exited1 at182.9s. At181.4s the last observed command
+was immutable-C01 compose up -d --wait db redis minio; all three sampled services
+were running/health-starting. This is NOT proof of the failing subcommand: a
+subsequent unsampled command remains possible, and raw child output was not
+retained. Zero pytest observer reports are not proof that no immutable tests ran.
+
+In the one diagnostic, full immutable C01 rehearsal returned0 in254.585264s;
+same-database C01/C02 migration, populated upgrade verification and drift all0.
+The current clean backend stage later returned1 after837.915282s; whole command
+returned1 after1247.436062s, not the earlier182.9s symptom. Existing Task7 REDs
+are a supported explanation for the late backend failure, but the stage-only
+artifact does not prove its individual failed assertions. No source defect or
+external transient root cause is established; no speculative fix or retry.
+Source/fixture verification after execution returned0; stage metadata is complete.
+Bounded raw prefixes and subprocess/pipe observation add explicit limitations;
+Compose down stages returned0, but full supervisor host-cleanup fields were not
+exported and are not claimed as acceptance proof. See finite JSON evidence.
+
+The independent early Foundation blocker is not legitimately classified/resolved.
+Task7 remains BLOCKED / IN_PROGRESS. Further evidence requires an explicitly
+authorized observation that catches the early failure with terminal stage/exit
+and bounded infrastructure classification. Do not resume implementation, perform
+an acceptance retry, or start Task8. Existing unpublished Work Cloud code was
+not edited, reset or cleaned during this diagnostic recovery.
