@@ -2128,3 +2128,34 @@ validate_checkpoint accepts the record. The docs-only checkpoint commit is not
 the tested implementation. Laptop-only unpublished state was not recovered.
 Task6 COMPLETE. Task7+ NOT AUTHORIZED; stop without starting it, merging,
 deploying or releasing Marketplace.
+
+
+### Task 7 — exclusive authorization, preflight and first bounded RED
+
+Phase Manager authorizes Task7 only, existing exclusive Cloud writer; root is
+the only active agent. Renewed remote HEAD27bd28ecd4e273fd7f1b8d304f804deefeb2d50a
+and tree0e0dadf25e82b57b07a4c70a212f60d9ce2e3ecc match. Task6 attempt2
+run39913564638 independently refetched: all15 completed/success on0787d788,
+accepted treeb207a0a8e946750a0dd1213f5460e51f67dd3000. Local checkpoint/ledger
+apparent changes were identical published Git blobs, not unpublished work;
+Git fetch and non-destructive index/HEAD alignment preserve runtime evidence.
+Approved plan blobf1225196c95a203e440afc4da362b74806e84f20 matches. No AGENTS.md
+or competing Task7 code present. Current migration leaves exactly professionals
+0018, assets0010, governance0015, marketplace0003; approved Task7 mappings
+0019_c04_educational_posts,0011_c04_educational_image_purpose,
+0016_c04_public_moderation require no remapping.
+
+Interfaces: source-domain posts consume current Task2 publication and Task3
+copy authority; governance consumes validated profile/post callbacks from config,
+never imports feature domains. New educational ingress is exact-post owned scope,
+quarantined private source/post_preview, separate gated public copy. Text-only
+draft permits upload binding; publication requires1..4 exact ready owned images
+and explicit revision confirmation/current parent publication. No routes/UI
+or Task8 work. ADR004 and product/permissions authorize only own educational
+images, no evidence/athlete/case-study reuse or new consent purpose.
+
+First local RED:26 safe PostInput contract assertions failed naturally, exit1,
+0 errors,0 skips,0.77s; missing contract explicitly asserted before import.
+Frozen dependency sync succeeds without lockfile change. No local Docker check
+was attempted. Further named real PostgreSQL, media and moderation REDs remain
+required before their implementations. Task7 RED/IN_PROGRESS, not accepted.

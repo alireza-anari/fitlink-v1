@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "approved_plan_commit": "ba82967cb2e21920076c5a0d25ed1988f777e943",
+  "approved_plan_tree": "1478d691b2a60d95f6c0d2ce5e561d34f59a61c0",
+  "approved_plan_blob": "f1225196c95a203e440afc4da362b74806e84f20",
+  "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+  "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
+  "task": 7,
+  "state": "RED",
+  "base_commit": "27bd28ecd4e273fd7f1b8d304f804deefeb2d50a",
+  "prerequisite": {
+    "task": 6,
+    "implementation_sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+    "implementation_tree": "b207a0a8e946750a0dd1213f5460e51f67dd3000",
+    "run_id": 39913564638,
+    "run_attempt": 2
+  },
+  "local_red": {
+    "command": ".venv/bin/python -m pytest tests/unit/c04/test_post_content.py -q --strict-markers --tb=no --show-capture=no",
+    "failed": 26,
+    "error": 0,
+    "seconds": 0.77,
+    "reason": "explicit missing safe post contract assertions; no import/collection failure"
+  },
+  "hosted_acceptance": null,
+  "next_task": 7,
+  "current_pending_requirement": "Named PostgreSQL/media/moderation REDs, implementation, real-service GREEN, full exact-source acceptance and independent review. Task8 prohibited."
+}
