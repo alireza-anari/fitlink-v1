@@ -2166,3 +2166,57 @@ Justified next execution is diagnostic only, not a same-SHA acceptance retry:
 
 Distinct read-only diagnostic review: no unresolved Critical/Important findings.
 Reviewer limitations above remain explicit; historical cause and acceptance remain unproven.
+
+
+### Task 6 paired performance diagnostic results — 2026-10-23 UTC
+
+Diagnostic-only run39926412693 attempt1 completed successfully on
+e67ec1c1bbe464fca2d9d6b7fc353367b5701c71,
+tree9e8c9c8e3c5c2966bfd5053f7d36f5f3e7863d14.
+Jobs120323789052 and120323789420 both succeeded; all eight24-case samples
+and both collection/MinIO measurements exited0. This is NOT acceptance.
+Artifact12490460430 SHA256
+f47ac8e9c610b32946e9af2794b7c027d4367f0f87c1f568aa82f600f1fe7ff0
+and artifact12490181632 SHA256
+7a0ca2162b45e3e2a9c438ae9eeec3bf0b78f2e9a6a4aa76ab17391d50290474
+were independently downloaded and rehashed; both matched GitHub digests.
+
+ABBA lane0: prior118.089, current132.986, current121.970, prior126.938 seconds.
+BAAB lane1: current108.404, prior116.663, prior113.624, current108.823 seconds.
+Current/prior mean ratios1.0405 and0.9433 reverse direction. No repeatable
+current-source regression is demonstrated by this diagnostic.
+The fixed CPU calendar case averaged3.783s on lane0 vs2.920s on lane1.
+This demonstrates present diagnostic host performance differences, not the cause
+of either historical full-rehearsal run.
+
+Both sources collected2082/2110 tests as expected. Prior collection6.433-7.072s;
+current3.864-4.540s. Prior was collected first, so cold/warm ordering prevents
+interpreting the difference as a source speedup. Actual full journals' first
+test starts4.165 ->6.153s: this recorded startup difference cannot explain the
+270.285s shared-prefix difference. Newly added MinIO cases were never executed
+before that timeout. Separate hosted28-case MinIO execution0.606-0.703s, no SQL.
+
+Representative samples executed156499-157027 SQL calls, elapsed SQL43.665-66.471s.
+These small call-count differences do not establish an application defect.
+All lane staff samples had1654 calls, comparison samples20824 calls. Most total
+count/timing variation was in the100-professional candidate lifecycle/reconciliation.
+Sampled active database waits observed Client/Timeout/running-or-other;
+no Lock or IO wait was observed. Two-second sampling cannot exclude shorter
+waits, nor establish anything about the historical full-rehearsal database.
+
+No source/fixture correction is justified by these results.
+Historical PostgreSQL/service contention vs runner resources vs full Compose
+topology remains unresolved: original c03-final has no matching synchronized
+resource/wait telemetry, and this focused host-Python service-container experiment
+does not recreate that topology or its background services.
+The next defensible execution, if continuing recovery, is one separately bounded
+diagnostic of the exact full complete_backend selection in original Compose
+topology with synchronized finite CPU/I/O/container/database-wait and phase SQL
+telemetry. Keep the exact source and inherited900s deadline. It must remain
+diagnostic-only; it is not an authorized same-SHA acceptance retry.
+
+Execution branch still0787d7880f9fd27006bf76ae0f16e31536ef4503.
+All existing refs remain unchanged; results are published on a separate
+diagnostics/c04-task06-performance-evidence branch to avoid triggering another
+performance run merely to record evidence.
+Task6 IN_PROGRESS. No completion checkpoint. Task7 NOT_AUTHORIZED.

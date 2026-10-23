@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "task": 6,
+  "state": "IN_PROGRESS",
+  "acceptance": false,
+  "execution_sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+  "execution_tree": "b207a0a8e946750a0dd1213f5460e51f67dd3000",
+  "diagnostic": {
+    "sha": "e67ec1c1bbe464fca2d9d6b7fc353367b5701c71",
+    "tree": "9e8c9c8e3c5c2966bfd5053f7d36f5f3e7863d14",
+    "run_id": 39926412693,
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 120323789052,
+        "name": "paired-performance (prior current current prior)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 120323789420,
+        "name": "paired-performance (current prior prior current)",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "id": 12490460430,
+      "name": "task06-performance-0",
+      "sha256": "f47ac8e9c610b32946e9af2794b7c027d4367f0f87c1f568aa82f600f1fe7ff0",
+      "downloaded_digest_matched": true
+    },
+    {
+      "id": 12490181632,
+      "name": "task06-performance-1",
+      "sha256": "7a0ca2162b45e3e2a9c438ae9eeec3bf0b78f2e9a6a4aa76ab17391d50290474",
+      "downloaded_digest_matched": true
+    }
+  ],
+  "measurements": {
+    "lane0": {
+      "prior_seconds": [
+        118.088961,
+        126.938187
+      ],
+      "current_seconds": [
+        132.986234,
+        121.969786
+      ],
+      "calendar_mean_seconds": 3.783439
+    },
+    "lane1": {
+      "prior_seconds": [
+        116.663049,
+        113.623997
+      ],
+      "current_seconds": [
+        108.403665,
+        108.823484
+      ],
+      "calendar_mean_seconds": 2.919853
+    },
+    "minio_seconds": [
+      0.703273,
+      0.605907
+    ],
+    "minio_cases": 28,
+    "collection_prior_seconds": [
+      7.071585,
+      6.432898
+    ],
+    "collection_current_seconds": [
+      4.540022,
+      3.86432
+    ],
+    "collection_order": "prior_then_current; cold/warm ordering confounds small source deltas",
+    "sample_cases_per_process": 24,
+    "sample_sql_count_range": [
+      156499,
+      157027
+    ],
+    "sample_sql_seconds_range": [
+      43.665277,
+      66.47061
+    ],
+    "all_sample_exit_codes": 0,
+    "postgres_lock_or_io_wait_observed": false,
+    "wait_sampling_seconds": 2,
+    "full_regression_common_cases": 1332,
+    "full_regression_first_start_seconds": [
+      4.165,
+      6.153
+    ]
+  },
+  "conclusion": {
+    "repeatable_current_source_slowdown": "not demonstrated; direction reverses across lanes",
+    "minio_execution_cause": "rejected for recorded timeout; no MinIO case executed before termination",
+    "collection_cause": "measured costs insufficient to explain the 270.285-second common-prefix difference",
+    "historical_postgresql_contention": "unresolved; no sufficient historical wait telemetry",
+    "historical_runner_resource_cause": "unresolved; present diagnostic host differences do not prove historical causality",
+    "full_compose_topology": "not reproduced by service-container focused samples",
+    "root_cause": "insufficient evidence",
+    "code_correction": "none justified",
+    "same_sha_acceptance_retry": "not performed or authorized",
+    "next_justified_action": "Instrument one bounded current-source complete_backend diagnostic in the original Compose topology with synchronized numeric host/container CPU, I/O, database aggregate wait and SQL phase telemetry; keep exact source, full selection and 900-second deadline. This would be diagnostic only, not acceptance."
+  },
+  "review": {
+    "independent_read_only": true,
+    "unresolved_critical": 0,
+    "unresolved_important": 0
+  },
+  "task7_authorized": false
+}
