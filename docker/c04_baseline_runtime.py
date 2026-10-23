@@ -1,8 +1,10 @@
 """Run original C03 unchanged; emit only bounded, finite outer diagnostics."""
 
+import errno
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 from collections import deque
@@ -161,6 +163,112 @@ def classify_prerequisite_private_log(text, known_files):
     }
 
 
+MINIO_LOG_LIMIT = 65536
+
+
+def _minio_record(
+    state, classification="unknown_or_insufficient_evidence", evidence=()
+):
+    return {
+        "acceptance": False,
+        "log_state": state,
+        "classification": classification,
+        "evidence": sorted(evidence),
+    }
+
+
+def classify_minio_private_log(data):
+    """Pinned mc error prefixes only. Silent alias/readiness failures stay unknown."""
+    if len(data) > MINIO_LOG_LIMIT:
+        return _minio_record("oversized")
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return _minio_record("malformed")
+    text = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", text)
+    if any(ord(c) < 32 and c not in "\t\n\r" for c in text):
+        return _minio_record("malformed")
+    lines = text.splitlines()
+    if len(lines) > 4096 or any(len(line) > 8192 for line in lines):
+        return _minio_record("malformed")
+    if not text.strip():
+        return _minio_record("empty")
+    categories = set()
+    evidence = set()
+    messages = (
+        (
+            "Unable to initialize new alias from the provided credentials.",
+            "readiness_or_alias_failure",
+        ),
+        ("Unable to make bucket", "bucket_configuration_failure"),
+        ("Unable to set anonymous", "anonymous_access_policy_failure"),
+        ("Unable to create new policy", "application_policy_creation_failure"),
+        ("Unable to add new user", "application_user_creation_failure"),
+        (
+            "Unable to make user/group policy association",
+            "application_policy_attachment_failure",
+        ),
+    )
+    for line in lines:
+        line = line.strip()
+        if line.startswith("mc: <ERROR> "):
+            message = line.removeprefix("mc: <ERROR> ")
+            for prefix, category in messages:
+                if message.startswith(prefix) and (
+                    len(message) == len(prefix) or message[len(prefix)] in " .`:\t"
+                ):
+                    categories.add(category)
+                    evidence.add(category)
+            if message.startswith("Unable to initialize admin connection."):
+                evidence.add("admin_connection_error_without_operation")
+        if line.startswith("Error response from daemon:"):
+            evidence.add("docker_daemon_error")
+            if "failed to create task for container" in line:
+                categories.add("container_startup_failure")
+                evidence.add("container_task_creation_error")
+            else:
+                categories.add("docker_daemon_failure")
+        if line.startswith("dependency failed to start:"):
+            categories.add("container_startup_failure")
+            evidence.add("container_dependency_start_error")
+    classification = (
+        next(iter(categories))
+        if len(categories) == 1
+        else "unknown_or_insufficient_evidence"
+    )
+    return _minio_record("read", classification, evidence)
+
+
+def read_minio_private_log(path):
+    """Read at most 64KiB, reject links/nonregular files and never return text."""
+    try:
+        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    except OSError as error:
+        state = {errno.ENOENT: "missing", errno.ELOOP: "symlink"}.get(
+            error.errno, "unreadable"
+        )
+        return _minio_record(state)
+    result = _minio_record("unreadable")
+    try:
+        info = os.fstat(descriptor)
+        if not stat.S_ISREG(info.st_mode):
+            result = _minio_record("not_regular")
+        elif info.st_size > MINIO_LOG_LIMIT:
+            result = _minio_record("oversized")
+        else:
+            result = classify_minio_private_log(
+                os.read(descriptor, MINIO_LOG_LIMIT + 1)
+            )
+    except OSError:
+        result = _minio_record("unreadable")
+    finally:
+        try:
+            os.close(descriptor)
+        except OSError:
+            result = _minio_record("unreadable")
+    return result
+
+
 def run(root):
     baseline = root / ".runtime/c03"
     tree = verify_baseline(baseline)
@@ -173,6 +281,9 @@ def run(root):
         if path.is_file() and not path.is_symlink()
     }
     # Read only known private stage logs, never upload them or reproduce text.
+    record["logs"]["clean_minio"] = read_minio_private_log(
+        baseline / ".runtime/task14-private/clean_minio.log"
+    )
     for stage in ("exact_original_c02",):
         path = baseline / ".runtime/task14-private" / (stage + ".log")
         if path.is_file() and not path.is_symlink():

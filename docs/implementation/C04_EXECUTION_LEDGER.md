@@ -2026,3 +2026,67 @@ historical audit which failed with URLError on earlier diagnostic source).
 No external root cause is inferred from this later success. Task7+ not started.
 Local Ruff/format/whitespace pass; real fixture characterization requires hosted
 proof. All original assertions/services/deadlines/security guards remain.
+
+### Task 6 — controlled immutable clean_minio diagnostics — 2026-10-23 UTC
+
+Phase Manager authorizes continued sole-writer Task6 recovery. Existing explicit
+stopped-executor handoff persists; branch independently remains6fa56e89567a7414602752c5882e5a6995c38dc6,
+treeb569d4eaa0c18af0bad0fb7b10e783a447bdfd95, local tracked/index state clean
+before this change, no other active implementation agent or competing remote
+advance observed. The fresh diagnostic reviewer is read-only. Laptop-only
+ledger changes remain unavailable/unpublished and are not reconstructed.
+
+Re-fetched run39904837930 attempt1 is terminal FAILURE. Thirteen jobs actually
+succeeded: c04-postgresql120254272507, foundation120254272404,
+c02-migrations120254272365, c03-owner120254272369, c03-staff120254272414,
+c03-storage120254272609, c03-processing120254272436,
+c03-restart120254272180, c03-timeout-probe120254272460,
+c03-task14-native120254272559, c03-evidence-audit120254272474,
+c04-public-media120254273473, c03-final120254272635.
+Failed c04-baseline120254272520 at original clean_minio exit1; c04-final120266713385
+correctly failed its upstream guard. No skipped/cancelled job is accepted.
+
+Separate c03-final now proves complete_backend natural0, original900s bound
+unchanged, final_rehearsal_passed and clean_cleanup0. This is actual current-source
+success, not inferred from the focused388 result. Baseline metadata artifact
+12481720290 digest28d798471454ea8feccfb3467bb6db8252ec051ad5814825f1ca94d88578477f
+remains insufficient for MinIO's failing subcommand. The C04 wrapper did not read
+clean_minio.log. That omission caused missing evidence, not the MinIO failure.
+
+Inspected immutable C03 minio-init.sh, Compose dependency/entrypoint and pinned mc
+release RELEASE.2025-08-13T08-35-41Z command source. Alias/readiness errors are
+explicitly redirected away in the unchanged original loop. Empty or Compose-only
+logs cannot prove which loop command failed; duration/last-active marker alone
+is not a cause. No original source, Compose behavior, init command, bucket/ACL/
+policy/user requirement, dependency, source guard or deadline is changed.
+
+Ruling: add ONLY a C04 outer reader for the exact generated clean_minio.log,
+64KiB maximum, reject links/nonregular files, explicit missing/empty/oversized/
+malformed/unreadable outcomes. Match fixed pinned-mc error prefixes or explicit
+Docker startup/daemon errors; export finite classifications/evidence tokens only.
+No raw logs, captures, credentials, environment values, endpoints, policy text,
+identifiers, paths or exception messages leave the reader. Unknown/admin-only or
+conflicting operation evidence stays unknown_or_insufficient_evidence. Diagnostics
+always say acceptance:false; original one subprocess execution/exit is preserved.
+Cost if insufficient: the failing subcommand remains unclassified; no success,
+external-transient label, initialization bypass or blind same-SHA retry follows.
+
+Actual local RED21 missing-reader assertions. Initial focused GREEN33, then
+additional directory and prefix-collision RED2 were corrected. Independent static
+security/privacy/correctness review found an Important descriptor-close error
+could override the original exit; reproduced actual RED. Its order-dependent
+conflicting-daemon finding was regraded as diagnostic correctness, reproduced
+RED, and fixed in the same pass. Both negatives now pass. No unresolved review
+finding remains; runtime/actual MinIO cause were explicitly not inferred by review.
+Final frozen C04 unit controls275 passed+37 subtests, failed/skipped0 in6.69s;
+whole-source Ruff/format538 files, whitespace and immutable source verification
+(5c294cb330cf08b297cc01c8baa27adb1e6b93b7) pass. The unchanged original subprocess
+one-call/exit17 control passes. No local Docker qualification or service PASS.
+New exact-source hosted full15 and actual sanitized MinIO observations required.
+Task6 remains IN_PROGRESS; completion checkpoint absent; Task7+ prohibited.
+Prior successful full-current rehearsal artifact12482016987 independently
+rehashed82b9f337407fe71590fc4647d4b5aea52cb09923c7974ea4bd3f08f2ec3303a6;
+all145 recorded stage exits0. This separate success does not waive the failed
+immutable MinIO baseline or aggregate.
+Its complete-backend journal proves2082 completed cases, pytest exit0 in692.474s,
+zero nonpassing reports; no deadline increase or selected-test suppression.
