@@ -1,7 +1,6 @@
 name: Task 6 comparative performance diagnosis (not acceptance)
 on:
-  push:
-    branches: [diagnostics/c04-task06-performance]
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

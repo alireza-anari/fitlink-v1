@@ -1,0 +1,79 @@
+name: Task 6 single full-topology performance diagnostic (not acceptance)
+on:
+  push:
+    branches: [diagnostics/c04-task06-performance]
+    paths:
+      - .github/workflows/c04-task06-topology.yml
+      - docker/c04_topology_host.py
+      - docker/c04_topology_plugin.py
+permissions:
+  contents: read
+concurrency:
+  group: task06-topology-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  full-topology-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0787d7880f9fd27006bf76ae0f16e31536ef4503
+          path: .runtime/source
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+          path: .runtime/source/.runtime/c02
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/source/.runtime/c01
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+          path: .runtime/source/.runtime/c02/.runtime/c01
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+          path: .runtime/source/.runtime/c03
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: 0.12.19
+          python-version: 3.13.15
+          enable-cache: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .runtime/source/.node-version
+      - name: Original frozen source environment and build assets
+        working-directory: .runtime/source
+        run: |
+          uv sync --frozen --group dev
+          npm ci
+          npm run build:css
+          npm run check:js
+          uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build --ignore=src/styles.css
+      - name: Offline telemetry controls
+        run: .runtime/source/.venv/bin/python docker/c04_topology_controls.py -q
+      - name: One bounded original-selection full-topology diagnostic
+        run: timeout -k 30s 3000s python docker/c04_topology_host.py
+      - name: Owned resource emergency cleanup only
+        if: always()
+        run: python docker/c04_topology_host.py --cleanup-only
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: task06-full-topology-numeric-evidence
+          path: |
+            .runtime/topology-evidence/summary.json
+            .runtime/topology-evidence/host.jsonl
+            .runtime/topology-evidence/pytest.jsonl
+          include-hidden-files: true
+          if-no-files-found: error

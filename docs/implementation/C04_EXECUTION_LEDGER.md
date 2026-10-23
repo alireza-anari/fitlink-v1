@@ -2166,3 +2166,89 @@ Justified next execution is diagnostic only, not a same-SHA acceptance retry:
 
 Distinct read-only diagnostic review: no unresolved Critical/Important findings.
 Reviewer limitations above remain explicit; historical cause and acceptance remain unproven.
+
+
+### Task 6 one full-topology performance diagnostic — authorized 2026-10-23 UTC
+
+Task6 IN_PROGRESS, unaccepted; Task7+ NOT_AUTHORIZED. The Phase Manager
+authorized exactly ONE bounded hosted full-topology diagnostic, not an acceptance
+retry. Existing execution source remains0787d7880f9fd27006bf76ae0f16e31536ef4503,
+treeb207a0a8e946750a0dd1213f5460e51f67dd3000.
+Earlier paired diagnostic results remain published atf1aa2292eed8cfa9682db08990d412ab878c721b.
+Neither their GREEN nor this diagnostic can establish15-job acceptance.
+
+Design:
+- Separate exact application checkout at.runtime/source pinned0787d788, immutable
+  C03/C02/C01 fixtures matching c03-final. Source SHA/tree/diff verified before
+  and after. No application code, lockfile, migration, fixture, test, Compose
+  source, immutable source or mandatory acceptance workflow is edited.
+- Use original Compose and exact clean-stage worker override fromverify_c03.sh.
+  Build original clean targets; real db,redis,minio,scanner,web,worker,beat plus
+  scanner-signatures/minio-init. Generate isolated credentials privately; verify
+  immutable fixtures; migrate, clean-chain probe, no-op/drift, scanner and14-case
+  isolated-baseline preflight. The earlier populated C02 upgrade/browser prelude
+  is not replayed: this experiment reproduces the clean full-backend topology,
+  not its complete historical host/volume/cache warmup history.
+- Exact backend command remains uv run --frozen pytest tests/unit tests/integration
+  -q --strict-markers --tb=no --show-capture=no. Original900s GNU timeout plus
+  original10s kill grace. No skips/deselections/assertion changes or retry.
+- Setup service/runtime/MinIO ceilings900s match inherited setup wrapper.
+  Overall diagnostic3000s/job55min bounds setup+test+cleanup, not an extended
+  regression deadline.
+- External read-only pytest plugin mount at/telemetry, evidence at/evidence;
+  original C03 foundation observer remains enabled. Its raw journals/stacks and
+  all command/framework stdout/stderr are excluded from uploaded evidence.
+  Extra plugin records only finite source-AST allowlisted unparameterized symbols,
+  case ordinal, phase/outcome/count/duration, monotonic numeric SQL counters.
+  Delegates execute/executemany exactly once with original args/results/exceptions;
+  never reads or serializes SQL/params. No transaction, cursor/session setting or
+  test order changes. Child pytest processes remain uninstrumented via exclusive
+  primary sentinel outside application source.
+- Five-second bounded heartbeat for cumulative SQL count/duration and observer
+  bookkeeping; timer/counter overhead calibrated on10000 no-op calls.
+  Observer write/AST/hook time and measured SQL-counter bookkeeping are recorded.
+  Instrumentation creates scheduling/file-I/O overhead, not a free observation;
+  calibration is an estimate, not proof of causal overhead or subtraction.
+- Five-second host samples: CPU ticks/count/affinity/cgroup quota and pressure,
+  memory availability, dirty/writeback, disk free and aggregate supported whole-
+  device I/O counts/sectors/times. Unsupported/missing metrics are null, not zero.
+  Per-owned-service cgroup CPU use/throttle/quota, memory/events/pressure and I/O.
+  No container IDs, PIDs, command lines, environment or paths are exported.
+- Read-only whole-owned-PostgreSQL-cluster active/wait counts exclude monitor.
+  Fixed primary-test/service/other numeric category counts cover auxiliary
+  migration databases without emitting database names. Separate test database
+  and cluster I/O aggregates; track_io_timing enabled boolean distinguishes
+  unavailable timing from measured zero. Telemetry session alone has1000ms
+  statement timeout,500ms lock timeout,2s connection timeout; application DB
+  settings remain unchanged. Five-second sampling cannot exclude shorter waits.
+- Host/container common monotonic origin verified by bracketed numeric clock read.
+  Sample intervals, collection wall time, host process/child CPU and sample errors
+  are recorded. Collector CPU and monitor sessions can influence services; an
+  isolated uninstrumented paired full-topology control is not authorized here.
+- Writer bounds:200 host rows,65536 bytes/row;12000 pytest rows/16MiB. Fixed JSON
+  artifact paths only. No raw SQL, params, HTTP data, private fields, session IDs,
+  arbitrary exceptions/stacks, credentials or environment dumps.
+- Timeout force-removes checks only after verifying its owned project label.
+  Terminal counts exclude all records beyond min(command exit,start+900s), and
+  report post-window record count. Cleanup precedes waiting for sampler shutdown.
+  Unique run/attempt project; reject existing label resources and exact volume
+  names before ownership. Marker-gated down --volumes only acquired project;
+  workflowalways cleanup fallback. No prune or unrelated volume/environment removal.
+
+Publication/review:
+- Existing diagnostic branch advances with expected-head lease frome67ec1c1.
+  Earlier paired workflow becomes manual-only to prevent an unauthorized duplicate
+  paired run. New one-job push workflow triggers only its own telemetry paths.
+  marketplace/c04-cloud and all other existing refs remain unchanged.
+-14 offline correctness/privacy controls pass: delegate success/failure fidelity,
+  parameter/unknown-symbol redaction, child isolation, output bound, AST allowlist,
+  missing-vs-zero, malformed PG schema, missing cgroup, ownership guard,
+  thread-error no traceback, deadline window, cluster waits and monitor timeouts.
+- Plugin smoke:53 actual unit tests pass, zero nonpassing categories, exact53
+  completed, observer_fault=false,truncated=false; numeric heartbeat observed.
+  No local Docker check/run is required or claimed. Ruff/format pass.
+- Independent read-only reviewer identified Important thread traceback, deadline
+  accounting and DB-monitor coverage/session-lifetime issues; corrected and
+  covered before hosted execution. No source-performance fix is claimed.
+
+Independent final read-only review: no unresolved Critical or Important findings.
