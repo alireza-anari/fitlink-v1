@@ -1,0 +1,33 @@
+{
+  "diagnostic_only": true,
+  "acceptance": false,
+  "authorized_executions": 1,
+  "application_sha": "6c66199bd5ea3032d319fa6f727eb1d2e5e6e158",
+  "application_tree": "afef30b518af8229eeb19101fbb2246480249db8",
+  "failed_run": 39977996148,
+  "failed_attempt": 1,
+  "failed_job": 120497555911,
+  "failed_artifact": {
+    "id": 12511439392,
+    "sha256": "2a0ccbdfe6a15dfeb4528203e6e88ccdfc6f33c24912e6160d45d739c08f63a2"
+  },
+  "successful_task6_foundation": {
+    "run": 39913564638,
+    "attempt": 2,
+    "job": 120401848666,
+    "seconds": 1729.6,
+    "artifact": 12500689823,
+    "sha256": "99bdd654ab830501938a04bc12ab76df8dc36f23ae61f1230c7c3e9ad35e29fd"
+  },
+  "scope": "Artifact inspection, then exactly one original supervised sh docker/verify_c02.sh execution; no acceptance rerun.",
+  "limits": {
+    "supervisor_seconds": 1800,
+    "outer_cleanup_seconds": 1860,
+    "delegated_stream_prefix_bytes": 65536,
+    "stage_file_bytes": 4194304,
+    "raw_supervisor_file_bytes": 33554432
+  },
+  "privacy": "Only fixed stage labels, exit codes, monotonic times, finite observed error markers and pinned source/run/artifact IDs are exported. API token removed before verifier execution. Raw output stays in unlinked private runner files or bounded private process memory. No raw logs, arguments, environment or signed URLs uploaded.",
+  "semantics": "Original source, dependencies, assertions, migration and service commands retained. PATH delegates original executable/argv/stdin and forwards each output stream. Process/pipe observation adds overhead; this diagnostic cannot establish acceptance equivalence. Missing or truncated telemetry remains explicit.",
+  "preservation": "Execution branch and unpublished Work Cloud state are untouched. No historical source or mandatory workflow edited."
+}
