@@ -1,0 +1,2066 @@
+{
+  "run": 39994344376,
+  "attempt": 1,
+  "diagnostic_sha": "0072150e1614eb07383a7524b231a7c9c13598ee",
+  "diagnostic_tree": "8436c1561daaf2b89d36905c954b46bb6bbb0760",
+  "artifact_sha256": "83db09b376a197aeb1939798b6f171c8c19a7bcfb10da8bbbab9239b34e4c067",
+  "artifact_bytes": 4917,
+  "digest_verified": true,
+  "result": {
+    "acceptance": false,
+    "application_sha": "6c66199bd5ea3032d319fa6f727eb1d2e5e6e158",
+    "artifacts": [],
+    "calibration": {
+      "delegated_five_noop_seconds": 0.570296,
+      "direct_five_noop_seconds": 0.159187
+    },
+    "cleanup": [
+      {
+        "container_cleanup_complete": true,
+        "elapsed_seconds": 299.4,
+        "event": "diagnostic_finished",
+        "host_cleanup_complete": true,
+        "observed_returncode": 0,
+        "reason": "command_exited"
+      }
+    ],
+    "diagnostic_only": true,
+    "elapsed_seconds": 301.552922,
+    "equivalence_limits": "PATH delegation pipes streams and adds Python startup; post-up read-only probes add measured delay. Original supervisor 20-second queries retained. No full acceptance equivalence; no current Task7 backend executed.",
+    "exit_code": 0,
+    "fixture_source_exit_codes": {
+      "c01": 0,
+      "c02": 0
+    },
+    "instrumentation": "PATH delegates exact original executables, argv and stdin; piped stream forwarding adds process and scheduling overhead; no acceptance equivalence claimed",
+    "original_verifier_sha256": "b19a1cb29367dc769b104b2b0079fc2752eb2f099fdd37d9f01d80ff4a90b6c2",
+    "outer_limit": null,
+    "prefix_sha256": "1ab9e11960c1b63efded3520fcf0e59c65b4c3d8f54b4c51d7a9144df8b51283",
+    "scope": "byte-identical original prefix through upgrade cleanup; final current zero-state verifier not executed",
+    "selfcheck_exit_preservation_and_redaction": true,
+    "source_unchanged": true,
+    "stage_bytes": 35944,
+    "stage_truncated": false,
+    "supervisor_window_seconds": 1800
+  },
+  "event_counts": {
+    "start": 122,
+    "end": 122,
+    "readiness": 5
+  },
+  "unmatched_stage_events": {},
+  "nonzero_commands": [],
+  "measured_readiness_probe_seconds": 0.880611,
+  "stages": [
+    {
+      "event": "start",
+      "seconds": 1.276285,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.054781,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 1.33106,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 1.4374,
+      "stage": "c01_c02_prefix"
+    },
+    {
+      "event": "start",
+      "seconds": 1.437483,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.014213,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 1.45169,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 1.494491,
+      "stage": "current_source.source_check"
+    },
+    {
+      "duration_seconds": 0.051638,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 1.546122,
+      "stage": "current_source.source_check"
+    },
+    {
+      "event": "start",
+      "seconds": 1.611322,
+      "stage": "immutable_c01.frozen_sync"
+    },
+    {
+      "duration_seconds": 0.234902,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 1.846215,
+      "stage": "immutable_c01.frozen_sync"
+    },
+    {
+      "event": "start",
+      "seconds": 1.909972,
+      "stage": "immutable_c01.npm_ci"
+    },
+    {
+      "event": "start",
+      "seconds": 2.585425,
+      "stage": "other_shell"
+    },
+    {
+      "duration_seconds": 0.028021,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 2.613441,
+      "stage": "other_shell"
+    },
+    {
+      "duration_seconds": 0.739137,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 2.649101,
+      "stage": "immutable_c01.npm_ci"
+    },
+    {
+      "event": "start",
+      "seconds": 2.712482,
+      "stage": "immutable_c01.css"
+    },
+    {
+      "event": "start",
+      "seconds": 2.864005,
+      "stage": "other_shell"
+    },
+    {
+      "duration_seconds": 0.226369,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 3.090366,
+      "stage": "other_shell"
+    },
+    {
+      "duration_seconds": 0.393385,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 3.105859,
+      "stage": "immutable_c01.css"
+    },
+    {
+      "event": "start",
+      "seconds": 3.171191,
+      "stage": "immutable_c01.javascript"
+    },
+    {
+      "event": "start",
+      "seconds": 3.334386,
+      "stage": "other_shell"
+    },
+    {
+      "duration_seconds": 0.025882,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 3.360263,
+      "stage": "other_shell"
+    },
+    {
+      "duration_seconds": 0.203478,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 3.374663,
+      "stage": "immutable_c01.javascript"
+    },
+    {
+      "event": "start",
+      "seconds": 3.439736,
+      "stage": "immutable_c01.collectstatic"
+    },
+    {
+      "duration_seconds": 1.21686,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 4.656587,
+      "stage": "immutable_c01.collectstatic"
+    },
+    {
+      "event": "start",
+      "seconds": 4.721012,
+      "stage": "immutable_c01.ruff"
+    },
+    {
+      "duration_seconds": 0.024336,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 4.745341,
+      "stage": "immutable_c01.ruff"
+    },
+    {
+      "event": "start",
+      "seconds": 4.81363,
+      "stage": "immutable_c01.ruff"
+    },
+    {
+      "duration_seconds": 0.023643,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 4.837266,
+      "stage": "immutable_c01.ruff"
+    },
+    {
+      "event": "start",
+      "seconds": 4.9013,
+      "stage": "immutable_c01.mypy"
+    },
+    {
+      "duration_seconds": 3.457146,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 8.358437,
+      "stage": "immutable_c01.mypy"
+    },
+    {
+      "event": "start",
+      "seconds": 8.422229,
+      "stage": "immutable_c01.uv_other"
+    },
+    {
+      "duration_seconds": 0.916688,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 9.338907,
+      "stage": "immutable_c01.uv_other"
+    },
+    {
+      "event": "start",
+      "seconds": 9.402642,
+      "stage": "immutable_c01.pytest"
+    },
+    {
+      "duration_seconds": 6.32403,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 15.726663,
+      "stage": "immutable_c01.pytest"
+    },
+    {
+      "event": "start",
+      "seconds": 15.791178,
+      "stage": "immutable_c01.production_check"
+    },
+    {
+      "duration_seconds": 0.505107,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 16.296275,
+      "stage": "immutable_c01.production_check"
+    },
+    {
+      "event": "start",
+      "seconds": 16.360722,
+      "stage": "immutable_c01.foundation_verifier"
+    },
+    {
+      "event": "start",
+      "seconds": 16.416583,
+      "stage": "owned_volume_inventory"
+    },
+    {
+      "duration_seconds": 0.013889,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 16.430468,
+      "stage": "owned_volume_inventory"
+    },
+    {
+      "event": "start",
+      "seconds": 16.493909,
+      "stage": "immutable_c01.generate_private_configuration"
+    },
+    {
+      "duration_seconds": 0.03706,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 16.530964,
+      "stage": "immutable_c01.generate_private_configuration"
+    },
+    {
+      "event": "start",
+      "seconds": 16.594164,
+      "stage": "immutable_c01.compose_config"
+    },
+    {
+      "duration_seconds": 0.169266,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 16.763421,
+      "stage": "immutable_c01.compose_config"
+    },
+    {
+      "event": "start",
+      "seconds": 16.828697,
+      "stage": "immutable_c01.compose_build"
+    },
+    {
+      "event": "start",
+      "seconds": 21.637907,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.026565,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 21.664465,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 41.828371,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.013624,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 41.841989,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 61.976882,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.033735,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 62.010608,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 82.206669,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.020551,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 82.227211,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 102.386317,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.018148,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 102.404456,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 122.568158,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.016791,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 122.584941,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 142.736104,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.016444,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 142.752526,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 129.131656,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": true,
+      "seconds": 145.960344,
+      "stage": "immutable_c01.compose_build"
+    },
+    {
+      "event": "start",
+      "seconds": 146.025858,
+      "stage": "immutable_c01.production_image_build"
+    },
+    {
+      "event": "start",
+      "seconds": 162.893797,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.016398,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 162.91019,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 20.676195,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 166.702043,
+      "stage": "immutable_c01.production_image_build"
+    },
+    {
+      "event": "start",
+      "seconds": 166.767841,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "duration_seconds": 9.314448,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 176.082278,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "classification": "readiness_observed",
+      "cpu_available": 4,
+      "daemon_query_exit_code": 0,
+      "disk_available_bytes": 83727142912,
+      "event": "readiness",
+      "inventory_bounded": true,
+      "inventory_exit_code": 0,
+      "load_1m": 6.03466796875,
+      "memory_available_kib": 14783940,
+      "probe_seconds": 0.127535,
+      "seconds": 176.209723,
+      "services": [
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "minio",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "redis",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "db",
+          "state": "running"
+        }
+      ],
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "event": "start",
+      "seconds": 176.274672,
+      "stage": "immutable_c01.compose_minio_initialization"
+    },
+    {
+      "duration_seconds": 1.116703,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 177.391369,
+      "stage": "immutable_c01.compose_minio_initialization"
+    },
+    {
+      "event": "start",
+      "seconds": 177.456313,
+      "stage": "immutable_c01.compose_migrate"
+    },
+    {
+      "duration_seconds": 3.851344,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 181.307649,
+      "stage": "immutable_c01.compose_migrate"
+    },
+    {
+      "event": "start",
+      "seconds": 181.373106,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "event": "start",
+      "seconds": 183.093004,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.024908,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 183.117903,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 183.259639,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.034829,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 183.294459,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 183.444727,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.040205,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 183.484923,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 183.608031,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.037205,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 183.645227,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 183.775616,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.037234,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 183.812841,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 183.938957,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.030314,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 183.969263,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 184.104371,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.041141,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 184.145504,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 184.273832,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.033806,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 184.30763,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 184.438692,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.507107,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 184.945788,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 185.056432,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.123283,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 185.179703,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 8.951477,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 190.324573,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "classification": "readiness_observed",
+      "cpu_available": 4,
+      "daemon_query_exit_code": 0,
+      "disk_available_bytes": 83725492224,
+      "event": "readiness",
+      "inventory_bounded": true,
+      "inventory_exit_code": 0,
+      "load_1m": 4.8388671875,
+      "memory_available_kib": 14176676,
+      "probe_seconds": 0.190602,
+      "seconds": 190.515101,
+      "services": [
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "beat",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "worker",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "web",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": null,
+          "query_exit_code": 0,
+          "service": "minio-init",
+          "state": "exited"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "minio",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "redis",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "db",
+          "state": "running"
+        }
+      ],
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "event": "start",
+      "seconds": 190.579429,
+      "stage": "immutable_c01.compose_service_command"
+    },
+    {
+      "duration_seconds": 3.779402,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 194.358823,
+      "stage": "immutable_c01.compose_service_command"
+    },
+    {
+      "event": "start",
+      "seconds": 194.42292,
+      "stage": "immutable_c01.compose_migration_drift"
+    },
+    {
+      "duration_seconds": 4.279743,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 198.702655,
+      "stage": "immutable_c01.compose_migration_drift"
+    },
+    {
+      "event": "start",
+      "seconds": 198.767022,
+      "stage": "immutable_c01.compose_backend_tests"
+    },
+    {
+      "event": "start",
+      "seconds": 205.296353,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.015611,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 205.31196,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 205.410814,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.023594,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 205.434404,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 205.54142,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.024922,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 205.566336,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 205.651389,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.025959,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 205.67734,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 205.765333,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.024782,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 205.790107,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 205.879446,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.025064,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 205.904504,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 205.993462,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.024778,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 206.018231,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 206.135036,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.032134,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 206.167164,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 206.29675,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.033924,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 206.330665,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 206.455905,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.407318,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 206.863211,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 206.978379,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.10796,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 207.086329,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 23.662077,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 222.42909,
+      "stage": "immutable_c01.compose_backend_tests"
+    },
+    {
+      "event": "start",
+      "seconds": 222.495236,
+      "stage": "immutable_c01.compose_ps"
+    },
+    {
+      "duration_seconds": 0.064537,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 222.559766,
+      "stage": "immutable_c01.compose_ps"
+    },
+    {
+      "event": "start",
+      "seconds": 222.625651,
+      "stage": "immutable_c01.compose_exec"
+    },
+    {
+      "duration_seconds": 1.994095,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 224.619737,
+      "stage": "immutable_c01.compose_exec"
+    },
+    {
+      "event": "start",
+      "seconds": 224.684169,
+      "stage": "immutable_c01.compose_exec"
+    },
+    {
+      "event": "start",
+      "seconds": 227.227227,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 2.553779,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 227.237942,
+      "stage": "immutable_c01.compose_exec"
+    },
+    {
+      "duration_seconds": 0.020072,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 227.247291,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 227.311834,
+      "stage": "immutable_c01.compose_service_command"
+    },
+    {
+      "event": "start",
+      "seconds": 227.357706,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.031349,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 227.389044,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 227.510124,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.0239,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 227.53402,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 227.628777,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.023004,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 227.651776,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 227.738979,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.022487,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 227.76146,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 227.852892,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.022183,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 227.87507,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 227.974824,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.02514,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 227.999958,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 228.095248,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.0276,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 228.122838,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 228.214121,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.378744,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 228.592855,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 228.661848,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.085056,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 228.746895,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 7.200948,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 234.512772,
+      "stage": "immutable_c01.compose_service_command"
+    },
+    {
+      "event": "start",
+      "seconds": 234.578009,
+      "stage": "immutable_c01.compose_restart"
+    },
+    {
+      "duration_seconds": 0.360775,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 234.938776,
+      "stage": "immutable_c01.compose_restart"
+    },
+    {
+      "event": "start",
+      "seconds": 235.005114,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "duration_seconds": 3.088797,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 238.093899,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "classification": "readiness_observed",
+      "cpu_available": 4,
+      "daemon_query_exit_code": 0,
+      "disk_available_bytes": 83708162048,
+      "event": "readiness",
+      "inventory_bounded": true,
+      "inventory_exit_code": 0,
+      "load_1m": 3.46337890625,
+      "memory_available_kib": 14128748,
+      "probe_seconds": 0.191455,
+      "seconds": 238.285301,
+      "services": [
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "beat",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "worker",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "web",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": null,
+          "query_exit_code": 0,
+          "service": "minio-init",
+          "state": "exited"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "minio",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "redis",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "db",
+          "state": "running"
+        }
+      ],
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "event": "start",
+      "seconds": 238.350851,
+      "stage": "immutable_c01.compose_exec"
+    },
+    {
+      "duration_seconds": 2.352882,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 240.703723,
+      "stage": "immutable_c01.compose_exec"
+    },
+    {
+      "event": "start",
+      "seconds": 240.798038,
+      "stage": "immutable_c01.compose_backend_tests"
+    },
+    {
+      "duration_seconds": 4.679037,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 245.477068,
+      "stage": "immutable_c01.compose_backend_tests"
+    },
+    {
+      "event": "start",
+      "seconds": 245.543564,
+      "stage": "immutable_c01.compose_restart"
+    },
+    {
+      "duration_seconds": 0.379484,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 245.923039,
+      "stage": "immutable_c01.compose_restart"
+    },
+    {
+      "event": "start",
+      "seconds": 246.010815,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "event": "start",
+      "seconds": 248.8396,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.013786,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 248.853378,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 248.958526,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.021191,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 248.979711,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 249.106091,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.030074,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 249.136158,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 249.251421,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.021941,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 249.273355,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 249.364372,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.022176,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 249.386529,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 249.478684,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.021437,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 249.500117,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 249.592983,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.022778,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 249.615755,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 3.62785,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 249.638658,
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "event": "start",
+      "seconds": 249.721112,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.023108,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 249.744212,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 249.834141,
+      "stage": "docker_other"
+    },
+    {
+      "classification": "readiness_observed",
+      "cpu_available": 4,
+      "daemon_query_exit_code": 0,
+      "disk_available_bytes": 83708276736,
+      "event": "readiness",
+      "inventory_bounded": true,
+      "inventory_exit_code": 0,
+      "load_1m": 3.16455078125,
+      "memory_available_kib": 14437104,
+      "probe_seconds": 0.258625,
+      "seconds": 249.897136,
+      "services": [
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "beat",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "worker",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "web",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": null,
+          "query_exit_code": 0,
+          "service": "minio-init",
+          "state": "exited"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "minio",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "redis",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "db",
+          "state": "running"
+        }
+      ],
+      "stage": "immutable_c01.compose_up"
+    },
+    {
+      "event": "start",
+      "seconds": 249.96626,
+      "stage": "immutable_c01.compose_minio_initialization"
+    },
+    {
+      "duration_seconds": 0.342364,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 250.176495,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 250.288216,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.081847,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 250.370054,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 1.110678,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 251.07693,
+      "stage": "immutable_c01.compose_minio_initialization"
+    },
+    {
+      "event": "start",
+      "seconds": 251.148483,
+      "stage": "immutable_c01.compose_backend_tests"
+    },
+    {
+      "duration_seconds": 5.374633,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 256.523108,
+      "stage": "immutable_c01.compose_backend_tests"
+    },
+    {
+      "event": "start",
+      "seconds": 256.588551,
+      "stage": "immutable_c01.compose_service_command"
+    },
+    {
+      "duration_seconds": 7.010878,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 263.599421,
+      "stage": "immutable_c01.compose_service_command"
+    },
+    {
+      "event": "start",
+      "seconds": 263.665033,
+      "stage": "immutable_c01.compose_down"
+    },
+    {
+      "duration_seconds": 2.316442,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 265.981466,
+      "stage": "immutable_c01.compose_down"
+    },
+    {
+      "duration_seconds": 249.630155,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": true,
+      "seconds": 265.990872,
+      "stage": "immutable_c01.foundation_verifier"
+    },
+    {
+      "event": "start",
+      "seconds": 266.05495,
+      "stage": "current_source.source_check"
+    },
+    {
+      "duration_seconds": 1.378382,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 267.433323,
+      "stage": "current_source.source_check"
+    },
+    {
+      "event": "start",
+      "seconds": 267.499926,
+      "stage": "owned_volume_inventory"
+    },
+    {
+      "duration_seconds": 0.013965,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 267.513887,
+      "stage": "owned_volume_inventory"
+    },
+    {
+      "event": "start",
+      "seconds": 267.578173,
+      "stage": "current_source.generate_private_configuration"
+    },
+    {
+      "duration_seconds": 0.030342,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 267.608512,
+      "stage": "current_source.generate_private_configuration"
+    },
+    {
+      "event": "start",
+      "seconds": 267.674258,
+      "stage": "same_database_upgrade.compose_config"
+    },
+    {
+      "duration_seconds": 0.081017,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 267.755266,
+      "stage": "same_database_upgrade.compose_config"
+    },
+    {
+      "event": "start",
+      "seconds": 267.821271,
+      "stage": "same_database_upgrade.compose_build"
+    },
+    {
+      "duration_seconds": 0.387189,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 268.20845,
+      "stage": "same_database_upgrade.compose_build"
+    },
+    {
+      "event": "start",
+      "seconds": 268.274142,
+      "stage": "same_database_upgrade.compose_up"
+    },
+    {
+      "event": "start",
+      "seconds": 270.454463,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.013646,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 270.468104,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 270.568482,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.013977,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 270.582454,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 270.694718,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.023538,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 270.718251,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 270.808926,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.022514,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 270.831432,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 270.923793,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.08663,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 271.010415,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 3.95843,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 272.23256,
+      "stage": "same_database_upgrade.compose_up"
+    },
+    {
+      "classification": "readiness_observed",
+      "cpu_available": 4,
+      "daemon_query_exit_code": 0,
+      "disk_available_bytes": 83660869632,
+      "event": "readiness",
+      "inventory_bounded": true,
+      "inventory_exit_code": 0,
+      "load_1m": 3.3544921875,
+      "memory_available_kib": 14955484,
+      "probe_seconds": 0.112394,
+      "seconds": 272.344881,
+      "services": [
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "db",
+          "state": "running"
+        },
+        {
+          "container_exit_code": 0,
+          "failing_streak": 0,
+          "health": "healthy",
+          "query_exit_code": 0,
+          "service": "redis",
+          "state": "running"
+        }
+      ],
+      "stage": "same_database_upgrade.compose_up"
+    },
+    {
+      "event": "start",
+      "seconds": 272.410302,
+      "stage": "same_database_upgrade.compose_migrate"
+    },
+    {
+      "duration_seconds": 2.818533,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 275.228827,
+      "stage": "same_database_upgrade.compose_migrate"
+    },
+    {
+      "event": "start",
+      "seconds": 275.294576,
+      "stage": "same_database_upgrade.compose_prepare"
+    },
+    {
+      "duration_seconds": 2.218712,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 277.513281,
+      "stage": "same_database_upgrade.compose_prepare"
+    },
+    {
+      "event": "start",
+      "seconds": 277.579628,
+      "stage": "same_database_upgrade.compose_config"
+    },
+    {
+      "duration_seconds": 0.085294,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 277.664914,
+      "stage": "same_database_upgrade.compose_config"
+    },
+    {
+      "event": "start",
+      "seconds": 277.730464,
+      "stage": "same_database_upgrade.compose_build"
+    },
+    {
+      "duration_seconds": 6.139339,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 283.869794,
+      "stage": "same_database_upgrade.compose_build"
+    },
+    {
+      "event": "start",
+      "seconds": 283.941358,
+      "stage": "same_database_upgrade.compose_migrate"
+    },
+    {
+      "event": "start",
+      "seconds": 291.088832,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.016348,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 291.105172,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 291.204184,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.016648,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 291.220826,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 291.334376,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.02642,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 291.36079,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 291.443205,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.026817,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 291.470015,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 291.558416,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.024657,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 291.583068,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 291.679419,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.085773,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 291.765181,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 8.732816,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 292.674166,
+      "stage": "same_database_upgrade.compose_migrate"
+    },
+    {
+      "event": "start",
+      "seconds": 292.740326,
+      "stage": "same_database_upgrade.compose_verify"
+    },
+    {
+      "duration_seconds": 3.383449,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 296.123765,
+      "stage": "same_database_upgrade.compose_verify"
+    },
+    {
+      "event": "start",
+      "seconds": 296.191484,
+      "stage": "same_database_upgrade.compose_migration_drift"
+    },
+    {
+      "duration_seconds": 3.519638,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 299.711114,
+      "stage": "same_database_upgrade.compose_migration_drift"
+    },
+    {
+      "event": "start",
+      "seconds": 299.77722,
+      "stage": "same_database_upgrade.compose_down"
+    },
+    {
+      "duration_seconds": 0.438264,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 300.215476,
+      "stage": "same_database_upgrade.compose_down"
+    },
+    {
+      "duration_seconds": 298.788259,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": true,
+      "seconds": 300.225653,
+      "stage": "c01_c02_prefix"
+    },
+    {
+      "event": "start",
+      "seconds": 300.304448,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.013217,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 300.317659,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 300.463831,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.012864,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 300.47669,
+      "stage": "docker_other"
+    },
+    {
+      "event": "start",
+      "seconds": 300.577656,
+      "stage": "docker_other"
+    },
+    {
+      "duration_seconds": 0.0127,
+      "event": "end",
+      "exit_code": 0,
+      "observed_markers": [],
+      "private_prefix_truncated": false,
+      "seconds": 300.590352,
+      "stage": "docker_other"
+    }
+  ],
+  "conclusion": {
+    "historical_early_failure_reproduced": false,
+    "historical_root_cause": "unknown",
+    "task7_status": "BLOCKED / IN_PROGRESS; unaccepted",
+    "next_decision": "Phase Manager authorization required before resuming implementation or acceptance; no source correction established",
+    "application_tree": "afef30b518af8229eeb19101fbb2246480249db8",
+    "execution_branch_unchanged": true,
+    "accepted_task6_unchanged": true,
+    "observed_service_result": "Five successful info/inventory probes; every sampled running required service healthy, health failing streak zero; exited minio-init status zero. No daemon or Docker command failure observed in this run.",
+    "resource_limits": "Four available CPUs; load sampled 3.16455 to 6.03467, MemAvailable 14128748 to 14955484 KiB, disk available 83660869632 to 83727142912 bytes. These point samples do not establish historical resource causes or exclude short failures.",
+    "instrumentation_limits": "Public events not truncated; private 64KiB marker prefixes truncated for compose build and enclosing parents. Successful exits preserved independently of those prefixes; unknown historical failure remains unclassified. Five direct no-op commands 0.159187s vs five delegated 0.570296s, approximately 82ms extra per no-op sample; not a measured end-to-end overhead correction. Five readiness probes totaled 0.880611s. Pipe scheduling and original supervisor snapshot overhead unquantified.",
+    "authorization_budget": "Exactly one additional diagnostic executed, no retry, current Task7 backend not executed, no acceptance run",
+    "self_tests": 10
+  }
+}
