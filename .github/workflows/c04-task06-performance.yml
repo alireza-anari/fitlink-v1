@@ -1,0 +1,90 @@
+name: Task 6 comparative performance diagnosis (not acceptance)
+on:
+  push:
+    branches: [diagnostics/c04-task06-performance]
+permissions:
+  contents: read
+concurrency:
+  group: task06-performance-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  paired-performance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        sequence: ['prior current current prior', 'current prior prior current']
+    services:
+      postgres:
+        image: postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+        env:
+          POSTGRES_DB: fitlink
+          POSTGRES_USER: fitlink
+          POSTGRES_PASSWORD: ci-performance-only
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U fitlink -d fitlink" --health-interval 3s --health-timeout 3s --health-retries 30
+      redis:
+        image: redis@sha256:c6eabf748fc7a61dbb5a705c78bcf3d6377b1127a97d0ce965c11c44ba46896f
+        ports: ['6379:6379']
+        options: --health-cmd "redis-cli ping" --health-interval 3s --health-timeout 3s --health-retries 30
+    env:
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: fitlink
+      POSTGRES_USER: fitlink
+      POSTGRES_PASSWORD: ci-performance-only
+      OTP_RATE_REDIS_URL: redis://127.0.0.1:6379/4
+      CELERY_BROKER_URL: redis://127.0.0.1:6379/1
+      CELERY_RESULT_BACKEND: redis://127.0.0.1:6379/2
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 6fa56e89567a7414602752c5882e5a6995c38dc6
+          path: .runtime/prior
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0787d7880f9fd27006bf76ae0f16e31536ef4503
+          path: .runtime/current
+          persist-credentials: false
+      - name: Verify both exact source identities and identical locks
+        run: |
+          test "$(git -C .runtime/prior rev-parse HEAD)" = 6fa56e89567a7414602752c5882e5a6995c38dc6
+          test "$(git -C .runtime/prior rev-parse 'HEAD^{tree}')" = b569d4eaa0c18af0bad0fb7b10e783a447bdfd95
+          test "$(git -C .runtime/current rev-parse HEAD)" = 0787d7880f9fd27006bf76ae0f16e31536ef4503
+          test "$(git -C .runtime/current rev-parse 'HEAD^{tree}')" = b207a0a8e946750a0dd1213f5460e51f67dd3000
+          cmp .runtime/prior/uv.lock .runtime/current/uv.lock
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: 0.12.19
+          python-version: 3.13.15
+          enable-cache: false
+      - run: uv sync --frozen --group dev
+      - name: Bounded collection, MinIO cost and paired real database samples
+        env:
+          PROBE_SEQUENCE: ${{ matrix.sequence }}
+        run: |
+          set -eu
+          for source in prior current; do
+            export PROBE_SOURCE_SHA=$(git -C .runtime/$source rev-parse HEAD)
+            timeout -k 10s 120s uv run --frozen python docker/c04_performance_probe.py .runtime/$source collect .runtime/performance/$source-collection.json
+          done
+          export PROBE_SOURCE_SHA=0787d7880f9fd27006bf76ae0f16e31536ef4503
+          timeout -k 10s 120s uv run --frozen python docker/c04_performance_probe.py .runtime/current minio .runtime/performance/current-minio.json
+          ordinal=0
+          for source in $PROBE_SEQUENCE; do
+            ordinal=$((ordinal+1))
+            export PROBE_SOURCE_SHA=$(git -C .runtime/$source rev-parse HEAD)
+            timeout -k 10s 240s uv run --frozen python docker/c04_performance_probe.py .runtime/$source sample .runtime/performance/$ordinal-$source.json
+          done
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: task06-performance-${{ strategy.job-index }}
+          path: .runtime/performance/*.json
+          include-hidden-files: true
+          if-no-files-found: error

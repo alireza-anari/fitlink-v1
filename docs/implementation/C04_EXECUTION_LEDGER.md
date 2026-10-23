@@ -2090,3 +2090,79 @@ all145 recorded stage exits0. This separate success does not waive the failed
 immutable MinIO baseline or aggregate.
 Its complete-backend journal proves2082 completed cases, pytest exit0 in692.474s,
 zero nonpassing reports; no deadline increase or selected-test suppression.
+
+
+### Task 6 full-regression comparative recovery diagnostic — 2026-10-23 UTC
+
+Task 6 remains IN_PROGRESS and unaccepted. No Task 7 authorization.
+The Phase Manager renewed this session's exclusive writer authority. Only the
+root implementation agent is a writer; a separate reviewer is read-only.
+Execution ref independently remains 0787d7880f9fd27006bf76ae0f16e31536ef4503,
+tree b207a0a8e946750a0dd1213f5460e51f67dd3000; working checkout is clean.
+
+Read-only evidence:
+- Run 39904837930 attempt 1, source 6fa56e89567a7414602752c5882e5a6995c38dc6:
+  c03-final succeeded. Artifact 12482016987 independently rehashed to
+  82b9f337407fe71590fc4647d4b5aea52cb09923c7974ea4bd3f08f2ec3303a6.
+  Complete-backend journal: 2082 completed cases, pytest exit 0, 692.474 seconds.
+- Run 39913564638 attempt 1, source 0787d7880f9fd27006bf76ae0f16e31536ef4503:
+  13 mandatory jobs succeeded, c03-final failed complete_backend exit 124 at
+  the unchanged 900-second bound, c04-final correctly rejected upstream failure.
+  Artifact 12486980090 independently rehashed to
+  beaa7f2d68fc93169d3994446de0e136480dee1c85013d49441ee00618632e40.
+  Complete-backend journal: 1332 completed cases, no nonpassing phase reports,
+  1333rd case active at termination; this is NOT complete acceptance.
+- Match sanitized node identity PLUS occurrence ordinal, preserving parameterized
+  repetitions instead of collapsing repeated identities into a dictionary.
+  First 1333 started identities have identical order. No newly added MinIO test
+  was reached before timeout. Their collection impact remains a separate question.
+- The 1332 common completed cases: setup 7.814 -> 11.316 seconds;
+  call 508.553 -> 696.943; teardown 104.681 -> 180.519.
+  Shared case #100 ended at 28.573 -> 42.935; #500 at156.427 ->236.498;
+  #1000 at376.245 ->555.344; #1332 at626.218 ->896.503 seconds.
+  Broad slowdown predates C04 and is not explained by the last active test.
+- Candidate-budget case total85.248 ->110.916; query-plan case17.752 ->27.508.
+  Existing focused profiles record SQL counts/timing only for their separate
+  diagnostic runs, not for the full-regression process. Do not equate them.
+- Current immutable C03 baseline succeeded, clean_minio exit0 and natural final
+  rehearsal completion. Its finite MinIO classifier returned
+  unknown_or_insufficient_evidence (log read; no recognized error).
+  Historical MinIO failure cause remains unknown, not classified as transient.
+- c03-final logs/journals do not contain sufficient CPU/memory/I/O utilization or
+  aggregate database-wait measurements to distinguish host from service contention.
+  A source defect, service contention, and runner variability are not established
+  root causes by these comparisons.
+
+Justified next execution is diagnostic only, not a same-SHA acceptance retry:
+- New diagnostics/c04-task06-performance branch, parent anchored to0787d788.
+  Execution branch, mandatory c04.yml and ci.yml, original full test selection,
+  900-second deadline, immutable C03, dependencies and lockfiles stay unchanged.
+- Two ubuntu-24.04 runners, same pinned PostgreSQL/Redis images as acceptance.
+  Both compare exact checked-out 6fa56e8 and0787d788 sources; ABBA and BAAB
+  sequences balance source order and cache/warmup effects within each runner.
+- Full collection-only measurements for both sources; current MinIO tests measured
+  separately; four bounded representative real-database samples on each runner.
+  Samples cover existing CPU-only exhaustive calendar case, C02 staff authority,
+  Task6 comparison fixtures, and100-real-professional candidate-budget lifecycle.
+  Diagnostic selections do NOT replace, deselect or modify acceptance selections.
+- Each process bounded120s(collection/MinIO) or240s(sample), job25min.
+  Record phase durations, SQL execute/executemany count and elapsed time without
+  SQL text, numeric host CPU/memory/pressure/disk-free snapshots, aggregate sampled
+  active database wait-type maxima. Wait samples2s can miss short contention.
+  Real-services backend is GitHub service containers, not the full C03 multi-service
+  rehearsal; results cannot prove full-regression acceptance or reproduce every
+  full-rehearsal contention source.
+- Framework stdout/stderr and arbitrary exceptions are discarded, not uploaded.
+  No locals, credentials, environment dumps, query text, IDs, query parameters or
+  pytest parameter values are exported. Output nodes are unparameterized known
+  selected source symbols; unknown paths become other.
+- Local non-service controls: collection2110, exit0; all28 MinIO tests passed
+  (84 phase reports), total phase duration0.031990s, whole diagnostic0.568513s.
+  These local timings do not substitute for hosted measurements.
+  Initial local harness run exposed missing temp-parent setup; corrected before
+  publication. Ruff and explicit redaction/exceptional-SQL-count controls pass.
+- Artifacts are finite JSON files identified by runner lane; acceptance:false.
+  No completion checkpoint is authorized by a diagnostic success.
+
+Distinct read-only diagnostic review: no unresolved Critical/Important findings.
+Reviewer limitations above remain explicit; historical cause and acceptance remain unproven.
