@@ -1915,3 +1915,40 @@ c04-final118747460960 correctly FAILED on its failed upstream.
   hosted900s failure is the performance RED. Local execution is unavailable:
   no local syntax/static/GREEN claim for this diagnostic; actual hosted source
   verification must run. Task6 remains IN_PROGRESS; Task7+ not started.
+
+### Task 6 — exclusive Work Cloud handoff and bounded timing probe — 2026-10-23
+
+The C04 Phase Manager explicitly confirmed the previous local executor and all
+background/Git writers stopped, and appointed this session sole Task6 writer.
+Local-only laptop ledger changes remain unavailable/unpublished; no recovery is
+claimed. Live branch independently matches7fad19eae808c781585f24d47c84470a835846bc,
+tree3b0cc18f4af58c08b25c087035f7e6c697617520. Approved plan blob f1225196c95a203e440afc4da362b74806e84f20
+and tree1478d691b2a60d95f6c0d2ce5e561d34f59a61c0 match; actual compare proves
+approved planning ancestor (zero behind). Fresh dedicated clone is clean at base.
+
+Run39458472046 attempt1 independently reports13 successful jobs and failed
+c03-final118751407841/aggregate118771461003. Downloaded artifact12284825254
+was independently SHA256-rehashed to
+ee7b69fb25596a9664bd14ff9c318c537d7e3b6556c96b749bb21d0803aeca34.
+Complete-backend journal has1107 completed cases, no nonpassing reports;
+candidate-budget call178.573s, teardown0.181s; last query-plan setup at874.842s.
+The older pinned hosted diagnostic independently reports180.311s on the earlier
+source. Transaction batching alone has not established full-budget recovery.
+No hung query, service failure or product root cause is inferred.
+
+Ruling: add one360s hosted cProfile probe of the two exact existing candidate/
+query-plan tests after the unchanged cumulative PostgreSQL gate. Export only
+fixed repository-function labels, bounded numeric counts/timings, exact GITHUB_SHA
+and exit code; no SQL, parameters, locals, call graphs, arbitrary filenames or
+profile dumps. Publish one identifiable timing.json artifact. Preserve all15 jobs,
+original900s complete-backend deadline, test selections/assertions, immutable C03,
+services and lockfiles. Cost if wrong: diagnostic fails or remains insufficient;
+it never grants acceptance. Full manifest still runs on this diagnostic source.
+
+Profiler export control: actual local missing-profiler assertion RED, then
+stdlib unittest GREEN1; focused installed controls/static checks recorded below.
+Task6 remains IN_PROGRESS; Task7+ prohibited. GitHub-hosted real services remain
+the only runtime acceptance environment; no local Docker qualification repeated.
+Local frozen C04 unit controls:247 passed+37 subtests, zero failures/skips7.88s.
+Ruff check/format and whitespace checks pass for the probe. This is not runtime
+acceptance or evidence of fixture performance improvement.

@@ -646,6 +646,15 @@ jobs:
       run: |
         timeout -k 5s 90s uv run --frozen python docker/c04_regression_metadata.py
         timeout -k 5s 15s uv run --frozen ruff format --diff docker/c04_regression_metadata.py tests/unit/c04/test_regression_metadata_reader.py
+    - name: Bounded Task6 fixture and query timing diagnosis
+      run: timeout -k 10s 360s uv run --frozen python docker/c04_recovery_profile.py
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      if: always()
+      with:
+        name: c04-task06-recovery-timing
+        path: .runtime/c04-recovery-profile/timing.json
+        include-hidden-files: true
+        if-no-files-found: error
 
   c04-public-media:
     if: github.ref == 'refs/heads/marketplace/c04-cloud'
