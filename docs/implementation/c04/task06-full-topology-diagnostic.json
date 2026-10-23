@@ -1,0 +1,311 @@
+{
+  "schema_version": 1,
+  "task": 6,
+  "state": "IN_PROGRESS",
+  "acceptance": false,
+  "execution_branch": "marketplace/c04-cloud",
+  "application_source": {
+    "sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+    "tree": "b207a0a8e946750a0dd1213f5460e51f67dd3000",
+    "verified_clean_before": true,
+    "verified_unchanged_after": true
+  },
+  "diagnostic": {
+    "sha": "f853186e1079239a43fc615a090d74f3eaad4690",
+    "tree": "15cc97029841d1e6cc621431fec1948f2bb19cd0",
+    "run_id": 39931454829,
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "job_id": 120340462413,
+    "job_conclusion": "success",
+    "authorized_executions": 1,
+    "actual_executions": 1,
+    "command": [
+      "pytest",
+      "tests/unit",
+      "tests/integration",
+      "-q",
+      "--strict-markers",
+      "--tb=no",
+      "--show-capture=no"
+    ],
+    "deadline_seconds": 900,
+    "acceptance_manifest_run": false
+  },
+  "artifact": {
+    "id": 12491729575,
+    "name": "task06-full-topology-numeric-evidence",
+    "sha256": "51b544718b81cb76af7b9db9c0bf182b4271504277dadd9a0e5cc3271a4e3b0d",
+    "downloaded_digest_matched": true
+  },
+  "runtime": {
+    "acceptance": false,
+    "backend": {
+      "deadline_ns": 1128706530585,
+      "elapsed_seconds": 629.038631,
+      "exit_code": 0,
+      "host_child_cpu_seconds": 7.003853,
+      "mono_end_ns": 857745162023,
+      "mono_start_ns": 228706530585,
+      "window_end_ns": 857745162023
+    },
+    "cleanup_complete": true,
+    "post_window_records": 0,
+    "sampler": {
+      "clock_sync": {
+        "common_origin_verified": true,
+        "container_ns": 233904392235,
+        "host_after_ns": 233909861362,
+        "host_before_ns": 233832972965
+      },
+      "errors": 0,
+      "host_process_cpu_ns": 618273372,
+      "interval_seconds": 5,
+      "sample_wall_ns": 16275330418,
+      "samples": 126,
+      "sampling_can_miss_short_waits": true,
+      "thread_stopped": true
+    },
+    "source_clean_before": true,
+    "source_sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+    "source_tree": "b207a0a8e946750a0dd1213f5460e51f67dd3000",
+    "source_unchanged": true,
+    "stages": [
+      {
+        "elapsed_seconds": 0.022488,
+        "exit_code": 0,
+        "stage": "generate_env"
+      },
+      {
+        "elapsed_seconds": 0.078579,
+        "exit_code": 0,
+        "stage": "immutable_c03"
+      },
+      {
+        "elapsed_seconds": 0.06893,
+        "exit_code": 0,
+        "stage": "immutable_c02"
+      },
+      {
+        "elapsed_seconds": 0.033307,
+        "exit_code": 0,
+        "stage": "immutable_c01"
+      },
+      {
+        "elapsed_seconds": 0.236722,
+        "exit_code": 0,
+        "stage": "config"
+      },
+      {
+        "elapsed_seconds": 122.696043,
+        "exit_code": 0,
+        "stage": "build"
+      },
+      {
+        "elapsed_seconds": 26.033884,
+        "exit_code": 0,
+        "stage": "services"
+      },
+      {
+        "elapsed_seconds": 1.057164,
+        "exit_code": 0,
+        "stage": "minio"
+      },
+      {
+        "elapsed_seconds": 6.718694,
+        "exit_code": 0,
+        "stage": "migrate"
+      },
+      {
+        "elapsed_seconds": 1.74458,
+        "exit_code": 0,
+        "stage": "independent_clean"
+      },
+      {
+        "elapsed_seconds": 2.711002,
+        "exit_code": 0,
+        "stage": "noop"
+      },
+      {
+        "elapsed_seconds": 2.543235,
+        "exit_code": 0,
+        "stage": "drift"
+      },
+      {
+        "elapsed_seconds": 8.363681,
+        "exit_code": 0,
+        "stage": "runtime"
+      },
+      {
+        "elapsed_seconds": 0.154116,
+        "exit_code": 0,
+        "stage": "scanner"
+      },
+      {
+        "elapsed_seconds": 4.644448,
+        "exit_code": 0,
+        "stage": "isolated_exact_baseline"
+      }
+    ],
+    "terminal": {
+      "call_outcomes": {
+        "failed": 0,
+        "other": 0,
+        "passed": 2147,
+        "skipped": 0
+      },
+      "cases_completed": 2110,
+      "cases_started": 2110,
+      "session_finish": {
+        "completed": 2110,
+        "counts": {
+          "deselected": 0,
+          "error": 0,
+          "failed": 0,
+          "passed": 2110,
+          "skipped": 0,
+          "xfailed": 0,
+          "xpassed": 0
+        },
+        "event": "finish",
+        "exit_code": 0,
+        "hook_observed_ns": 403701937,
+        "mono_ns": 856107558748,
+        "observer_fault": false,
+        "sql_count": 739164,
+        "sql_counter_observed_ns": 1083770578,
+        "sql_ns": 233300330909,
+        "started": 2110,
+        "truncated": false
+      }
+    }
+  },
+  "analysis": {
+    "pytest_observer_seconds": 624.549194162,
+    "in_window_host_samples": 125,
+    "coverage_seconds": 620.120920092,
+    "collection_count": 2110,
+    "unknown_source_nodes": 0,
+    "collection_sequence_sha256": "68453e7896260d9b5a2968a1c49cf5227eacbcc1d9e8c925cf18faf964d8bb0c",
+    "first_1333_order_matches_historical_timeout": true,
+    "call_reports": 2147,
+    "additional_call_reports_beyond_cases": 37,
+    "call_reports_are_not_case_counts": true,
+    "common_1332_elapsed_seconds": {
+      "prior_success": 626.218,
+      "prior_timeout": 896.503,
+      "current_diagnostic": 572.85061556
+    },
+    "calendar_cpu_case_seconds": {
+      "prior_success": 3.097,
+      "prior_timeout": 5.358,
+      "current_diagnostic": 3.08916
+    },
+    "candidate_budget_call_seconds": {
+      "prior_success": 85.085,
+      "prior_timeout": 110.731,
+      "current_diagnostic": 67.823317
+    },
+    "minio_diagnostic_cases": 28,
+    "minio_total_phase_seconds": 0.037023,
+    "host": {
+      "reported_cpus": 4,
+      "affinity_cpus": 4,
+      "root_cpu_quota": "unavailable",
+      "cpu_percent": {
+        "user": 39.353,
+        "system": 4.454,
+        "idle": 55.015,
+        "iowait": 0.531,
+        "softirq": 0.647,
+        "steal": 0
+      },
+      "min_available_memory_kib": 12685380,
+      "pressure": {
+        "cpu_some_stall_percent": 2.736144,
+        "cpu_some_peak_avg10": 19.81,
+        "memory_some_peak_avg10": 0,
+        "memory_full_peak_avg10": 0,
+        "io_some_stall_percent": 0.560828,
+        "io_some_peak_avg10": 1.52
+      }
+    },
+    "containers": {
+      "mean_cpu_cores": {
+        "checks": 0.69896,
+        "db": 0.310116,
+        "worker": 0.266291,
+        "beat": 0.244938,
+        "web": 0.08516,
+        "minio": 0.080547,
+        "redis": 0.01087,
+        "scanner": 0.007842
+      },
+      "all_observed_throttled_usec_deltas": 0,
+      "all_observed_memory_oom_high_max_event_deltas": 0,
+      "main_container_quotas_unlimited": true,
+      "scanner_cpu_quota": 1
+    },
+    "postgres": {
+      "samples": 125,
+      "missing_samples": 0,
+      "max_active": 1,
+      "max_test_active": 1,
+      "max_service_active": 0,
+      "max_other_database_active": 0,
+      "lock_wait_nonzero_samples": 0,
+      "ungranted_lock_nonzero_samples": 0,
+      "io_wait_nonzero_samples": 1,
+      "io_wait_sample_active_case": "tests/integration/c04/test_public_copy_races.py::test_cleanup_replay_preserves_first_erasure_metadata",
+      "client_wait_nonzero_samples": 5,
+      "io_timing_enabled": false,
+      "io_duration_values": "unavailable because track_io_timing=false; zeros must not be interpreted as measured zero latency"
+    },
+    "disk": {
+      "read_mib_per_second": 0.005167,
+      "write_mib_per_second": 3.576219,
+      "read_ms_per_completed_op": 0.28169,
+      "write_ms_per_completed_op": 3.061176,
+      "scope": "supported whole-host devices; indicators, not application query latency"
+    },
+    "instrumentation": {
+      "wrapped_django_calls": 739164,
+      "wrapped_django_elapsed_seconds": 233.300330909,
+      "observed_sql_counter_bookkeeping_seconds": 1.083770578,
+      "observed_hook_seconds": 0.403701937,
+      "noop_calibration_calls": 10000,
+      "noop_calibration_seconds": 0.005600676,
+      "host_controller_cpu_seconds": 0.618273372,
+      "host_child_cpu_seconds": 7.003853,
+      "cumulative_sample_collection_wall_seconds": 16.275330418,
+      "wall_sampling_is_concurrent_not_additive": true,
+      "full_causal_overhead_not_identified_without_uninstrumented_control": true
+    }
+  },
+  "decision": {
+    "application_or_fixture_regression": "not demonstrated; unchanged full source passed within900s, and earlier paired SHA effect reversed across hosts",
+    "service_contention": "no sustained contention observed in this diagnostic; short waits not excluded",
+    "runner_resource_variability": "supported as a recovery hypothesis by cross-run throughput differences and earlier paired host CPU variation, not proven as the exact historical mechanism",
+    "historical_root_cause": "unproven; historical synchronized telemetry and identical preceding workload history unavailable",
+    "source_correction": "none justified; no application/fixture/DB tuning change",
+    "recommended_action": "one full15-job acceptance retry on unchanged0787d788, only after separate Phase Manager authorization",
+    "acceptance_retry_authorized": false,
+    "acceptance_retry_executed": false
+  },
+  "limits": [
+    "One full-topology diagnostic cannot establish general runner behavior or historical causality.",
+    "Clean backend services reproduced; preceding populated-upgrade/browser workload history not replayed.",
+    "Five-second samples can miss short CPU, lock or I/O events.",
+    "Django wrappers do not count every SQL query from other services/processes.",
+    "Monitor and observer overhead measured or estimated, not eliminated or causally subtracted.",
+    "Diagnostic success is not mandatory15-job acceptance."
+  ],
+  "review": {
+    "independent_read_only": true,
+    "unresolved_critical": 0,
+    "unresolved_important": 0
+  },
+  "task7_authorized": false,
+  "completion_checkpoint_created": false
+}

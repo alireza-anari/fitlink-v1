@@ -2220,3 +2220,81 @@ All existing refs remain unchanged; results are published on a separate
 diagnostics/c04-task06-performance-evidence branch to avoid triggering another
 performance run merely to record evidence.
 Task6 IN_PROGRESS. No completion checkpoint. Task7 NOT_AUTHORIZED.
+
+
+### Task 6 single full-topology diagnostic outcome — 2026-10-23 UTC
+
+Exactly one authorized diagnostic executed: run39931454829 attempt1,
+job120340462413 succeeded; diagnostic SHA
+f853186e1079239a43fc615a090d74f3eaad4690, tree
+15cc97029841d1e6cc621431fec1948f2bb19cd0.
+Application checkout before/after verified clean and unchanged at
+0787d7880f9fd27006bf76ae0f16e31536ef4503,
+treeb207a0a8e946750a0dd1213f5460e51f67dd3000.
+The original acceptance workflows and execution branch remain unchanged.
+
+Artifact12491729575 task06-full-topology-numeric-evidence downloaded and
+independently SHA256 verified:
+51b544718b81cb76af7b9db9c0bf182b4271504277dadd9a0e5cc3271a4e3b0d.
+Only summary.json,host.jsonl,pytest.jsonl; no unrestricted logs/stacks/SQL/data.
+
+Actual original-selection complete backend:
+- Command elapsed629.038631s, natural exit0, unchanged900s bound.
+- Pytest observer624.549194s;2110 started/completed/passed cases.
+  Zero failed,error,skipped,xfailed,xpassed,deselected. No observer fault/truncation.
+-2147 call reports include37 additional subtest reports; they are not2147 cases.
+- First1333 case identities/order match historical timed-out source. Shared1332
+  completion: historical success626.218s, historical timeout896.503s,
+  current diagnostic572.850616s on pytest monotonic reference.
+- Current28 MinIO tests total phase time0.037023s; no basis to blame their execution.
+- Candidate-budget call67.823317s vs prior85.085/110.731s.
+  Fixed CPU calendar call3.089160s vs prior3.097/5.358s.
+- All15 recorded setup/preflight stages exited0: immutableC03/C02/C01 identity,
+  original build/services/MinIO/scanner, migrate/clean/no-op/drift and isolated
+  exact-baseline. Original clean worker override and all required services used.
+- Cleanup complete, no post-window records, sampler stopped. No unrelated
+  persistent resources deleted; execution source remains unchanged.
+
+Correlated numeric observations:
+-126 total host samples,125 within window,620.121s coverage, zero sampler errors,
+  no missing PostgreSQL samples. Common host/container monotonic origin verified.
+- Four reported/affinity CPUs. Host idle55.015%,iowait0.531%,steal0%.
+  CPU some pressure cumulative2.736%, peak10s average19.81%.
+  No observed container CPU throttling deltas. Root quota unavailable;
+  checks/db/worker/beat quotas reported unlimited; scanner retains1CPU quota.
+- Memory available minimum12685380KiB; no observed high/max/OOM/kill deltas.
+  Memory pressure10s averages0; no evidence of sustained memory pressure here.
+- Mean container cores: checks0.699,db0.310,worker0.266,beat0.245,
+  web0.085,minio0.081,redis0.011,scanner0.008.
+- Whole-cluster PostgreSQL active max1; no sampled Lock/LWLock/ungranted-lock
+  waits; one IO-wait sample and five Client-wait samples. IO-wait sample aligned
+  with public-copy cleanup replay, not the candidate-budget case.
+  Five-second sampling cannot exclude short waits or historical contention.
+- Host IO some pressure cumulative0.561%,peak10s1.52%; supported-device mean
+  writes3.576MiB/s,write_ms/completed_op3.061ms. These are whole-host indicators,
+  not application query latency. PostgreSQL track_io_timing=false; its0 timing
+  fields are unavailable measurements, not measured zero latency.
+- Wrapped Django739164 execute/executemany calls,233.300331s aggregate elapsed.
+  Other process/service SQL is outside this wrapper counter.
+- Observed SQL-counter bookkeeping1.083771s,hook/AST/write observation0.403702s;
+ 10000-no-op calibration0.005601s. Host controllerCPU0.618273s,
+  host childCPU7.003853s; cumulative collection wall16.275330s ran concurrently.
+  None is causally subtracted from runtime; uninstrumented same-host full control
+  was not authorized. Instrumentation overhead is measured/estimated, not eliminated.
+
+Decision:
+No repeatable current-source regression or authorized application/fixture defect
+is established. Unchanged full source passes comfortably despite telemetry.
+Earlier paired-source direction reversal, independent CPU benchmark variation,
+cross-stage historical slowdown and current full-topology result support runtime/
+host performance variability as a recovery hypothesis; they do not prove the exact
+historical mechanism. This experiment did not replay preceding populated-upgrade/
+browser workload history, and earlier runs lack synchronized resource telemetry.
+No speculative source,fixture,DB tuning or deadline change is justified.
+
+Recommended final recovery action: ONE full15-job acceptance retry on unchanged
+0787d7880f9fd27006bf76ae0f16e31536ef4503, only after separate Phase Manager
+authorization as required by the diagnostic-only instruction. None triggered.
+This diagnostic GREEN is NOT acceptance GREEN. Latest mandatory acceptance stays
+run39913564638 attempt1,13/15, c03-final124 and c04-final upstream rejection.
+Task6 IN_PROGRESS. No completion checkpoint. Task7+ NOT_AUTHORIZED.
