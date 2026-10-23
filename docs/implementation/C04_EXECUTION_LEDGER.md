@@ -1952,3 +1952,55 @@ the only runtime acceptance environment; no local Docker qualification repeated.
 Local frozen C04 unit controls:247 passed+37 subtests, zero failures/skips7.88s.
 Ruff check/format and whitespace checks pass for the probe. This is not runtime
 acceptance or evidence of fixture performance improvement.
+
+### Task 6 — measured fixture specialization candidate, not acceptance
+
+Diagnostic4054dd7e71e66c0d24b8bc1c5d6aa9ba1c1809c9/
+85e764f6d84e6f637e9b58f09ce32d17b3fb52a4, run39902905443 attempt1,
+PostgreSQL120248252482: unchanged cumulative Task6 gate naturally passed,
+30000-row query plan4.645ms/441 blocks/two indexes/10 returned. The separately
+bounded two-test profile naturally passed2/0 in227.13s. Fixed-symbol profile:
+101 corpus calls160.039s; dual-role approvals124.984s;173959 database executions
+85.724s; publication prepare10.138s/confirm9.981s; withdrawal2.973s;
+reconciliation17.158s/search12.526s. Artifact12480161568 digest
+1f5ad44050084d8183c075d74b9bbe6fc207dd40a8b74e714e3518f614edd3ca.
+These are overlapping cumulative times under cProfile, not additive wall times.
+The30k planner is not established as the cause; repeated full fixture construction
+is the measured dominant probe cost.
+
+Ruling: specialize ONLY the100-candidate test to an actual identity+coach source
+lifecycle. Each distinct professional still uses real account/session/setup,
+private evidence/credential, prepare/submit/assignment/case-bound step-up/review/
+terminal approval, publication prepare/confirmation, projection and withdrawal
+commands with all SQL guards. Eliminate unrelated nutritionist declaration,
+third evidence/revision and third review decision from this bulk fixture only.
+All mixed-role, expiry, private-field, media, SQL, isolation and concurrency tests
+retain their original dual-role corpus. Preserve100 unique real profiles, stale
+budget/no-partial-output/cursor/four reconciliation calls/recovery assertions,
+all15 jobs, lockfiles, original900s deadline and immutable C03. Add a real SQL
+fixture characterization proving exactly the two approved targets, current
+identity/coach eligibility, declared coach-only role and effective coach release.
+Cost if wrong: the characterization or full hosted gate rejects this candidate;
+no fixture or performance GREEN is assumed before actual hosted measurement.
+This changes test construction only; no production behavior/schema is changed.
+
+Independent fresh-context read-only security/privacy/architecture review of
+accepted Task5edd6b300..4054dd7e found no Critical/Important/Minor findings.
+Runtime concurrency/migrations/full15 were explicitly not inferred by review;
+actual hosted gates remain authoritative. Task8 HTTP adapters/CSRF/browser work
+were set aside because no routes are introduced at Task6; existing CSRF/session
+middleware must remain unchanged. The profiler was not treated as acceptance.
+
+A distinct mandatory job120248252465 failed its historical HTTP audit with
+URLError at c03_upgrade_probe_impl.py1266. Earlier supervised decoder checks,
+native real credential processing and diagnostic_cleanup all naturally0;
+expected direct-PID1 diagnostic isolation failure is not relabeled as runtime
+acceptance. No blind retry used and no transport/DNS/TLS cause invented. Other
+current-head completed gates are successful; full run remains active/unaccepted.
+A new correction head must obtain every gate naturally GREEN; no waiver.
+Task6 IN_PROGRESS. Task7+ prohibited.
+The timing ZIP was independently downloaded/rehashed to the digest above.
+Local frozen C04 unit controls247+37 subtests pass7.96s, zero failures/skips.
+Whole-source Ruff check and format537 files pass after preserving generated
+pytest temp copies under ignored .runtime; whitespace clean. No local real-service
+GREEN or fixture timing improvement is claimed. Fresh hosted proof required.

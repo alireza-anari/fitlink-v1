@@ -55,7 +55,7 @@ def test_candidate_budget_fails_without_partial_output_and_recovers(corpus):
     # of independent setup commits without changing the 100-candidate contract.
     with transaction.atomic():
         for _ in range(100):
-            subject, draft = corpus()
+            subject, draft = corpus(coach_only=True)
             publication = ProfessionalPublication.objects.get(pk=draft.publication_id)
             unpublish_profile(
                 subject.actor,
@@ -113,3 +113,23 @@ def test_expiring_one_role_without_worker_preserves_other_current_search(corpus)
     assert nutritionist.items == ()
     subject.profile.refresh_from_db()
     assert subject.profile.version == version
+
+
+def test_budget_fixture_uses_real_identity_and_coach_approval(corpus):
+    from tests.integration.c03.test_verification_decisions import eligibility
+    from tests.integration.c04.publication_helpers import effective
+
+    subject, _ = corpus(coach_only=True)
+    facts = eligibility(subject)
+    assert facts.eligible and facts.identity_verified
+    assert facts.verified_roles == ("coach",)
+    assert set(subject.case.targets.values_list("target", "state")) == {
+        ("identity", "approved"),
+        ("coach", "approved"),
+    }
+    assert set(
+        subject.profile.roles.filter(declared_active=True).values_list(
+            "role", flat=True
+        )
+    ) == {"coach"}
+    assert effective(subject).snapshot["verified_roles"] == ["coach"]

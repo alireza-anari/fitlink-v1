@@ -11,6 +11,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SYMBOLS = {
     ("tests/integration/c04/search_helpers.py", "create"): "corpus",
+    (
+        "tests/integration/c04/search_helpers.py",
+        "coach_approved",
+    ): "single_role_approval",
     ("tests/integration/c03/test_verification_decisions.py", "approved"): "approval",
     ("tests/integration/c04/publication_helpers.py", "prepare"): "publication_prepare",
     ("tests/integration/c04/publication_helpers.py", "confirm"): "publication_confirm",
