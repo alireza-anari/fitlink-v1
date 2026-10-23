@@ -6,6 +6,10 @@ from .models import (
     AssistantMembership,
     Credential,
     CredentialRevision,
+    EducationalPost,
+    PostHistory,
+    PostImageBinding,
+    PostRevision,
     ProfessionalLocation,
     ProfessionalProfile,
     ProfessionalPublication,
@@ -29,6 +33,32 @@ def enumerate_professional_inventory(owner_uuid):
     records = []
     # This fixed installed set is internal lifetime metadata, not a subject registry.
     queries = (
+        (
+            EducationalPost.objects.filter(profile__user__public_id=owner_uuid),
+            "educational_post",
+            "profile_media",
+            "profile_id",
+        ),
+        (
+            PostRevision.objects.filter(post__profile__user__public_id=owner_uuid),
+            "post_revision",
+            "profile_media",
+            "post_id",
+        ),
+        (
+            PostImageBinding.objects.filter(
+                revision__post__profile__user__public_id=owner_uuid
+            ),
+            "post_image_binding",
+            "profile_media",
+            "revision_id",
+        ),
+        (
+            PostHistory.objects.filter(post__profile__user__public_id=owner_uuid),
+            "post_history",
+            "profile_media",
+            "post_id",
+        ),
         (
             ProfessionalPublication.objects.filter(profile__user__public_id=owner_uuid),
             "professional_publication",
@@ -167,6 +197,18 @@ def enumerate_professional_inventory(owner_uuid):
     for query, kind, data_class, parent in queries:
         for row in bounded_rows(query):
             assets = ()
+            if isinstance(row, PostImageBinding):
+                asset = row.asset
+                post = row.revision.post
+                if (
+                    asset.owner_id != post.profile.user_id
+                    or asset.purpose != "educational_image"
+                    or asset.subject_kind != "educational_post"
+                    or asset.subject_uuid != post.id
+                    or asset.classification != "private_source"
+                ):
+                    raise PermissionError("Inventory subject denied")
+                assets = (asset.id,)
             if isinstance(row, PublicationQualification):
                 source = row.credential_revision
                 if (

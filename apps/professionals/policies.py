@@ -62,6 +62,21 @@ def owned_asset_subject(user: User, purpose: str, identifier: UUID):
     )
     if profile is None:
         raise AssetNotFound("Asset unavailable")
+    if purpose == "educational_image":
+        from .post_models import EducationalPost
+
+        post = (
+            EducationalPost.objects.select_for_update()
+            .filter(
+                pk=identifier,
+                profile=profile,
+            )
+            .exclude(state__in=["archived", "deleted"])
+            .first()
+        )
+        if post is None:
+            raise AssetNotFound("Asset unavailable")
+        return AssetSubject("educational_post", post.id)
     if purpose in {"avatar", "cover", "logo"}:
         if profile.id != identifier:
             raise AssetNotFound("Asset unavailable")

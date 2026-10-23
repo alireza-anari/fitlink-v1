@@ -8,6 +8,29 @@ from .publication_contracts import bounded_json
 from .validation import plain
 
 
+@dataclass(frozen=True)
+class PostDTO:
+    id: UUID
+    revision_id: UUID | None
+    version: int
+    state: str
+
+
+@dataclass(frozen=True)
+class PublicPostImage:
+    copy_uuid: UUID
+    alt: str
+
+
+@dataclass(frozen=True)
+class PublicPostDTO:
+    id: UUID
+    profile_uuid: UUID
+    revision_uuid: UUID
+    text: str
+    images: tuple[PublicPostImage, ...]
+
+
 def _text(value, limit):
     value = plain(value, limit, required=True)
     if re.search(r"(?:javascript|data|https?|file|vbscript)\s*:", value, re.I):

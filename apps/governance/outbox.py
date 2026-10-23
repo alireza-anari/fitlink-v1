@@ -18,6 +18,8 @@ PAYLOAD_FIELDS = {
     "asset.cleanup_requested": frozenset({"asset_uuid", "user_uuid"}),
     "assistant.membership_changed": frozenset({"membership_uuid", "user_uuid"}),
     "professional.publication_changed": frozenset({"publication_uuid", "user_uuid"}),
+    "professional.post_changed": frozenset({"post_uuid", "user_uuid"}),
+    "marketplace.moderation_changed": frozenset({"moderation_uuid", "user_uuid"}),
 }
 
 
@@ -99,6 +101,8 @@ def validate_dispatch(
         "asset.cleanup_requested": "asset_uuid",
         "assistant.membership_changed": "membership_uuid",
         "professional.publication_changed": "publication_uuid",
+        "professional.post_changed": "post_uuid",
+        "marketplace.moderation_changed": "moderation_uuid",
     }[event_type]
     if payload[aggregate_field] != str(aggregate_uuid):
         raise ValueError("Invalid dispatch aggregate")

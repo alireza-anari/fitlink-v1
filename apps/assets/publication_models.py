@@ -25,7 +25,7 @@ class PublicAssetCopy(models.Model):
     profile_uuid = models.UUIDField()
     publication_uuid = models.UUIDField()
     release_revision_uuid = models.UUIDField()
-    purpose = models.CharField(max_length=16)
+    purpose = models.CharField(max_length=24)
     source_version = models.PositiveBigIntegerField()
     source_derivative_version = models.PositiveBigIntegerField()
     source_derivative_sha256 = models.CharField(max_length=64)
@@ -58,7 +58,9 @@ class PublicAssetCopy(models.Model):
                 name="public_copy_effect",
             ),
             models.CheckConstraint(
-                condition=models.Q(purpose__in=["avatar", "cover", "logo"]),
+                condition=models.Q(
+                    purpose__in=["avatar", "cover", "logo", "educational_image"]
+                ),
                 name="public_copy_branding_purpose",
             ),
             models.CheckConstraint(

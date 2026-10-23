@@ -11,6 +11,7 @@ CAPABILITIES = (
     "privacy_operations",
     "feature_flags",
     "professional_verification",
+    "marketplace_moderation",
 )
 
 

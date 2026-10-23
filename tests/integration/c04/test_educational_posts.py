@@ -42,10 +42,10 @@ def test_post_revision_is_immutable_and_edits_withdraw_old_release(corpus):
     save = command("save_post")
     subject, _ = corpus()
     post = draft(subject)
-    from apps.professionals.post_models import PostRevision
     from django.db import DatabaseError, transaction
 
     from apps.professionals.post_contracts import PostInput
+    from apps.professionals.post_models import PostRevision
 
     revision = PostRevision.objects.get(pk=post.revision_id)
     with pytest.raises(DatabaseError), transaction.atomic():
@@ -83,3 +83,56 @@ def test_post_receipt_payload_and_expected_version_are_fenced(corpus):
             uuid4(),
             timezone.now(),
         )
+
+
+def test_confirmed_post_activates_only_complete_copies_and_edit_withdraws(corpus):
+    from apps.professionals.post_contracts import PostInput
+    from apps.professionals.post_models import EducationalPost
+    from tests.integration.c04.post_helpers import published
+
+    subject, _ = corpus()
+    post, asset, derivative, store, copy = published(subject)
+    dto = command("public_post")(post.id, timezone.now())
+    assert dto is not None and dto.text == "آموزش"
+    assert dto.images[0].copy_uuid == copy.id
+    assert set(dto.__dataclass_fields__) == {
+        "id",
+        "profile_uuid",
+        "revision_uuid",
+        "text",
+        "images",
+    }
+    row = EducationalPost.objects.get(pk=post.id)
+    command("save_post")(
+        subject.actor, post.id, PostInput("تازه"), row.version, uuid4(), timezone.now()
+    )
+    assert command("public_post")(post.id, timezone.now()) is None
+
+
+@pytest.mark.parametrize(
+    "defect", ["marketplace_off", "suspended", "parent_withdrawn", "stale_profile"]
+)
+def test_post_current_parent_and_account_authority(corpus, settings, defect):
+    from tests.integration.c03.test_professional_setup import save
+    from tests.integration.c04.post_helpers import published
+
+    subject, parent = corpus()
+    post, *_ = published(subject)
+    assert command("public_post")(post.id, timezone.now()) is not None
+    if defect == "marketplace_off":
+        from apps.governance.flag_models import FeatureFlag
+
+        FeatureFlag.objects.filter(key="marketplace").update(enabled=False)
+    elif defect == "suspended":
+        subject.user.state = "suspended"
+        subject.user.is_active = False
+        subject.user.save()
+    elif defect == "parent_withdrawn":
+        from apps.professionals.models import ProfessionalPublication
+        from config.use_cases.publication import unpublish_profile
+
+        row = ProfessionalPublication.objects.get(profile=subject.profile)
+        unpublish_profile(subject.actor, row.id, row.version, uuid4(), timezone.now())
+    else:
+        save(subject, "description", {"biography": "تغییر"})
+    assert command("public_post")(post.id, timezone.now()) is None

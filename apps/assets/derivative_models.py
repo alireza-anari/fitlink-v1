@@ -46,7 +46,9 @@ class AssetDerivative(models.Model):
                 condition=models.Q(version__gte=1), name="derivative_version"
             ),
             models.CheckConstraint(
-                condition=models.Q(purpose__in=["owner_preview", "evidence_preview"]),
+                condition=models.Q(
+                    purpose__in=["owner_preview", "evidence_preview", "post_preview"]
+                ),
                 name="derivative_purpose",
             ),
             models.CheckConstraint(

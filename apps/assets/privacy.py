@@ -76,6 +76,7 @@ def enumerate_asset_inventory(owner_uuid, at):
                     "avatar",
                     "cover",
                     "logo",
+                    "educational_image",
                     "identity_evidence",
                     "credential_evidence",
                 ],

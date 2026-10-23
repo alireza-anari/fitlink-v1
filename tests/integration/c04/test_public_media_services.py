@@ -43,6 +43,112 @@ def raster(*, eicar=False):
     return out.getvalue()
 
 
+@pytest.mark.parametrize("malicious", [False, True])
+def test_educational_ingress_real_quarantine_scan_decoder_and_public_copy(
+    settings,
+    corpus,
+    malicious,
+):
+    from uuid import uuid4
+
+    from apps.assets.models import Asset, PublicAssetCopy
+    from apps.assets.public_copies import read_public_copy, scan_due_public_copies
+    from apps.governance.outbox_models import OutboxEvent
+    from apps.professionals.post_contracts import PostImageInput, PostInput
+    from config.use_cases import asset_processing, public_media
+    from config.use_cases import public_content as content
+    from tests.integration.c04.post_helpers import draft
+
+    real_service_settings(settings)
+    subject, _ = corpus()
+    post = draft(subject)
+    body = raster(eicar=malicious)
+    upload = content.begin_post_upload(
+        subject.actor,
+        post.id,
+        uuid4(),
+        timezone.now(),
+        declared_size=len(body),
+        declared_type="image/png",
+    )
+    upload = content.receive_post_upload(
+        subject.actor, upload.id, upload.version, BytesIO(body), timezone.now()
+    )
+    upload = content.finalize_post_upload(
+        subject.actor, upload.id, upload.version, uuid4(), timezone.now()
+    )
+    assert upload.state == "quarantined"
+    assert content.public_post(post.id, timezone.now()) is None
+    event = OutboxEvent.objects.get(
+        event_type="asset.processing_requested", aggregate_uuid=upload.id
+    )
+    assert asset_processing.request_processing(event, timezone.now()) == "applied"
+    queue = []
+    assert (
+        asset_processing.scan_due_assets(
+            timezone.now(), 100, enqueue=lambda *args: queue.append(args)
+        )
+        == 1
+    )
+    outcome = asset_processing.process_asset(*queue[0], timezone.now())
+    asset = Asset.objects.get(pk=upload.id)
+    if malicious:
+        assert outcome != "ready" and asset.state != "ready"
+        assert not asset.derivatives.filter(state="ready").exists()
+        with pytest.raises((ValueError, LookupError, PermissionError)):
+            content.save_post(
+                subject.actor,
+                post.id,
+                PostInput("آموزش", (PostImageInput(asset.id, "شرح"),)),
+                post.version,
+                uuid4(),
+                timezone.now(),
+            )
+        assert not PublicAssetCopy.objects.filter(publication_uuid=post.id).exists()
+        return
+    assert outcome == "ready" and asset.state == "ready"
+    derivative = asset.derivatives.get(purpose="post_preview", state="ready")
+    store = S3PrivateStore()
+    preview = store.read_limited(derivative.key, 10_000_000)
+    assert b"PRIVATE_" not in preview
+    unsigned_denied(settings, asset.source_key)
+    unsigned_denied(settings, derivative.key)
+    post = content.save_post(
+        subject.actor,
+        post.id,
+        PostInput("آموزش", (PostImageInput(asset.id, "شرح"),)),
+        post.version,
+        uuid4(),
+        timezone.now(),
+    )
+    post = content.publish_post(
+        subject.actor, post.id, True, post.version, uuid4(), timezone.now()
+    )
+    assert content.public_post(post.id, timezone.now()) is None
+    queued = []
+    assert (
+        scan_due_public_copies(
+            timezone.now(),
+            100,
+            authorize=public_media.validate_release,
+            enqueue=lambda *args: queued.append(args),
+        )
+        == 1
+    )
+    assert (
+        public_media.process_public_copy(*queued[0], timezone.now()).status == "ready"
+    )
+    copy = PublicAssetCopy.objects.get(publication_uuid=post.id)
+    dto = content.public_post(post.id, timezone.now())
+    assert dto is not None and dto.images[0].copy_uuid == copy.id
+    output = read_public_copy(
+        copy.id, timezone.now(), authorize=public_media.validate_public_copy_read
+    )
+    assert output.content.startswith(b"\x89PNG") and b"PRIVATE_" not in output.content
+    key = module("apps.assets.public_storage").publication_key(copy.id, copy.generation)
+    unsigned_denied(settings, key)
+
+
 def real_service_settings(settings):
     # The inherited pytest --ds=test default intentionally uses fake storage.
     # Only explicitly provisioned real services can override that fixture value.

@@ -24,7 +24,22 @@ def authority(user, asset, at):
         profile.identity_evidence_revision,
         profile.identity_decision_version,
     ]
-    if asset.purpose in {"avatar", "cover", "logo"}:
+    if asset.purpose == "educational_image":
+        from apps.professionals.post_models import EducationalPost
+
+        post = (
+            EducationalPost.objects.select_for_update()
+            .filter(
+                pk=asset.subject_uuid,
+                profile=profile,
+            )
+            .exclude(state__in=["archived", "deleted"])
+            .first()
+        )
+        if asset.subject_kind != "educational_post" or post is None:
+            raise AssetNotFound("Asset unavailable")
+        facts += [str(post.id), post.version, post.state]
+    elif asset.purpose in {"avatar", "cover", "logo"}:
         if (
             asset.subject_kind != "professional_profile"
             or asset.subject_uuid != profile.id

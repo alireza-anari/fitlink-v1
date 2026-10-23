@@ -1,0 +1,126 @@
+name: Task7 focused GREEN development - NOT full acceptance
+'on':
+  push:
+    branches:
+    - diagnostics/c04-task07-green
+permissions:
+  contents: read
+jobs:
+  task07-focused-postgresql:
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+        env:
+          POSTGRES_DB: fitlink
+          POSTGRES_USER: fitlink
+          POSTGRES_PASSWORD: ci-migration-only
+        ports:
+        - 5432:5432
+        options: --health-cmd "pg_isready -U fitlink -d fitlink" --health-interval
+          3s --health-timeout 3s --health-retries 30
+      redis:
+        image: redis@sha256:c6eabf748fc7a61dbb5a705c78bcf3d6377b1127a97d0ce965c11c44ba46896f
+        ports:
+        - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 3s --health-timeout
+          3s --health-retries 30
+    env:
+      OTP_RATE_REDIS_URL: redis://127.0.0.1:6379/4
+      CELERY_BROKER_URL: redis://127.0.0.1:6379/1
+      CELERY_RESULT_BACKEND: redis://127.0.0.1:6379/2
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: fitlink
+      POSTGRES_USER: fitlink
+      POSTGRES_PASSWORD: ci-migration-only
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+      with:
+        version: 0.12.19
+        python-version: 3.13.15
+        enable-cache: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+        path: .runtime/c03
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/c02
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c01
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c02/.runtime/c01
+        persist-credentials: false
+    - run: uv sync --frozen --group dev
+    - name: Task7 focused PostgreSQL behavior and cumulative authority regression
+      run: 'mkdir -p .runtime/task07-focused
+
+        uv run --frozen ruff check .
+
+        uv run --frozen ruff format --check .
+
+        uv run --frozen python manage.py migrate --noinput
+
+        uv run --frozen python manage.py migrate --noinput
+
+        uv run --frozen python manage.py makemigrations --check --dry-run
+
+        timeout -k 10s 600s uv run --frozen python docker/c04_gate.py tests/unit/c04
+        tests/integration/c04/test_educational_posts.py tests/integration/c04/test_post_media.py
+        tests/integration/c04/test_public_moderation.py tests/integration/c04/test_post_races.py
+        tests/integration/c04/test_public_copies.py tests/integration/c04/test_public_copy_races.py
+        tests/integration/c03/test_upload_lifecycle.py tests/integration/c03/test_private_assets.py
+        -q --strict-markers --tb=no --show-capture=no > .runtime/task07-focused/results.txt'
+    - name: 'Diagnostic only: bounded sanitized results'
+      if: always()
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: task07-focused-postgresql-only
+        path: .runtime/task07-focused/results.txt
+        include-hidden-files: true
+        if-no-files-found: error
+        retention-days: 14
+  task07-focused-real-media:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+      with:
+        version: 0.12.19
+        python-version: 3.13.15
+        enable-cache: false
+    - run: uv sync --frozen --group dev
+    - name: Real private publication media and non-eager crash recovery
+      run: uv run --frozen python docker/c04_media_probe.py run
+    - name: Finite publication media evidence
+      if: always()
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: c04-public-media-evidence
+        path: '.runtime/c03-diagnostics/*.jsonl
+
+          .runtime/c03-triage/*.jsonl
+
+          .runtime/c04-media-evidence/*.jsonl
+
+          '
+        include-hidden-files: true
+        if-no-files-found: error

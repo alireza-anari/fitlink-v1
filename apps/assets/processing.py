@@ -326,7 +326,11 @@ def process_asset(
         )
     digest = sha256(image.data).hexdigest()
     derivative_purpose = (
-        "evidence_preview" if purpose.endswith("evidence") else "owner_preview"
+        "post_preview"
+        if purpose == "educational_image"
+        else "evidence_preview"
+        if purpose.endswith("evidence")
+        else "owner_preview"
     )
     try:
         with transaction.atomic():

@@ -16,6 +16,8 @@ EVENT_TYPES = (
     "asset.cleanup_requested",
     "assistant.membership_changed",
     "professional.publication_changed",
+    "professional.post_changed",
+    "marketplace.moderation_changed",
 )
 
 

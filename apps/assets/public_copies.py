@@ -40,8 +40,12 @@ def locked_source(release, authorize, at):
         .filter(
             pk=release.source_asset_uuid,
             owner=user,
-            subject_kind="professional_profile",
-            subject_uuid=release.profile_uuid,
+            subject_kind="educational_post"
+            if release.purpose == "educational_image"
+            else "professional_profile",
+            subject_uuid=release.publication_uuid
+            if release.purpose == "educational_image"
+            else release.profile_uuid,
             purpose=release.purpose,
             classification="private_source",
             state="ready",
@@ -58,7 +62,9 @@ def locked_source(release, authorize, at):
         .filter(
             asset=asset,
             processing_version=release.processing_version,
-            purpose="owner_preview",
+            purpose="post_preview"
+            if release.purpose == "educational_image"
+            else "owner_preview",
             state="ready",
         )
         .first()
@@ -133,7 +139,14 @@ def prepare_public_copy(release: AuthorizedPublicMediaRelease, at, *, authorize=
 
 
 def release_for(row):
-    return AuthorizedPublicMediaRelease(
+    from .publication_contracts import AuthorizedEducationalMediaRelease
+
+    constructor = (
+        AuthorizedEducationalMediaRelease
+        if row.purpose == "educational_image"
+        else AuthorizedPublicMediaRelease
+    )
+    return constructor(
         row.owner.public_id,
         row.profile_uuid,
         row.publication_uuid,
@@ -453,8 +466,12 @@ def process_public_copy(
         or image.mime_type != "image/png"
         or type(image.width) is not int
         or type(image.height) is not int
-        or not 1 <= image.width <= (1600 if purpose == "cover" else 512)
-        or not 1 <= image.height <= (1600 if purpose == "cover" else 512)
+        or not 1
+        <= image.width
+        <= (1600 if purpose in {"cover", "educational_image"} else 512)
+        or not 1
+        <= image.height
+        <= (1600 if purpose in {"cover", "educational_image"} else 512)
     ):
         return fail("decode_invalid", fatal=True)
     digest = sha256(image.data).hexdigest()

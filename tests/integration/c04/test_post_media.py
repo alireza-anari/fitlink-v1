@@ -62,3 +62,25 @@ def test_post_upload_is_bound_to_exact_owned_draft(corpus):
         "educational_image",
         "private_source",
     )
+
+
+def test_private_post_preview_is_buffered_owned_and_never_raw(corpus, monkeypatch):
+    from config.use_cases import profile_assets
+    from tests.integration.c03.profile_helpers import make_actor
+    from tests.integration.c04.post_helpers import image
+
+    subject, _ = corpus()
+    post = draft(subject)
+    asset, derivative, store = image(subject, post)
+    monkeypatch.setattr(profile_assets, "get_private_store", lambda: store)
+    read = command("authorized_post_download")
+    result = read(subject.actor, asset.id, "post_preview", timezone.now())
+    assert result.derivative_uuid == derivative.id and result.content.startswith(
+        b"\x89PNG"
+    )
+    for purpose in ["source", "owner_preview", "evidence_preview"]:
+        with pytest.raises((LookupError, PermissionError)):
+            read(subject.actor, asset.id, purpose, timezone.now())
+    other = make_actor("+989155557013")
+    with pytest.raises((LookupError, PermissionError)):
+        read(other.actor, asset.id, "post_preview", timezone.now())

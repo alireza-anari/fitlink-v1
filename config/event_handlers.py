@@ -15,7 +15,9 @@ from config.c03_event_handlers import (
     verification_metadata,
 )
 from config.c04_event_handlers import (
+    professional_post_metadata,
     professional_publication_metadata,
+    public_moderation_metadata,
     with_projection_due,
 )
 
@@ -84,6 +86,10 @@ HANDLERS = MappingProxyType(
         "verification.changed": with_projection_due(verification_metadata),
         "professional.publication_changed": with_projection_due(
             professional_publication_metadata
+        ),
+        "professional.post_changed": with_projection_due(professional_post_metadata),
+        "marketplace.moderation_changed": with_projection_due(
+            public_moderation_metadata
         ),
     }
 )

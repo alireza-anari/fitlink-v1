@@ -88,6 +88,7 @@ class Asset(models.Model):
                     subject_kind__in=[
                         "professional_profile",
                         "professional_credential",
+                        "educational_post",
                     ]
                 ),
                 name="asset_subject_kind",
@@ -107,6 +108,7 @@ class Asset(models.Model):
                         "avatar",
                         "cover",
                         "logo",
+                        "educational_image",
                     ]
                 ),
                 name="asset_c03_purpose",

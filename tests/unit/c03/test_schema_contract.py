@@ -38,6 +38,10 @@ C04_PUBLICATION_MODELS = {
     "PublicationRevision",
     "PublicationQualification",
     "PublicationMediaBinding",
+    "EducationalPost",
+    "PostRevision",
+    "PostImageBinding",
+    "PostHistory",
 }
 
 C04_COPY_MODELS = {"PublicAssetCopy", "PublicCopyAttempt"}

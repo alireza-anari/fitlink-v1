@@ -6,7 +6,7 @@
   "immutable_c03_commit": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
   "immutable_c03_tree": "5c294cb330cf08b297cc01c8baa27adb1e6b93b7",
   "task": 7,
-  "state": "RED",
+  "state": "IN_PROGRESS",
   "base_commit": "27bd28ecd4e273fd7f1b8d304f804deefeb2d50a",
   "prerequisite": {
     "task": 6,
@@ -24,5 +24,18 @@
   },
   "hosted_acceptance": null,
   "next_task": 7,
-  "current_pending_requirement": "Named PostgreSQL/media/moderation REDs, implementation, real-service GREEN, full exact-source acceptance and independent review. Task8 prohibited."
+  "current_pending_requirement": "Complete preserved Task7 implementation, focused real-service GREEN, mandatory full exact-source acceptance, independent review and docs-only completion. Task8 prohibited.",
+  "foundation_observation": {
+    "original_run": 39977996148,
+    "original_job": 120497555911,
+    "original_exit_code": 1,
+    "historical_cause": "unknown",
+    "diagnostics": [
+      39987116028,
+      39994344376
+    ],
+    "reproduced": false,
+    "phase_manager_lifted_diagnostic_block": true,
+    "acceptance_waiver": false
+  }
 }

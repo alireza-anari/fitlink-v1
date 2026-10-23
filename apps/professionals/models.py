@@ -7,6 +7,10 @@ from django.utils import timezone
 from .assistant_models import AssistantMembership as AssistantMembership
 from .credential_models import Credential as Credential
 from .credential_models import CredentialRevision as CredentialRevision
+from .post_models import EducationalPost as EducationalPost
+from .post_models import PostHistory as PostHistory
+from .post_models import PostImageBinding as PostImageBinding
+from .post_models import PostRevision as PostRevision
 from .profile_models import ProfessionalLocation as ProfessionalLocation
 from .profile_models import ProfessionalRole as ProfessionalRole
 from .publication_models import ProfessionalPublication as ProfessionalPublication

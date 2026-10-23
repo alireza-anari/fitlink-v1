@@ -65,6 +65,14 @@ ACTIONS = (
     "publication.prepared",
     "publication.confirmed",
     "publication.withdrawn",
+    "post.saved",
+    "post.confirmed",
+    "post.withdrawn",
+    "moderation.reported",
+    "moderation.claimed",
+    "moderation.hide",
+    "moderation.dismiss",
+    "moderation.restore",
 )
 RESULTS = ("accepted", "denied", "failed", "succeeded", "throttled", "unavailable")
 CHANGED_FIELDS = frozenset(
@@ -144,6 +152,7 @@ REASONS = frozenset(
     }
 )
 SUBJECT_TYPES = (
+    "moderation",
     "account",
     "recovery",
     "consent",

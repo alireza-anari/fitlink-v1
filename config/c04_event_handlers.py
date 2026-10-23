@@ -43,3 +43,31 @@ def professional_publication_metadata(event, at):
         ).exists()
         else "skipped"
     )
+
+
+def professional_post_metadata(event, at):
+    from apps.professionals.post_models import EducationalPost
+
+    return (
+        "applied"
+        if EducationalPost.objects.filter(
+            pk=event.aggregate_uuid,
+            version=event.aggregate_version,
+            profile__user__public_id=event.payload["user_uuid"],
+        ).exists()
+        else "skipped"
+    )
+
+
+def public_moderation_metadata(event, at):
+    from apps.governance.moderation_models import ModerationCase
+
+    return (
+        "applied"
+        if ModerationCase.objects.filter(
+            pk=event.aggregate_uuid,
+            version=event.aggregate_version,
+            owner__public_id=event.payload["user_uuid"],
+        ).exists()
+        else "skipped"
+    )

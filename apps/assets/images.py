@@ -27,6 +27,7 @@ def sanitize(data: bytes, mime_type: str, purpose: str) -> SanitizedImage:
         "avatar": 512,
         "logo": 512,
         "cover": 1600,
+        "educational_image": 1600,
         "identity_evidence": 1600,
         "credential_evidence": 1600,
     }

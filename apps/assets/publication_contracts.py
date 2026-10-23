@@ -26,6 +26,9 @@ class AuthorizedPublicMediaRelease:
     generation: int
 
     def __post_init__(self):
+        self._validate(PUBLIC_MEDIA_PURPOSES)
+
+    def _validate(self, purposes):
         for value in (
             self.owner_uuid,
             self.profile_uuid,
@@ -35,10 +38,7 @@ class AuthorizedPublicMediaRelease:
         ):
             if not isinstance(value, UUID):
                 raise ValueError("Invalid publication binding")
-        if (
-            not isinstance(self.purpose, str)
-            or self.purpose not in PUBLIC_MEDIA_PURPOSES
-        ):
+        if not isinstance(self.purpose, str) or self.purpose not in purposes:
             raise ValueError("Invalid publication media purpose")
         for value in (
             self.source_version,
@@ -47,6 +47,14 @@ class AuthorizedPublicMediaRelease:
             self.generation,
         ):
             positive_version(value)
+
+
+@dataclass(frozen=True)
+class AuthorizedEducationalMediaRelease(AuthorizedPublicMediaRelease):
+    """Distinct exact post authority; the branding constructor remains closed."""
+
+    def __post_init__(self):
+        self._validate(frozenset({"educational_image"}))
 
 
 @dataclass(frozen=True)

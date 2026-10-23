@@ -137,6 +137,10 @@ def validate_release(user, release, at):
     if not isinstance(release, AuthorizedPublicMediaRelease):
         raise AssetNotFound("Publication media unavailable")
     release.__post_init__()
+    if release.purpose == "educational_image":
+        from config.use_cases.post_media import validate_release as validate_post
+
+        return validate_post(user, release, at)
     if user.public_id != release.owner_uuid:
         raise AssetNotFound("Publication media unavailable")
     expected, digest = _binding(
@@ -160,6 +164,11 @@ def activate_publication_media(copy, at):
     from apps.assets.models import PublicCopyAttempt
     from apps.assets.public_copies import release_for
     from apps.governance.outbox import append_outbox
+
+    if copy.purpose == "educational_image":
+        from config.use_cases.post_media import activate
+
+        return activate(copy, at)
 
     if not transaction.get_connection().in_atomic_block:
         raise AssetNotFound("Publication media unavailable")
@@ -235,6 +244,11 @@ def validate_public_copy_read(copy, at):
     from apps.assets.public_copies import release_for
     from apps.professionals.publication_selectors import effective_publication
 
+    if copy.purpose == "educational_image":
+        from config.use_cases.post_media import validate_read
+
+        return validate_read(copy, at)
+
     user = User.objects.select_for_update().get(pk=copy.owner_id)
     digest = validate_release(user, release_for(copy), max(at, timezone.now()))
     facts = effective_publication(copy.profile_uuid, max(at, timezone.now()))
@@ -254,6 +268,18 @@ def reconcile_public_copy_lifetime(identifier, at):
 
     def current(user, copy, now):
         try:
+            if copy.purpose == "educational_image":
+                from config.use_cases.post_media import binding
+
+                binding(
+                    user,
+                    copy.publication_uuid,
+                    copy.release_revision_uuid,
+                    copy.source_asset_id,
+                    now,
+                    require_flag=False,
+                )
+                return True
             _binding(
                 user,
                 copy.publication_uuid,

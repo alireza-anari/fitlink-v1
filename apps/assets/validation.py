@@ -3,7 +3,14 @@
 MAX_BYTES = 10_000_000
 MEDIA_TYPES = frozenset({"image/jpeg", "image/png"})
 PURPOSES = frozenset(
-    {"identity_evidence", "credential_evidence", "avatar", "cover", "logo"}
+    {
+        "identity_evidence",
+        "credential_evidence",
+        "avatar",
+        "cover",
+        "logo",
+        "educational_image",
+    }
 )
 
 

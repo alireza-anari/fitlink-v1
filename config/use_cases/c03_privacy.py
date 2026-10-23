@@ -326,6 +326,16 @@ def _subject_row(subject):
 def _asset_binding_valid(asset):
     if asset.classification != "private_source":
         return False
+    if asset.subject_kind == "educational_post":
+        from apps.professionals.post_models import EducationalPost
+
+        return (
+            asset.purpose == "educational_image"
+            and EducationalPost.objects.filter(
+                pk=asset.subject_uuid,
+                profile__user_id=asset.owner_id,
+            ).exists()
+        )
     if asset.subject_kind == "professional_profile":
         return ProfessionalProfile.objects.filter(
             pk=asset.subject_uuid, user_id=asset.owner_id
@@ -708,6 +718,25 @@ def _asset_held(asset, at):
 
 
 def _asset_in_use(asset):
+    if asset.subject_kind == "educational_post":
+        from django.db.models import F, Q
+
+        from apps.professionals.post_models import PostImageBinding
+
+        return (
+            asset.owner.state == "active"
+            and asset.owner.is_active
+            and PostImageBinding.objects.filter(
+                asset=asset,
+                revision__post_id=asset.subject_uuid,
+                revision__post__profile__user_id=asset.owner_id,
+            )
+            .filter(
+                Q(revision_id=F("revision__post__current_revision_id"))
+                | Q(revision_id=F("revision__post__requested_revision_id"))
+            )
+            .exists()
+        )
     profile = ProfessionalProfile.objects.filter(user_id=asset.owner_id).first()
     return bool(
         profile

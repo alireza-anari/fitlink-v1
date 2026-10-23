@@ -139,6 +139,14 @@ def test_only_foundation_routes_and_identity_model():
         "AssistantMembership",
     }
     c04_models = {
+        "EducationalPost",
+        "PostRevision",
+        "PostImageBinding",
+        "PostHistory",
+        "ModerationCase",
+        "ModerationHistory",
+        "PublicContentReport",
+        "PublicContentOperation",
         "Favorite",
         "FavoriteReceipt",
         "ComparisonCollection",
@@ -159,6 +167,14 @@ def test_only_foundation_routes_and_identity_model():
     assert own_models == c02_models | c03_models | c04_models
     user = apps.get_model("accounts", "User")
     assert {field.name for field in user._meta.get_fields()} == {
+        "educational_revisions",
+        "confirmed_post_revisions",
+        "posthistory",
+        "public_moderation_cases",
+        "assigned_public_moderation_cases",
+        "public_content_reports",
+        "publiccontentoperation",
+        "moderationhistory",
         "id",
         "password",
         "last_login",

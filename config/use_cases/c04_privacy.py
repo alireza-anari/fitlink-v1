@@ -14,6 +14,43 @@ def enumerate_marketplace_inventory(owner_uuid):
         "id"
     )
     result = []
+    from apps.governance.moderation_models import (
+        ModerationCase,
+        ModerationHistory,
+        PublicContentOperation,
+        PublicContentReport,
+    )
+
+    for model, kind, owned in [
+        (ModerationCase, "public_moderation_case", {"owner__public_id": owner_uuid}),
+        (
+            ModerationHistory,
+            "public_moderation_history",
+            {"actor__public_id": owner_uuid},
+        ),
+        (
+            PublicContentReport,
+            "public_content_report",
+            {"reporter__public_id": owner_uuid},
+        ),
+        (
+            PublicContentOperation,
+            "public_content_operation",
+            {"actor__public_id": owner_uuid},
+        ),
+    ]:
+        for row in bounded_rows(model.objects.filter(**owned)):
+            result.append(
+                InventoryRecord(
+                    kind,
+                    row.id,
+                    owner_uuid,
+                    getattr(row, "version", getattr(row, "resulting_version", 1)),
+                    "public_content_metadata",
+                    classification="private_record",
+                    deletion_behavior="retain_only",
+                )
+            )
     for model, kind in [
         (PublicProfessionalProjection, "public_projection"),
         (ProjectionRefreshState, "public_projection_refresh"),

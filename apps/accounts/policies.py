@@ -62,6 +62,7 @@ NORMAL_ACTIONS = CONTROL_ACTIONS | frozenset(
         "asset.owner_read",
         "asset.owner_write",
         "marketplace.selection",
+        "marketplace.report",
     }
 )
 

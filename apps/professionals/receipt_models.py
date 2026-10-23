@@ -44,6 +44,9 @@ class ProfileCommandReceipt(models.Model):
                         "publication.prepare",
                         "publication.confirm",
                         "publication.unpublish",
+                        "post.save",
+                        "post.publish",
+                        "post.withdraw",
                     ]
                 ),
                 name="professionals_receipt_command",

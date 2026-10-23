@@ -2169,3 +2169,44 @@ New named integration modules exercise actual owner draft/version/receipt,
 append-only revision, exact-post ingress and evidence denial plus bounded reports
 and staff-flag denial. They require real PostgreSQL execution before domain
 implementation; no local database fallback/mocks or service PASS claimed.
+
+### Task 7 implementation resumed under Phase Manager authorization — 2026-10-23 UTC
+
+Foundation diagnostic block lifted explicitly. Historical run39977996148 attempt1,
+job120497555911 exit1 remains unexplained; diagnostics39987116028 and39994344376
+did not reproduce its early failure. No transient-cause claim, waiver or speculative
+Foundation correction. Original mandatory gate and 900-second backend deadline remain.
+Execution HEAD6c66199bd5ea3032d319fa6f727eb1d2e5e6e158/treeafef30b518af8229eeb19101fbb2246480249db8
+reverified; no competing agent or hosted execution. Thirteen preexisting unpublished
+files preserved with SHA-256 manifest and non-destructive local archive before edits.
+Task6 run39913564638 attempt2 independently re-fetched: all15 mandatory jobs successful
+on0787d7880f9fd27006bf76ae0f16e31536ef4503. Task6 checkpoint not changed.
+
+Retained hosted PostgreSQL behavioral RED39978550234/artifact12511534831 and published
+input-contract RED. Added educational-media contract RED2 cases and bounded queue RED5
+cases locally before their implementations. Contracts now GREEN; prepublication C04
+plus schema inventory checks342 passed,37 subtests passed, zero failures/skips7.70s.
+Ruff check and mypy domain checks pass. Local full-unit exploration was not GREEN:
+isolated-decoder cases returned unavailable and static manifest was not built; initial
+subprocess dependency failures came from the preserved broken interpreter symlink.
+Restored only the runtime link after preserving it. Hosted frozen environment remains
+authoritative; no local Docker/database qualification or service PASS is claimed.
+
+Ruling: preserve the branding AuthorizedPublicMediaRelease constructor's existing
+educational-purpose rejection; introduce AuthorizedEducationalMediaRelease for exact
+post binding instead of weakening the prior contract. Both still require fresh server
+authorization. Cost if wrong: integration binding failures, never fallback authority.
+Ruling: current-source schema-inventory and SQL-evidence contracts explicitly enumerate
+the eight Task7 models, their reverse identity relations and the three C04-owned leaves.
+Exact-set assertions retained; immutable historical tests and sources unchanged. Cost
+if wrong: cumulative schema acceptance fails; no broad future-model allowance.
+
+Task7 changes implement owned drafts, immutable revisions/image bindings, confirmation,
+buffered owner preview, current public reads, existing real scanner/copy pipeline,
+bounded report receipts/quota, assigned capability+step-up moderation and finite queue.
+New additive leaves use the approved names0019_c04_educational_posts,
+0011_c04_educational_image_purpose and0016_c04_public_moderation; source migration-state
+check reports no changes, but actual PostgreSQL migration/drift evidence is pending.
+Focused PostgreSQL plus full existing real-media job will run on an isolated development
+branch before any acceptance publication. New positive, negative and concurrent tests
+extend existing REDs. No Task7 completion or Task8 work is claimed.

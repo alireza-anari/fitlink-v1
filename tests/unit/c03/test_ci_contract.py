@@ -420,6 +420,9 @@ def test_task1_sql_evidence_covers_all_installed_migrations():
         ("professionals", "0018_c04_publication"),
         ("governance", "0015_c04_publication_metadata"),
         ("assets", "0010_c04_public_copies"),
+        ("professionals", "0019_c04_educational_posts"),
+        ("assets", "0011_c04_educational_image_purpose"),
+        ("governance", "0016_c04_public_moderation"),
     }
     for label in ("athletes", "professionals", "assets", "governance"):
         for migration in (ROOT / "apps" / label / "migrations").glob("[0-9]*.py"):
