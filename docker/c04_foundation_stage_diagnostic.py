@@ -15,6 +15,7 @@ import time
 from urllib import request
 from urllib.error import HTTPError, URLError
 import zipfile
+import resource
 
 SOURCE = "6c66199bd5ea3032d319fa6f727eb1d2e5e6e158"
 NAMES = ("python", "uv", "npm", "docker", "sh")
@@ -43,6 +44,8 @@ def category(error):
 def label(name, args, cwd):
     scope = "immutable_c01" if ".runtime/c01" in str(cwd) else "current_source"
     if name == "sh":
+        if args and args[0].endswith("foundation-prefix.sh"):
+            return "c01_c02_prefix"
         if args and args[0] == "docker/verify_c02.sh":
             return "c02_verifier"
         if args and args[0] == "docker/verify_foundation.sh":
@@ -155,7 +158,99 @@ def delegate(name, args, config):
                           "duration_seconds": round(time.monotonic() - started, 6),
                           "exit_code": code, "observed_markers": markers,
                           "private_prefix_truncated": truncated})
+    if name == "docker" and stage.endswith(".compose_up"):
+        try:
+            readiness(args, config, stage)
+        except Exception:
+            append_event(config, {"event": "readiness", "stage": stage, "classification": "probe_error", "seconds": round(time.monotonic() - config["origin"], 6)})
     return code if code >= 0 else 128 - code
+
+
+def readiness(args, config, stage):
+    started = time.monotonic()
+    value = {"event": "readiness", "stage": stage, "services": []}
+    project = args[args.index("-p") + 1]
+    assert project in {"fitlink-c02-immutable-c01", "fitlink-c02-exact-upgrade", "fitlink-foundation-verify"}
+    def query(argv):
+        try:
+            with tempfile.TemporaryFile() as private:
+                child = subprocess.run([config["executables"]["docker"], *argv], stdout=private, stderr=subprocess.DEVNULL, timeout=2)
+                private.seek(0)
+                data = private.read(16385)
+            return child.returncode, data if len(data) <= 16384 else None
+        except subprocess.TimeoutExpired:
+            return None, None
+        except OSError:
+            return 127, None
+    daemon_code, _ = query(["info", "--format", "{{.ServerVersion}}"])
+    value["daemon_query_exit_code"] = daemon_code
+    code, data = query(["ps", "-aq", "--filter", "label=com.docker.compose.project=" + project])
+    value["inventory_exit_code"] = code
+    ids = data.decode().split() if code == 0 and data is not None else None
+    value["inventory_bounded"] = ids is not None and len(ids) <= 16
+    if ids is not None and len(ids) <= 16:
+        for identifier in ids:
+            if time.monotonic() - started > 8:
+                value["probe_bound_reached"] = True
+                break
+            # Restrict Docker output at the source. Never request health logs,
+            # Config.Env, arguments, mounts, URLs or arbitrary container names.
+            fmt = '{{json .State.Status}}|{{if .State.Health}}{{json .State.Health.Status}}|{{.State.Health.FailingStreak}}{{else}}null|0{{end}}|{{.State.ExitCode}}|{{json (index .Config.Labels "com.docker.compose.service")}}'
+            status, row = query(["inspect", "--format", fmt, identifier])
+            entry = {"query_exit_code": status}
+            if status == 0 and row is not None:
+                try:
+                    state, health, streak, exit_code, service = row.decode().strip().split("|")
+                    state, health, service = json.loads(state), json.loads(health), json.loads(service)
+                    entry.update(state=state if state in {"created", "running", "paused", "restarting", "removing", "exited", "dead"} else "unknown",
+                                 health=health if health in {"starting", "healthy", "unhealthy", None} else "unknown",
+                                 failing_streak=int(streak), container_exit_code=int(exit_code),
+                                 service=service if service in {"db", "redis", "minio", "web", "worker", "beat", "minio-init", "checks", "browser"} else "other")
+                except (ValueError, TypeError):
+                    entry["parse_state"] = "malformed"
+            value["services"].append(entry)
+    unhealthy = any(x.get("health") == "unhealthy" for x in value["services"])
+    value["classification"] = "unhealthy_observed" if unhealthy else "readiness_observed" if value["services"] else "unknown"
+    # A failed info query alone does not prove daemon unavailability.
+    value["seconds"] = round(time.monotonic() - config["origin"], 6)
+    value["probe_seconds"] = round(time.monotonic() - started, 6)
+    value["cpu_available"] = len(os.sched_getaffinity(0))
+    value["load_1m"] = os.getloadavg()[0]
+    value["disk_available_bytes"] = os.statvfs('.').f_bavail * os.statvfs('.').f_frsize
+    value['memory_available_kib'] = None
+    try:
+        for line in Path('/proc/meminfo').read_text().splitlines():
+            if line.startswith('MemAvailable:'):
+                value['memory_available_kib'] = int(line.split()[1])
+    except (OSError, ValueError):
+        pass
+    value["probe_seconds"] = round(time.monotonic() - started, 6)
+    append_event(config, value)
+
+def prefix_bytes(original):
+    boundary = b'# Independent zero-state C02 DB and every existing Foundation/browser/restart gate.\nsh docker/verify_foundation.sh\n'
+    assert original.count(boundary) == 1 and original.endswith(boundary)
+    return original[:-len(boundary)]
+
+def cleanup_summary(root):
+    result = []
+    for path in (root / '.runtime/c03-diagnostics').glob('foundation-*.jsonl'):
+        if path.stat().st_size > 4 * 1024 * 1024:
+            continue
+        for line in path.read_text().splitlines():
+            item = json.loads(line)
+            if item.get('event') != 'diagnostic_finished':
+                continue
+            value = {'event': 'diagnostic_finished'}
+            for key in ['elapsed_seconds', 'observed_returncode']:
+                x = item.get(key)
+                value[key] = x if type(x) in (int, float) else None
+            value['host_cleanup_complete'] = item.get('host_cleanup_complete') if type(item.get('host_cleanup_complete')) is bool else None
+            value['container_cleanup_complete'] = item.get('container_cleanup', {}).get('complete')
+            reason = item.get('reason')
+            value['reason'] = reason if reason in {'command_exited','observation_deadline','diagnostic_cancelled','diagnostic_error','fresh_runner_ownership_unavailable','host_process_ownership_unavailable'} else 'unknown'
+            result.append(value)
+    return result[:4]
 
 class PublicRedirect(request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -220,10 +315,7 @@ def main():
     source = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     if source != SOURCE:
         raise ValueError("source_mismatch")
-    summaries = [
-        artifact_summary(12511439392, "2a0ccbdfe6a15dfeb4528203e6e88ccdfc6f33c24912e6160d45d739c08f63a2"),
-        artifact_summary(12500689823, "99bdd654ab830501938a04bc12ab76df8dc36f23ae61f1230c7c3e9ad35e29fd"),
-    ]
+    summaries = []
     # Verify private-byte capture/forwarding and original nonzero status without
     # publishing the synthetic secret or subprocess command/arguments.
     real = {name: shutil.which(name) for name in NAMES}
@@ -262,10 +354,26 @@ def main():
         assert probe.returncode == 17 and probe.stdout == b"synthetic-private-sentinel\n" and not probe.stderr
         assert "synthetic-private-sentinel" not in Path(config["events"]).read_text()
         assert label("docker", ["compose", "-p", "fitlink-c02-immutable-c01", "run", "--rm", "minio-init", "synthetic-private-sentinel"], root) == "immutable_c01.compose_minio_initialization"
+        calibration = {}
+        for kind, executable in [("direct", real["python"]), ("delegated", str(folder / "python"))]:
+            begin = time.monotonic()
+            for _ in range(5):
+                checked = subprocess.run([executable, "-c", "pass"], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
+                assert checked.returncode == 0
+            calibration[kind + "_five_noop_seconds"] = round(time.monotonic() - begin, 6)
+        Path(config["events"]).unlink()
+        original = (root / 'docker/verify_c02.sh').read_bytes()
+        prefix = prefix_bytes(original)
+        prefix_path = folder / 'foundation-prefix.sh'
+        prefix_path.write_bytes(prefix)
+        # Explicitly execute a diagnostic-only byte-identical prefix, stopping
+        # after the original upgrade cleanup. No historical file is edited.
+        launch = folder / 'launch.py'
+        launch.write_text("import sys;sys.path.insert(0, " + repr(str(root)) + ");from docker.c03_gate_diagnostics import watch;raise SystemExit(watch('foundation', ['sh', " + repr(str(prefix_path)) + "], acceptance=True))")
         started = time.monotonic()
         limit_reason = None
         with tempfile.TemporaryFile() as private:
-            child = subprocess.Popen([real["python"], "docker/c03_foundation_evidence.py"],
+            child = subprocess.Popen([real["python"], str(launch)],
                                      env=env, stdout=private, stderr=subprocess.STDOUT)
             while child.poll() is None:
                 if time.monotonic() - started > 1860 or os.fstat(private.fileno()).st_size > 32 * 1024 * 1024:
@@ -288,13 +396,18 @@ def main():
         stages = output / "stages.jsonl"
         size = stages.stat().st_size if stages.exists() else 0
         result = {"diagnostic_only": True, "acceptance": False, "application_sha": SOURCE,
-                  "source_unchanged": clean, "fixture_source_exit_codes": fixture_checks, "artifacts": summaries,
+                  "source_unchanged": clean, "fixture_source_exit_codes": fixture_checks, "artifacts": summaries, "cleanup": cleanup_summary(root),
+                  "prefix_sha256": hashlib.sha256(prefix).hexdigest(),
+                  "original_verifier_sha256": hashlib.sha256(original).hexdigest(),
+                  "scope": "byte-identical original prefix through upgrade cleanup; final current zero-state verifier not executed",
                   "exit_code": code, "elapsed_seconds": round(time.monotonic() - started, 6),
                   "outer_limit": limit_reason, "stage_bytes": size,
+                  "calibration": calibration,
                   "stage_truncated": size >= LIMIT - 4096,
                   "supervisor_window_seconds": 1800,
                   "instrumentation": "PATH delegates exact original executables, argv and stdin; piped stream forwarding adds process and scheduling overhead; no acceptance equivalence claimed",
-                  "selfcheck_exit_preservation_and_redaction": True}
+                  "selfcheck_exit_preservation_and_redaction": True,
+                  "equivalence_limits": "PATH delegation pipes streams and adds Python startup; post-up read-only probes add measured delay. Original supervisor 20-second queries retained. No full acceptance equivalence; no current Task7 backend executed."}
         (output / "result.json").write_text(json.dumps(result, sort_keys=True))
         print("FOUNDATION_DIAGNOSTIC " + json.dumps(result, sort_keys=True), flush=True)
         return 0 if clean and not any(fixture_checks.values()) and limit_reason is None else 1
@@ -373,3 +486,4 @@ if __name__ == "__main__":
     except Exception as error:
         print("FOUNDATION_DIAGNOSTIC " + json.dumps({"diagnostic_only": True, "acceptance": False, "error_category": category(error)}), flush=True)
         raise SystemExit(1) from None
+

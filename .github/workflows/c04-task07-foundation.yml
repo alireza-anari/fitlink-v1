@@ -1,4 +1,4 @@
-name: Task7 Foundation stage diagnostic ONLY - NOT acceptance
+name: Task7 C01 C02 prefix observation ONLY - NOT acceptance
 on:
   push:
     branches: [diagnostics/c04-task07-foundation]
@@ -11,7 +11,7 @@ permissions:
 jobs:
   foundation-diagnostic-only:
     runs-on: ubuntu-24.04
-    timeout-minutes: 50
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -44,10 +44,12 @@ jobs:
           ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
           path: .runtime/source/.runtime/c03
           persist-credentials: false
+      - name: Observer redaction exit status and boundedness self-tests
+        run: python docker/test_c04_foundation_stage_diagnostic.py
       - name: Exact fixtures and original frozen preconditions
         working-directory: .runtime/source
         run: python "$GITHUB_WORKSPACE/docker/c04_foundation_stage_diagnostic.py" prepare
-      - name: ONE unchanged Foundation verifier with private stage observation
+      - name: ONE byte-identical C01 C02 prefix with private stage observation
         working-directory: .runtime/source
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -57,7 +59,7 @@ jobs:
         id: evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: task07-foundation-stage-diagnostic-only
+          name: task07-foundation-prefix-observation-only
           path: |
             .runtime/source/.runtime/foundation-stage-diagnostic/preparation.jsonl
             .runtime/source/.runtime/foundation-stage-diagnostic/result.json

@@ -1,0 +1,34 @@
+{
+  "diagnostic_only": true,
+  "acceptance": false,
+  "authorization": "one additional prerequisite-prefix observation; no retry",
+  "application_sha": "6c66199bd5ea3032d319fa6f727eb1d2e5e6e158",
+  "application_tree": "afef30b518af8229eeb19101fbb2246480249db8",
+  "historical_failure": {
+    "run": 39977996148,
+    "attempt": 1,
+    "job": 120497555911,
+    "cause": "unclassified"
+  },
+  "prior_diagnostic": {
+    "run": 39987116028,
+    "artifact": 12517791013,
+    "sha256": "0677b19b6497824b65a5f3835700028de15c83a1a0a97c19c5e66f444c69f677"
+  },
+  "equivalence": "Exact byte prefix of original verify_c02.sh, asserted single terminal boundary. Includes immutable C01 complete original rehearsal and same-database upgrade with original cleanup. Omits final current zero-state verify_foundation.sh explicitly. No historical or current source modified; not historical full acceptance.",
+  "telemetry": {
+    "events": "Immediate delegated start/end and exact subprocess exit; monotonic time",
+    "readiness": "Post-up read-only finite restricted-format Docker queries, 2-second per query, 16-container cap, approximately 10-second group bound",
+    "limitations": "Query failure is unknown, not proof daemon unavailable. Readiness samples cannot exclude earlier short failures. Original 20-second supervisor snapshots retained privately. Private output prefix 64KiB, public events cap 4MiB; truncation explicit.",
+    "overhead": "Five direct and five delegated no-op calibration commands before prefix; measured post-up probe durations; pipe forwarding and extra interpreter processes add unquantified scheduling overhead. No acceptance equivalence."
+  },
+  "privacy_review": "Only finite labels, numeric aggregates, fixed SHA identifiers and boolean/null metadata exported. Raw logs stay in runner temporary files; no SQL, secrets, arguments, environment values, exception strings or raw Docker output exported.",
+  "correctness_review": "Telemetry exceptions preserve child exit; ten focused self-tests passing locally, repeated before real execution. Source and immutable fixture identities checked after execution. Original ownership supervisor guard and cleanup retained.",
+  "bounds": {
+    "supervisor_seconds": 1800,
+    "outer_seconds": 1860,
+    "raw_private_bytes": 33554432,
+    "public_event_bytes": 4194304
+  },
+  "status": "Task7 BLOCKED / IN_PROGRESS; no application changes or acceptance execution authorized"
+}
