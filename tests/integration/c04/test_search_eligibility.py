@@ -116,6 +116,7 @@ def test_expiring_one_role_without_worker_preserves_other_current_search(corpus)
 
 
 def test_budget_fixture_uses_real_identity_and_coach_approval(corpus):
+    from apps.professionals.models import VerificationTarget
     from tests.integration.c03.test_verification_decisions import eligibility
     from tests.integration.c04.publication_helpers import effective
 
@@ -123,7 +124,11 @@ def test_budget_fixture_uses_real_identity_and_coach_approval(corpus):
     facts = eligibility(subject)
     assert facts.eligible and facts.identity_verified
     assert facts.verified_roles == ("coach",)
-    assert set(subject.case.targets.values_list("target", "state")) == {
+    assert set(
+        VerificationTarget.objects.filter(verification_id=subject.case.id).values_list(
+            "target", "state"
+        )
+    ) == {
         ("identity", "approved"),
         ("coach", "approved"),
     }

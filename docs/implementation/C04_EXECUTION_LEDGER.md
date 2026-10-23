@@ -2004,3 +2004,25 @@ Local frozen C04 unit controls247+37 subtests pass7.96s, zero failures/skips.
 Whole-source Ruff check and format537 files pass after preserving generated
 pytest temp copies under ignored .runtime; whitespace clean. No local real-service
 GREEN or fixture timing improvement is claimed. Fresh hosted proof required.
+
+### Task 6 — fixture characterization adapter correction, still IN_PROGRESS
+
+Correction92b80a0a7bd98d48ed2c1540a261b25793b9812b/tree
+b912acb3ef33e372a7ef0c31797faa1d450cf016, run39904239921 attempt1,
+PostgreSQL120252405589 naturally failed1:387 passed/exactly1 failed;
+errors/skips/xfails/xpasses/deselections0. The new characterization reaches
+eligible identity+coach and exact coach-only verified-role assertions, then raises
+AttributeError at test_search_eligibility.py126. The returned subject.case is a
+VerificationDTO, not an ORM Verification instance, so it has no targets manager.
+Fix ONLY that test adapter to inspect persisted VerificationTarget rows by the
+exact case.id, retaining the same exact two approved-target assertion. This is an
+author test defect, not a permission/SQL failure, fixture GREEN, or acceptance.
+All existing budget/recovery tests passed; query-plan30000/10/two indexes/441
+blocks/2.9ms. Subsequent profile was correctly not run after the failed cumulative
+gate; no timing artifact or performance GREEN is invented.
+No same-SHA retry; forward source correction requires a fresh full15 manifest.
+Native job120252405715 on this candidate independently succeeded (including the
+historical audit which failed with URLError on earlier diagnostic source).
+No external root cause is inferred from this later success. Task7+ not started.
+Local Ruff/format/whitespace pass; real fixture characterization requires hosted
+proof. All original assertions/services/deadlines/security guards remain.
