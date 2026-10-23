@@ -2090,3 +2090,41 @@ all145 recorded stage exits0. This separate success does not waive the failed
 immutable MinIO baseline or aggregate.
 Its complete-backend journal proves2082 completed cases, pytest exit0 in692.474s,
 zero nonpassing reports; no deadline increase or selected-test suppression.
+
+
+### Task 6 — authorized complete retry, exact-source acceptance and completion
+
+Phase Manager manually initiated the one explicitly authorized Re-run all jobs
+retry of run39913564638. Attempt2 completed successfully on unchanged implementation
+0787d7880f9fd27006bf76ae0f16e31536ef4503, tree
+b207a0a8e946750a0dd1213f5460e51f67dd3000. All fifteen mandatory job conclusions
+are completed/success on attempt2 and that exact SHA; no skipped/cancelled job,
+partial rerun substitution or extra retry. Branch head was independently rechecked.
+
+All14 current-attempt artifacts were downloaded and SHA-256 matched GitHub's
+reported digests. c03-final artifact12502955089 digest
+6ffebedc83b31d59fee7cb9e1732278c00bb35e083147fccc9ce260fcd933f97
+records2110 completed cases, zero nonpassing phase reports, pytest exit0 in777.422s,
+within original900s. Both focused Task6 jobs report416 passed, zero failures,
+errors, skips, xfails, xpasses or deselections. Clean and upgrade migration,
+no-op, drift, immutable baseline and cleanup stages all exit0. Public-media,
+real worker/broker and inherited security/architecture regressions remain selected.
+
+The earlier independently reviewed search-fixture correction removes unrelated
+dual-role approvals while retaining100 real profiles and all assertions.
+The later unchanged-source historical slowdown remains unexplained: paired and
+full-topology diagnostics found no repeatable source defect; CPU throughput
+variation is supported, not established as its precise cause. Diagnostic
+run39931454829 passed2110 in629.039s. Immutable clean_minio succeeds here; its
+earlier failed subcommand remains unknown. No timeout, selection, assertion,
+service, lockfile, workflow or immutable source was changed for this retry.
+
+Existing independent fresh-context Task6 security/privacy/architecture and
+bounded diagnostic reviews have no unresolved Critical/Important finding;
+final application source is unchanged by this documentation publication.
+Task06 completion checkpoint records exact implementation authority, same-attempt
+jobs, sanitized runtime results, artifact digests and review limits; installed
+validate_checkpoint accepts the record. The docs-only checkpoint commit is not
+the tested implementation. Laptop-only unpublished state was not recovered.
+Task6 COMPLETE. Task7+ NOT AUTHORIZED; stop without starting it, merging,
+deploying or releasing Marketplace.
