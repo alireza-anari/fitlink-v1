@@ -2159,3 +2159,13 @@ First local RED:26 safe PostInput contract assertions failed naturally, exit1,
 Frozen dependency sync succeeds without lockfile change. No local Docker check
 was attempted. Further named real PostgreSQL, media and moderation REDs remain
 required before their implementations. Task7 RED/IN_PROGRESS, not accepted.
+
+Task7 first RED published as d6bdc25cfdc30fa19e8da9b41b36f9746858bd42,
+tree22a5d0a18917562b3b0c09c831ec7ceeabbb5820; hosted run39977409314
+is the expected RED checkpoint, not acceptance. Local minimal PostInput
+implementation now26/26 GREEN0.22s, validates exact fields, finite text/image
+selections, one-to-four publication bound and rejects executable/remote payloads.
+New named integration modules exercise actual owner draft/version/receipt,
+append-only revision, exact-post ingress and evidence denial plus bounded reports
+and staff-flag denial. They require real PostgreSQL execution before domain
+implementation; no local database fallback/mocks or service PASS claimed.
