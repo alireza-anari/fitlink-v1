@@ -82,7 +82,7 @@ def test_assigned_capability_hide_restore_only_removes_own_latch(
         case.id,
         case.version,
         staff.step,
-        "security_review",
+        "staff_assigned",
         uuid4(),
         timezone.now(),
     )
@@ -93,7 +93,7 @@ def test_assigned_capability_hide_restore_only_removes_own_latch(
             case.version,
             "hide",
             staff.step,
-            "security_review",
+            "staff_assigned",
             uuid4(),
             timezone.now(),
         )
@@ -103,7 +103,7 @@ def test_assigned_capability_hide_restore_only_removes_own_latch(
         claimed.version,
         "hide",
         staff.step,
-        "security_review",
+        "staff_assigned",
         uuid4(),
         timezone.now(),
     )
@@ -114,7 +114,7 @@ def test_assigned_capability_hide_restore_only_removes_own_latch(
         hidden.version,
         "restore",
         staff.step,
-        "security_review",
+        "staff_assigned",
         uuid4(),
         timezone.now(),
     )
@@ -128,7 +128,7 @@ def test_assigned_capability_hide_restore_only_removes_own_latch(
             restored.version,
             "hide",
             staff.step,
-            "security_review",
+            "staff_assigned",
             uuid4(),
             timezone.now(),
         )
@@ -161,7 +161,7 @@ def test_owner_and_reporter_cannot_moderate_even_with_capability(
             case.id,
             case.version,
             staff.step,
-            "security_review",
+            "staff_assigned",
             uuid4(),
             timezone.now(),
         )

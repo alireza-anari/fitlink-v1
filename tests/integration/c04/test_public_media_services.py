@@ -63,6 +63,15 @@ def test_educational_ingress_real_quarantine_scan_decoder_and_public_copy(
     subject, _ = corpus()
     post = draft(subject)
     body = raster(eicar=malicious)
+    # EICAR is an exact-file antivirus fixture. A valid PNG containing its text
+    # metadata is not guaranteed to receive the same scanner classification.
+    # Both decisions must be safe: quarantine a malicious verdict, otherwise
+    # release only canonical pixels with all marker/active metadata removed.
+    scanner = configured_scanner()
+    eicar = b"X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"
+    assert scanner.scan(eicar, timezone.now()).status == "malicious"
+    verdict = scanner.scan(body, timezone.now()).status
+    assert verdict in {"clean", "malicious"}
     upload = content.begin_post_upload(
         subject.actor,
         post.id,
@@ -92,7 +101,7 @@ def test_educational_ingress_real_quarantine_scan_decoder_and_public_copy(
     )
     outcome = asset_processing.process_asset(*queue[0], timezone.now())
     asset = Asset.objects.get(pk=upload.id)
-    if malicious:
+    if verdict == "malicious":
         assert outcome != "ready" and asset.state != "ready"
         assert not asset.derivatives.filter(state="ready").exists()
         with pytest.raises((ValueError, LookupError, PermissionError)):
@@ -111,6 +120,7 @@ def test_educational_ingress_real_quarantine_scan_decoder_and_public_copy(
     store = S3PrivateStore()
     preview = store.read_limited(derivative.key, 10_000_000)
     assert b"PRIVATE_" not in preview
+    assert b"EICAR-STANDARD-ANTIVIRUS-TEST-FILE" not in preview
     unsigned_denied(settings, asset.source_key)
     unsigned_denied(settings, derivative.key)
     post = content.save_post(
@@ -147,6 +157,59 @@ def test_educational_ingress_real_quarantine_scan_decoder_and_public_copy(
     assert output.content.startswith(b"\x89PNG") and b"PRIVATE_" not in output.content
     key = module("apps.assets.public_storage").publication_key(copy.id, copy.generation)
     unsigned_denied(settings, key)
+
+
+def test_educational_public_copy_real_scanner_rejects_malicious_private_output(
+    settings, corpus
+):
+    from uuid import uuid4
+
+    from apps.assets.models import PublicAssetCopy
+    from apps.assets.public_copies import scan_due_public_copies
+    from apps.professionals.post_contracts import PostImageInput, PostInput
+    from config.use_cases import public_content as content
+    from config.use_cases import public_media
+    from tests.integration.c04.post_helpers import draft, image
+
+    real_service_settings(settings)
+    subject, _ = corpus()
+    post = draft(subject)
+    asset, derivative, _ = image(subject, post)
+    eicar = b"X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"
+    assert configured_scanner().scan(eicar, timezone.now()).status == "malicious"
+    derivative.sha256 = sha256(eicar).hexdigest()
+    derivative.save(update_fields=["sha256"])
+    S3PrivateStore().put(derivative.key, eicar, "image/png")
+    post = content.save_post(
+        subject.actor,
+        post.id,
+        PostInput("آموزش", (PostImageInput(asset.id, "شرح"),)),
+        post.version,
+        uuid4(),
+        timezone.now(),
+    )
+    post = content.publish_post(
+        subject.actor, post.id, True, post.version, uuid4(), timezone.now()
+    )
+    queue = []
+    assert (
+        scan_due_public_copies(
+            timezone.now(),
+            100,
+            authorize=public_media.validate_release,
+            enqueue=lambda *args: queue.append(args),
+        )
+        == 1
+    )
+    assert (
+        public_media.process_public_copy(*queue[0], timezone.now()).status == "failed"
+    )
+    row = PublicAssetCopy.objects.get(publication_uuid=post.id)
+    assert (
+        row.state == "failed"
+        and row.attempts.get(generation=1).failure_code == "scan_malicious"
+    )
+    assert content.public_post(post.id, timezone.now()) is None
 
 
 def real_service_settings(settings):

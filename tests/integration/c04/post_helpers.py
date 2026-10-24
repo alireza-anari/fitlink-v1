@@ -81,19 +81,24 @@ def image(subject, post):
     return asset, derivative, store
 
 
-def published(subject):
+def pending_post(subject, image_count=1):
     from apps.assets.models import PublicAssetCopy
     from apps.assets.public_copies import scan_due_public_copies
     from apps.professionals.post_contracts import PostImageInput, PostInput
     from config.use_cases.public_media import validate_release
-    from tests.integration.c04.copy_helpers import process
 
     post = draft(subject)
-    asset, derivative, store = image(subject, post)
+    sources = [image(subject, post) for _ in range(image_count)]
+    store = sources[0][2]
+    for _, _, other in sources[1:]:
+        store.objects.update(other.objects)
     post = command("save_post")(
         subject.actor,
         post.id,
-        PostInput("آموزش", (PostImageInput(asset.id, "شرح تصویر"),)),
+        PostInput(
+            "آموزش",
+            tuple(PostImageInput(asset.id, "شرح تصویر") for asset, _, _ in sources),
+        ),
         post.version,
         uuid4(),
         timezone.now(),
@@ -110,14 +115,29 @@ def published(subject):
             authorize=validate_release,
             enqueue=lambda *args: queued.append(args),
         )
-        == 1
+        == image_count
     )
-    assert process(store, queued[0]).status == "ready"
-    copy = PublicAssetCopy.objects.get(publication_uuid=post.id)
-    return post, asset, derivative, store, copy
+    copies = list(PublicAssetCopy.objects.filter(publication_uuid=post.id))
+    return (
+        post,
+        tuple(x[0] for x in sources),
+        tuple(x[1] for x in sources),
+        store,
+        copies,
+        queued,
+    )
 
 
-def moderator(settings, case_uuid, *, person=None, phone="+989155557010"):
+def published(subject):
+    from tests.integration.c04.copy_helpers import process
+
+    post, assets, derivatives, store, copies, jobs = pending_post(subject)
+    for job in jobs:
+        assert process(store, job).status == "ready"
+    return post, assets[0], derivatives[0], store, copies[0]
+
+
+def moderator(settings, case_uuid, *, person=None, phone="+989155557010", issuer=None):
     from dataclasses import replace
     from datetime import timedelta
 
@@ -131,7 +151,8 @@ def moderator(settings, case_uuid, *, person=None, phone="+989155557010"):
         settings.ACCOUNT_SECURITY, step_up_provider="mock"
     )
     staff = person or make_actor(phone)
-    issuer = make_actor("+989155557011")
+    issuer = issuer or make_actor("+989155557011")
+    staff.issuer = issuer
     staff.grant = StaffCapabilityGrant.objects.create(
         user=staff.user,
         capability="marketplace_moderation",
@@ -155,3 +176,25 @@ def moderator(settings, case_uuid, *, person=None, phone="+989155557010"):
             provider,
         )
     return staff
+
+
+def case_step(staff, identifier):
+    from django.db import transaction
+
+    from apps.governance.staff import MockStepUpProvider, issue_mock_step_up
+
+    provider = MockStepUpProvider()
+    now = timezone.now()
+    proof = provider.prepare(
+        staff.user.public_id, "marketplace_moderation", identifier, now
+    )
+    with transaction.atomic():
+        return issue_mock_step_up(
+            staff.user,
+            "marketplace_moderation",
+            identifier,
+            proof.raw_assertion,
+            staff.issuer.user,
+            now,
+            provider,
+        )

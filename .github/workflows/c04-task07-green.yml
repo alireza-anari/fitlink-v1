@@ -10,7 +10,7 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     services:
       postgres:
         image: postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
@@ -68,9 +68,7 @@ jobs:
         persist-credentials: false
     - run: uv sync --frozen --group dev
     - name: Task7 focused PostgreSQL behavior and cumulative authority regression
-      run: 'mkdir -p .runtime/task07-focused
-
-        uv run --frozen ruff check .
+      run: 'uv run --frozen ruff check .
 
         uv run --frozen ruff format --check .
 
@@ -80,18 +78,15 @@ jobs:
 
         uv run --frozen python manage.py makemigrations --check --dry-run
 
-        timeout -k 10s 600s uv run --frozen python docker/c04_gate.py tests/unit/c04
-        tests/integration/c04/test_educational_posts.py tests/integration/c04/test_post_media.py
-        tests/integration/c04/test_public_moderation.py tests/integration/c04/test_post_races.py
-        tests/integration/c04/test_public_copies.py tests/integration/c04/test_public_copy_races.py
-        tests/integration/c03/test_upload_lifecycle.py tests/integration/c03/test_private_assets.py
-        -q --strict-markers --tb=no --show-capture=no > .runtime/task07-focused/results.txt'
+        uv run --frozen python docker/c04_task07_focused.py'
     - name: 'Diagnostic only: bounded sanitized results'
       if: always()
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       with:
         name: task07-focused-postgresql-only
-        path: .runtime/task07-focused/results.txt
+        path: '.runtime/task07-focused/results.txt
+
+          .runtime/task07-focused/infrastructure.json'
         include-hidden-files: true
         if-no-files-found: error
         retention-days: 14

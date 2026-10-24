@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "task": 7,
+  "state": "IN_PROGRESS",
+  "candidate_sha": "9654a67b04d62a5e7fc6db7f9a685f1ef4258f67",
+  "candidate_tree": "3fe548c0ce3253315f908e5fef7ed1541bc342a1",
+  "review": {
+    "method": "Independent fresh-context read-only whole-task source review",
+    "reviewer": "task07_final_review",
+    "verdict": "request_changes",
+    "critical": 0,
+    "important": [
+      {
+        "id": "T7-R1",
+        "status": "open",
+        "finding": "Temporary moderation hide causes lifetime reconciliation to permanently retire otherwise confirmed release copies."
+      },
+      {
+        "id": "T7-R2",
+        "status": "open",
+        "finding": "Authority loss during copy I/O leaves running inventory outside installed cleanup discovery."
+      },
+      {
+        "id": "T7-R3",
+        "status": "open",
+        "finding": "Post read imposes continuing scanner-signature TTL while direct bytes do not; no renewal path."
+      },
+      {
+        "id": "T7-R4",
+        "status": "open",
+        "finding": "Assigned case read has no exact target, reported revision, finite reasons or useful approved content."
+      },
+      {
+        "id": "T7-R5",
+        "status": "open",
+        "finding": "Image membership of saved unconfirmed revisions can be extended with bulk INSERT."
+      },
+      {
+        "id": "T7-R6",
+        "status": "open",
+        "finding": "Missing actual moderation, quota, output-release and four-image boundary race/authority coverage."
+      }
+    ],
+    "minor": [],
+    "declined_to_judge": [
+      "Hosted results and complete acceptance must be independently verified by executor.",
+      "Historical Foundation failure causality remains unknown.",
+      "Task8 UI and later task work remain outside authorization.",
+      "Production wording, retention durations, deployment and operational release sign-offs remain outside engineering completion."
+    ]
+  },
+  "focused_run": {
+    "id": 40011075782,
+    "attempt": 1,
+    "acceptance": false,
+    "postgresql": {
+      "job": 120611302258,
+      "conclusion": "failure",
+      "passed": 424,
+      "failed": 10,
+      "error": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0,
+      "migrations": "Applied all three new Task7 migrations; second migrate no-op; drift check no changes.",
+      "classification": "Two positive moderation tests submitted an unsupported reason code; eight inherited MinIO tests were selected without providing their real service in the focused PostgreSQL development job.",
+      "artifact": 12526851101,
+      "sha256": "6b425f6994d4b3a463a04ce239e4ab2597c6f67094050214097edf408965bd60",
+      "bytes_verified": true
+    },
+    "media": {
+      "job": 120611302005,
+      "conclusion": "failure",
+      "passed": 25,
+      "failed": 1,
+      "error": 0,
+      "skipped": 0,
+      "class": "New educational test assumed a valid PNG containing EICAR text metadata must receive the exact-file EICAR malicious classification. Actual pipeline returned ready; test failed before any release assertions. Preserve actual scanner+canonicalization safety and add a separate exact-file malicious educational-copy test.",
+      "artifact": 12526502087,
+      "sha256": "2384777ac501cdf3e53f681c58f125fe5ad98d63121ac62351581c42d52aeb74",
+      "bytes_verified": true,
+      "cleanup": {
+        "host": true,
+        "containers": true
+      }
+    }
+  },
+  "next": "Publish targeted review regression REDs with corrected focused real-service provisioning, then fix Important findings, focused GREEN and full exact-source mandatory acceptance. No Foundation-only repeat or acceptance retry performed."
+}
