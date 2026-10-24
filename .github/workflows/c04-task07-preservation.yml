@@ -1,0 +1,73 @@
+name: Task7 populated preservation observation - NOT acceptance
+'on':
+  push:
+    branches:
+    - diagnostics/c04-task07-preservation
+permissions:
+  contents: read
+jobs:
+  task07-populated-preservation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+      with:
+        version: 0.12.19
+        python-version: 3.13.15
+        enable-cache: false
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      with:
+        node-version-file: .node-version
+    - name: Exact original C02 fixture
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/c02
+        persist-credentials: false
+    - name: Separate immutable C01 fixture
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c01
+        persist-credentials: false
+    - name: Exact C01 fixture at the original C02 runtime path
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/c02/.runtime/c01
+        persist-credentials: false
+    - name: Immutable C03 source fixture for C04 unit controls
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+        path: .runtime/c03
+        persist-credentials: false
+    - name: Frozen Task 14 environment
+      run: uv sync --frozen --group dev
+    - name: Task 14 exact C02 source and tamper negatives
+      run: 'python docker/c03_baseline.py .runtime/c02
+
+        python docker/c02_baseline.py .runtime/c01
+
+        uv run --frozen pytest tests/unit/c03/test_exact_baseline.py -q --strict-markers
+        --tb=short --show-capture=no
+
+        '
+    - name: Exact original C02 and populated same-database upgrade rehearsal
+      run: uv run --frozen python docker/c04_preservation_observation.py
+    - name: Task 14 metadata-only stage exit evidence
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: task07-populated-preservation-diagnostic
+        path: '.runtime/c03-task14-evidence/*.jsonl
+
+          .runtime/c03-diagnostics/*.jsonl
+
+          .runtime/task07-preservation/outcome.json'
+        include-hidden-files: true
+        if-no-files-found: error
+        retention-days: 14
+      if: always()

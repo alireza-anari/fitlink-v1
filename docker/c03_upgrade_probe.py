@@ -20,6 +20,43 @@ snapshot = _impl.snapshot
 verify_preservation = _impl.verify_preservation
 upgraded_constraints = _impl.upgraded_constraints
 
+
+def preservation_predicate(error):
+    """Export only a finite static assertion identity, never exception text."""
+    reasons = {
+        "database identity": "database_identity",
+        "original User table": "original_user_table",
+        "auth_user absent": "auth_user_absent",
+        "original tables": "original_tables",
+        "original table OID": "original_table_oid",
+        "original count": "original_count",
+        "current count": "current_count",
+        "original rows and values": "original_rows",
+        "original catalog identity": "original_catalog_identity",
+        "current catalog identity": "current_catalog_identity",
+        "original catalog rows": "original_catalog_rows",
+        "exact C03 content types": "exact_content_types",
+        "unique new content types": "unique_content_types",
+        "exact C03 permission metadata": "exact_permissions",
+        "unique new permissions": "unique_permissions",
+        "exact additive migration records": "exact_migrations",
+        "unique new migrations": "unique_migrations",
+        "no automatic C03 business rows": "automatic_business_rows",
+    }
+    if type(error) is not AssertionError or len(error.args) != 1:
+        return "unknown"
+    if type(error.args[0]) is not str:
+        return "unknown"
+    return next(
+        (
+            code
+            for reason, code in reasons.items()
+            if error.args[0] == "preservation " + reason
+        ),
+        "unknown",
+    )
+
+
 _original_upgraded_capability_case = _impl.upgraded_capability_case
 _original_history_http_diagnostic = _impl.history_http_diagnostic
 
@@ -292,4 +329,5 @@ if __name__ == "__main__":
             "C03_TASK14 probe_failed " + type(error).__name__ + f" line={line}",
             flush=True,
         )
+        print("C03_TASK14 preservation_" + preservation_predicate(error), flush=True)
         raise SystemExit(1) from None
