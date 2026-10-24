@@ -141,6 +141,19 @@ def review_content(case, at):
             ).first()
             if copy is None:
                 return None
+            from config.use_cases.public_media import _binding
+
+            try:
+                _binding(
+                    owner,
+                    facts.publication_id,
+                    facts.revision_id,
+                    purpose,
+                    at,
+                    require_flag=False,
+                )
+            except (PermissionError, LookupError, ValueError):
+                return None
             media.append({"purpose": purpose, "copy_uuid": str(copy.id)})
         value = {"fields": facts.snapshot, "media": media}
     else:
@@ -169,6 +182,19 @@ def review_content(case, at):
                 revoked_at__isnull=True,
             ).first()
             if copy is None:
+                return None
+            from config.use_cases.post_media import binding
+
+            try:
+                binding(
+                    owner,
+                    post.id,
+                    revision.id,
+                    link.asset_id,
+                    at,
+                    require_flag=False,
+                )
+            except (PermissionError, LookupError, ValueError):
                 return None
             images.append({"copy_uuid": str(copy.id), "alt": link.alt})
         value = {"text": payload.text, "images": images}

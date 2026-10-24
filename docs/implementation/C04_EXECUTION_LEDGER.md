@@ -2266,3 +2266,49 @@ generation recovery. Local targeted unit/schema checks348 passed,37 subtests11.9
 Ruff and domain mypy pass, migration-state check has no changes. Hosted focused GREEN,
 full15-job exact-source acceptance and final review resolution remain pending.
 Execution branch stays at6c66199; historical Foundation cause remains unknown.
+
+### Task 7 residual review boundary — 2026-10-24 UTC
+
+Execution branch independently remains6c66199bd5ea3032d319fa6f727eb1d2e5e6e158,
+with no overlapping acceptance run or delegated writer. Candidate ebc239 focused
+run40065182994: PostgreSQL459 passed/1 failed; real media27 passed/0 failed,
+zero errors/skips/xfails/xpasses/deselections. ZIPs12549431356 and12548773893 were
+independently downloaded and hashed (digests in task07-review.json); real-media
+host/container cleanup completed. Focused real MinIO setup/initialization/cleanup
+all exited0. No acceptance or checkpoint is inferred from these partial results.
+
+Independent follow-up verified R1/R2/R3/R5 source corrections and substantial R6
+coverage, but identified residual R4: assigned review omitted frozen derivative
+binding checks. RED-only source98900c475f5a06cc3d42a6498b73a16e6990d165,
+tree1f2403d53835a14e98ab34d64500e1c7068d1dc4, run40065582821 attempt1 reproduced
+all four profile/post × before/during-I/O witnesses. PostgreSQL459 passed/5 failed:
+four intended residual witnesses plus the preceding cleanup fixture assertion.
+Artifact12548534103 SHA256
+9384ec15ee91deaf7292f8a2f60cef7dbb82994ab974b338de98f88f7dcddb4b
+was independently byte-verified. Initial metadata assertions fail and both buffered
+reads omit the expected denial. No raw process output was exported.
+
+Residual correction uses the existing exact retention-capable profile/post binding
+validators for every selected review copy; only the moderation latch is bypassed.
+Missing/stale current derivative returns metadata-only; buffered final capture
+revalidates before bytes leave. Current source, eligibility, assignment, step-up
+and capability remain required. Four PostgreSQL regressions remain installed.
+
+The focused finite adapter previously kept the first64 traceback frames and only
+64-character function names, dropping the known long cleanup test's location.
+A new unit RED demonstrates the omission; last64 static frames and bounded200
+character static names preserve the innermost location without exception text,
+locals, arbitrary paths or unrestricted logs. All three adapter unit tests pass.
+
+Cleanup fixture inspection establishes default test STORAGE_BACKEND=fake and the
+inherited erasure guard explicitly returns retry in that mode without an injected
+store. The installed reconciler intentionally invokes the store factory. Configure
+this single fixture for that factory path with its patched observed store; do not
+remove the inherited fake-mode erasure refusal or weaken the erasure assertions.
+Actual hosted outcome and final source review remain pending. No Foundation fix,
+full acceptance retry, execution-branch advancement or Task8 work has occurred.
+
+Independent bounded follow-up now verifies residual R4 resolved in source with no
+Critical/Important issue remaining in that correction. Both captures reuse exact
+retention-aware binding; current assignment, case-bound step-up, source and
+eligibility remain intact. This is source verification, not hosted GREEN.

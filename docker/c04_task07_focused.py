@@ -67,7 +67,7 @@ def sanitized_results(text):
                     continue
                 safe = {"node": node, "exception": exception, "phase": value["phase"]}
                 frames = []
-                for item in value.get("traceback", [])[:64]:
+                for item in value.get("traceback", [])[-64:]:
                     if not isinstance(item, dict):
                         continue
                     file = item.get("file", "")
@@ -79,7 +79,7 @@ def sanitized_results(text):
                         continue
                     if (
                         not isinstance(function, str)
-                        or not re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]{0,63}", function)
+                        or not re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]{0,199}", function)
                         or type(number) is not int
                         or not 1 <= number <= 1000000
                     ):

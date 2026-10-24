@@ -99,7 +99,7 @@ def test_hide_reconciliation_then_restore_preserves_confirmed_release(
 
 
 def test_withdraw_after_write_is_discovered_and_erased_by_installed_reconciler(
-    corpus, monkeypatch
+    corpus, settings, monkeypatch
 ):
     import apps.assets.public_storage as storage
     from tests.integration.c03.test_asset_holds import policy
@@ -122,6 +122,9 @@ def test_withdraw_after_write_is_discovered_and_erased_by_installed_reconciler(
     monkeypatch.setattr(
         storage, "get_publication_store", lambda: PublicationObjectStore(store)
     )
+    # Exercise the installed store factory, rather than the explicit fake-mode
+    # erasure refusal. The factory above remains our observed I/O adapter.
+    settings.STORAGE_BACKEND = "s3"
     later = attempt.lease_until + timedelta(seconds=2)
     # Use installed discovery, not a hand-picked copy lifetime call.
     public_media.scan_due_public_copies(later, 100)

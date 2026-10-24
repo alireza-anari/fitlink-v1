@@ -7,7 +7,7 @@
   "review": {
     "method": "Independent fresh-context read-only whole-task source review",
     "reviewer": "task07_final_review",
-    "verdict": "fixes implemented; awaiting hosted verification",
+    "verdict": "Source findings resolved; hosted focused and full acceptance pending",
     "critical": 0,
     "important": [
       {
@@ -86,7 +86,7 @@
       }
     }
   },
-  "next": "Publish targeted review regression REDs with corrected focused real-service provisioning, then fix Important findings, focused GREEN and full exact-source mandatory acceptance. No Foundation-only repeat or acceptance retry performed.",
+  "next": "Resolve residual current-derivative review boundary using four real-PostgreSQL RED/GREEN regressions; improve finite static failure location retention; verify focused GREEN before exact-source full acceptance. Task8 prohibited.",
   "review_red_run": {
     "id": 40062264628,
     "attempt": 1,
@@ -115,7 +115,7 @@
     "T7-R1": "Retention-only current-source checks ignore moderation latches, never delivery; still-confirmed retired copies may renew into fresh scanner-backed generations capped at eight. Withdrawal/edit/eligibility loss cannot renew.",
     "T7-R2": "Installed bounded reconciliation discovers pending/running inventory and retires unreferenced output after source loss, with existing policy and hold gates.",
     "T7-R3": "Remove unplanned continuing scanner-signature TTL from immutable post read. Initial scan freshness remains mandatory. Text and direct media share complete current-revision copy validation.",
-    "T7-R4": "Assigned case view supplies only exact target/revision, finite reasons and current approved content. Hidden content review and buffered media recheck case capability/step-up after I/O; changed/withdrawn sources return metadata only.",
+    "T7-R4": "Assigned case view supplies only exact target/revision, finite reasons and current approved content. Hidden content review and buffered media recheck case capability/step-up after I/O; changed/withdrawn sources return metadata only. Residual fix validates each selected frozen derivative through existing retention-capable exact binding before snapshot inclusion; final buffered capture repeats it. No public/eligibility bypass is added.",
     "T7-R5": "Saved PostHistory seals image INSERT membership as well as existing immutable UPDATE/DELETE.",
     "T7-R6": "Add actual competing claims and final report quota, hide/confirm/copy orderings, withdrawal/final release, restore/withdraw ordering, four-image completeness, keyset queue and wrong/expired/revoked authority coverage."
   },
@@ -131,5 +131,78 @@
     "scope": "C04 unit plus current schema/identity/SQL inventory contracts; not real-service acceptance",
     "ruff": "passed",
     "migration_state": "no changes detected; no local PostgreSQL history proof"
-  }
+  },
+  "followup_review": {
+    "candidate_sha": "ebc239835ef779b9bc08fe9ba80a4924f5a6c95e",
+    "candidate_tree": "bc583b4ff3673253f50a96318e6d7518b51788c9",
+    "critical": 0,
+    "important_remaining": [],
+    "other_findings": "R1/R2/R3/R5 source fixes verified; R6 coverage substantially addressed, hosted execution judged separately.",
+    "residual_resolution": {
+      "verdict": "No Critical/Important issue remains in bounded R4 source correction",
+      "source_files": [
+        "config/use_cases/public_moderation.py",
+        "tests/integration/c04/test_post_review_regressions.py"
+      ],
+      "verified": "Existing retention-aware exact binding before selected-copy inclusion and repeated final buffered capture; current case/step-up/owner/eligibility unchanged.",
+      "limitation": "Source verification only; hosted focused and full acceptance pending."
+    }
+  },
+  "fixpass_run": {
+    "id": 40065182994,
+    "attempt": 1,
+    "sha": "ebc239835ef779b9bc08fe9ba80a4924f5a6c95e",
+    "acceptance": false,
+    "postgresql": {
+      "job": 120786818065,
+      "passed": 459,
+      "failed": 1,
+      "error": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0,
+      "artifact": 12549431356,
+      "sha256": "6d5b4bcd80fe68e0f1a24e3bf9a7f391d1c0177291bb037f993be9b8d93643fc",
+      "bytes_verified": true,
+      "failure": "test_withdraw_after_write_is_discovered_and_erased_by_installed_reconciler; AssertionError; static innermost frame omitted by focused sanitizer.",
+      "infrastructure": "All real MinIO setup stages and owned cleanup exited zero."
+    },
+    "media": {
+      "job": 120786817955,
+      "passed": 27,
+      "failed": 0,
+      "error": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0,
+      "artifact": 12548773893,
+      "sha256": "bfb14ae2e2ccfa0ddd745c8368607c650e4bb7bc485cc6b691b289632e01f207",
+      "bytes_verified": true,
+      "owned_cleanup": true,
+      "host_cleanup": true
+    }
+  },
+  "residual_red_run": {
+    "id": 40065582821,
+    "attempt": 1,
+    "sha": "98900c475f5a06cc3d42a6498b73a16e6990d165",
+    "tree": "1f2403d53835a14e98ab34d64500e1c7068d1dc4",
+    "acceptance": false,
+    "postgresql": {
+      "passed": 459,
+      "failed": 5,
+      "error": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0,
+      "artifact": 12548534103,
+      "sha256": "9384ec15ee91deaf7292f8a2f60cef7dbb82994ab974b338de98f88f7dcddb4b",
+      "bytes_verified": true,
+      "classification": "Four intended stale derivative regressions fail: profile/post metadata still exposes stale content and both buffered reads return instead of denying. Separate prior cleanup fixture assertion persists."
+    }
+  },
+  "diagnostic_adapter_correction": "Retain bounded innermost 64 static frames and allow static function names up to 200 characters; original first-64 and 64-character bounds omitted known failure locations. Three finite metadata/redaction unit tests pass after one new RED."
 }
