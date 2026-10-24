@@ -1,0 +1,1737 @@
+{
+  "task": 7,
+  "status": "IN_PROGRESS_UNACCEPTED",
+  "execution_branch": "marketplace/c04-cloud",
+  "execution_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+  "execution_tree": "f4a49666111ce27d6c12cc6aff89f3430c7ea243",
+  "diagnostic_branch": "diagnostics/c04-task07-causal",
+  "diagnostic_sha": "aeb5801eaf72c219c502936fd5cdf02016b8dbbd",
+  "diagnostic_tree": "3e36b97e02542cb6dd9608e8e5540fb13ae61ee1",
+  "run": 40097612768,
+  "attempt": 1,
+  "workflow_conclusion": "success",
+  "acceptance": false,
+  "jobs": [
+    {
+      "id": 120883046990,
+      "name": "immutable-minio-localization",
+      "conclusion": "success"
+    },
+    {
+      "id": 120883047150,
+      "name": "matched-postgresql-attribution",
+      "conclusion": "success"
+    }
+  ],
+  "artifact_evidence": [
+    {
+      "id": 12560564558,
+      "sha256": "5ed8c88dc87c7c28f181ab8e49f86bc093b4d6c624b5ea136195b89b7b10d9ad",
+      "bytes_independently_verified": true
+    },
+    {
+      "id": 12562360348,
+      "sha256": "8776fa2b039740813dfa4b6d3c14be26b0db6a31b354d6f58d2b1474dc2b214c",
+      "bytes_independently_verified": true
+    }
+  ],
+  "minio": {
+    "classification": "initialization_completed_historical_failure_not_reproduced",
+    "source_sha": "0a867328a6d8ee8c71ec9bd9eeb8910221d1b270",
+    "immutable_tree_unchanged": true,
+    "artifact_id": 12560564558,
+    "artifact_sha256": "5ed8c88dc87c7c28f181ab8e49f86bc093b4d6c624b5ea136195b89b7b10d9ad",
+    "bytes_verified": true,
+    "operations": [
+      {
+        "operation": "alias",
+        "exit_code": 0,
+        "start_ns": 186186989455,
+        "end_ns": 186226113728,
+        "elapsed_seconds": 0.039124273
+      },
+      {
+        "operation": "ready",
+        "exit_code": 0,
+        "start_ns": 186379997592,
+        "end_ns": 186405174955,
+        "elapsed_seconds": 0.025177363
+      },
+      {
+        "operation": "bucket",
+        "exit_code": 0,
+        "start_ns": 186554235308,
+        "end_ns": 186581827568,
+        "elapsed_seconds": 0.02759226
+      },
+      {
+        "operation": "anonymous",
+        "exit_code": 0,
+        "start_ns": 186726488169,
+        "end_ns": 186755093215,
+        "elapsed_seconds": 0.028605046
+      },
+      {
+        "operation": "policy",
+        "exit_code": 0,
+        "start_ns": 186902164842,
+        "end_ns": 186933151009,
+        "elapsed_seconds": 0.030986167
+      },
+      {
+        "operation": "user",
+        "exit_code": 0,
+        "start_ns": 187086074479,
+        "end_ns": 187148094066,
+        "elapsed_seconds": 0.062019587
+      },
+      {
+        "operation": "attach",
+        "exit_code": 0,
+        "start_ns": 187291659576,
+        "end_ns": 187406104948,
+        "elapsed_seconds": 0.114445372
+      }
+    ],
+    "attempts": 1,
+    "cleanup_complete": true,
+    "container_exit_code": 0,
+    "init_exit_code": 0,
+    "equivalence_limits": [
+      "Only original MinIO and init services, not complete immutable upgrade/rehearsal/runner load.",
+      "Python delegation adds process startup/observer overhead and could affect readiness races.",
+      "Stopped init retained only until numeric exit inspection; original provisioning script and binary unchanged.",
+      "Historical failure cause remains unknown; not immutable acceptance or proof of transience.",
+      "Wrapper startup/logging overhead was not separately calibrated. Delegate intervals include child launch/wait; readiness-race interference is not excluded."
+    ]
+  },
+  "paired": {
+    "acceptance": false,
+    "runs": {
+      "sixfull": {
+        "source_sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+        "observer_mode": "full",
+        "schema": {
+          "content_types": 63,
+          "migrations": 84,
+          "tables": 67
+        },
+        "cases": 18,
+        "valid_evidence": true,
+        "pytest_exit": 0,
+        "cleanup_complete": true,
+        "source_unchanged": true,
+        "subset_wall_seconds": 148.662270197,
+        "phase_wall_seconds": {
+          "setup": 7.079409,
+          "call": 134.350699,
+          "teardown": 2.939558
+        },
+        "sql_by_phase_and_class": {
+          "setup": {
+            "ALTER": {
+              "count": 379,
+              "seconds": 0.221872,
+              "bins": [
+                367,
+                10,
+                2,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.5854142480211082
+            },
+            "CREATE": {
+              "count": 248,
+              "seconds": 0.250814,
+              "bins": [
+                178,
+                69,
+                0,
+                1,
+                0,
+                0
+              ],
+              "mean_ms": 1.0113467741935485
+            },
+            "DELETE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "DROP": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "INSERT": {
+              "count": 106,
+              "seconds": 0.039266,
+              "bins": [
+                104,
+                2,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.370433962264151
+            },
+            "OTHER": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "SELECT": {
+              "count": 51,
+              "seconds": 0.017574,
+              "bins": [
+                49,
+                2,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.3445882352941176
+            },
+            "TRANSACTION": {
+              "count": 8,
+              "seconds": 0.000829,
+              "bins": [
+                8,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.103625
+            },
+            "TRUNCATE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "UPDATE": {
+              "count": 2,
+              "seconds": 0.000929,
+              "bins": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.4645
+            }
+          },
+          "call": {
+            "ALTER": {
+              "count": 554,
+              "seconds": 0.284852,
+              "bins": [
+                537,
+                17,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.5141732851985559
+            },
+            "CREATE": {
+              "count": 327,
+              "seconds": 0.265625,
+              "bins": [
+                241,
+                86,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.8123088685015291
+            },
+            "DELETE": {
+              "count": 597,
+              "seconds": 1.259517,
+              "bins": [
+                551,
+                13,
+                11,
+                22,
+                0,
+                0
+              ],
+              "mean_ms": 2.109743718592965
+            },
+            "DROP": {
+              "count": 28,
+              "seconds": 0.022123,
+              "bins": [
+                22,
+                6,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.7901071428571429
+            },
+            "INSERT": {
+              "count": 11520,
+              "seconds": 7.702309,
+              "bins": [
+                10977,
+                421,
+                62,
+                60,
+                0,
+                0
+              ],
+              "mean_ms": 0.6686032118055555
+            },
+            "OTHER": {
+              "count": 2,
+              "seconds": 0.167022,
+              "bins": [
+                0,
+                0,
+                0,
+                1,
+                1,
+                0
+              ],
+              "mean_ms": 83.511
+            },
+            "SELECT": {
+              "count": 88421,
+              "seconds": 28.292045,
+              "bins": [
+                87870,
+                411,
+                140,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.31996974700580183
+            },
+            "TRANSACTION": {
+              "count": 48382,
+              "seconds": 6.02109,
+              "bins": [
+                48376,
+                6,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.12444896862469514
+            },
+            "TRUNCATE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "UPDATE": {
+              "count": 5352,
+              "seconds": 2.529631,
+              "bins": [
+                5171,
+                181,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.47265153213751876
+            }
+          },
+          "teardown": {
+            "ALTER": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "CREATE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "DELETE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "DROP": {
+              "count": 1,
+              "seconds": 0.155536,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+              ],
+              "mean_ms": 155.536
+            },
+            "INSERT": {
+              "count": 324,
+              "seconds": 0.202992,
+              "bins": [
+                289,
+                35,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.6265185185185186
+            },
+            "OTHER": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "SELECT": {
+              "count": 666,
+              "seconds": 0.255985,
+              "bins": [
+                631,
+                35,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.3843618618618619
+            },
+            "TRANSACTION": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "TRUNCATE": {
+              "count": 18,
+              "seconds": 1.183179,
+              "bins": [
+                0,
+                0,
+                0,
+                18,
+                0,
+                0
+              ],
+              "mean_ms": 65.73216666666667
+            },
+            "UPDATE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            }
+          }
+        },
+        "sql_count": 156986,
+        "sql_wall_seconds": 48.873188305,
+        "direct_sql_observer_seconds": 1.519636181,
+        "direct_hook_seconds": 0.217122117,
+        "observer_calibration_10000_calls_seconds": 0.016947115,
+        "cpu_calibration_wall_seconds": {
+          "min": 0.226272682,
+          "max": 0.231747373,
+          "mean": 0.22844778766666665
+        },
+        "sampler": {
+          "clock_sync": {
+            "common_origin_verified": true,
+            "container_ns": 322118958157,
+            "host_after_ns": 322127741159,
+            "host_before_ns": 321978266963
+          },
+          "errors": 0,
+          "host_process_cpu_ns": 258207436,
+          "interval_seconds": 5,
+          "samples": 30,
+          "thread_stopped": true,
+          "wall_ns": 5531686634
+        },
+        "resource": {
+          "samples": 30,
+          "postgres_missing": 0,
+          "cpu_busy_mean_pct": 51.32662207531538,
+          "cpu_iowait_mean_pct": 0.06147269386412354,
+          "cpu_pressure_avg10_max": 25.25,
+          "available_memory_min_kib": 13078788,
+          "postgres_positive_samples": {
+            "lock_wait": 0,
+            "io_wait": 0,
+            "lwlock_wait": 0,
+            "ungranted_locks": 0
+          },
+          "containers": {
+            "beat": {
+              "cpu_seconds_delta": 45.200243,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 173268992
+            },
+            "checks": {
+              "cpu_seconds_delta": 109.480541,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 167653376
+            },
+            "db": {
+              "cpu_seconds_delta": 37.60758,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 187285504
+            },
+            "minio": {
+              "cpu_seconds_delta": 16.535579,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 302919680
+            },
+            "redis": {
+              "cpu_seconds_delta": 2.08317,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 9859072
+            },
+            "scanner": {
+              "cpu_seconds_delta": 1.616539,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 1016205312
+            },
+            "web": {
+              "cpu_seconds_delta": 17.878821,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 129757184
+            },
+            "worker": {
+              "cpu_seconds_delta": 49.70299,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 194400256
+            }
+          }
+        },
+        "counts": {
+          "deselected": 0,
+          "error": 0,
+          "failed": 0,
+          "passed": 18,
+          "skipped": 0,
+          "xfailed": 0,
+          "xpassed": 0
+        }
+      },
+      "sevenfull": {
+        "source_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+        "observer_mode": "full",
+        "schema": {
+          "content_types": 71,
+          "migrations": 87,
+          "tables": 75
+        },
+        "cases": 18,
+        "valid_evidence": true,
+        "pytest_exit": 0,
+        "cleanup_complete": true,
+        "source_unchanged": true,
+        "subset_wall_seconds": 168.659630449,
+        "phase_wall_seconds": {
+          "setup": 9.728549,
+          "call": 151.439037,
+          "teardown": 3.341114
+        },
+        "sql_by_phase_and_class": {
+          "setup": {
+            "ALTER": {
+              "count": 449,
+              "seconds": 0.237923,
+              "bins": [
+                436,
+                13,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.5298953229398664
+            },
+            "CREATE": {
+              "count": 280,
+              "seconds": 0.257131,
+              "bins": [
+                208,
+                71,
+                0,
+                1,
+                0,
+                0
+              ],
+              "mean_ms": 0.918325
+            },
+            "DELETE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "DROP": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "INSERT": {
+              "count": 109,
+              "seconds": 0.044839,
+              "bins": [
+                103,
+                6,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.4113669724770642
+            },
+            "OTHER": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "SELECT": {
+              "count": 51,
+              "seconds": 0.026039,
+              "bins": [
+                48,
+                2,
+                1,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.5105686274509803
+            },
+            "TRANSACTION": {
+              "count": 8,
+              "seconds": 0.001015,
+              "bins": [
+                8,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.12687500000000002
+            },
+            "TRUNCATE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "UPDATE": {
+              "count": 2,
+              "seconds": 0.000936,
+              "bins": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.46799999999999997
+            }
+          },
+          "call": {
+            "ALTER": {
+              "count": 686,
+              "seconds": 0.361856,
+              "bins": [
+                657,
+                29,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.5274868804664723
+            },
+            "CREATE": {
+              "count": 374,
+              "seconds": 0.292947,
+              "bins": [
+                278,
+                96,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.7832807486631016
+            },
+            "DELETE": {
+              "count": 594,
+              "seconds": 1.446514,
+              "bins": [
+                546,
+                14,
+                7,
+                27,
+                0,
+                0
+              ],
+              "mean_ms": 2.4352087542087544
+            },
+            "DROP": {
+              "count": 34,
+              "seconds": 0.024816,
+              "bins": [
+                28,
+                6,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.7298823529411765
+            },
+            "INSERT": {
+              "count": 11524,
+              "seconds": 8.091265,
+              "bins": [
+                10925,
+                463,
+                70,
+                66,
+                0,
+                0
+              ],
+              "mean_ms": 0.7021229607775078
+            },
+            "OTHER": {
+              "count": 2,
+              "seconds": 0.217322,
+              "bins": [
+                0,
+                0,
+                0,
+                1,
+                1,
+                0
+              ],
+              "mean_ms": 108.66099999999999
+            },
+            "SELECT": {
+              "count": 88291,
+              "seconds": 35.521385,
+              "bins": [
+                87171,
+                707,
+                374,
+                10,
+                29,
+                0
+              ],
+              "mean_ms": 0.4023216975682686
+            },
+            "TRANSACTION": {
+              "count": 48357,
+              "seconds": 5.986691,
+              "bins": [
+                48339,
+                18,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.12380195214756913
+            },
+            "TRUNCATE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "UPDATE": {
+              "count": 5340,
+              "seconds": 2.552453,
+              "bins": [
+                5105,
+                235,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.4779874531835206
+            }
+          },
+          "teardown": {
+            "ALTER": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "CREATE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "DELETE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "DROP": {
+              "count": 1,
+              "seconds": 0.183818,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+              ],
+              "mean_ms": 183.818
+            },
+            "INSERT": {
+              "count": 324,
+              "seconds": 0.208094,
+              "bins": [
+                278,
+                46,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.6422654320987654
+            },
+            "OTHER": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "SELECT": {
+              "count": 666,
+              "seconds": 0.263687,
+              "bins": [
+                627,
+                39,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": 0.39592642642642645
+            },
+            "TRANSACTION": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            },
+            "TRUNCATE": {
+              "count": 18,
+              "seconds": 1.437491,
+              "bins": [
+                0,
+                0,
+                0,
+                15,
+                3,
+                0
+              ],
+              "mean_ms": 79.86061111111111
+            },
+            "UPDATE": {
+              "count": 0,
+              "seconds": 0.0,
+              "bins": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "mean_ms": null
+            }
+          }
+        },
+        "sql_count": 157110,
+        "sql_wall_seconds": 57.1562215,
+        "direct_sql_observer_seconds": 1.522692214,
+        "direct_hook_seconds": 0.255848347,
+        "observer_calibration_10000_calls_seconds": 0.017365585,
+        "cpu_calibration_wall_seconds": {
+          "min": 0.222670617,
+          "max": 0.234943231,
+          "mean": 0.22746111833333335
+        },
+        "sampler": {
+          "clock_sync": {
+            "common_origin_verified": true,
+            "container_ns": 536525790370,
+            "host_after_ns": 536553014121,
+            "host_before_ns": 536262377150
+          },
+          "errors": 0,
+          "host_process_cpu_ns": 302346239,
+          "interval_seconds": 5,
+          "samples": 34,
+          "thread_stopped": true,
+          "wall_ns": 6687416275
+        },
+        "resource": {
+          "samples": 34,
+          "postgres_missing": 0,
+          "cpu_busy_mean_pct": 50.770357675122646,
+          "cpu_iowait_mean_pct": 0.06589981572689042,
+          "cpu_pressure_avg10_max": 4.27,
+          "available_memory_min_kib": 12973236,
+          "postgres_positive_samples": {
+            "lock_wait": 0,
+            "io_wait": 0,
+            "lwlock_wait": 0,
+            "ungranted_locks": 0
+          },
+          "containers": {
+            "beat": {
+              "cpu_seconds_delta": 50.909015,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 174006272
+            },
+            "checks": {
+              "cpu_seconds_delta": 121.35356,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 204410880
+            },
+            "db": {
+              "cpu_seconds_delta": 46.352517,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 190791680
+            },
+            "minio": {
+              "cpu_seconds_delta": 18.181759,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 300814336
+            },
+            "redis": {
+              "cpu_seconds_delta": 2.433476,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 16482304
+            },
+            "scanner": {
+              "cpu_seconds_delta": 1.877967,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 1017274368
+            },
+            "web": {
+              "cpu_seconds_delta": 20.42045,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 134987776
+            },
+            "worker": {
+              "cpu_seconds_delta": 55.037693,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 198692864
+            }
+          }
+        },
+        "counts": {
+          "deselected": 0,
+          "error": 0,
+          "failed": 0,
+          "passed": 18,
+          "skipped": 0,
+          "xfailed": 0,
+          "xpassed": 0
+        }
+      },
+      "sevenminimal": {
+        "source_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+        "observer_mode": "minimal",
+        "schema": {
+          "content_types": 71,
+          "migrations": 87,
+          "tables": 75
+        },
+        "cases": 18,
+        "valid_evidence": true,
+        "pytest_exit": 0,
+        "cleanup_complete": true,
+        "source_unchanged": true,
+        "subset_wall_seconds": 164.690700819,
+        "phase_wall_seconds": {
+          "setup": 9.846512,
+          "call": 147.254726,
+          "teardown": 3.192131
+        },
+        "sql_by_phase_and_class": null,
+        "sql_count": null,
+        "sql_wall_seconds": null,
+        "direct_sql_observer_seconds": null,
+        "direct_hook_seconds": 0.239768549,
+        "observer_calibration_10000_calls_seconds": 0.016902529,
+        "cpu_calibration_wall_seconds": {
+          "min": 0.224733886,
+          "max": 0.239033213,
+          "mean": 0.23140949583333334
+        },
+        "sampler": {
+          "clock_sync": {
+            "common_origin_verified": true,
+            "container_ns": 766139841968,
+            "host_after_ns": 766153131164,
+            "host_before_ns": 765868561271
+          },
+          "errors": 0,
+          "host_process_cpu_ns": 288478546,
+          "interval_seconds": 5,
+          "samples": 33,
+          "thread_stopped": true,
+          "wall_ns": 6066463433
+        },
+        "resource": {
+          "samples": 33,
+          "postgres_missing": 0,
+          "cpu_busy_mean_pct": 50.57987492487874,
+          "cpu_iowait_mean_pct": 0.07751447033260307,
+          "cpu_pressure_avg10_max": 3.04,
+          "available_memory_min_kib": 12944808,
+          "postgres_positive_samples": {
+            "lock_wait": 0,
+            "io_wait": 0,
+            "lwlock_wait": 0,
+            "ungranted_locks": 0
+          },
+          "containers": {
+            "beat": {
+              "cpu_seconds_delta": 49.131452,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 167526400
+            },
+            "checks": {
+              "cpu_seconds_delta": 118.263061,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 203624448
+            },
+            "db": {
+              "cpu_seconds_delta": 44.42719,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 188690432
+            },
+            "minio": {
+              "cpu_seconds_delta": 17.712262,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 362926080
+            },
+            "redis": {
+              "cpu_seconds_delta": 2.377482,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 15507456
+            },
+            "scanner": {
+              "cpu_seconds_delta": 1.84484,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 1016836096
+            },
+            "web": {
+              "cpu_seconds_delta": 19.163887,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 128421888
+            },
+            "worker": {
+              "cpu_seconds_delta": 52.710896,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 216600576
+            }
+          }
+        },
+        "counts": {
+          "deselected": 0,
+          "error": 0,
+          "failed": 0,
+          "passed": 18,
+          "skipped": 0,
+          "xfailed": 0,
+          "xpassed": 0
+        }
+      },
+      "sixminimal": {
+        "source_sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+        "observer_mode": "minimal",
+        "schema": {
+          "content_types": 63,
+          "migrations": 84,
+          "tables": 67
+        },
+        "cases": 18,
+        "valid_evidence": true,
+        "pytest_exit": 0,
+        "cleanup_complete": true,
+        "source_unchanged": true,
+        "subset_wall_seconds": 141.200472513,
+        "phase_wall_seconds": {
+          "setup": 6.746342,
+          "call": 127.399782,
+          "teardown": 2.992246
+        },
+        "sql_by_phase_and_class": null,
+        "sql_count": null,
+        "sql_wall_seconds": null,
+        "direct_sql_observer_seconds": null,
+        "direct_hook_seconds": 0.201044462,
+        "observer_calibration_10000_calls_seconds": 0.017413921,
+        "cpu_calibration_wall_seconds": {
+          "min": 0.218917363,
+          "max": 0.232750586,
+          "mean": 0.22592390083333333
+        },
+        "sampler": {
+          "clock_sync": {
+            "common_origin_verified": true,
+            "container_ns": 988874457117,
+            "host_after_ns": 988887091694,
+            "host_before_ns": 988689031330
+          },
+          "errors": 0,
+          "host_process_cpu_ns": 272760250,
+          "interval_seconds": 5,
+          "samples": 29,
+          "thread_stopped": true,
+          "wall_ns": 5609613222
+        },
+        "resource": {
+          "samples": 29,
+          "postgres_missing": 0,
+          "cpu_busy_mean_pct": 50.8889975012711,
+          "cpu_iowait_mean_pct": 0.07062032600743501,
+          "cpu_pressure_avg10_max": 3.32,
+          "available_memory_min_kib": 13050320,
+          "postgres_positive_samples": {
+            "lock_wait": 0,
+            "io_wait": 0,
+            "lwlock_wait": 0,
+            "ungranted_locks": 0
+          },
+          "containers": {
+            "beat": {
+              "cpu_seconds_delta": 44.122749,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 164171776
+            },
+            "checks": {
+              "cpu_seconds_delta": 108.17012,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 167403520
+            },
+            "db": {
+              "cpu_seconds_delta": 33.704564,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 187293696
+            },
+            "minio": {
+              "cpu_seconds_delta": 15.531359,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 299532288
+            },
+            "redis": {
+              "cpu_seconds_delta": 2.031341,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 9781248
+            },
+            "scanner": {
+              "cpu_seconds_delta": 1.634941,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 1019682816
+            },
+            "web": {
+              "cpu_seconds_delta": 16.441816,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 128933888
+            },
+            "worker": {
+              "cpu_seconds_delta": 46.51266,
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "peak_memory_bytes": 216317952
+            }
+          }
+        },
+        "counts": {
+          "deselected": 0,
+          "error": 0,
+          "failed": 0,
+          "passed": 18,
+          "skipped": 0,
+          "xfailed": 0,
+          "xpassed": 0
+        }
+      }
+    },
+    "limits": [
+      "One runner; reversed observer control shares time/order/cache effects.",
+      "SQL observations cover primary-process Django cursors, not all server or child-process SQL.",
+      "Summed SQL cursor durations may overlap; do not subtract from phase wall time.",
+      "Sample interval5seconds can miss short waits.",
+      "Installed schema is intentionally different.",
+      "Full900second and Foundation1800second gates are not executed here."
+    ],
+    "contract": {
+      "acceptance": false,
+      "fixture_source_equivalence": true,
+      "identical_source_files": {
+        "pyproject.toml": "a1d122612c7d6fc048c9c97aabdcaa11af49348a7628b6112a0d47fea3021488",
+        "tests/conftest.py": "1f50677254c28647f0b95ab512b5e360aa001a9f65ffcfbc52f4a7bb02e3b141",
+        "tests/e2e/c02/conftest.py": "5dffe56b870df0f90821646651ee345545a6868d9b855e20146364f9c0a9fe74",
+        "tests/e2e/c03/conftest.py": "79eea239026cabb764d20fe4ad7ce3ae76c34e9364371fee0f88a3438926a746",
+        "tests/integration/c02/conftest.py": "95654c6c82329f8335dc70ab72301448de49b2c7088421f0fbffdf7d2ee30d37",
+        "tests/integration/c02/test_account_migrations.py": "95510fc4e90e3acf9c700e2c5fb384d7306ac733ce0ec6694ee6310085be19e1",
+        "tests/integration/c03/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tests/integration/c03/conftest.py": "b7522a4fb11d188e2a335ff7d02d0b423fb90fb2bb3047e495b95f4c8dfb57e5",
+        "tests/integration/c03/profile_helpers.py": "f5867a0ebf49ddc490fb697b1b342062fe858902988d0bf1be46e43123df8136",
+        "tests/integration/c03/test_c03_migrations.py": "d80da72832d3989edc0be93a13aadd21c7ffa268fa6954179017a777e5d0c4c0",
+        "tests/integration/c03/test_credential_revisions.py": "f2c9e99e59b2e62436845bf61aea43236fd45cea6756b11255189eb31ca1a16a",
+        "tests/integration/c03/test_professional_setup.py": "15029bd5cc8acf54f3fcd15bfd2bffd76b04bc8e258a9a7fa9b66dde92956b0a",
+        "tests/integration/c03/test_upgrade_from_c02.py": "0a4b7c6f95a2b510548950ea3914f42454b52bad5d372e79c74c8ab50ebec353",
+        "tests/integration/c03/test_verification_decisions.py": "b61627b5c28f167b2e8800c91989d96cb235687cfb18db6e75a91b17c0d76a31",
+        "tests/integration/c03/test_verification_revocation.py": "3d63ed368dc28a4bc24a035da9f2d735646a47180adfaf02e0068f2c0d0d3d81",
+        "tests/integration/c03/verification_helpers.py": "3f8528b5a5bf95e284b3935f0b9ff7e99761d53329e210fc68ddce9aee016554",
+        "tests/integration/c04/conftest.py": "3caaab4e5a6f4cdc20720557d83d8afa2350735ddbc573572bfb2917962d586a",
+        "tests/integration/c04/migration_history.py": "5b4f5f8aa5be67eeae061cc0a1f38f9a300777592fec9ad1557bc8642a2d6959",
+        "tests/integration/c04/publication_helpers.py": "7715561edfc1e9741e35686340f9da29257cb527637e50bbcb49b015d37be498",
+        "tests/integration/c04/search_helpers.py": "dc2bfd4c97777d734a93ba1986a63422ce1f4bf60c8c6dc8d784b604885f0430",
+        "tests/integration/c04/test_postgresql_search.py": "4e08fc2772111fdb7c8fd349a655f9a7e951a5aff1aad4948670251a50208ed0",
+        "tests/integration/c04/test_public_projection.py": "3ba20847a714174187908c7e4117f74721ee6f00fc3e1c410483293fb21e4ce0",
+        "tests/integration/c04/test_search_eligibility.py": "4601e84984bf2427beb5a3f50843775610f5482d266d11fe3d02f084771cbeec",
+        "uv.lock": "36671286a414ab75c37aa7fc1ec76aa06d6a788ac7b047e78d70b212207425a2"
+      },
+      "independent_reversed_runner": false,
+      "observation_controls": "minimal excludes cursor wrapper; order/time effects remain possible, indirect overhead not fully isolated",
+      "order": [
+        "six_full",
+        "seven_full",
+        "seven_minimal",
+        "six_minimal"
+      ],
+      "schema_equivalence": false,
+      "tests": [
+        "tests/integration/c02/test_account_migrations.py::test_populated_c01_upgrade_preserves_identity_and_sessions",
+        "tests/integration/c03/test_c03_migrations.py::test_optional_profiles_not_created",
+        "tests/integration/c03/test_c03_migrations.py::test_restriction_has_reasoned_forward_history",
+        "tests/integration/c03/test_upgrade_from_c02.py::test_upgrade_replays_all_eleven_capability_cases",
+        "tests/integration/c04/test_search_eligibility.py::test_candidate_budget_fails_without_partial_output_and_recovers"
+      ]
+    },
+    "complete_pairs": true,
+    "ratios": {
+      "full": {
+        "subset_wall_task7_over_task6": 1.1345153698076886,
+        "phases_task7_over_task6": {
+          "setup": 1.3742035528671954,
+          "call": 1.127192028974855,
+          "teardown": 1.1366042105649898
+        }
+      },
+      "minimal": {
+        "subset_wall_task7_over_task6": 1.1663608335576732,
+        "phases_task7_over_task6": {
+          "setup": 1.4595334775497595,
+          "call": 1.1558475508223398,
+          "teardown": 1.0668009916296988
+        }
+      }
+    }
+  },
+  "per_function_attribution": {
+    "sixfull": {
+      "tests/integration/c02/test_account_migrations.py::test_populated_c01_upgrade_preserves_identity_and_sessions": {
+        "setup": 7.032228,
+        "call": 9.223231,
+        "teardown": 0.177218,
+        "sql_count": 1222,
+        "sql_seconds": 0.841644645
+      },
+      "tests/integration/c03/test_c03_migrations.py::test_optional_profiles_not_created": {
+        "setup": 0.002771,
+        "call": 7.072587,
+        "teardown": 0.183873,
+        "sql_count": 813,
+        "sql_seconds": 0.721271332
+      },
+      "tests/integration/c03/test_c03_migrations.py::test_restriction_has_reasoned_forward_history": {
+        "setup": 0.011374,
+        "call": 0.210847,
+        "teardown": 0.609843,
+        "sql_count": 334,
+        "sql_seconds": 0.489328215
+      },
+      "tests/integration/c03/test_upgrade_from_c02.py::test_upgrade_replays_all_eleven_capability_cases": {
+        "setup": 0.030068000000000004,
+        "call": 16.45738,
+        "teardown": 1.6290890000000002,
+        "sql_count": 20260,
+        "sql_seconds": 6.8627460440000005
+      },
+      "tests/integration/c04/test_search_eligibility.py::test_candidate_budget_fails_without_partial_output_and_recovers": {
+        "setup": 0.002968,
+        "call": 101.386654,
+        "teardown": 0.339535,
+        "sql_count": 134357,
+        "sql_seconds": 39.958198069000005
+      }
+    },
+    "sevenfull": {
+      "tests/integration/c02/test_account_migrations.py::test_populated_c01_upgrade_preserves_identity_and_sessions": {
+        "setup": 9.680237,
+        "call": 16.141491,
+        "teardown": 0.159529,
+        "sql_count": 1433,
+        "sql_seconds": 0.9283497219999999
+      },
+      "tests/integration/c03/test_c03_migrations.py::test_optional_profiles_not_created": {
+        "setup": 0.002714,
+        "call": 10.582506,
+        "teardown": 0.160227,
+        "sql_count": 918,
+        "sql_seconds": 0.835593546
+      },
+      "tests/integration/c03/test_c03_migrations.py::test_restriction_has_reasoned_forward_history": {
+        "setup": 0.009257000000000001,
+        "call": 0.193691,
+        "teardown": 0.655107,
+        "sql_count": 334,
+        "sql_seconds": 0.508835835
+      },
+      "tests/integration/c03/test_upgrade_from_c02.py::test_upgrade_replays_all_eleven_capability_cases": {
+        "setup": 0.031779,
+        "call": 15.887188000000002,
+        "teardown": 1.946443,
+        "sql_count": 20260,
+        "sql_seconds": 6.8817229640000015
+      },
+      "tests/integration/c04/test_search_eligibility.py::test_candidate_budget_fails_without_partial_output_and_recovers": {
+        "setup": 0.004562,
+        "call": 108.634161,
+        "teardown": 0.419808,
+        "sql_count": 134165,
+        "sql_seconds": 48.001719433
+      }
+    },
+    "sevenminimal": {
+      "tests/integration/c02/test_account_migrations.py::test_populated_c01_upgrade_preserves_identity_and_sessions": {
+        "setup": 9.80529,
+        "call": 16.050806,
+        "teardown": 0.148585,
+        "sql_count": null,
+        "sql_seconds": null
+      },
+      "tests/integration/c03/test_c03_migrations.py::test_optional_profiles_not_created": {
+        "setup": 0.002722,
+        "call": 10.147934,
+        "teardown": 0.178259,
+        "sql_count": null,
+        "sql_seconds": null
+      },
+      "tests/integration/c03/test_c03_migrations.py::test_restriction_has_reasoned_forward_history": {
+        "setup": 0.008818,
+        "call": 0.173873,
+        "teardown": 0.633943,
+        "sql_count": null,
+        "sql_seconds": null
+      },
+      "tests/integration/c03/test_upgrade_from_c02.py::test_upgrade_replays_all_eleven_capability_cases": {
+        "setup": 0.027052,
+        "call": 15.651287,
+        "teardown": 1.765435,
+        "sql_count": null,
+        "sql_seconds": null
+      },
+      "tests/integration/c04/test_search_eligibility.py::test_candidate_budget_fails_without_partial_output_and_recovers": {
+        "setup": 0.00263,
+        "call": 105.230826,
+        "teardown": 0.465909,
+        "sql_count": null,
+        "sql_seconds": null
+      }
+    },
+    "sixminimal": {
+      "tests/integration/c02/test_account_migrations.py::test_populated_c01_upgrade_preserves_identity_and_sessions": {
+        "setup": 6.702101,
+        "call": 9.050831,
+        "teardown": 0.143715,
+        "sql_count": null,
+        "sql_seconds": null
+      },
+      "tests/integration/c03/test_c03_migrations.py::test_optional_profiles_not_created": {
+        "setup": 0.003034,
+        "call": 7.157759,
+        "teardown": 0.164973,
+        "sql_count": null,
+        "sql_seconds": null
+      },
+      "tests/integration/c03/test_c03_migrations.py::test_restriction_has_reasoned_forward_history": {
+        "setup": 0.010794999999999999,
+        "call": 0.221391,
+        "teardown": 0.73224,
+        "sql_count": null,
+        "sql_seconds": null
+      },
+      "tests/integration/c03/test_upgrade_from_c02.py::test_upgrade_replays_all_eleven_capability_cases": {
+        "setup": 0.028156999999999998,
+        "call": 15.982563999999998,
+        "teardown": 1.6111129999999998,
+        "sql_count": null,
+        "sql_seconds": null
+      },
+      "tests/integration/c04/test_search_eligibility.py::test_candidate_budget_fails_without_partial_output_and_recovers": {
+        "setup": 0.002255,
+        "call": 94.987237,
+        "teardown": 0.340205,
+        "sql_count": null,
+        "sql_seconds": null
+      }
+    }
+  },
+  "measured_comparisons": {
+    "full": {
+      "old_seconds": 148.662270197,
+      "new_seconds": 168.659630449,
+      "increase_seconds": 19.997360251999993,
+      "increase_percent": 13.451536980768864,
+      "phase_delta_seconds": {
+        "setup": 2.649139999999999,
+        "call": 17.08833800000002,
+        "teardown": 0.40155600000000025
+      }
+    },
+    "minimal": {
+      "old_seconds": 141.200472513,
+      "new_seconds": 164.690700819,
+      "increase_seconds": 23.490228306000006,
+      "increase_percent": 16.63608335576732,
+      "phase_delta_seconds": {
+        "setup": 3.1001700000000003,
+        "call": 19.854944000000003,
+        "teardown": 0.19988499999999965
+      }
+    },
+    "sixfull_sql_seconds": {
+      "SELECT": 28.565604,
+      "TRUNCATE": 1.183179,
+      "CREATE": 0.516439,
+      "ALTER": 0.506724,
+      "TRANSACTION": 6.0219190000000005
+    },
+    "sevenfull_sql_seconds": {
+      "SELECT": 35.811111000000004,
+      "TRUNCATE": 1.437491,
+      "CREATE": 0.5500780000000001,
+      "ALTER": 0.5997790000000001,
+      "TRANSACTION": 5.987706
+    }
+  },
+  "findings": {
+    "established": [
+      "All seven immutable MinIO operations returned0; first readiness attempt succeeded, service healthy before/after, container and owned cleanup0, immutable source unchanged.",
+      "All four paired runs completed the same18cases in identical sanitized collection order with18passes and zero failures/errors/skips/xfails/xpasses/deselections.",
+      "Task7 was slower in both controlled comparisons:13.4515percent full,16.6361percent reversed minimal. One observation per source/mode on one runner does not estimate repeatability or uncertainty.",
+      "Primary-process Django cursor invocations156986 to157110; summed cursor wall48.873188 to57.156222seconds.",
+      "Full observation phase delta:setup2.649140,call17.088338,teardown0.401556seconds. TRUNCATE18calls each,1.183179 to1.437491seconds.",
+      "Installed schema differs:tables67 to75,migrations84 to87,contenttypes63 to71. Static test/fixture/import-helper sources and dependency locks identical. Migration test work is therefore not identical database work.",
+      "No sampled PostgreSQL lock/IO/LWLock/ungranted-lock waits, container throttling or OOM events in these126samples. Short-lived waits remain possible.",
+      "Host fixed CPU calibration per-pass mean0.225924 to0.231409seconds; individual observations0.218917 to0.239033seconds. Calibration does not isolate query/service throughput."
+    ],
+    "supported_narrowing": [
+      "Difference persists without cursor wrapping, so cursor-wrapper overhead alone does not explain these observations.",
+      "Observed total slowdown here is primarily call work, not teardown alone. This cannot be extrapolated uniformly to the full suite.",
+      "Schema/migration expansion is a plausible contributor; underlying call-site and SELECT-tail mechanism remains unproven.",
+      "A blanket runner-only/transient explanation is not established by these matched observations."
+    ],
+    "unresolved": [
+      "Historical immutable clean_minio failure and exact transport/operation cause: not reproduced; passing current initialization does not prove transience.",
+      "Specific source/harness defect responsible for full backend/Foundation deadlines: not established.",
+      "Costs of migration state construction, candidate SELECT statements, short-lived contention, workload-specific host variation and indirect observer/cache effects remain incompletely separated.",
+      "No valid full-suite prediction demonstrates current candidate meets900second backend and1800second Foundation acceptance bounds."
+    ]
+  },
+  "observer_controls": {
+    "full_sql_counter_direct_seconds": [
+      1.519636181,
+      1.522692214
+    ],
+    "hook_direct_seconds": {
+      "sixfull": 0.217122117,
+      "sevenfull": 0.255848347,
+      "sevenminimal": 0.239768549,
+      "sixminimal": 0.201044462
+    },
+    "host_sampler_cpu_seconds": {
+      "sixfull": 0.258207436,
+      "sevenfull": 0.302346239,
+      "sevenminimal": 0.288478546,
+      "sixminimal": 0.27276025
+    },
+    "sample_wall_seconds": {
+      "sixfull": 5.531686634,
+      "sevenfull": 6.687416275,
+      "sevenminimal": 6.066463433,
+      "sixminimal": 5.609613222
+    },
+    "full_minus_minimal_seconds": {
+      "six": 7.461797684000004,
+      "seven": 3.968929629999991
+    },
+    "limits": "Full-minus-minimal also includes time/order/cache differences, not a clean causal overhead estimate. Sampler wall overlaps test execution; do not subtract it. SQL totals cover primary-process cursors, exclude child SQL, and can contain overlapping concurrent durations."
+  },
+  "independent_review": {
+    "reviewer": "task07_causal_review",
+    "critical": 0,
+    "important_remaining": 0,
+    "verdict": "ready_for_one_diagnostic_execution",
+    "important_resolved": [
+      "Observer completeness, matching collection and sampler/clock validation required before complete paired result"
+    ],
+    "minor_resolved": [
+      "Static recursive fixture import and conftest closure equality",
+      "Actual new subset bound control",
+      "complete_pairs aligned with source, cleanup, pytest and evidence result"
+    ],
+    "declined": [
+      "Actual hosted Docker behavior and image availability",
+      "Uncollected timing and causal conclusions",
+      "Acceptance or merge readiness"
+    ],
+    "selftests_new": 9,
+    "legacy_observer_controls": 14,
+    "ruff": "passed"
+  },
+  "interpretation_review": "Read-only reviewer confirmed numbers and STOP decision; narrowed wording to observed slower comparisons, not claimed repeatability, and preserved schema/work/observer caveats.",
+  "preservation": {
+    "execution_branch_unchanged": true,
+    "application_source_and_locks_unchanged": true,
+    "test_assertions_and_fixtures_unchanged": true,
+    "immutable_sources_unchanged": true,
+    "mandatory_workflow_unchanged": true,
+    "backend_acceptance_deadline_seconds": 900,
+    "foundation_acceptance_observation_seconds": 1800,
+    "all_owned_resources_cleaned": true,
+    "task6_checkpoint_preserved": true,
+    "task7_completion_checkpoint_published": false
+  },
+  "next_decision": "STOP. No minimal corrective patch is justified yet and no blind full acceptance retry is recommended. Separate Phase Manager decision required for targeted current-C04 migration-replay/state-construction and candidate-query call-site attribution before authorizing product/harness changes. Existing full acceptance40084769140 attempt1 remains RED with11success4failure; Foundation and immutable baseline are unresolved independent gates.",
+  "authorization_state": {
+    "workflow_budget_used": 1,
+    "independent_jobs_used": 2,
+    "another_diagnostic_authorized": false,
+    "acceptance_retry_authorized": false,
+    "product_or_fixture_optimization_authorized": false,
+    "task8_authorized": false
+  }
+}
