@@ -1,0 +1,225 @@
+name: Task 7 one timing-attribution diagnostic (NOT acceptance)
+'on':
+  push:
+    branches:
+    - diagnostics/c04-task07-timing
+    paths:
+    - .github/workflows/c04-task07-timing.yml
+    - docker/timing_*.py
+    - docker/prior_controls.py
+permissions:
+  contents: read
+concurrency:
+  group: task07-timing-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  migration-state-attribution:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 70
+    env:
+      TIMING_JOB: migration
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331
+        path: .runtime/seven
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0787d7880f9fd27006bf76ae0f16e31536ef4503
+        path: .runtime/six
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/six/.runtime/c01
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/six/.runtime/c02
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+        path: .runtime/six/.runtime/c03
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/seven/.runtime/c01
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/seven/.runtime/c02
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+        path: .runtime/seven/.runtime/c03
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+      with:
+        version: 0.12.19
+        python-version: 3.13.15
+        enable-cache: false
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      with:
+        node-version-file: .runtime/seven/.node-version
+    - name: Frozen interpreter for diagnostic controls
+      working-directory: .runtime/seven
+      run: uv sync --frozen --group dev
+    - name: Exactly-once, exception, privacy, nesting and observer controls
+      run: '.runtime/seven/.venv/bin/python docker/timing_controls.py -q
+
+        .runtime/seven/.venv/bin/python docker/prior_controls.py -q'
+    - name: Frozen original assets six
+      working-directory: .runtime/six
+      run: 'uv sync --frozen --group dev
+
+        npm ci
+
+        npm run build:css
+
+        npm run check:js
+
+        uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build
+        --ignore=src/styles.css'
+    - name: Frozen original assets seven
+      working-directory: .runtime/seven
+      run: 'uv sync --frozen --group dev
+
+        npm ci
+
+        npm run build:css
+
+        npm run check:js
+
+        uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build
+        --ignore=src/styles.css'
+    - name: One bounded paired timing diagnostic
+      run: timeout -k 30s 2700s python docker/timing_run.py paired
+    - name: Owned resources only emergency cleanup
+      if: always()
+      run: timeout -k 10s 550s python docker/timing_run.py cleanup
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      if: always()
+      with:
+        name: task07-timing-migration
+        path: '.runtime/timing-evidence/**/*.json
+
+          .runtime/timing-evidence/**/pytest.jsonl
+
+          .runtime/timing-evidence/**/host.jsonl'
+        include-hidden-files: true
+        if-no-files-found: error
+        retention-days: 14
+  candidate-lifecycle-attribution:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 70
+    env:
+      TIMING_JOB: budget
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331
+        path: .runtime/seven
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0787d7880f9fd27006bf76ae0f16e31536ef4503
+        path: .runtime/six
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/six/.runtime/c01
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/six/.runtime/c02
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+        path: .runtime/six/.runtime/c03
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/seven/.runtime/c01
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/seven/.runtime/c02
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+        path: .runtime/seven/.runtime/c03
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+      with:
+        version: 0.12.19
+        python-version: 3.13.15
+        enable-cache: false
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      with:
+        node-version-file: .runtime/seven/.node-version
+    - name: Frozen interpreter for diagnostic controls
+      working-directory: .runtime/seven
+      run: uv sync --frozen --group dev
+    - name: Exactly-once, exception, privacy, nesting and observer controls
+      run: '.runtime/seven/.venv/bin/python docker/timing_controls.py -q
+
+        .runtime/seven/.venv/bin/python docker/prior_controls.py -q'
+    - name: Frozen original assets six
+      working-directory: .runtime/six
+      run: 'uv sync --frozen --group dev
+
+        npm ci
+
+        npm run build:css
+
+        npm run check:js
+
+        uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build
+        --ignore=src/styles.css'
+    - name: Frozen original assets seven
+      working-directory: .runtime/seven
+      run: 'uv sync --frozen --group dev
+
+        npm ci
+
+        npm run build:css
+
+        npm run check:js
+
+        uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build
+        --ignore=src/styles.css'
+    - name: One bounded paired timing diagnostic
+      run: timeout -k 30s 3000s python docker/timing_run.py paired
+    - name: Owned resources only emergency cleanup
+      if: always()
+      run: timeout -k 10s 550s python docker/timing_run.py cleanup
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      if: always()
+      with:
+        name: task07-timing-budget
+        path: '.runtime/timing-evidence/**/*.json
+
+          .runtime/timing-evidence/**/pytest.jsonl
+
+          .runtime/timing-evidence/**/host.jsonl'
+        include-hidden-files: true
+        if-no-files-found: error
+        retention-days: 14
