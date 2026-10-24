@@ -196,7 +196,7 @@ def main():
         env.pop("GITHUB_TOKEN", None)
         env.update(
             {
-                "S3_ENDPOINT_URL": "http://127.0.0.1:9000",
+                "S3_ENDPOINT_URL": values["S3_ENDPOINT_URL"],
                 "S3_BUCKET_NAME": "fitlink-private",
                 "S3_REGION": "us-east-1",
                 "S3_ACCESS_KEY_ID": values["MINIO_APP_ACCESS_KEY"],

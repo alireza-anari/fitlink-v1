@@ -3,6 +3,7 @@
 import hashlib
 import json
 
+from django.db import transaction
 from django.utils import timezone
 
 from apps.accounts.models import User
@@ -24,9 +25,9 @@ def binding(user, post_uuid, revision_uuid, source_uuid, at, *, require_flag=Tru
     def lifetime_parent(identifier, now):
         from types import SimpleNamespace
 
-        from apps.professionals.publication_selectors import effective_publication
+        from apps.professionals.publication_selectors import retained_publication
 
-        value = effective_publication(identifier, now)
+        value = retained_publication(identifier, now)
         return SimpleNamespace(revision_uuid=value.revision_id) if value else None
 
     facts = confirmed_post(
@@ -35,6 +36,7 @@ def binding(user, post_uuid, revision_uuid, source_uuid, at, *, require_flag=Tru
         revision_uuid,
         at,
         parent_source=parent_source if require_flag else lifetime_parent,
+        retain_hidden=not require_flag,
     )
     if facts is None:
         raise AssetNotFound("Publication media unavailable")
@@ -178,6 +180,7 @@ def validate_read(copy, at):
 
     user = User.objects.select_for_update().get(pk=copy.owner_id)
     digest = validate_release(user, release_for(copy), at)
+    post = EducationalPost.objects.select_for_update().get(pk=copy.publication_uuid)
     if (
         not EducationalPost.objects.filter(
             pk=copy.publication_uuid,
@@ -188,4 +191,54 @@ def validate_read(copy, at):
         or copy.revoked_at is not None
     ):
         raise AssetNotFound("Publication media unavailable")
+    current_copies(user, post, post.current_revision)
     return digest
+
+
+def current_copies(user, post, revision):
+    """One complete-revision policy shared by text and direct media delivery."""
+    if (
+        not transaction.get_connection().in_atomic_block
+        or revision is None
+        or post.state != "published"
+        or post.current_revision_id != revision.id
+    ):
+        raise AssetNotFound("Publication media unavailable")
+    links = {b.asset_id: b for b in revision.images.all()}
+    if not 1 <= len(links) <= 4:
+        raise AssetNotFound("Publication media unavailable")
+    rows = list(
+        PublicAssetCopy.objects.select_for_update(of=("self",))
+        .select_related("source_derivative")
+        .filter(
+            owner=user,
+            profile_uuid=post.profile_id,
+            publication_uuid=post.id,
+            release_revision_uuid=revision.id,
+            purpose="educational_image",
+            source_asset_id__in=links,
+            state="ready",
+            revoked_at__isnull=True,
+        )
+        .order_by("id")
+    )
+    if len(rows) != len(links):
+        raise AssetNotFound("Publication media unavailable")
+    for row in rows:
+        link = links[row.source_asset_id]
+        derivative = row.source_derivative
+        if (
+            row.source_version != link.asset_version
+            or row.processing_version != link.processing_version
+            or derivative.asset_id != row.source_asset_id
+            or derivative.state != "ready"
+            or derivative.purpose != "post_preview"
+            or derivative.version != row.source_derivative_version
+            or derivative.sha256 != row.source_derivative_sha256
+            or derivative.processing_version != row.processing_version
+            or not PublicCopyAttempt.objects.filter(
+                copy=row, generation=row.generation, state="ready"
+            ).exists()
+        ):
+            raise AssetNotFound("Publication media unavailable")
+    return {row.source_asset_id: row for row in rows}

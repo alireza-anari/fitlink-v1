@@ -160,7 +160,9 @@ def source_is_current(profile, revision):
     return source_snapshot(profile, selection, qualifications) == revision.snapshot
 
 
-def _confirmed_publication(profile_uuid: UUID, at: datetime, media_revision=None):
+def _confirmed_publication(
+    profile_uuid: UUID, at: datetime, media_revision=None, *, retain_hidden=False
+):
     if (
         not isinstance(profile_uuid, UUID)
         or not isinstance(at, datetime)
@@ -187,8 +189,14 @@ def _confirmed_publication(profile_uuid: UUID, at: datetime, media_revision=None
                         else ["published", "publication_requested"]
                     ),
                     withdrawn_at__isnull=True,
-                    hidden_at__isnull=True,
-                    hidden_case_uuid__isnull=True,
+                    **(
+                        {}
+                        if retain_hidden
+                        else {
+                            "hidden_at__isnull": True,
+                            "hidden_case_uuid__isnull": True,
+                        }
+                    ),
                 )
                 .select_related("current_revision", "requested_revision")
                 .first()
@@ -258,3 +266,13 @@ def confirmed_media_publication(profile_uuid: UUID, revision_uuid: UUID, at: dat
     if not isinstance(revision_uuid, UUID):
         raise ValueError("Invalid media release revision")
     return _confirmed_publication(profile_uuid, at, revision_uuid)
+
+
+def retained_publication(profile_uuid: UUID, at: datetime, revision_uuid=None):
+    """Private retention/review facts only; NEVER public release authority.
+
+    Temporary moderation suppresses delivery, not the owner's unchanged consent
+    or privately retained bytes. Withdrawal, source changes, account/role loss and
+    expiry still fail the exact same current-source checks.
+    """
+    return _confirmed_publication(profile_uuid, at, revision_uuid, retain_hidden=True)

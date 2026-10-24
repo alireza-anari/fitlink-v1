@@ -109,6 +109,9 @@ CREATE FUNCTION fitlink_guard_post_image() RETURNS trigger LANGUAGE plpgsql AS $
 BEGIN
  IF TG_OP<>'INSERT' THEN RAISE EXCEPTION 'Post images immutable' USING ERRCODE='23514';
 END IF;
+ IF EXISTS(SELECT 1 FROM professionals_posthistory
+           WHERE revision_id=NEW.revision_id AND action='saved') THEN
+ RAISE EXCEPTION 'Saved post image membership sealed' USING ERRCODE='23514'; END IF;
  IF NOT fitlink_public_text(to_jsonb(NEW.alt),200,true)
  OR NEW.alt ~* '(javascript|data|https?|file|vbscript)[[:space:]]*:'
  OR NOT EXISTS(SELECT 1 FROM professionals_postrevision r

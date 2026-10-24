@@ -1,6 +1,7 @@
 """C04 public content metadata only; no evidence or dispute payloads."""
 
-from dataclasses import dataclass
+import json
+from dataclasses import dataclass, field
 from uuid import UUID
 
 REPORT_REASONS = frozenset({"privacy", "unsafe", "misleading", "other"})
@@ -37,6 +38,21 @@ class ModerationDTO:
 class ModerationPage:
     cases: tuple[ModerationDTO, ...]
     cursor: str | None
+
+
+@dataclass(frozen=True)
+class ModerationView:
+    id: UUID
+    version: int
+    state: str
+    target: PublicReportTarget
+    revision_uuid: UUID
+    reasons: tuple[str, ...]
+    content_json: str | None = field(repr=False)
+
+    @property
+    def content(self):
+        return json.loads(self.content_json) if self.content_json is not None else None
 
 
 def validate_report_command(target, reason, operation_id):

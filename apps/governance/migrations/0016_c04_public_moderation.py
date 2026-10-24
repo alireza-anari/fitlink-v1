@@ -337,6 +337,8 @@ class Migration(migrations.Migration):
                             "moderation.hide",
                             "moderation.dismiss",
                             "moderation.restore",
+                            "moderation.read",
+                            "moderation.queue",
                         ),
                     )
                 ),
@@ -607,6 +609,12 @@ class Migration(migrations.Migration):
                     )
                 ),
                 name="audit_subject_type",
+            ),
+        ),
+        migrations.AddIndex(
+            model_name="publiccontentreport",
+            index=models.Index(
+                fields=["case", "reason"], name="public_report_case_reason"
             ),
         ),
         migrations.RunSQL(FORWARD_GUARDS, REVERSE_GUARDS),

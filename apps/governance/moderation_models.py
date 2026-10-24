@@ -72,6 +72,9 @@ class PublicContentReport(models.Model):
     updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
+        indexes = [
+            models.Index(fields=["case", "reason"], name="public_report_case_reason")
+        ]
         constraints = [
             models.UniqueConstraint(
                 fields=["case", "reporter"], name="public_report_dedup"

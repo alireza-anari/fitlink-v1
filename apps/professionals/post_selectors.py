@@ -17,17 +17,27 @@ def stored_post(revision):
     )
 
 
-def confirmed_post(user, identifier, revision_uuid, at, *, parent_source):
+def confirmed_post(
+    user, identifier, revision_uuid, at, *, parent_source, retain_hidden=False
+):
     """Caller holds User anchor; parent authorization is injected composition."""
     row = (
         EducationalPost.objects.select_for_update()
         .filter(
             pk=identifier,
             profile__user=user,
-            state__in=["draft", "published"],
+            state__in=["draft", "published", "hidden"]
+            if retain_hidden
+            else ["draft", "published"],
             withdrawn_at__isnull=True,
-            hidden_at__isnull=True,
-            hidden_case_uuid__isnull=True,
+            **(
+                {}
+                if retain_hidden
+                else {
+                    "hidden_at__isnull": True,
+                    "hidden_case_uuid__isnull": True,
+                }
+            ),
         )
         .first()
     )

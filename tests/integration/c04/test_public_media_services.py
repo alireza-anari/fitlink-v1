@@ -202,7 +202,8 @@ def test_educational_public_copy_real_scanner_rejects_malicious_private_output(
         == 1
     )
     assert (
-        public_media.process_public_copy(*queue[0], timezone.now()).status == "failed"
+        public_media.process_public_copy(*queue[0], timezone.now()).status
+        == "scan_malicious"
     )
     row = PublicAssetCopy.objects.get(publication_uuid=post.id)
     assert (

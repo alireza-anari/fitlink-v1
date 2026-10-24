@@ -37,7 +37,12 @@ def _binding(user, publication_uuid, revision_uuid, purpose, at, *, require_flag
     ).first()
     if publication is None:
         raise AssetNotFound("Publication media unavailable")
-    facts = confirmed_media_publication(publication.profile_id, revision_uuid, at)
+    if require_flag:
+        facts = confirmed_media_publication(publication.profile_id, revision_uuid, at)
+    else:
+        from apps.professionals.publication_selectors import retained_publication
+
+        facts = retained_publication(publication.profile_id, at, revision_uuid)
     if facts is None or facts.publication_id != publication.id:
         raise AssetNotFound("Publication media unavailable")
     binding = PublicationMediaBinding.objects.filter(
@@ -333,11 +338,13 @@ def reconcile_public_media(at, batch_size=100):
             next_attempt_at__lte=at,
         )
         .filter(
-            Q(state="ready", generation=F("copy__generation"))
+            Q(
+                state__in=["pending", "running", "ready"],
+                generation=F("copy__generation"),
+            )
             | Q(copy__state__in=["revoked", "failed", "deletion_pending", "deleted"])
             | Q(generation__lt=F("copy__generation")),
         )
-        .exclude(state__in=["pending", "running"])
         .order_by(
             "next_attempt_at",
             "id",
@@ -355,6 +362,11 @@ def reconcile_public_media(at, batch_size=100):
             continue
         reconcile_public_copy_lifetime(hint.copy_id, at)
         row = PublicAssetCopy.objects.get(pk=hint.copy_id)
+        if row.state in {"revoked", "deleted"}:
+            from apps.assets.public_copies import renew_revoked_public_copy
+
+            renew_revoked_public_copy(row.id, at, authorize=validate_release)
+            row.refresh_from_db()
         if (
             row.state in {"failed", "revoked", "deletion_pending", "deleted"}
             or hint.generation < row.generation

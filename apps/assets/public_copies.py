@@ -160,6 +160,76 @@ def release_for(row):
     )
 
 
+def renew_revoked_public_copy(identifier, at, *, authorize=None):
+    """Recover only the same still-confirmed source into a NEW bounded generation.
+
+    No bytes are revived or written here. The normal scanner/decoder worker must
+    produce fresh output before delivery; withdrawals/edits cannot authorize it.
+    """
+    from uuid import UUID
+
+    if (
+        not isinstance(identifier, UUID)
+        or not isinstance(at, datetime)
+        or not timezone.is_aware(at)
+        or not callable(authorize)
+    ):
+        return "denied"
+    try:
+        with transaction.atomic():
+            hint = (
+                PublicAssetCopy.objects.select_related("owner")
+                .filter(pk=identifier)
+                .first()
+            )
+            if hint is None or hint.state not in {"revoked", "deleted"}:
+                return "denied"
+            release = release_for(hint)
+            user, asset, derivative, _ = locked_source(release, authorize, at)
+            row = PublicAssetCopy.objects.select_for_update().get(pk=identifier)
+            if (
+                row.version != hint.version
+                or row.state not in {"revoked", "deleted"}
+                or row.source_asset_id != asset.id
+                or row.source_derivative_id != derivative.id
+                or row.source_derivative_version != derivative.version
+                or row.source_derivative_sha256 != derivative.sha256
+            ):
+                return "denied"
+            if row.generation >= 8:
+                return "exhausted"
+            now = max(at, timezone.now())
+            previous = (
+                PublicCopyAttempt.objects.select_for_update()
+                .filter(copy=row, generation=row.generation)
+                .first()
+            )
+            if previous is None:
+                return "denied"
+            if previous.retired_at is None:
+                previous.retired_at = row.revoked_at or now
+                previous.updated_at = max(now, previous.updated_at)
+                previous.save()
+            row.generation += 1
+            row.version += 1
+            row.state = "pending"
+            row.revoked_at = None
+            row.owner_auth_version = user.auth_version
+            row.updated_at = now
+            row.save()
+            PublicCopyAttempt.objects.create(
+                copy=row,
+                generation=row.generation,
+                key=publication_key(row.id, row.generation),
+                next_attempt_at=now,
+                created_at=now,
+                updated_at=now,
+            )
+            return "pending"
+    except (PermissionError, LookupError, ValueError):
+        return "denied"
+
+
 def locked_copy(identifier, authorize, at):
     hint = PublicAssetCopy.objects.select_related("owner").filter(pk=identifier).first()
     if hint is None:

@@ -2210,3 +2210,59 @@ check reports no changes, but actual PostgreSQL migration/drift evidence is pend
 Focused PostgreSQL plus full existing real-media job will run on an isolated development
 branch before any acceptance publication. New positive, negative and concurrent tests
 extend existing REDs. No Task7 completion or Task8 work is claimed.
+
+### Task 7 independent review and measured fix pass — 2026-10-24 UTC
+
+Independent read-only reviewer task07_final_review examined candidate9654a67,
+verified55 source files against its published snapshot and reported0 Critical,
+6 Important,0 Minor findings. Exact report/status is task07-review.json. Hosted
+focused run40011075782 had424 PostgreSQL passes/10 failures and25 media passes/1
+failure, no skips/errors/xfails. Both artifact ZIPs independently hashed. The two
+moderation positives supplied an unsupported reason; eight MinIO tests lacked a
+service in the PG development harness. Source assertions were retained while real
+MinIO provisioning was added. The PNG metadata/EICAR test was corrected to test
+actual scanner verdict plus canonical-pixel safety; a separate exact-file malicious
+educational-copy case retains the exact malicious/failure-state requirements.
+
+Review regression RED run40062264628 attempt1 on a3113046a7ea31823e3b8554c2018b6932850750
+reproduced seven targeted failures: hide/reconcile/restore for both targets,
+unreferenced I/O cleanup discovery, text/image lifetime disagreement, two saved-image
+append cases, and missing useful case reads. Other race/queue/quota tests ran. The
+four-image fixture omitted MIME metadata for merged objects; its assertion remains
+unchanged after fixture repair. The focused MinIO endpoint used9000 while the
+unchanged generator publishes9100; endpoint now comes from the generated private
+configuration. Exact scanner failure result is scan_malicious, not generic failed.
+No domain/antivirus assertion or mandatory selection was suppressed.
+
+Fix pass: temporary moderation is separated from private retention authority;
+pending/running copy inventory enters installed bounded retirement/cleanup discovery;
+saved revision image membership is sealed by immutable saved history; useful assigned
+review binds exact reported revision, current approved fields, finite reasons and
+buffered public-copy media with current case capability/step-up after I/O. Private
+draft edits yield metadata-only case views, never new private text. Text and direct
+post media share a complete-current-copy policy. Existing scan/decoder and private
+origin security remain mandatory.
+
+Ruling: scanner definition expiry bounds new-copy processing, not an invented TTL
+on already sanitized immutable pixels, matching inherited branding semantics.
+Current account/source/role/parent/consent expiry remains fresh at every read.
+Cost if wrong: a future ongoing-rescan policy needs explicit bounded renewal design;
+this change makes no such unsupported policy or production-release claim.
+Ruling: assigned moderation may bypass only its hide latch for current approved
+content, not private drafts, revoked eligibility or unrelated historical evidence.
+Cost if wrong: a broader history-review requirement remains a later explicit scope,
+never silently expanded staff access.
+Ruling: a retired/deleted generation may recover only while the exact unchanged
+owner-confirmed source currently authorizes it, into a new generation capped at8
+and through the normal fresh scan/decoder worker. Deleted bytes are never revived;
+withdrawal or edits deny recovery. Cost if wrong: at the attempt cap, availability
+requires an explicit new authorized release rather than a security bypass.
+
+Added both hide/confirm and hide/copy orderings, actual competing moderator claims,
+concurrent final report quota, four-output completeness, restore/withdraw orderings,
+withdrawal versus buffered release, useful case/restricted media reads, revoked
+capability during buffered I/O, sealed current/superseded membership and fresh
+generation recovery. Local targeted unit/schema checks348 passed,37 subtests11.90s;
+Ruff and domain mypy pass, migration-state check has no changes. Hosted focused GREEN,
+full15-job exact-source acceptance and final review resolution remain pending.
+Execution branch stays at6c66199; historical Foundation cause remains unknown.

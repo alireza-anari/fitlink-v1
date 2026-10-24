@@ -7,37 +7,37 @@
   "review": {
     "method": "Independent fresh-context read-only whole-task source review",
     "reviewer": "task07_final_review",
-    "verdict": "request_changes",
+    "verdict": "fixes implemented; awaiting hosted verification",
     "critical": 0,
     "important": [
       {
         "id": "T7-R1",
-        "status": "open",
+        "status": "implemented_pending_hosted_green",
         "finding": "Temporary moderation hide causes lifetime reconciliation to permanently retire otherwise confirmed release copies."
       },
       {
         "id": "T7-R2",
-        "status": "open",
+        "status": "implemented_pending_hosted_green",
         "finding": "Authority loss during copy I/O leaves running inventory outside installed cleanup discovery."
       },
       {
         "id": "T7-R3",
-        "status": "open",
+        "status": "implemented_pending_hosted_green",
         "finding": "Post read imposes continuing scanner-signature TTL while direct bytes do not; no renewal path."
       },
       {
         "id": "T7-R4",
-        "status": "open",
+        "status": "implemented_pending_hosted_green",
         "finding": "Assigned case read has no exact target, reported revision, finite reasons or useful approved content."
       },
       {
         "id": "T7-R5",
-        "status": "open",
+        "status": "implemented_pending_hosted_green",
         "finding": "Image membership of saved unconfirmed revisions can be extended with bulk INSERT."
       },
       {
         "id": "T7-R6",
-        "status": "open",
+        "status": "implemented_pending_hosted_green",
         "finding": "Missing actual moderation, quota, output-release and four-image boundary race/authority coverage."
       }
     ],
@@ -86,5 +86,50 @@
       }
     }
   },
-  "next": "Publish targeted review regression REDs with corrected focused real-service provisioning, then fix Important findings, focused GREEN and full exact-source mandatory acceptance. No Foundation-only repeat or acceptance retry performed."
+  "next": "Publish targeted review regression REDs with corrected focused real-service provisioning, then fix Important findings, focused GREEN and full exact-source mandatory acceptance. No Foundation-only repeat or acceptance retry performed.",
+  "review_red_run": {
+    "id": 40062264628,
+    "attempt": 1,
+    "sha": "a3113046a7ea31823e3b8554c2018b6932850750",
+    "tree": "58bfa01303f7387c1814b1f5fa37e4d7a9e43830",
+    "postgresql": {
+      "passed": 435,
+      "failed": 16,
+      "error": 0,
+      "skipped": 0,
+      "artifact": 12548131984,
+      "sha256": "47a32858c0cdbdeee643287008a5d87e9495198717d8745aa6d6b9ea470b9488",
+      "bytes_verified": true,
+      "classification": "Seven expected review regression failures plus one four-image fixture MIME omission; eight inherited storage tests used a wrong host endpoint port despite successful real MinIO startup."
+    },
+    "media": {
+      "passed": 26,
+      "failed": 1,
+      "artifact": 12548191533,
+      "sha256": "4b3d9e8ab5b6e8e008529bbb05926475e8c33246db5c4184f26c070b8174692b",
+      "bytes_verified": true,
+      "classification": "New test expected generic failed result instead of the existing exact scan_malicious result contract; failed-state and exact malicious-code assertions retained."
+    }
+  },
+  "fixes": {
+    "T7-R1": "Retention-only current-source checks ignore moderation latches, never delivery; still-confirmed retired copies may renew into fresh scanner-backed generations capped at eight. Withdrawal/edit/eligibility loss cannot renew.",
+    "T7-R2": "Installed bounded reconciliation discovers pending/running inventory and retires unreferenced output after source loss, with existing policy and hold gates.",
+    "T7-R3": "Remove unplanned continuing scanner-signature TTL from immutable post read. Initial scan freshness remains mandatory. Text and direct media share complete current-revision copy validation.",
+    "T7-R4": "Assigned case view supplies only exact target/revision, finite reasons and current approved content. Hidden content review and buffered media recheck case capability/step-up after I/O; changed/withdrawn sources return metadata only.",
+    "T7-R5": "Saved PostHistory seals image INSERT membership as well as existing immutable UPDATE/DELETE.",
+    "T7-R6": "Add actual competing claims and final report quota, hide/confirm/copy orderings, withdrawal/final release, restore/withdraw ordering, four-image completeness, keyset queue and wrong/expired/revoked authority coverage."
+  },
+  "rulings": [
+    "Scanner signature expiry is the freshness bound for producing a new sanitized immutable copy, consistent with inherited branding; it is not a newly invented publication TTL. Current parent/source/account/role/consent expiry checks remain authoritative at every read.",
+    "Task7 moderation does not grant private draft or unrelated historical/evidence access. Reported-source changes return target/reason metadata with unavailable content; only moderation denial is bypassed for current eligible assigned review.",
+    "Fresh-generation renewal reuses exact still-confirmed source authorization and bounded existing worker pipeline; deleted bytes are never marked ready or revived."
+  ],
+  "local_fix_verification": {
+    "passed": 348,
+    "subtests_passed": 37,
+    "seconds": 11.9,
+    "scope": "C04 unit plus current schema/identity/SQL inventory contracts; not real-service acceptance",
+    "ruff": "passed",
+    "migration_state": "no changes detected; no local PostgreSQL history proof"
+  }
 }

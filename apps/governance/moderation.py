@@ -78,7 +78,7 @@ def audit(user, action, identifier, operation, at, reason="user_requested"):
             "succeeded",
             identifier,
             operation,
-            ("version", "state"),
+            () if action in {"read", "queue"} else ("version", "state"),
             reason,
         ),
         actor_uuid=user.public_id,
@@ -211,28 +211,88 @@ def moderation_queue(actor, step_up_id, reason_code, at, *, limit=25, cursor=Non
                 },
                 salt="c04-public-moderation",
             )
+        _staff(
+            user,
+            "marketplace_moderation",
+            None,
+            step_up_id,
+            reason_code,
+            max(at, timezone.now()),
+        )
+        from uuid import uuid4
+
+        audit(user, "queue", None, uuid4(), max(at, timezone.now()), reason_code)
         return ModerationPage(
             tuple(ModerationDTO(r.id, r.version, r.state) for r in rows[:limit]),
             following,
         )
 
 
-def read_public_moderation(actor, case_uuid, step_up_id, reason_code, at, *, lock_case):
+def assigned_moderation(actor, case_uuid, step_up_id, reason_code, at, *, lock_case):
+    from uuid import UUID
+
+    if not transaction.get_connection().in_atomic_block:
+        raise RuntimeError("Moderation transaction required")
+    if not isinstance(case_uuid, UUID) or not isinstance(step_up_id, UUID):
+        raise ValueError("Invalid moderation binding")
+    context(actor, at)
+    user, case = _authority(
+        actor,
+        case_uuid,
+        None,
+        step_up_id,
+        reason_code,
+        None,
+        max(at, timezone.now()),
+        lock_case,
+    )
+    if case.assigned_staff_id != user.pk:
+        raise PermissionError("Assigned moderator required")
+    return user, case
+
+
+def read_public_moderation(
+    actor, case_uuid, step_up_id, reason_code, at, *, lock_case, read_target
+):
+    from uuid import uuid4
+
+    from .moderation_contracts import REPORT_REASONS, ModerationView, PublicReportTarget
+
+    if not callable(read_target):
+        raise ValueError("Moderation reader unavailable")
     context(actor, at)
     with transaction.atomic():
-        user, case = _authority(
-            actor,
-            case_uuid,
-            None,
+        user, case = assigned_moderation(
+            actor, case_uuid, step_up_id, reason_code, at, lock_case=lock_case
+        )
+        content = read_target(case, max(at, timezone.now()))
+        if content is not None and (
+            not isinstance(content, str)
+            or len(content.encode()) > 20 * 1024
+            or not isinstance(json.loads(content), dict)
+        ):
+            raise ValueError("Moderation content unavailable")
+        reasons = tuple(
+            r for r in sorted(REPORT_REASONS) if case.reports.filter(reason=r).exists()
+        )
+        _staff(
+            user,
+            "marketplace_moderation",
+            case.id,
             step_up_id,
             reason_code,
-            None,
             max(at, timezone.now()),
-            lock_case,
         )
-        if case.assigned_staff_id != user.pk:
-            raise PermissionError("Assigned moderator required")
-        return ModerationDTO(case.id, case.version, case.state)
+        audit(user, "read", case.id, uuid4(), max(at, timezone.now()), reason_code)
+        return ModerationView(
+            case.id,
+            case.version,
+            case.state,
+            PublicReportTarget(case.target_kind, case.target_uuid),
+            case.revision_uuid,
+            reasons,
+            content,
+        )
 
 
 def _complete(user, case, action, operation, hashed, reason, at):

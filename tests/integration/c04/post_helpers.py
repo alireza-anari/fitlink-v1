@@ -92,6 +92,7 @@ def pending_post(subject, image_count=1):
     store = sources[0][2]
     for _, _, other in sources[1:]:
         store.objects.update(other.objects)
+        store.content_types.update(other.content_types)
     post = command("save_post")(
         subject.actor,
         post.id,

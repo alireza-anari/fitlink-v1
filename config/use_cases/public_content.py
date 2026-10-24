@@ -4,7 +4,6 @@ from django.db import DatabaseError, transaction
 from django.utils import timezone
 
 from apps.accounts.models import User
-from apps.assets.models import PublicAssetCopy, PublicCopyAttempt
 from apps.governance.audit import append_event
 from apps.governance.flags import feature_enabled
 from apps.governance.outbox import append_outbox
@@ -202,33 +201,14 @@ def _public_post(user, identifier, at):
     if facts is None:
         return None
     row, revision, payload = facts
-    images = []
-    for link in revision.images.order_by("position"):
-        copy = PublicAssetCopy.objects.filter(
-            publication_uuid=row.id,
-            release_revision_uuid=revision.id,
-            purpose="educational_image",
-            source_asset_id=link.asset_id,
-            processing_version=link.processing_version,
-            source_version=link.asset_version,
-            state="ready",
-            revoked_at__isnull=True,
-        ).first()
-        if (
-            copy is None
-            or not PublicCopyAttempt.objects.filter(
-                copy=copy,
-                generation=copy.generation,
-                state="ready",
-                signature_expires_at__gt=max(at, timezone.now()),
-            ).exists()
-        ):
-            return None
-        try:
-            post_media.validate_read(copy, max(at, timezone.now()))
-        except (ValueError, LookupError, PermissionError):
-            return None
-        images.append(PublicPostImage(copy.id, link.alt))
+    try:
+        copies = post_media.current_copies(user, row, revision)
+    except (ValueError, LookupError, PermissionError):
+        return None
+    images = [
+        PublicPostImage(copies[b.asset_id].id, b.alt)
+        for b in revision.images.order_by("position")
+    ]
     return PublicPostDTO(
         row.id, row.profile_id, revision.id, payload.text, tuple(images)
     )
@@ -327,6 +307,30 @@ def moderation_queue(actor, step_up_id, reason_code, at, *, limit=25, cursor=Non
 
 def read_public_moderation(actor, case_uuid, step_up_id, reason_code, at):
     from apps.governance.moderation import read_public_moderation as read
-    from config.use_cases.public_moderation import lock_case
+    from config.use_cases.public_moderation import lock_case, review_content
 
-    return read(actor, case_uuid, step_up_id, reason_code, at, lock_case=lock_case)
+    return read(
+        actor,
+        case_uuid,
+        step_up_id,
+        reason_code,
+        at,
+        lock_case=lock_case,
+        read_target=review_content,
+    )
+
+
+def read_public_moderation_media(
+    actor, case_uuid, copy_uuid, step_up_id, reason_code, at, *, publication_store=None
+):
+    from config.use_cases.public_moderation import read_moderation_media
+
+    return read_moderation_media(
+        actor,
+        case_uuid,
+        copy_uuid,
+        step_up_id,
+        reason_code,
+        at,
+        publication_store=publication_store,
+    )

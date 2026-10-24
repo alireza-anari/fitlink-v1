@@ -73,6 +73,8 @@ ACTIONS = (
     "moderation.hide",
     "moderation.dismiss",
     "moderation.restore",
+    "moderation.read",
+    "moderation.queue",
 )
 RESULTS = ("accepted", "denied", "failed", "succeeded", "throttled", "unavailable")
 CHANGED_FIELDS = frozenset(

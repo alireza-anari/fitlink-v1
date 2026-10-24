@@ -148,6 +148,67 @@ def test_immutable_scanned_copy_and_post_have_consistent_read_lifetime(corpus):
     assert content.public_post(post.id, future) is not None
 
 
+def test_restore_deleted_generation_uses_fresh_scan_and_new_object(
+    corpus, settings, monkeypatch
+):
+    import apps.assets.public_storage as storage
+    from tests.integration.c03.test_asset_holds import policy
+
+    subject, _ = corpus()
+    post, asset, derivative, store, copy = published(subject)
+    case, staff, claimed, _ = assigned(
+        settings, subject, PublicReportTarget("post", post.id)
+    )
+    hidden = decision(staff, case, claimed.version, "hide")
+    # Simulate an inventoried generation retired by the historical hide defect.
+    copy.refresh_from_db()
+    copy.state = "revoked"
+    copy.revoked_at = timezone.now()
+    copy.updated_at = copy.revoked_at
+    copy.version += 1
+    copy.save()
+    old = copy.attempts.get(generation=1)
+    rule = policy(subject, asset)
+    wrapped = PublicationObjectStore(store)
+    assert (
+        public_media.cleanup_public_copy(
+            copy.id,
+            1,
+            rule.id,
+            timezone.now() + timedelta(seconds=2),
+            publication_store=wrapped,
+        )
+        == "deleted"
+    )
+    assert old.key not in store.objects and derivative.key in store.objects
+    decision(staff, case, hidden.version, "restore")
+    assert content.public_post(post.id, timezone.now()) is None
+    monkeypatch.setattr(storage, "get_publication_store", lambda: wrapped)
+    later = timezone.now() + timedelta(minutes=1)
+    assert public_media.reconcile_public_media(later, 100) >= 1
+    copy.refresh_from_db()
+    assert copy.generation == 2 and copy.state == "pending"
+    queued = []
+    from apps.assets.public_copies import scan_due_public_copies
+
+    assert (
+        scan_due_public_copies(
+            later,
+            100,
+            authorize=public_media.validate_release,
+            enqueue=lambda *args: queued.append(args),
+        )
+        == 1
+    )
+    assert content.public_post(post.id, timezone.now()) is None
+    assert process(store, queued[0], at=later).status == "ready"
+    copy.refresh_from_db()
+    assert (
+        copy.attempts.get(generation=2).key != old.key and old.key not in store.objects
+    )
+    assert content.public_post(post.id, later) is not None
+
+
 @pytest.mark.parametrize("superseded", [False, True])
 def test_saved_revision_image_membership_is_sealed_against_bulk_append(
     corpus, superseded
@@ -194,7 +255,7 @@ def test_assigned_review_binds_reported_revision_and_excludes_private_evidence(
     corpus, settings
 ):
     subject, _ = corpus()
-    post, *_ = published(subject)
+    post, _, _, store, copy = published(subject)
     case, staff, claimed, reporter = assigned(
         settings, subject, PublicReportTarget("post", post.id)
     )
@@ -216,6 +277,29 @@ def test_assigned_review_binds_reported_revision_and_excludes_private_evidence(
     assert set(view.content) == {"text", "images"} and view.content["text"] == "آموزش"
     assert set(view.content["images"][0]) == {"copy_uuid", "alt"}
     assert view.version == hidden.version
+    media = content.read_public_moderation_media(
+        staff.actor,
+        case.id,
+        copy.id,
+        staff.step,
+        "security_restriction",
+        timezone.now(),
+        publication_store=PublicationObjectStore(store),
+    )
+    assert media.content.startswith(b"\x89PNG") and media.asset_uuid == copy.id
+    _, _, _, _, other_copy = published(subject)
+    before = len(store.reads)
+    with pytest.raises((PermissionError, LookupError)):
+        content.read_public_moderation_media(
+            staff.actor,
+            case.id,
+            other_copy.id,
+            staff.step,
+            "security_restriction",
+            timezone.now(),
+            publication_store=PublicationObjectStore(store),
+        )
+    assert len(store.reads) == before
     for actor, step in [
         (reporter.actor, staff.step),
         (subject.actor, staff.step),
@@ -225,6 +309,29 @@ def test_assigned_review_binds_reported_revision_and_excludes_private_evidence(
             content.read_public_moderation(
                 actor, case.id, step, "security_restriction", timezone.now()
             )
+    row = EducationalPost.objects.get(pk=post.id)
+    content.save_post(
+        subject.actor,
+        row.id,
+        PostInput("PRIVATE_UNCONFIRMED_SENTINEL"),
+        row.version,
+        uuid4(),
+        timezone.now(),
+    )
+    changed = content.read_public_moderation(
+        staff.actor, case.id, staff.step, "security_restriction", timezone.now()
+    )
+    assert changed.content is None and changed.revision_uuid == case.revision_uuid
+    with pytest.raises((PermissionError, LookupError)):
+        content.read_public_moderation_media(
+            staff.actor,
+            case.id,
+            copy.id,
+            staff.step,
+            "security_restriction",
+            timezone.now(),
+            publication_store=PublicationObjectStore(store),
+        )
 
 
 def test_moderation_queue_has_real_keyset_pagination_and_case_scoped_reads(
@@ -287,6 +394,34 @@ def test_moderation_queue_has_real_keyset_pagination_and_case_scoped_reads(
     with pytest.raises((PermissionError, LookupError)):
         content.read_public_moderation(
             staff.actor, cases[0], step, "staff_assigned", timezone.now()
+        )
+
+
+def test_case_media_rechecks_capability_after_buffered_io(corpus, settings):
+    subject, _ = corpus()
+    post, _, _, store, copy = published(subject)
+    case, staff, claimed, _ = assigned(
+        settings, subject, PublicReportTarget("post", post.id)
+    )
+    decision(staff, case, claimed.version, "hide")
+    original = store.read_limited
+
+    def revoke(key, maximum):
+        body = original(key, maximum)
+        staff.grant.revoked_at = timezone.now()
+        staff.grant.save(update_fields=["revoked_at"])
+        return body
+
+    store.read_limited = revoke
+    with pytest.raises((PermissionError, LookupError)):
+        content.read_public_moderation_media(
+            staff.actor,
+            case.id,
+            copy.id,
+            staff.step,
+            "security_restriction",
+            timezone.now(),
+            publication_store=PublicationObjectStore(store),
         )
 
 
@@ -406,14 +541,50 @@ def test_withdrawal_during_buffered_post_release_wins(corpus):
     assert content.public_post(post.id, timezone.now(), release=release) is None
 
 
-def test_restore_after_owner_withdrawal_does_not_republish(corpus, settings):
+@pytest.mark.parametrize(
+    "order", ["withdraw_before_restore", "restore_before_withdraw"]
+)
+def test_restore_after_owner_withdrawal_does_not_republish(corpus, settings, order):
     subject, _ = corpus()
     post, *_ = published(subject)
     case, staff, claimed, _ = assigned(
         settings, subject, PublicReportTarget("post", post.id)
     )
     hidden = decision(staff, case, claimed.version, "hide")
+    if order == "restore_before_withdraw":
+        decision(staff, case, hidden.version, "restore")
     row = EducationalPost.objects.get(pk=post.id)
     content.withdraw_post(subject.actor, row.id, row.version, uuid4(), timezone.now())
-    decision(staff, case, hidden.version, "restore")
+    if order == "withdraw_before_restore":
+        decision(staff, case, hidden.version, "restore")
+    assert content.public_post(post.id, timezone.now()) is None
+
+
+@pytest.mark.parametrize("order", ["hide_before_confirm", "confirm_before_hide"])
+def test_parent_hide_linearizes_against_post_confirmation(corpus, settings, order):
+    subject, _ = corpus()
+    case, staff, claimed, _ = assigned(
+        settings, subject, PublicReportTarget("profile", subject.profile.id)
+    )
+    post = draft(subject)
+    asset, _, _ = image(subject, post)
+    post = content.save_post(
+        subject.actor,
+        post.id,
+        PostInput("آموزش", (PostImageInput(asset.id, "شرح"),)),
+        post.version,
+        uuid4(),
+        timezone.now(),
+    )
+    if order == "confirm_before_hide":
+        content.publish_post(
+            subject.actor, post.id, True, post.version, uuid4(), timezone.now()
+        )
+        decision(staff, case, claimed.version, "hide")
+    else:
+        decision(staff, case, claimed.version, "hide")
+        with pytest.raises((ValueError, LookupError, PermissionError)):
+            content.publish_post(
+                subject.actor, post.id, True, post.version, uuid4(), timezone.now()
+            )
     assert content.public_post(post.id, timezone.now()) is None
