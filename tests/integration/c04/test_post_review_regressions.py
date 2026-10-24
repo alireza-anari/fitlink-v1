@@ -588,3 +588,57 @@ def test_parent_hide_linearizes_against_post_confirmation(corpus, settings, orde
                 subject.actor, post.id, True, post.version, uuid4(), timezone.now()
             )
     assert content.public_post(post.id, timezone.now()) is None
+
+
+@pytest.mark.parametrize("target_kind", ["profile", "post"])
+@pytest.mark.parametrize("during_io", [False, True])
+def test_assigned_media_denies_stale_derivative_binding(
+    corpus, settings, target_kind, during_io
+):
+    if target_kind == "post":
+        subject, _ = corpus()
+        post, _, derivative, store, copy = published(subject)
+        target_uuid = post.id
+    else:
+        from tests.integration.c04.copy_helpers import copy_model, pending
+
+        subject, _, _, derivative, store, dto, job = pending(settings)
+        assert process(store, job).status == "ready"
+        copy = copy_model().objects.get(pk=dto.id)
+        target_uuid = subject.profile.id
+    case, staff, claimed, _ = assigned(
+        settings, subject, PublicReportTarget(target_kind, target_uuid)
+    )
+    decision(staff, case, claimed.version, "hide")
+
+    def mutate():
+        derivative.version += 1
+        derivative.save(update_fields=["version"])
+
+    if during_io:
+        original = store.read_limited
+
+        def change_after_read(key, maximum):
+            body = original(key, maximum)
+            mutate()
+            return body
+
+        store.read_limited = change_after_read
+    else:
+        mutate()
+        view = content.read_public_moderation(
+            staff.actor, case.id, staff.step, "security_restriction", timezone.now()
+        )
+        assert view.content is None
+    before = len(store.reads)
+    with pytest.raises((PermissionError, LookupError)):
+        content.read_public_moderation_media(
+            staff.actor,
+            case.id,
+            copy.id,
+            staff.step,
+            "security_restriction",
+            timezone.now(),
+            publication_store=PublicationObjectStore(store),
+        )
+    assert len(store.reads) == before + int(during_io)
