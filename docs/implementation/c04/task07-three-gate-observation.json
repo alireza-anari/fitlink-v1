@@ -1,0 +1,443 @@
+{
+  "status": "IN_PROGRESS_UNACCEPTED",
+  "execution_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+  "execution_tree": "f4a49666111ce27d6c12cc6aff89f3430c7ea243",
+  "failed_acceptance": {
+    "run": 40084769140,
+    "attempt": 1,
+    "successful_jobs": 11,
+    "failed_jobs": 4,
+    "skipped_jobs": 0,
+    "cancelled_jobs": 0
+  },
+  "diagnostic": {
+    "run": 40089478434,
+    "attempt": 1,
+    "job": 120859044547,
+    "sha": "5e1b23285fa6531f052014693a9f08e9c1c6c378",
+    "tree": "4625062d91dc6718a8984a18d798b39608c1819c",
+    "budget_used": 1,
+    "jobs": 1,
+    "acceptance": false,
+    "source_pin": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+    "offline_controls_passed": 14,
+    "scope": "Original-selection current complete backend, established full Compose topology; does not reproduce Foundation or immutable MinIO gate.",
+    "status": "completed",
+    "workflow_conclusion": "success",
+    "backend_conclusion": "deadline_exceeded_not_green",
+    "artifact_id": 12559330364,
+    "artifact_sha256": "971954d8282fde648306ca804883ee65587970393edf874dd32fe649820a1eda",
+    "artifact_bytes_independently_verified": true,
+    "summary": {
+      "acceptance": false,
+      "backend": {
+        "deadline_ns": 1274828859768,
+        "elapsed_seconds": 900.021805,
+        "exit_code": 124,
+        "host_child_cpu_seconds": 12.152578,
+        "mono_end_ns": 1274850664624,
+        "mono_start_ns": 374828859768,
+        "window_end_ns": 1274828859768
+      },
+      "cleanup_complete": true,
+      "post_window_records": 0,
+      "sampler": {
+        "clock_sync": {
+          "common_origin_verified": true,
+          "container_ns": 380062462075,
+          "host_after_ns": 380069755509,
+          "host_before_ns": 379959592715
+        },
+        "errors": 0,
+        "host_process_cpu_ns": 1392814361,
+        "interval_seconds": 5,
+        "sample_wall_ns": 32626565436,
+        "samples": 180,
+        "sampling_can_miss_short_waits": true,
+        "thread_stopped": true
+      },
+      "source_clean_before": true,
+      "source_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+      "source_tree": "f4a49666111ce27d6c12cc6aff89f3430c7ea243",
+      "source_unchanged": true,
+      "stages": [
+        {
+          "elapsed_seconds": 0.032661,
+          "exit_code": 0,
+          "stage": "generate_env"
+        },
+        {
+          "elapsed_seconds": 0.136111,
+          "exit_code": 0,
+          "stage": "immutable_c03"
+        },
+        {
+          "elapsed_seconds": 0.116167,
+          "exit_code": 0,
+          "stage": "immutable_c02"
+        },
+        {
+          "elapsed_seconds": 0.053005,
+          "exit_code": 0,
+          "stage": "immutable_c01"
+        },
+        {
+          "elapsed_seconds": 2.636999,
+          "exit_code": 0,
+          "stage": "config"
+        },
+        {
+          "elapsed_seconds": 138.288185,
+          "exit_code": 0,
+          "stage": "build"
+        },
+        {
+          "elapsed_seconds": 31.506956,
+          "exit_code": 0,
+          "stage": "services"
+        },
+        {
+          "elapsed_seconds": 1.19178,
+          "exit_code": 0,
+          "stage": "minio"
+        },
+        {
+          "elapsed_seconds": 11.379993,
+          "exit_code": 0,
+          "stage": "migrate"
+        },
+        {
+          "elapsed_seconds": 2.363699,
+          "exit_code": 0,
+          "stage": "independent_clean"
+        },
+        {
+          "elapsed_seconds": 3.705651,
+          "exit_code": 0,
+          "stage": "noop"
+        },
+        {
+          "elapsed_seconds": 3.549205,
+          "exit_code": 0,
+          "stage": "drift"
+        },
+        {
+          "elapsed_seconds": 8.995758,
+          "exit_code": 0,
+          "stage": "runtime"
+        },
+        {
+          "elapsed_seconds": 0.109371,
+          "exit_code": 0,
+          "stage": "scanner"
+        },
+        {
+          "elapsed_seconds": 6.196458,
+          "exit_code": 0,
+          "stage": "isolated_exact_baseline"
+        }
+      ],
+      "terminal": {
+        "call_outcomes": {
+          "failed": 0,
+          "other": 0,
+          "passed": 1152,
+          "skipped": 0
+        },
+        "cases_completed": 1152,
+        "cases_started": 1153,
+        "session_finish": null
+      }
+    }
+  },
+  "classification": {
+    "minio": "Unresolved; original immutable clean_minio exit1 after 59.661 seconds, same-stage other job success in1.225 seconds. Original alias/readiness output is suppressed. Timing is compatible with retry exhaustion but does not prove the failing subcommand. Current candidate diagnostic MinIO initialization passed in1.192 seconds; this is not a reproduction of the immutable baseline gate.",
+    "foundation": "unresolved performance/budget pressure; backend completed in 1071.638 seconds; full rehearsal hit original 1800-second supervisor during C03 consolidation.",
+    "complete_backend": "Reproduced 900-second deadline on exact candidate in separate real-service full-topology diagnostic. Reproducible timeout, not proven source or fixture defect. Added cases and slower common-case SQL/teardown both measured. CPU/environment versus schema/fixture execution-cost attribution remains unresolved."
+  },
+  "case_comparison": {
+    "identity_limit": "Parametrization suffixes are redacted; matched by source test function and execution occurrence. Fixture/report ordering retained; altered parametrization can limit equivalence.",
+    "old": {
+      "cases": 2110,
+      "complete": 2110,
+      "phases": {
+        "setup": 8.514,
+        "call": 605.876,
+        "teardown": 157.158
+      }
+    },
+    "partial": {
+      "cases": 1161,
+      "complete": 1160,
+      "phases": {
+        "setup": 11.871,
+        "call": 687.213,
+        "teardown": 174.945
+      }
+    },
+    "foundation": {
+      "cases": 2249,
+      "complete": 2249,
+      "phases": {
+        "setup": 14.503,
+        "call": 855.972,
+        "teardown": 194.186
+      }
+    },
+    "partial_comparison": {
+      "common_cases": 1108,
+      "old_seconds": 666.181,
+      "current_seconds": 750.028,
+      "new_cases": 52,
+      "new_seconds": 123.998,
+      "new_phase_seconds": {
+        "setup": 0.109,
+        "call": 115.857,
+        "teardown": 8.032
+      }
+    },
+    "foundation_comparison": {
+      "common_cases": 2110,
+      "old_seconds": 771.548,
+      "current_seconds": 931.606,
+      "new_cases": 139,
+      "new_seconds": 133.055,
+      "new_phase_seconds": {
+        "setup": 0.258,
+        "call": 123.563,
+        "teardown": 9.234
+      }
+    }
+  },
+  "acceptance_retry_authorized": false,
+  "source_correction_authorized": false,
+  "task8_authorized": false,
+  "completion_checkpoint_published": false,
+  "numeric_comparison": {
+    "comparison_limit": "Function symbol plus occurrence; parameter names deliberately omitted. Current run incomplete; no all-suite SQL total or final pytest outcome available.",
+    "old_resources": {
+      "samples": 126,
+      "postgres_missing": 0,
+      "cpu_busy_mean_pct": 44.46354288097778,
+      "cpu_busy_max_pct": 55.31486146095718,
+      "cpu_iowait_mean_pct": 0.5292332112752355,
+      "cpu_steal_mean_pct": 0.0,
+      "available_memory_min_kib": 12685380,
+      "host_cpu_pressure_avg10_max": 19.81,
+      "host_io_pressure_avg10_max": 1.52,
+      "wait_samples": {
+        "lock_wait": 0,
+        "io_wait": 1,
+        "lwlock_wait": 0,
+        "ungranted_locks": 0
+      },
+      "wait_max": {
+        "lock_wait": 0,
+        "io_wait": 1,
+        "lwlock_wait": 0,
+        "ungranted_locks": 0
+      },
+      "containers": {
+        "beat": {
+          "memory_peak_bytes": 172486656,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 153.096691
+        },
+        "checks": {
+          "memory_peak_bytes": 509427712,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 433.29702
+        },
+        "db": {
+          "memory_peak_bytes": 1337929728,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 192.430868
+        },
+        "minio": {
+          "memory_peak_bytes": 365002752,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 50.433438
+        },
+        "redis": {
+          "memory_peak_bytes": 13910016,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 6.800646
+        },
+        "scanner": {
+          "memory_peak_bytes": 1025388544,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 4.907498
+        },
+        "web": {
+          "memory_peak_bytes": 128315392,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 53.228256
+        },
+        "worker": {
+          "memory_peak_bytes": 227057664,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 166.501506
+        }
+      }
+    },
+    "current_resources": {
+      "samples": 180,
+      "postgres_missing": 0,
+      "cpu_busy_mean_pct": 51.333715064837065,
+      "cpu_busy_max_pct": 67.72216547497446,
+      "cpu_iowait_mean_pct": 0.11568367089893379,
+      "cpu_steal_mean_pct": 0.0,
+      "available_memory_min_kib": 12768512,
+      "host_cpu_pressure_avg10_max": 5.58,
+      "host_io_pressure_avg10_max": 0.15,
+      "wait_samples": {
+        "lock_wait": 2,
+        "io_wait": 1,
+        "lwlock_wait": 0,
+        "ungranted_locks": 2
+      },
+      "wait_max": {
+        "lock_wait": 1,
+        "io_wait": 1,
+        "lwlock_wait": 0,
+        "ungranted_locks": 1
+      },
+      "containers": {
+        "beat": {
+          "memory_peak_bytes": 174481408,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 280.606467
+        },
+        "checks": {
+          "memory_peak_bytes": 440139776,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 595.002119
+        },
+        "db": {
+          "memory_peak_bytes": 1296715776,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 340.231183
+        },
+        "minio": {
+          "memory_peak_bytes": 367542272,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 99.703686
+        },
+        "redis": {
+          "memory_peak_bytes": 16003072,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 13.363342
+        },
+        "scanner": {
+          "memory_peak_bytes": 1034158080,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 10.401315
+        },
+        "web": {
+          "memory_peak_bytes": 132751360,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 105.982701
+        },
+        "worker": {
+          "memory_peak_bytes": 217661440,
+          "throttled_usec_delta": 0,
+          "oom_kill_delta": 0,
+          "cpu_usage_seconds_delta": 302.016267
+        }
+      }
+    },
+    "common_completed_cases": 1100,
+    "common_old_phases": {
+      "setup": 7.197246,
+      "call": 355.43012,
+      "teardown": 97.271892
+    },
+    "common_current_phases": {
+      "setup": 12.141396,
+      "call": 480.88894,
+      "teardown": 171.723691
+    },
+    "added_completed_cases": 52,
+    "added_phases": {
+      "setup": 0.112259,
+      "call": 119.59493,
+      "teardown": 8.335534
+    },
+    "current_all_phases": {
+      "setup": 12.260017,
+      "call": 600.48387,
+      "teardown": 180.059225
+    },
+    "common_sql": {
+      "old_count": 575193,
+      "current_count": 575696,
+      "old_seconds": 184.513272342,
+      "current_seconds": 276.461907461
+    },
+    "added_sql": {
+      "count": 142793,
+      "seconds": 46.930652782
+    },
+    "last_counters": {
+      "event": "counters",
+      "hook_observed_ns": 539945243,
+      "mono_ns": 1273770144696,
+      "sql_count": 838570,
+      "sql_counter_observed_ns": 1494474272,
+      "sql_ns": 367989352784
+    },
+    "last_phase_counters": {
+      "event": "phase",
+      "hook_observed_ns": 538017609,
+      "mono_ns": 1179487808588,
+      "ordinal": 1153,
+      "outcome": "passed",
+      "phase": "setup",
+      "seconds": 0.006362,
+      "sql_count": 0,
+      "sql_counter_observed_ns": 1284973653,
+      "sql_ns": 0
+    }
+  },
+  "instrumentation_limits": [
+    "Five-second resource samples can miss short waits.",
+    "Host sampler CPU1.393s; sample wall32.627s overlaps tests and must not be subtracted from runtime.",
+    "Pytest hook observed0.540s; SQL counter wrapper observed1.494s. Monitoring query contention/cache effects are not fully measured.",
+    "Source symbols and execution occurrence match cases; parametrization names are omitted.",
+    "No final pytest session outcome or complete-suite SQL total exists after timeout.",
+    "Old topology full suite and current partial suite resource means are not matched windows. Do not infer causality from these means.",
+    "This single diagnostic did not rerun original Foundation or immutable baseline."
+  ],
+  "source_invariants": {
+    "exact_source_unchanged": true,
+    "immutable_checks_passed": true,
+    "migrations_noop_drift_initialization_passed": true,
+    "original_backend_deadline_seconds": 900,
+    "foundation_observation_deadline_seconds": 1800,
+    "original_test_selection_retained": true,
+    "real_services_retained": true,
+    "owned_cleanup_complete": true,
+    "candidate_files_unchanged": true
+  },
+  "remaining_evidence_needed": [
+    "MinIO: immediate alias/ready subcommand exits and bounded readiness context from a diagnostic adapter without exposing secret arguments or modifying immutable source.",
+    "Performance: attribute common-case SQL/teardown cost to schema/fixture execution versus host throughput using bounded site/operation-class aggregates or a controlled paired measurement; current aggregate SQL counts alone do not distinguish them.",
+    "Foundation: complete original gate remains mandatory; prior wall-clock budget exhausted during C03 consolidation."
+  ],
+  "decision": "STOP after one diagnostic. No speculative patch or same-SHA acceptance retry recommended while material uncertainty remains. Phase Manager decision required for further narrowly scoped measurement/correction. Task7 remains IN_PROGRESS and unaccepted; no Task8."
+}
