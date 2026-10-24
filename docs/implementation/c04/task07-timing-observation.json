@@ -1,0 +1,1248 @@
+{
+  "task": 7,
+  "status": "IN_PROGRESS_NOT_ACCEPTED",
+  "diagnostic_status": "PARTIAL_MIGRATION_REPLAY_UNOBSERVED",
+  "execution_branch": "marketplace/c04-cloud",
+  "execution_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+  "execution_tree": "f4a49666111ce27d6c12cc6aff89f3430c7ea243",
+  "diagnostic_branch": "diagnostics/c04-task07-timing",
+  "diagnostic_sha": "33109e4fbec882a032bb59276c59e89790b1e542",
+  "diagnostic_tree": "d3965debbc7b2aefa5f2342ca22312b797bd8574",
+  "run": 40129394641,
+  "attempt": 1,
+  "workflow_conclusion": "failure",
+  "acceptance": false,
+  "jobs": [
+    {
+      "id": 120977665959,
+      "name": "migration-state-attribution",
+      "conclusion": "failure",
+      "classification": "service_start_command_exit1_unclassified",
+      "source_at_failure": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+      "failed_stage": "services",
+      "exit_code": 1,
+      "elapsed_seconds": 0.740386417,
+      "pytest_executed": false,
+      "migration_replay_profile_available": false,
+      "source_unchanged": true,
+      "owned_cleanup_complete": true,
+      "owned_cleanup_exit_code": 0
+    },
+    {
+      "id": 120977665627,
+      "name": "candidate-lifecycle-attribution",
+      "conclusion": "success",
+      "complete_pairs": true,
+      "passes": 4,
+      "cases_per_pass": 1,
+      "total_completed_test_cases": 4,
+      "passed": 4,
+      "failed": 0,
+      "error": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "xpassed": 0,
+      "deselected": 0,
+      "identical_sanitized_collection_sequence": true,
+      "source_unchanged_all_passes": true,
+      "owned_cleanup_complete_all_passes": true
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12574637369,
+      "name": "task07-timing-migration",
+      "sha256": "829c529012ee6c3a5b37e8967c0c1d9dfe59e43e66f33dab7ed938dff55103ec",
+      "bytes_independently_verified": true
+    },
+    {
+      "id": 12574987085,
+      "name": "task07-timing-budget",
+      "sha256": "c75dbea184babe3596d4691eba28e0535665a682eb36cb3980c13821712c8c5a",
+      "bytes_independently_verified": true
+    }
+  ],
+  "migration_failure": {
+    "successful_prefix": [
+      "immutable_c01",
+      "immutable_c02",
+      "immutable_c03",
+      "env",
+      "config",
+      "build"
+    ],
+    "failed_operation_family": "docker_compose_up_wait_db_redis_minio_scanner",
+    "classification": "unclassified startup command failure; not a proven individual service, daemon, port, DNS, permission or source defect",
+    "evidence_limit": "Child stdout/stderr was discarded, no pre-cleanup service-state/failure classifier was retained. Underlying error cannot be reconstructed from this artifact. Never infer it from0.740seconds.",
+    "remaining_passes": "not started after first failed pass; no automatic retry",
+    "analysis": {
+      "acceptance": false,
+      "complete_pairs": false,
+      "runs": {
+        "sixfull": {
+          "source_sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+          "observer_mode": "full",
+          "source_unchanged": true,
+          "cleanup_complete": true,
+          "pytest_exit_code": null,
+          "evidence": {
+            "reason": "missing_or_incomplete_numeric_evidence",
+            "valid": false
+          },
+          "schema": null,
+          "subset_wall_seconds": null,
+          "timing_data_available": false,
+          "host_calibration_wall_seconds": {
+            "min": 0.135538405,
+            "max": 0.137021721,
+            "mean": 0.13618538483333334
+          }
+        }
+      },
+      "limits": [
+        "Inclusive nested timers overlap and must not be summed.",
+        "Self time subtracts only timed descendants and can retain descendant recorder work.",
+        "CPU is primary thread time; excludes server/worker/child CPU.",
+        "Full-minus-minimal includes order/time/cache effects.",
+        "Missing disabled observations are null."
+      ],
+      "comparisons": {}
+    }
+  },
+  "candidate_budget": {
+    "acceptance": false,
+    "complete_pairs": true,
+    "runs": {
+      "sixfull": {
+        "source_sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+        "observer_mode": "full",
+        "source_unchanged": true,
+        "cleanup_complete": true,
+        "pytest_exit_code": 0,
+        "evidence": {
+          "cases": 1,
+          "resource_coverage": {
+            "coverage_required_percent": 80,
+            "full_running_service_samples": 15,
+            "host_usable": 16,
+            "missing_host_samples": 0,
+            "missing_postgres_samples": 0,
+            "postgres_usable": 16,
+            "samples": 16,
+            "valid": true
+          },
+          "sequence_sha256": "4d5591989ee518530a87381ac426f4de7a9c26d41e900420d323637902917de9",
+          "valid": true
+        },
+        "schema": {
+          "content_types": 63,
+          "migrations": 84,
+          "tables": 67
+        },
+        "subset_wall_seconds": 77.147772986,
+        "profile_enabled": true,
+        "profile_fault": false,
+        "profile": {
+          "call": {
+            "corpus": {
+              "count": 100,
+              "wall_seconds": 54.715704148,
+              "thread_cpu_seconds": 43.463010033,
+              "self_wall_seconds": 0.292378516,
+              "self_thread_cpu_seconds": 0.235388235
+            },
+            "install": {
+              "count": 1,
+              "wall_seconds": 0.021554355,
+              "thread_cpu_seconds": 0.021552696,
+              "self_wall_seconds": 0.021554355,
+              "self_thread_cpu_seconds": 0.021552696
+            },
+            "projection_refresh": {
+              "count": 323,
+              "wall_seconds": 12.949041951,
+              "thread_cpu_seconds": 9.707899881,
+              "self_wall_seconds": 12.949041951,
+              "self_thread_cpu_seconds": 9.707899881
+            },
+            "publication_confirm": {
+              "count": 100,
+              "wall_seconds": 3.873009675,
+              "thread_cpu_seconds": 3.048670243,
+              "self_wall_seconds": 3.873009675,
+              "self_thread_cpu_seconds": 3.048670243
+            },
+            "publication_prepare": {
+              "count": 100,
+              "wall_seconds": 4.053631456,
+              "thread_cpu_seconds": 3.275189737,
+              "self_wall_seconds": 4.053631456,
+              "self_thread_cpu_seconds": 3.275189737
+            },
+            "reconcile": {
+              "count": 4,
+              "wall_seconds": 7.711648427,
+              "thread_cpu_seconds": 5.441239127,
+              "self_wall_seconds": 0.1283913,
+              "self_thread_cpu_seconds": 0.020389965
+            },
+            "search": {
+              "count": 2,
+              "wall_seconds": 4.555580216,
+              "thread_cpu_seconds": 3.679205908,
+              "self_wall_seconds": 4.555580216,
+              "self_thread_cpu_seconds": 3.679205908
+            },
+            "unpublish": {
+              "count": 100,
+              "wall_seconds": 1.372489167,
+              "thread_cpu_seconds": 1.096098488,
+              "self_wall_seconds": 1.372489167,
+              "self_thread_cpu_seconds": 1.096098488
+            },
+            "verification_fixture": {
+              "count": 100,
+              "wall_seconds": 41.130899677,
+              "thread_cpu_seconds": 32.616711099,
+              "self_wall_seconds": 41.130899677,
+              "self_thread_cpu_seconds": 32.616711099
+            }
+          },
+          "setup": {
+            "migration_apply": {
+              "count": 84,
+              "wall_seconds": 4.499389569,
+              "thread_cpu_seconds": 4.304915692,
+              "self_wall_seconds": 0.351238689,
+              "self_thread_cpu_seconds": 0.174910687
+            },
+            "migration_execute": {
+              "count": 1,
+              "wall_seconds": 4.698789589,
+              "thread_cpu_seconds": 4.365852024,
+              "self_wall_seconds": 0.19940002,
+              "self_thread_cpu_seconds": 0.060936332
+            },
+            "model_reload": {
+              "count": 320,
+              "wall_seconds": 3.924169406,
+              "thread_cpu_seconds": 3.907871576,
+              "self_wall_seconds": 0.159999103,
+              "self_thread_cpu_seconds": 0.160131281
+            },
+            "model_render": {
+              "count": 686,
+              "wall_seconds": 3.875226593,
+              "thread_cpu_seconds": 3.858116373,
+              "self_wall_seconds": 3.875226593,
+              "self_thread_cpu_seconds": 3.858116373
+            },
+            "state_clone": {
+              "count": 358,
+              "wall_seconds": 0.146490377,
+              "thread_cpu_seconds": 0.144955369,
+              "self_wall_seconds": 0.145667046,
+              "self_thread_cpu_seconds": 0.144495117
+            }
+          }
+        },
+        "registered_labels": [
+          "corpus",
+          "install",
+          "migration_apply",
+          "migration_execute",
+          "migration_state",
+          "migration_unapply",
+          "model_reload",
+          "model_render",
+          "models_reload",
+          "projection_refresh",
+          "publication_confirm",
+          "publication_prepare",
+          "reconcile",
+          "search",
+          "state_clone",
+          "unpublish",
+          "verification_fixture"
+        ],
+        "phases": {
+          "setup": {
+            "wall_seconds": 4.995586,
+            "cursor_calls": 794,
+            "cursor_wall_seconds": 0.465086455
+          },
+          "call": {
+            "wall_seconds": 68.487691,
+            "cursor_calls": 134056,
+            "cursor_wall_seconds": 25.17254497
+          },
+          "teardown": {
+            "wall_seconds": 0.235359,
+            "cursor_calls": 57,
+            "cursor_wall_seconds": 0.140079881
+          }
+        },
+        "finish": {
+          "completed": 1,
+          "counts": {
+            "deselected": 0,
+            "error": 0,
+            "failed": 0,
+            "passed": 1,
+            "skipped": 0,
+            "xfailed": 0,
+            "xpassed": 0
+          },
+          "event": "finish",
+          "exit_code": 0,
+          "hook_observed_ns": 154128109,
+          "mono_ns": 323456864241,
+          "observer_fault": false,
+          "sql_count": 134907,
+          "sql_counter_observed_ns": 940083576,
+          "sql_ns": 25777711306,
+          "started": 1,
+          "truncated": false
+        },
+        "profile_calibration": {
+          "calls": 10000,
+          "cpu_ns": 56561235,
+          "fault": false,
+          "wall_ns": 56610407
+        },
+        "profile_bookkeeping_wall_seconds": 0.020608388,
+        "profile_bookkeeping_cpu_seconds": 0.023559914,
+        "sampler": {
+          "clock_probe_attempts": 1,
+          "clock_sync": {
+            "attempts": 1,
+            "common_origin_verified": true,
+            "container_ns": 252199096978,
+            "host_after_ns": 252207580170,
+            "host_before_ns": 252086319938
+          },
+          "errors": 0,
+          "host_process_cpu_ns": 94057871,
+          "interval_seconds": 5,
+          "samples": 16,
+          "thread_stopped": true,
+          "wall_ns": 2203935835
+        },
+        "resource": {
+          "samples": 16,
+          "postgres_missing": 0,
+          "positive_wait_samples": {
+            "lock_wait": 0,
+            "io_wait": 0,
+            "lwlock_wait": 0,
+            "ungranted_locks": 0
+          },
+          "memory_available_min_kib": 13031384,
+          "containers": {
+            "beat": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 19.348382
+            },
+            "checks": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 55.463335
+            },
+            "db": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 16.985104
+            },
+            "minio": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 6.286249
+            },
+            "redis": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 0.854531
+            },
+            "scanner": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 0.669658
+            },
+            "web": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 6.662707
+            },
+            "worker": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 20.326756
+            }
+          }
+        },
+        "host_calibration_wall_seconds": {
+          "min": 0.184194251,
+          "max": 0.203908521,
+          "mean": 0.19473172183333334
+        }
+      },
+      "sevenfull": {
+        "source_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+        "observer_mode": "full",
+        "source_unchanged": true,
+        "cleanup_complete": true,
+        "pytest_exit_code": 0,
+        "evidence": {
+          "cases": 1,
+          "resource_coverage": {
+            "coverage_required_percent": 80,
+            "full_running_service_samples": 15,
+            "host_usable": 16,
+            "missing_host_samples": 0,
+            "missing_postgres_samples": 0,
+            "postgres_usable": 16,
+            "samples": 16,
+            "valid": true
+          },
+          "sequence_sha256": "4d5591989ee518530a87381ac426f4de7a9c26d41e900420d323637902917de9",
+          "valid": true
+        },
+        "schema": {
+          "content_types": 71,
+          "migrations": 87,
+          "tables": 75
+        },
+        "subset_wall_seconds": 79.356354161,
+        "profile_enabled": true,
+        "profile_fault": false,
+        "profile": {
+          "call": {
+            "corpus": {
+              "count": 100,
+              "wall_seconds": 55.393118479,
+              "thread_cpu_seconds": 44.030522191,
+              "self_wall_seconds": 0.294957857,
+              "self_thread_cpu_seconds": 0.238446903
+            },
+            "install": {
+              "count": 1,
+              "wall_seconds": 0.024881368,
+              "thread_cpu_seconds": 0.02487903,
+              "self_wall_seconds": 0.024881368,
+              "self_thread_cpu_seconds": 0.02487903
+            },
+            "projection_refresh": {
+              "count": 326,
+              "wall_seconds": 12.49974571,
+              "thread_cpu_seconds": 9.645711198,
+              "self_wall_seconds": 12.49974571,
+              "self_thread_cpu_seconds": 9.645711198
+            },
+            "publication_confirm": {
+              "count": 100,
+              "wall_seconds": 3.915076951,
+              "thread_cpu_seconds": 3.090465597,
+              "self_wall_seconds": 3.915076951,
+              "self_thread_cpu_seconds": 3.090465597
+            },
+            "publication_prepare": {
+              "count": 100,
+              "wall_seconds": 4.104641579,
+              "thread_cpu_seconds": 3.322791888,
+              "self_wall_seconds": 4.104641579,
+              "self_thread_cpu_seconds": 3.322791888
+            },
+            "reconcile": {
+              "count": 4,
+              "wall_seconds": 7.218928743,
+              "thread_cpu_seconds": 5.340481027,
+              "self_wall_seconds": 0.099221737,
+              "self_thread_cpu_seconds": 0.017456458
+            },
+            "search": {
+              "count": 2,
+              "wall_seconds": 4.623878763,
+              "thread_cpu_seconds": 3.742254981,
+              "self_wall_seconds": 4.623878763,
+              "self_thread_cpu_seconds": 3.742254981
+            },
+            "unpublish": {
+              "count": 100,
+              "wall_seconds": 1.398212122,
+              "thread_cpu_seconds": 1.116372809,
+              "self_wall_seconds": 1.398212122,
+              "self_thread_cpu_seconds": 1.116372809
+            },
+            "verification_fixture": {
+              "count": 100,
+              "wall_seconds": 41.698403388,
+              "thread_cpu_seconds": 33.056131174,
+              "self_wall_seconds": 41.698403388,
+              "self_thread_cpu_seconds": 33.056131174
+            }
+          },
+          "setup": {
+            "migration_apply": {
+              "count": 87,
+              "wall_seconds": 6.51596589,
+              "thread_cpu_seconds": 6.263809885,
+              "self_wall_seconds": 0.437235393,
+              "self_thread_cpu_seconds": 0.221244095
+            },
+            "migration_execute": {
+              "count": 1,
+              "wall_seconds": 6.700513598,
+              "thread_cpu_seconds": 6.326368789,
+              "self_wall_seconds": 0.184547708,
+              "self_thread_cpu_seconds": 0.062558904
+            },
+            "model_reload": {
+              "count": 400,
+              "wall_seconds": 5.811191936,
+              "thread_cpu_seconds": 5.776014693,
+              "self_wall_seconds": 0.2366398,
+              "self_thread_cpu_seconds": 0.236276957
+            },
+            "model_render": {
+              "count": 849,
+              "wall_seconds": 5.687620338,
+              "thread_cpu_seconds": 5.65234767,
+              "self_wall_seconds": 5.687620338,
+              "self_thread_cpu_seconds": 5.65234767
+            },
+            "state_clone": {
+              "count": 441,
+              "wall_seconds": 0.193209048,
+              "thread_cpu_seconds": 0.192228334,
+              "self_wall_seconds": 0.192185351,
+              "self_thread_cpu_seconds": 0.191643804
+            }
+          }
+        },
+        "registered_labels": [
+          "corpus",
+          "install",
+          "migration_apply",
+          "migration_execute",
+          "migration_state",
+          "migration_unapply",
+          "model_reload",
+          "model_render",
+          "models_reload",
+          "projection_refresh",
+          "publication_confirm",
+          "publication_prepare",
+          "reconcile",
+          "search",
+          "state_clone",
+          "unpublish",
+          "verification_fixture"
+        ],
+        "phases": {
+          "setup": {
+            "wall_seconds": 7.019784,
+            "cursor_calls": 899,
+            "cursor_wall_seconds": 0.53228692
+          },
+          "call": {
+            "wall_seconds": 68.799934,
+            "cursor_calls": 134200,
+            "cursor_wall_seconds": 25.355790185
+          },
+          "teardown": {
+            "wall_seconds": 0.242813,
+            "cursor_calls": 57,
+            "cursor_wall_seconds": 0.136662728
+          }
+        },
+        "finish": {
+          "completed": 1,
+          "counts": {
+            "deselected": 0,
+            "error": 0,
+            "failed": 0,
+            "passed": 1,
+            "skipped": 0,
+            "xfailed": 0,
+            "xpassed": 0
+          },
+          "event": "finish",
+          "exit_code": 0,
+          "hook_observed_ns": 164051337,
+          "mono_ns": 457486461617,
+          "observer_fault": false,
+          "sql_count": 135156,
+          "sql_counter_observed_ns": 937116836,
+          "sql_ns": 26024739833,
+          "started": 1,
+          "truncated": false
+        },
+        "profile_calibration": {
+          "calls": 10000,
+          "cpu_ns": 57211393,
+          "fault": false,
+          "wall_ns": 57229787
+        },
+        "profile_bookkeeping_wall_seconds": 0.022758868,
+        "profile_bookkeeping_cpu_seconds": 0.026146251,
+        "sampler": {
+          "clock_probe_attempts": 1,
+          "clock_sync": {
+            "attempts": 1,
+            "common_origin_verified": true,
+            "container_ns": 383805852178,
+            "host_after_ns": 383813456802,
+            "host_before_ns": 383692149832
+          },
+          "errors": 0,
+          "host_process_cpu_ns": 95987616,
+          "interval_seconds": 5,
+          "samples": 16,
+          "thread_stopped": true,
+          "wall_ns": 2488881089
+        },
+        "resource": {
+          "samples": 16,
+          "postgres_missing": 0,
+          "positive_wait_samples": {
+            "lock_wait": 0,
+            "io_wait": 0,
+            "lwlock_wait": 0,
+            "ungranted_locks": 0
+          },
+          "memory_available_min_kib": 12998960,
+          "containers": {
+            "beat": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 19.628228
+            },
+            "checks": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 56.426014
+            },
+            "db": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 16.679279
+            },
+            "minio": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 6.263348
+            },
+            "redis": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 0.824451
+            },
+            "scanner": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 0.641707
+            },
+            "web": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 7.028893
+            },
+            "worker": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 20.212379
+            }
+          }
+        },
+        "host_calibration_wall_seconds": {
+          "min": 0.183376224,
+          "max": 0.204800791,
+          "mean": 0.19380141016666666
+        }
+      },
+      "sevenminimal": {
+        "source_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+        "observer_mode": "minimal",
+        "source_unchanged": true,
+        "cleanup_complete": true,
+        "pytest_exit_code": 0,
+        "evidence": {
+          "cases": 1,
+          "resource_coverage": {
+            "coverage_required_percent": 80,
+            "full_running_service_samples": 15,
+            "host_usable": 16,
+            "missing_host_samples": 0,
+            "missing_postgres_samples": 0,
+            "postgres_usable": 16,
+            "samples": 16,
+            "valid": true
+          },
+          "sequence_sha256": "4d5591989ee518530a87381ac426f4de7a9c26d41e900420d323637902917de9",
+          "valid": true
+        },
+        "schema": {
+          "content_types": 71,
+          "migrations": 87,
+          "tables": 75
+        },
+        "subset_wall_seconds": 77.336984497,
+        "profile_enabled": false,
+        "profile_fault": false,
+        "profile": null,
+        "registered_labels": null,
+        "phases": {
+          "setup": {
+            "wall_seconds": 6.840261,
+            "cursor_calls": null,
+            "cursor_wall_seconds": null
+          },
+          "call": {
+            "wall_seconds": 66.843549,
+            "cursor_calls": null,
+            "cursor_wall_seconds": null
+          },
+          "teardown": {
+            "wall_seconds": 0.289785,
+            "cursor_calls": null,
+            "cursor_wall_seconds": null
+          }
+        },
+        "finish": {
+          "completed": 1,
+          "counts": {
+            "deselected": 0,
+            "error": 0,
+            "failed": 0,
+            "passed": 1,
+            "skipped": 0,
+            "xfailed": 0,
+            "xpassed": 0
+          },
+          "event": "finish",
+          "exit_code": 0,
+          "hook_observed_ns": 167380501,
+          "mono_ns": 585225102275,
+          "observer_fault": false,
+          "sql_count": null,
+          "sql_counter_observed_ns": null,
+          "sql_ns": null,
+          "started": 1,
+          "truncated": false
+        },
+        "profile_calibration": {
+          "calls": 10000,
+          "cpu_ns": 56276981,
+          "fault": false,
+          "wall_ns": 56284852
+        },
+        "profile_bookkeeping_wall_seconds": null,
+        "profile_bookkeeping_cpu_seconds": null,
+        "sampler": {
+          "clock_probe_attempts": 1,
+          "clock_sync": {
+            "attempts": 1,
+            "common_origin_verified": true,
+            "container_ns": 513693393770,
+            "host_after_ns": 513705193229,
+            "host_before_ns": 513487646761
+          },
+          "errors": 0,
+          "host_process_cpu_ns": 99442374,
+          "interval_seconds": 5,
+          "samples": 16,
+          "thread_stopped": true,
+          "wall_ns": 2602652142
+        },
+        "resource": {
+          "samples": 16,
+          "postgres_missing": 0,
+          "positive_wait_samples": {
+            "lock_wait": 0,
+            "io_wait": 0,
+            "lwlock_wait": 0,
+            "ungranted_locks": 0
+          },
+          "memory_available_min_kib": 13031788,
+          "containers": {
+            "beat": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 19.826981
+            },
+            "checks": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 55.940365
+            },
+            "db": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 16.991056
+            },
+            "minio": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 6.356625
+            },
+            "redis": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 0.843693
+            },
+            "scanner": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 0.673942
+            },
+            "web": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 7.109814
+            },
+            "worker": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 20.282765
+            }
+          }
+        },
+        "host_calibration_wall_seconds": {
+          "min": 0.182991655,
+          "max": 0.204603147,
+          "mean": 0.18928420583333333
+        }
+      },
+      "sixminimal": {
+        "source_sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+        "observer_mode": "minimal",
+        "source_unchanged": true,
+        "cleanup_complete": true,
+        "pytest_exit_code": 0,
+        "evidence": {
+          "cases": 1,
+          "resource_coverage": {
+            "coverage_required_percent": 80,
+            "full_running_service_samples": 15,
+            "host_usable": 16,
+            "missing_host_samples": 0,
+            "missing_postgres_samples": 0,
+            "postgres_usable": 16,
+            "samples": 16,
+            "valid": true
+          },
+          "sequence_sha256": "4d5591989ee518530a87381ac426f4de7a9c26d41e900420d323637902917de9",
+          "valid": true
+        },
+        "schema": {
+          "content_types": 63,
+          "migrations": 84,
+          "tables": 67
+        },
+        "subset_wall_seconds": 76.497447264,
+        "profile_enabled": false,
+        "profile_fault": false,
+        "profile": null,
+        "registered_labels": null,
+        "phases": {
+          "setup": {
+            "wall_seconds": 5.100512,
+            "cursor_calls": null,
+            "cursor_wall_seconds": null
+          },
+          "call": {
+            "wall_seconds": 67.47536,
+            "cursor_calls": null,
+            "cursor_wall_seconds": null
+          },
+          "teardown": {
+            "wall_seconds": 0.252839,
+            "cursor_calls": null,
+            "cursor_wall_seconds": null
+          }
+        },
+        "finish": {
+          "completed": 1,
+          "counts": {
+            "deselected": 0,
+            "error": 0,
+            "failed": 0,
+            "passed": 1,
+            "skipped": 0,
+            "xfailed": 0,
+            "xpassed": 0
+          },
+          "event": "finish",
+          "exit_code": 0,
+          "hook_observed_ns": 158201630,
+          "mono_ns": 709498445419,
+          "observer_fault": false,
+          "sql_count": null,
+          "sql_counter_observed_ns": null,
+          "sql_ns": null,
+          "started": 1,
+          "truncated": false
+        },
+        "profile_calibration": {
+          "calls": 10000,
+          "cpu_ns": 56238764,
+          "fault": false,
+          "wall_ns": 56239280
+        },
+        "profile_bookkeeping_wall_seconds": null,
+        "profile_bookkeeping_cpu_seconds": null,
+        "sampler": {
+          "clock_probe_attempts": 1,
+          "clock_sync": {
+            "attempts": 1,
+            "common_origin_verified": true,
+            "container_ns": 639098706207,
+            "host_after_ns": 639107537675,
+            "host_before_ns": 638986880576
+          },
+          "errors": 0,
+          "host_process_cpu_ns": 94797289,
+          "interval_seconds": 5,
+          "samples": 16,
+          "thread_stopped": true,
+          "wall_ns": 2394851329
+        },
+        "resource": {
+          "samples": 16,
+          "postgres_missing": 0,
+          "positive_wait_samples": {
+            "lock_wait": 0,
+            "io_wait": 0,
+            "lwlock_wait": 0,
+            "ungranted_locks": 0
+          },
+          "memory_available_min_kib": 12993132,
+          "containers": {
+            "beat": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 20.327025
+            },
+            "checks": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 55.367505
+            },
+            "db": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 16.866021
+            },
+            "minio": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 6.440359
+            },
+            "redis": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 0.842931
+            },
+            "scanner": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 0.663072
+            },
+            "web": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 6.804024
+            },
+            "worker": {
+              "throttled_usec_delta": 0,
+              "oom_kill_delta": 0,
+              "cpu_seconds_delta": 20.346328
+            }
+          }
+        },
+        "host_calibration_wall_seconds": {
+          "min": 0.181720022,
+          "max": 0.192711537,
+          "mean": 0.185580938
+        }
+      }
+    },
+    "limits": [
+      "Inclusive nested timers overlap and must not be summed.",
+      "Self time subtracts only timed descendants and can retain descendant recorder work.",
+      "CPU is primary thread time; excludes server/worker/child CPU.",
+      "Full-minus-minimal includes order/time/cache effects.",
+      "Missing disabled observations are null."
+    ],
+    "comparisons": {
+      "full": {
+        "task7_over_task6_wall_ratio": 1.028627931688978,
+        "phase_delta_seconds": {
+          "setup": 2.0241979999999993,
+          "call": 0.31224299999999516,
+          "teardown": 0.007453999999999988
+        }
+      },
+      "minimal": {
+        "task7_over_task6_wall_ratio": 1.0109747091311776,
+        "phase_delta_seconds": {
+          "setup": 1.7397489999999998,
+          "call": -0.631810999999999,
+          "teardown": 0.036946000000000034
+        }
+      }
+    }
+  },
+  "initial_schema_setup_attribution": {
+    "scope": "Fresh test-database bootstrap inside successful candidate-budget job. NOT the historical migration replay tests from the failed job.",
+    "setup_wall_seconds": {
+      "six": 4.995586,
+      "seven": 7.019784
+    },
+    "migration_execute": {
+      "sixfull": {
+        "count": 1,
+        "wall_seconds": 4.698789589,
+        "thread_cpu_seconds": 4.365852024,
+        "self_wall_seconds": 0.19940002,
+        "self_thread_cpu_seconds": 0.060936332
+      },
+      "sevenfull": {
+        "count": 1,
+        "wall_seconds": 6.700513598,
+        "thread_cpu_seconds": 6.326368789,
+        "self_wall_seconds": 0.184547708,
+        "self_thread_cpu_seconds": 0.062558904
+      }
+    },
+    "model_render": {
+      "sixfull": {
+        "count": 686,
+        "wall_seconds": 3.875226593,
+        "thread_cpu_seconds": 3.858116373,
+        "self_wall_seconds": 3.875226593,
+        "self_thread_cpu_seconds": 3.858116373
+      },
+      "sevenfull": {
+        "count": 849,
+        "wall_seconds": 5.687620338,
+        "thread_cpu_seconds": 5.65234767,
+        "self_wall_seconds": 5.687620338,
+        "self_thread_cpu_seconds": 5.65234767
+      }
+    },
+    "state_clone": {
+      "sixfull": {
+        "count": 358,
+        "wall_seconds": 0.146490377,
+        "thread_cpu_seconds": 0.144955369,
+        "self_wall_seconds": 0.145667046,
+        "self_thread_cpu_seconds": 0.144495117
+      },
+      "sevenfull": {
+        "count": 441,
+        "wall_seconds": 0.193209048,
+        "thread_cpu_seconds": 0.192228334,
+        "self_wall_seconds": 0.192185351,
+        "self_thread_cpu_seconds": 0.191643804
+      }
+    },
+    "counts": {
+      "migration_apply": [
+        84,
+        87
+      ],
+      "state_clone": [
+        358,
+        441
+      ],
+      "model_reload": [
+        320,
+        400
+      ],
+      "model_render": [
+        686,
+        849
+      ]
+    },
+    "interpretation": "Observed fresh-setup growth is concentrated in CPU-heavy rendering within migration execution. Clone counts increase but their measured duration difference is small. Nested inclusive timers must not be summed. No inference of historical replay or full-suite timeout cause."
+  },
+  "candidate_lifecycle_attribution": {
+    "task7_full_call_wall_seconds": 68.799934,
+    "task7_full_timers": {
+      "corpus": {
+        "count": 100,
+        "wall_seconds": 55.393118479,
+        "thread_cpu_seconds": 44.030522191,
+        "self_wall_seconds": 0.294957857,
+        "self_thread_cpu_seconds": 0.238446903
+      },
+      "install": {
+        "count": 1,
+        "wall_seconds": 0.024881368,
+        "thread_cpu_seconds": 0.02487903,
+        "self_wall_seconds": 0.024881368,
+        "self_thread_cpu_seconds": 0.02487903
+      },
+      "projection_refresh": {
+        "count": 326,
+        "wall_seconds": 12.49974571,
+        "thread_cpu_seconds": 9.645711198,
+        "self_wall_seconds": 12.49974571,
+        "self_thread_cpu_seconds": 9.645711198
+      },
+      "publication_confirm": {
+        "count": 100,
+        "wall_seconds": 3.915076951,
+        "thread_cpu_seconds": 3.090465597,
+        "self_wall_seconds": 3.915076951,
+        "self_thread_cpu_seconds": 3.090465597
+      },
+      "publication_prepare": {
+        "count": 100,
+        "wall_seconds": 4.104641579,
+        "thread_cpu_seconds": 3.322791888,
+        "self_wall_seconds": 4.104641579,
+        "self_thread_cpu_seconds": 3.322791888
+      },
+      "reconcile": {
+        "count": 4,
+        "wall_seconds": 7.218928743,
+        "thread_cpu_seconds": 5.340481027,
+        "self_wall_seconds": 0.099221737,
+        "self_thread_cpu_seconds": 0.017456458
+      },
+      "search": {
+        "count": 2,
+        "wall_seconds": 4.623878763,
+        "thread_cpu_seconds": 3.742254981,
+        "self_wall_seconds": 4.623878763,
+        "self_thread_cpu_seconds": 3.742254981
+      },
+      "unpublish": {
+        "count": 100,
+        "wall_seconds": 1.398212122,
+        "thread_cpu_seconds": 1.116372809,
+        "self_wall_seconds": 1.398212122,
+        "self_thread_cpu_seconds": 1.116372809
+      },
+      "verification_fixture": {
+        "count": 100,
+        "wall_seconds": 41.698403388,
+        "thread_cpu_seconds": 33.056131174,
+        "self_wall_seconds": 41.698403388,
+        "self_thread_cpu_seconds": 33.056131174
+      }
+    },
+    "corpus_share_of_call": 0.805133308398232,
+    "verification_fixture_is_nested_in_corpus": true,
+    "observed_refresh_invocations": {
+      "sixfull": 323,
+      "sevenfull": 326
+    },
+    "interpretation": "Corpus creation dominates this candidate-budget case. Observed call durations were similar in these four runs; one run per source/mode does not establish stability or repeatability. Different observed primary-process refresh invocation counts mean measured work is not exactly identical. No demonstrated search-product defect."
+  },
+  "observer_overhead": {
+    "profile_bookkeeping_segments_seconds": {
+      "sixfull": {
+        "wall": 0.020608388,
+        "thread_cpu": 0.023559914
+      },
+      "sevenfull": {
+        "wall": 0.022758868,
+        "thread_cpu": 0.026146251
+      },
+      "sevenminimal": {
+        "wall": null,
+        "thread_cpu": null
+      },
+      "sixminimal": {
+        "wall": null,
+        "thread_cpu": null
+      }
+    },
+    "noop_10000_call_calibrations": {
+      "sixfull": {
+        "calls": 10000,
+        "cpu_ns": 56561235,
+        "fault": false,
+        "wall_ns": 56610407
+      },
+      "sevenfull": {
+        "calls": 10000,
+        "cpu_ns": 57211393,
+        "fault": false,
+        "wall_ns": 57229787
+      },
+      "sevenminimal": {
+        "calls": 10000,
+        "cpu_ns": 56276981,
+        "fault": false,
+        "wall_ns": 56284852
+      },
+      "sixminimal": {
+        "calls": 10000,
+        "cpu_ns": 56238764,
+        "fault": false,
+        "wall_ns": 56239280
+      }
+    },
+    "full_minus_minimal_wall_seconds": {
+      "six": 0.6503257220000052,
+      "seven": 2.0193696639999956
+    },
+    "limits": [
+      "Bookkeeping segments exclude final counter-update work; calibration measures separate noop wrapper cost.",
+      "Full-minus-minimal includes temporal/order/cache differences and cannot be treated as clean causal overhead.",
+      "Sampler wall time overlaps application work and must not be subtracted.",
+      "Inclusive timers overlap. Self time excludes only timed descendants and can retain descendant recorder work.",
+      "Thread CPU excludes server/worker/child-process CPU; primary Django cursor counts exclude child/server-internal SQL.",
+      "Both modes import fixed function-only gateways after fixtures and before original test body; import/order effects remain possible.",
+      "Five-second sampling can miss short waits. Unavailable metrics are not zero."
+    ]
+  },
+  "remaining_uncertainty": [
+    "Historical migration replay timing, including reverse/unapply/state rendering, remains unavailable because its job failed before pytest.",
+    "Startup underlying failure cause is unknown; no correction or transient classification is established.",
+    "This diagnostic does not establish the exact cause of the earlier900second backend or1800second Foundation timeouts.",
+    "Fresh schema expansion adds measured rendering work but does not prove a safe optimization or defective migration.",
+    "No full mandatory acceptance result exists on a new source; prior full acceptance40084769140 attempt1 remains failed."
+  ],
+  "recommended_next_decision": "STOP. Separate Phase Manager approval is needed for a minimal C04-owned diagnostic adapter that retains bounded private startup output and emits only finite infrastructure/service-state categories before owned cleanup, then a bounded completion of missing migration attribution. Do not blindly retry acceptance, edit published migrations or optimize product/fixture code from this partial result. Corpus/verification-fixture construction is the measured candidate-case cost center; search-index changes are not justified by these data.",
+  "review": {
+    "implementation": {
+      "critical": 0,
+      "important_remaining": 0,
+      "minor_remaining": 0,
+      "verdict": "ready_for_one_two_job_diagnostic",
+      "controls_new": 15,
+      "controls_prior": 14,
+      "both_job_envs_tested": true,
+      "ruff": "passed"
+    },
+    "interpretation": "Independent read-only reviewer confirmed arithmetic, nested timer limits, fresh-bootstrap versus replay distinction, and STOP recommendation; no causal/full-gate/acceptance conclusion."
+  },
+  "preservation": {
+    "application_source_unchanged": true,
+    "execution_branch_unchanged": true,
+    "published_migrations_unchanged": true,
+    "dependency_locks_unchanged": true,
+    "original_tests_and_fixtures_unchanged": true,
+    "immutable_sources_unchanged": true,
+    "mandatory_workflows_unchanged": true,
+    "original_backend_deadline_seconds": 900,
+    "original_foundation_observation_limit_seconds": 1800,
+    "all_acquired_resources_cleaned": true,
+    "task6_checkpoint_preserved": true,
+    "task7_completion_checkpoint_published": false
+  },
+  "authorization": {
+    "one_workflow_budget_consumed": true,
+    "jobs_executed": 2,
+    "no_additional_execution_authorized": true,
+    "no_acceptance_retry_authorized": true,
+    "no_product_or_migration_or_fixture_change_authorized": true,
+    "task8_authorized": false
+  }
+}
