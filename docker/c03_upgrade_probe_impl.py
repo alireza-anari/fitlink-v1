@@ -203,6 +203,11 @@ def verify_preservation(previous, current):
         if model._meta.app_label in {"assets", "athletes", "professionals"}
         or (model._meta.app_label, model._meta.model_name)
         in {
+            # Current-C04 Task7 metadata only; never arbitrary governance models.
+            ("governance", "moderationcase"),
+            ("governance", "publiccontentreport"),
+            ("governance", "publiccontentoperation"),
+            ("governance", "moderationhistory"),
             ("marketplace", "publicprofessionalprojection"),
             ("marketplace", "publiclocation"),
             ("marketplace", "projectionrefreshstate"),
@@ -263,6 +268,13 @@ def verify_preservation(previous, current):
             if name.startswith(
                 ("assets_", "athletes_", "professionals_", "marketplace_")
             )
+            or name
+            in {
+                "governance_moderationcase",
+                "governance_publiccontentreport",
+                "governance_publiccontentoperation",
+                "governance_moderationhistory",
+            }
         ),
         "no automatic C03 business rows",
     )

@@ -2312,3 +2312,69 @@ Independent bounded follow-up now verifies residual R4 resolved in source with n
 Critical/Important issue remaining in that correction. Both captures reuse exact
 retention-aware binding; current assignment, case-bound step-up, source and
 eligibility remain intact. This is source verification, not hosted GREEN.
+
+### Task 7 bounded preservation compatibility authorization — 2026-10-24 UTC
+
+Phase Manager authorizes one narrow current-C04 catalog compatibility correction,
+real populated-C02 PostgreSQL RED/GREEN, negative exactness tests, independent
+review and a new-source mandatory acceptance. Execution HEAD/tree independently
+remain4f1e7921953f783b81524297fe87d259033c5d85 /
+1f51281fc57230f015cb0765db926faf7c53a058. No delegated writer is active;
+current unpublished state is retained and targeted prechange files archived.
+Immutable C03 source content verifies tree5c294cb330cf08b297cc01c8baa27adb1e6b93b7;
+local nested git lookup is not its identity authority because it resolves to the
+parent workspace. Content-manifest verification is the evidence, not that lookup.
+
+Previous acceptance40066591419 attempt1 finished12/15 successful. c03-final failed
+populated_preservation1 after migration/no-op/drift0; c04-final rejected upstream.
+Failure artifact12549746702 was independently byte-verified SHA256
+43149f0c96da1fe17cb2dafe1804683c42dce111d6920c8bfd741250012c1e81.
+Its generic require() assertion does not identify the exact predicate.
+
+Separately, Foundation120791036942 hit supervisor observation_deadline at1802.2s,
+with no natural child exit code. Two pytest sessions exited0; the third recorded
+36 starts/35 ends and no pytest_exit. Recorded2299 successful calls and zero call
+failures/skips do not establish a complete Foundation run. Last observed browser
+test is not proof of cause. Host/container cleanup completed. Artifact12549748144
+was downloaded and independently hashed:
+0e3893e477597b624c8247d8d409d1da4d26f31e5577995390c1723d508bdfed.
+Underlying slowdown remains unproven; preservation compatibility is not its fix.
+Original historical182.9s Foundation failure remains a separate unknown observation.
+
+Named local metadata RED fails exact C03 content types; finite classifier RED also
+failed before implementation. A bounded predicate classifier now emits only a
+static allowlisted code or unknown; no assertion text/locals/SQL/snapshot leaves
+private logs. Diagnostic branch diagnostics/c04-task07-preservation, RED source
+fc1ff23ba6a4342e5a9e7463f07c0eb8afd52a45 tree
+de0adc84904ccf6b13fa7990d53369d90b54348b, run40073820893 attempt1.
+The original verifier prefix, original C02 rehearsal, all original prefix assertions
+and900-second commands are retained. Only the preservation command is wrapped in
+one named unittest; it delegates to unchanged main() and preserves failure status.
+Diagnostic ends after populated preservation and original owned cleanup; it does
+not execute later complete-backend/browser/fault stages or replace acceptance.
+Actual PostgreSQL predicate proof must precede the compatibility correction.
+
+Hosted RED40073820893 attempt1 on fc1ff23 emitted exact_content_types from the
+actual populated C02-to-current-C04 PostgreSQL verifier. All preceding stages and
+owned cleanup exited0; preservation exited1 naturally at983.2s total observation.
+Artifact12552269651 was independently downloaded and byte-hashed:
+22aff1fee6afc553f5eb8df686341cc3d20fbb7bcff42d8e92888b5c664655d6.
+This establishes the previously suspected exact-content-type mismatch in real
+services, rather than inferring it from the original generic assertion line.
+
+Ruling: extend only the existing current-C04 compatibility inventory in the
+current harness with the four approved governance models, beside its existing
+explicit Marketplace additions — avoids filtering or rewriting snapshots and
+preserves every original equality/assertion. Immutable C03 content stays unchanged.
+Cost if wrong: any additional future governance model remains rejected until an
+explicit subsequent authorization; no broad governance metadata permission exists.
+The no-automatic-business-row guard now also covers the four new moderation tables.
+No identity/OID/original-row/catalog/permission/migration guard was removed.
+
+Local named catalog RED -> GREEN after that bounded correction. Added negatives
+for missing/extra/modified/duplicate content types, permissions and migration sets;
+original database/table identity, original account data and catalog contents;
+and automatic rows in each of four moderation tables. All28 metadata tests pass.
+Original Marketplace tests now construct the exact installed Task7 metadata before
+checking their inherited negative; they do not pass from an unrelated missing-model
+failure. Real-service focused GREEN and independent narrow review remain pending.
