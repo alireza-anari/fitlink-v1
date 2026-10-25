@@ -1,0 +1,4449 @@
+{
+  "acceptance": false,
+  "decision": {
+    "acceptance_retry_authorized": false,
+    "additional_runs_authorized": false,
+    "product_or_published_migration_change_justified": false,
+    "recommended_next": "Separate Phase Manager authorization for the minimal diagnostic control-context compatibility correction and one startup-only accepted-Task6 observation. Do not repeat completed Task7 migration attribution without new evidence. No acceptance retry or performance optimization is justified by this diagnostic alone.",
+    "status": "STOP_AFTER_REPORT"
+  },
+  "diagnostic": {
+    "authorized_runs": 1,
+    "branch": "diagnostics/c04-task07-startup-migration",
+    "executed_runs": 1,
+    "max_jobs": 2,
+    "no_automatic_retry": true,
+    "parent_checkpoint_sha": "33109e4fbec882a032bb59276c59e89790b1e542",
+    "parent_checkpoint_tree": "d3965debbc7b2aefa5f2342ca22312b797bd8574",
+    "prior_evidence_checkpoint_preserved": "dd4ca05a7d09a3681ae5e8f693453d91fe9e9170",
+    "sha": "007a9cae60eaaef5107264a7408788935e3e0d91",
+    "tree": "9c2e992e553bde5bca0bb3c77d9be7c812204fea",
+    "workflow": ".github/workflows/c04-task07-startup-migration.yml"
+  },
+  "execution": {
+    "branch": "marketplace/c04-cloud",
+    "sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+    "tree": "f4a49666111ce27d6c12cc6aff89f3430c7ea243",
+    "unchanged": true
+  },
+  "hosted": {
+    "artifacts": [
+      {
+        "bytes": 17395,
+        "id": 12587291956,
+        "independently_downloaded_bytes_verified": true,
+        "name": "task07-recovery-migration",
+        "sha256": "67dd94958a82a40d3dc95295de445c15d63dab176c14ce02f6d73cc75f32ffd5"
+      },
+      {
+        "bytes": 203,
+        "id": 12586464231,
+        "independently_downloaded_bytes_verified": true,
+        "name": "task07-recovery-startup",
+        "sha256": "01e4cad0bfeff2fd7d27c3fb03f8753fe121cd71cdefa6de813ebff46d5092d4"
+      }
+    ],
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 121078308179,
+        "name": "candidate-migration-attribution",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Frozen interpreter for diagnostic controls",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Exactly-once, exception, privacy, nesting and observer controls",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Frozen original assets six",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Frozen original assets seven",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "One bounded source-pinned diagnostic; no retry",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Owned resources only emergency cleanup",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "status": "completed"
+          }
+        ]
+      },
+      {
+        "conclusion": "failure",
+        "id": 121078308408,
+        "name": "service-startup-classification",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Set up job",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Frozen interpreter for diagnostic controls",
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "name": "Exactly-once, exception, privacy, nesting and observer controls",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Frozen original assets six",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Frozen original assets seven",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "One bounded source-pinned diagnostic; no retry",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Owned resources only emergency cleanup",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Complete job",
+            "status": "completed"
+          }
+        ]
+      }
+    ],
+    "run": {
+      "attempt": 1,
+      "conclusion": "failure",
+      "created_at": "2026-10-25T04:44:52Z",
+      "id": 40163005748,
+      "source_sha": "007a9cae60eaaef5107264a7408788935e3e0d91",
+      "status": "completed",
+      "updated_at": "2026-10-25T04:48:35Z"
+    }
+  },
+  "job_a": {
+    "causal_explanation": "The diagnostic control tests migration-evidence rejection. evidence_check gates its new manifest/details checks on RECOVERY_JOB=migration. Job A sets RECOVERY_JOB=startup, so a missing manifest is accepted by that synthetic control and the control correctly fails. This is a harness/self-test integration defect, not an observed Docker or service failure.",
+    "classification": "proven_diagnostic_self_test_environment_mismatch",
+    "cleanup": {
+      "controller_acquired_no_owned_resources": true,
+      "emergency_step": "success",
+      "global_host_resource_absence_not_claimed": true,
+      "owned_results": {}
+    },
+    "conclusion": "failure",
+    "diagnostic_controller_executed": false,
+    "evidence": {
+      "actual_service_start_stage_skipped": true,
+      "hosted_timing_controls_failures": 1,
+      "hosted_timing_controls_tests_run": 15,
+      "raw_job_log_or_trace_not_published": true,
+      "same_failure_reproduced_locally_under_actual_job_environment": true
+    },
+    "failed_invariant": "missing_manifest_expected_rejection_not_enforced_in_RECOVERY_JOB_startup",
+    "failed_test": "test_controller_rejects_missing_profile_fault_and_wrong_counts",
+    "failure_stage": "Exactly-once, exception, privacy, nesting and observer controls",
+    "fixed_source_checkout_steps_succeeded": true,
+    "historical_startup_failure_classification": "unclassified_no_new_task6_service_observation",
+    "id": 121078308408,
+    "minimal_proposed_correction_not_applied": {
+      "file": "docker/timing_run.py",
+      "function": "evidence_check",
+      "proposal": "Gate migration evidence validation by the migration workload JOB rather than the startup controller RECOVERY_JOB, or explicitly isolate the synthetic migration control context. Job A never calls pytest evidence validation for its actual startup-only observation. Add tests under both actual workflow environments before publication.",
+      "requires_separate_authorization": true
+    },
+    "name": "service-startup-classification",
+    "source_sha_requested": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+    "source_tree_independently_verified": "b207a0a8e946750a0dd1213f5460e51f67dd3000",
+    "startup_command_identity": "docker compose up -d --wait db redis minio scanner",
+    "startup_elapsed_seconds": null,
+    "startup_exit_code": null,
+    "startup_precleanup_state": null
+  },
+  "job_b": {
+    "cleanup": {
+      "complete": true,
+      "emergency": {
+        "acceptance": false,
+        "owned_results": {}
+      },
+      "exit_code": 0,
+      "owned_containers_networks_volumes_verified_absent": true
+    },
+    "conclusion": "success",
+    "cpu_calibration_after": [
+      {
+        "cpu_ns": 133174257,
+        "result": 199771713,
+        "wall_ns": 133210909
+      },
+      {
+        "cpu_ns": 136568890,
+        "result": 199771713,
+        "wall_ns": 136580485
+      },
+      {
+        "cpu_ns": 133738057,
+        "result": 199771713,
+        "wall_ns": 133734501
+      }
+    ],
+    "cpu_calibration_before": [
+      {
+        "cpu_ns": 137879406,
+        "result": 199771713,
+        "wall_ns": 137907379
+      },
+      {
+        "cpu_ns": 129879129,
+        "result": 199771713,
+        "wall_ns": 129905417
+      },
+      {
+        "cpu_ns": 138622646,
+        "result": 199771713,
+        "wall_ns": 138649145
+      }
+    ],
+    "direction_totals_all_phases": {
+      "migration_apply": {
+        "declared_operation_invocations": 1022,
+        "invocations": 202,
+        "thread_cpu_seconds": 13.702681869,
+        "wall_seconds": 14.339857372
+      },
+      "migration_unapply": {
+        "declared_operation_invocations": 142,
+        "invocations": 28,
+        "thread_cpu_seconds": 1.663941865,
+        "wall_seconds": 1.703303371
+      }
+    },
+    "evidence_validation": {
+      "cases": 2,
+      "resource_coverage": {
+        "coverage_required_percent": 80,
+        "full_running_service_samples": 4,
+        "host_usable": 5,
+        "missing_host_samples": 0,
+        "missing_postgres_samples": 0,
+        "postgres_usable": 5,
+        "samples": 5,
+        "valid": true
+      },
+      "sequence_sha256": "f82156e2a80b3a0593951a92b3eedd5260735ce7d83c2c6439ae719e632e956b",
+      "valid": true
+    },
+    "finish": {
+      "completed": 2,
+      "counts": {
+        "deselected": 0,
+        "error": 0,
+        "failed": 0,
+        "passed": 2,
+        "skipped": 0,
+        "xfailed": 0,
+        "xpassed": 0
+      },
+      "event": "finish",
+      "exit_code": 0,
+      "hook_observed_ns": 183563644,
+      "mono_ns": 238617353758,
+      "observer_fault": false,
+      "sql_count": 2352,
+      "sql_counter_observed_ns": 20500899,
+      "sql_ns": 1455623951,
+      "started": 2,
+      "truncated": false
+    },
+    "id": 121078308179,
+    "name": "candidate-migration-attribution",
+    "observer": {
+      "bookkeeping_thread_cpu_seconds": 0.048137017,
+      "bookkeeping_wall_seconds": 0.041496688,
+      "nested_inclusive_not_additive": true,
+      "noop_calibration": {
+        "calls": 10000,
+        "cpu_ns": 45488906,
+        "fault": false,
+        "wall_ns": 45490377
+      },
+      "per_migration_wrapper_bookkeeping_separately_measured": false
+    },
+    "original_tests_unchanged": [
+      "tests/integration/c02/test_account_migrations.py::test_populated_c01_upgrade_preserves_identity_and_sessions",
+      "tests/integration/c03/test_c03_migrations.py::test_optional_profiles_not_created"
+    ],
+    "per_migration_manifest": [
+      {
+        "app": "accounts",
+        "index": 1,
+        "migration": "0001_initial"
+      },
+      {
+        "app": "accounts",
+        "index": 2,
+        "migration": "0002_account_security"
+      },
+      {
+        "app": "accounts",
+        "index": 3,
+        "migration": "0003_map_legacy_account_state"
+      },
+      {
+        "app": "accounts",
+        "index": 4,
+        "migration": "0004_account_state_constraints"
+      },
+      {
+        "app": "accounts",
+        "index": 5,
+        "migration": "0005_target_binding_constraint"
+      },
+      {
+        "app": "accounts",
+        "index": 6,
+        "migration": "0006_recoveryrequest_recoveryevidencemetadata_and_more"
+      },
+      {
+        "app": "accounts",
+        "index": 7,
+        "migration": "0007_recoveryrequest_recovery_live_target"
+      },
+      {
+        "app": "accounts",
+        "index": 8,
+        "migration": "0008_history_append_only"
+      },
+      {
+        "app": "accounts",
+        "index": 9,
+        "migration": "0009_recoveryrequest_decided_at"
+      },
+      {
+        "app": "accounts",
+        "index": 10,
+        "migration": "0010_remove_recoveryrequest_recovery_decision_binding_and_more"
+      },
+      {
+        "app": "accounts",
+        "index": 11,
+        "migration": "0011_alter_recoveryevidencemetadata_classification"
+      },
+      {
+        "app": "accounts",
+        "index": 12,
+        "migration": "0012_phonechangeintent"
+      },
+      {
+        "app": "accounts",
+        "index": 13,
+        "migration": "0013_invitereferrallink_referralattribution_and_more"
+      },
+      {
+        "app": "assets",
+        "index": 14,
+        "migration": "0001_private_asset_metadata"
+      },
+      {
+        "app": "assets",
+        "index": 15,
+        "migration": "0002_remove_assetprocessingattempt_attempt_lease_pair_and_more"
+      },
+      {
+        "app": "assets",
+        "index": 16,
+        "migration": "0003_bounded_metadata"
+      },
+      {
+        "app": "assets",
+        "index": 17,
+        "migration": "0004_immutable_accepted_source"
+      },
+      {
+        "app": "assets",
+        "index": 18,
+        "migration": "0005_record_timestamps"
+      },
+      {
+        "app": "assets",
+        "index": 19,
+        "migration": "0006_lifecycle_timestamp_guard"
+      },
+      {
+        "app": "assets",
+        "index": 20,
+        "migration": "0007_lifecycle_metadata"
+      },
+      {
+        "app": "assets",
+        "index": 21,
+        "migration": "0008_processing_authority"
+      },
+      {
+        "app": "assets",
+        "index": 22,
+        "migration": "0009_processing_algorithm_prompts"
+      },
+      {
+        "app": "assets",
+        "index": 23,
+        "migration": "0010_c04_public_copies"
+      },
+      {
+        "app": "assets",
+        "index": 24,
+        "migration": "0011_c04_educational_image_purpose"
+      },
+      {
+        "app": "athletes",
+        "index": 25,
+        "migration": "0001_initial"
+      },
+      {
+        "app": "athletes",
+        "index": 26,
+        "migration": "0002_baseline_guards"
+      },
+      {
+        "app": "athletes",
+        "index": 27,
+        "migration": "0003_submitted_baseline_delete_guard"
+      },
+      {
+        "app": "athletes",
+        "index": 28,
+        "migration": "0004_bounded_metadata"
+      },
+      {
+        "app": "athletes",
+        "index": 29,
+        "migration": "0005_receipt_restriction_contracts"
+      },
+      {
+        "app": "athletes",
+        "index": 30,
+        "migration": "0006_baseline_json_contract"
+      },
+      {
+        "app": "athletes",
+        "index": 31,
+        "migration": "0007_record_timestamps"
+      },
+      {
+        "app": "athletes",
+        "index": 32,
+        "migration": "0008_lifecycle_timestamp_guard"
+      },
+      {
+        "app": "athletes",
+        "index": 33,
+        "migration": "0009_ownership_anchors"
+      },
+      {
+        "app": "athletes",
+        "index": 34,
+        "migration": "0010_task3_baseline_command_contracts"
+      },
+      {
+        "app": "auth",
+        "index": 35,
+        "migration": "0001_initial"
+      },
+      {
+        "app": "auth",
+        "index": 36,
+        "migration": "0002_alter_permission_name_max_length"
+      },
+      {
+        "app": "auth",
+        "index": 37,
+        "migration": "0003_alter_user_email_max_length"
+      },
+      {
+        "app": "auth",
+        "index": 38,
+        "migration": "0004_alter_user_username_opts"
+      },
+      {
+        "app": "auth",
+        "index": 39,
+        "migration": "0005_alter_user_last_login_null"
+      },
+      {
+        "app": "auth",
+        "index": 40,
+        "migration": "0006_require_contenttypes_0002"
+      },
+      {
+        "app": "auth",
+        "index": 41,
+        "migration": "0007_alter_validators_add_error_messages"
+      },
+      {
+        "app": "auth",
+        "index": 42,
+        "migration": "0008_alter_user_username_max_length"
+      },
+      {
+        "app": "auth",
+        "index": 43,
+        "migration": "0009_alter_user_last_name_max_length"
+      },
+      {
+        "app": "auth",
+        "index": 44,
+        "migration": "0010_alter_group_name_max_length"
+      },
+      {
+        "app": "auth",
+        "index": 45,
+        "migration": "0011_update_proxy_permissions"
+      },
+      {
+        "app": "auth",
+        "index": 46,
+        "migration": "0012_alter_user_first_name_max_length"
+      },
+      {
+        "app": "contenttypes",
+        "index": 47,
+        "migration": "0001_initial"
+      },
+      {
+        "app": "contenttypes",
+        "index": 48,
+        "migration": "0002_remove_content_type_name"
+      },
+      {
+        "app": "governance",
+        "index": 49,
+        "migration": "0001_initial"
+      },
+      {
+        "app": "governance",
+        "index": 50,
+        "migration": "0002_audit_append_only"
+      },
+      {
+        "app": "governance",
+        "index": 51,
+        "migration": "0003_evidence_payload_constraints"
+      },
+      {
+        "app": "governance",
+        "index": 52,
+        "migration": "0004_consent_core"
+      },
+      {
+        "app": "governance",
+        "index": 53,
+        "migration": "0005_consent_granted_outbox"
+      },
+      {
+        "app": "governance",
+        "index": 54,
+        "migration": "0006_consent_terminal_guards"
+      },
+      {
+        "app": "governance",
+        "index": 55,
+        "migration": "0007_featureflag"
+      },
+      {
+        "app": "governance",
+        "index": 56,
+        "migration": "0008_seed_feature_flags"
+      },
+      {
+        "app": "governance",
+        "index": 57,
+        "migration": "0009_privacyrequest_recordhold_retentionpolicy"
+      },
+      {
+        "app": "governance",
+        "index": 58,
+        "migration": "0010_outboxdeliveryreceipt"
+      },
+      {
+        "app": "governance",
+        "index": 59,
+        "migration": "0011_c03_profile_contracts"
+      },
+      {
+        "app": "governance",
+        "index": 60,
+        "migration": "0012_c03_staff_capability_width"
+      },
+      {
+        "app": "governance",
+        "index": 61,
+        "migration": "0013_c03_audit_consent_hold_contracts"
+      },
+      {
+        "app": "governance",
+        "index": 62,
+        "migration": "0014_task3_baseline_read_audit"
+      },
+      {
+        "app": "governance",
+        "index": 63,
+        "migration": "0015_c04_publication_metadata"
+      },
+      {
+        "app": "governance",
+        "index": 64,
+        "migration": "0016_c04_public_moderation"
+      },
+      {
+        "app": "marketplace",
+        "index": 65,
+        "migration": "0001_public_projection"
+      },
+      {
+        "app": "marketplace",
+        "index": 66,
+        "migration": "0002_persian_search"
+      },
+      {
+        "app": "marketplace",
+        "index": 67,
+        "migration": "0003_owned_selections"
+      },
+      {
+        "app": "professionals",
+        "index": 68,
+        "migration": "0001_profile_verification_metadata"
+      },
+      {
+        "app": "professionals",
+        "index": 69,
+        "migration": "0002_relational_guards"
+      },
+      {
+        "app": "professionals",
+        "index": 70,
+        "migration": "0003_immutable_evidence_guards"
+      },
+      {
+        "app": "professionals",
+        "index": 71,
+        "migration": "0004_fix_verification_decision_guard"
+      },
+      {
+        "app": "professionals",
+        "index": 72,
+        "migration": "0005_remove_verificationtarget_target_role_declaration_pair_and_more"
+      },
+      {
+        "app": "professionals",
+        "index": 73,
+        "migration": "0006_submission_set_guards"
+      },
+      {
+        "app": "professionals",
+        "index": 74,
+        "migration": "0007_assistant_nonself"
+      },
+      {
+        "app": "professionals",
+        "index": 75,
+        "migration": "0008_bounded_metadata"
+      },
+      {
+        "app": "professionals",
+        "index": 76,
+        "migration": "0009_evidence_metadata_contracts"
+      },
+      {
+        "app": "professionals",
+        "index": 77,
+        "migration": "0010_decision_snapshot_guard"
+      },
+      {
+        "app": "professionals",
+        "index": 78,
+        "migration": "0011_receipt_restriction_contracts"
+      },
+      {
+        "app": "professionals",
+        "index": 79,
+        "migration": "0012_profile_json_contract"
+      },
+      {
+        "app": "professionals",
+        "index": 80,
+        "migration": "0013_evidence_source_bindings"
+      },
+      {
+        "app": "professionals",
+        "index": 81,
+        "migration": "0014_record_timestamps"
+      },
+      {
+        "app": "professionals",
+        "index": 82,
+        "migration": "0015_lifecycle_timestamp_guards"
+      },
+      {
+        "app": "professionals",
+        "index": 83,
+        "migration": "0016_lifecycle_metadata"
+      },
+      {
+        "app": "professionals",
+        "index": 84,
+        "migration": "0017_ownership_anchors"
+      },
+      {
+        "app": "professionals",
+        "index": 85,
+        "migration": "0018_c04_publication"
+      },
+      {
+        "app": "professionals",
+        "index": 86,
+        "migration": "0019_c04_educational_posts"
+      },
+      {
+        "app": "sessions",
+        "index": 87,
+        "migration": "0001_initial"
+      }
+    ],
+    "per_migration_measurements": [
+      {
+        "count": 1,
+        "cpu_ns": 3031263,
+        "direction": "migration_apply",
+        "migration_index": 1,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0001_initial",
+        "thread_cpu_seconds": 0.003031263,
+        "wall_ns": 4973637,
+        "wall_seconds": 0.004973637
+      },
+      {
+        "count": 1,
+        "cpu_ns": 3608903,
+        "direction": "migration_apply",
+        "migration_index": 1,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0001_initial",
+        "thread_cpu_seconds": 0.003608903,
+        "wall_ns": 6609486,
+        "wall_seconds": 0.006609486
+      },
+      {
+        "count": 1,
+        "cpu_ns": 458104887,
+        "direction": "migration_apply",
+        "migration_index": 2,
+        "operation_count": 13,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0002_account_security",
+        "thread_cpu_seconds": 0.458104887,
+        "wall_ns": 465898632,
+        "wall_seconds": 0.465898632
+      },
+      {
+        "count": 1,
+        "cpu_ns": 31036933,
+        "direction": "migration_apply",
+        "migration_index": 2,
+        "operation_count": 13,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0002_account_security",
+        "thread_cpu_seconds": 0.031036933,
+        "wall_ns": 37946386,
+        "wall_seconds": 0.037946386
+      },
+      {
+        "count": 1,
+        "cpu_ns": 31854233,
+        "direction": "migration_apply",
+        "migration_index": 2,
+        "operation_count": 13,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0002_account_security",
+        "thread_cpu_seconds": 0.031854233,
+        "wall_ns": 38765557,
+        "wall_seconds": 0.038765557
+      },
+      {
+        "count": 1,
+        "cpu_ns": 23674150,
+        "direction": "migration_unapply",
+        "migration_index": 2,
+        "operation_count": 13,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0002_account_security",
+        "thread_cpu_seconds": 0.02367415,
+        "wall_ns": 26803039,
+        "wall_seconds": 0.026803039
+      },
+      {
+        "count": 1,
+        "cpu_ns": 29655985,
+        "direction": "migration_apply",
+        "migration_index": 3,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0003_map_legacy_account_state",
+        "thread_cpu_seconds": 0.029655985,
+        "wall_ns": 30282619,
+        "wall_seconds": 0.030282619
+      },
+      {
+        "count": 1,
+        "cpu_ns": 5638733,
+        "direction": "migration_apply",
+        "migration_index": 3,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0003_map_legacy_account_state",
+        "thread_cpu_seconds": 0.005638733,
+        "wall_ns": 5901070,
+        "wall_seconds": 0.00590107
+      },
+      {
+        "count": 1,
+        "cpu_ns": 5113299,
+        "direction": "migration_apply",
+        "migration_index": 3,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0003_map_legacy_account_state",
+        "thread_cpu_seconds": 0.005113299,
+        "wall_ns": 5304380,
+        "wall_seconds": 0.00530438
+      },
+      {
+        "count": 1,
+        "cpu_ns": 194250,
+        "direction": "migration_unapply",
+        "migration_index": 3,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0003_map_legacy_account_state",
+        "thread_cpu_seconds": 0.00019425,
+        "wall_ns": 194521,
+        "wall_seconds": 0.000194521
+      },
+      {
+        "count": 1,
+        "cpu_ns": 48118299,
+        "direction": "migration_apply",
+        "migration_index": 4,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0004_account_state_constraints",
+        "thread_cpu_seconds": 0.048118299,
+        "wall_ns": 49354860,
+        "wall_seconds": 0.04935486
+      },
+      {
+        "count": 1,
+        "cpu_ns": 18393141,
+        "direction": "migration_apply",
+        "migration_index": 4,
+        "operation_count": 4,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0004_account_state_constraints",
+        "thread_cpu_seconds": 0.018393141,
+        "wall_ns": 19204548,
+        "wall_seconds": 0.019204548
+      },
+      {
+        "count": 1,
+        "cpu_ns": 13673030,
+        "direction": "migration_apply",
+        "migration_index": 4,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0004_account_state_constraints",
+        "thread_cpu_seconds": 0.01367303,
+        "wall_ns": 14512491,
+        "wall_seconds": 0.014512491
+      },
+      {
+        "count": 1,
+        "cpu_ns": 18326271,
+        "direction": "migration_unapply",
+        "migration_index": 4,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0004_account_state_constraints",
+        "thread_cpu_seconds": 0.018326271,
+        "wall_ns": 18753225,
+        "wall_seconds": 0.018753225
+      },
+      {
+        "count": 1,
+        "cpu_ns": 29192703,
+        "direction": "migration_apply",
+        "migration_index": 5,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0005_target_binding_constraint",
+        "thread_cpu_seconds": 0.029192703,
+        "wall_ns": 29767170,
+        "wall_seconds": 0.02976717
+      },
+      {
+        "count": 1,
+        "cpu_ns": 7030119,
+        "direction": "migration_apply",
+        "migration_index": 5,
+        "operation_count": 2,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0005_target_binding_constraint",
+        "thread_cpu_seconds": 0.007030119,
+        "wall_ns": 7362569,
+        "wall_seconds": 0.007362569
+      },
+      {
+        "count": 1,
+        "cpu_ns": 7146972,
+        "direction": "migration_apply",
+        "migration_index": 5,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0005_target_binding_constraint",
+        "thread_cpu_seconds": 0.007146972,
+        "wall_ns": 7485182,
+        "wall_seconds": 0.007485182
+      },
+      {
+        "count": 1,
+        "cpu_ns": 7264668,
+        "direction": "migration_unapply",
+        "migration_index": 5,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0005_target_binding_constraint",
+        "thread_cpu_seconds": 0.007264668,
+        "wall_ns": 7552793,
+        "wall_seconds": 0.007552793
+      },
+      {
+        "count": 1,
+        "cpu_ns": 286141885,
+        "direction": "migration_apply",
+        "migration_index": 6,
+        "operation_count": 14,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0006_recoveryrequest_recoveryevidencemetadata_and_more",
+        "thread_cpu_seconds": 0.286141885,
+        "wall_ns": 298399142,
+        "wall_seconds": 0.298399142
+      },
+      {
+        "count": 1,
+        "cpu_ns": 74738835,
+        "direction": "migration_apply",
+        "migration_index": 6,
+        "operation_count": 14,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0006_recoveryrequest_recoveryevidencemetadata_and_more",
+        "thread_cpu_seconds": 0.074738835,
+        "wall_ns": 79173346,
+        "wall_seconds": 0.079173346
+      },
+      {
+        "count": 1,
+        "cpu_ns": 71152965,
+        "direction": "migration_apply",
+        "migration_index": 6,
+        "operation_count": 14,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0006_recoveryrequest_recoveryevidencemetadata_and_more",
+        "thread_cpu_seconds": 0.071152965,
+        "wall_ns": 75752302,
+        "wall_seconds": 0.075752302
+      },
+      {
+        "count": 1,
+        "cpu_ns": 66059706,
+        "direction": "migration_unapply",
+        "migration_index": 6,
+        "operation_count": 14,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0006_recoveryrequest_recoveryevidencemetadata_and_more",
+        "thread_cpu_seconds": 0.066059706,
+        "wall_ns": 68651535,
+        "wall_seconds": 0.068651535
+      },
+      {
+        "count": 1,
+        "cpu_ns": 15434167,
+        "direction": "migration_apply",
+        "migration_index": 7,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0007_recoveryrequest_recovery_live_target",
+        "thread_cpu_seconds": 0.015434167,
+        "wall_ns": 15996434,
+        "wall_seconds": 0.015996434
+      },
+      {
+        "count": 1,
+        "cpu_ns": 5281499,
+        "direction": "migration_apply",
+        "migration_index": 7,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0007_recoveryrequest_recovery_live_target",
+        "thread_cpu_seconds": 0.005281499,
+        "wall_ns": 5708532,
+        "wall_seconds": 0.005708532
+      },
+      {
+        "count": 1,
+        "cpu_ns": 5124445,
+        "direction": "migration_apply",
+        "migration_index": 7,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0007_recoveryrequest_recovery_live_target",
+        "thread_cpu_seconds": 0.005124445,
+        "wall_ns": 5477468,
+        "wall_seconds": 0.005477468
+      },
+      {
+        "count": 1,
+        "cpu_ns": 5181000,
+        "direction": "migration_unapply",
+        "migration_index": 7,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0007_recoveryrequest_recovery_live_target",
+        "thread_cpu_seconds": 0.005181,
+        "wall_ns": 5298722,
+        "wall_seconds": 0.005298722
+      },
+      {
+        "count": 1,
+        "cpu_ns": 583260,
+        "direction": "migration_apply",
+        "migration_index": 8,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0008_history_append_only",
+        "thread_cpu_seconds": 0.00058326,
+        "wall_ns": 924649,
+        "wall_seconds": 0.000924649
+      },
+      {
+        "count": 1,
+        "cpu_ns": 231496,
+        "direction": "migration_apply",
+        "migration_index": 8,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0008_history_append_only",
+        "thread_cpu_seconds": 0.000231496,
+        "wall_ns": 1034633,
+        "wall_seconds": 0.001034633
+      },
+      {
+        "count": 1,
+        "cpu_ns": 241800,
+        "direction": "migration_apply",
+        "migration_index": 8,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0008_history_append_only",
+        "thread_cpu_seconds": 0.0002418,
+        "wall_ns": 1036295,
+        "wall_seconds": 0.001036295
+      },
+      {
+        "count": 1,
+        "cpu_ns": 301711,
+        "direction": "migration_unapply",
+        "migration_index": 8,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0008_history_append_only",
+        "thread_cpu_seconds": 0.000301711,
+        "wall_ns": 421389,
+        "wall_seconds": 0.000421389
+      },
+      {
+        "count": 1,
+        "cpu_ns": 14517230,
+        "direction": "migration_apply",
+        "migration_index": 9,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0009_recoveryrequest_decided_at",
+        "thread_cpu_seconds": 0.01451723,
+        "wall_ns": 14808603,
+        "wall_seconds": 0.014808603
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4719501,
+        "direction": "migration_apply",
+        "migration_index": 9,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0009_recoveryrequest_decided_at",
+        "thread_cpu_seconds": 0.004719501,
+        "wall_ns": 4870183,
+        "wall_seconds": 0.004870183
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4770596,
+        "direction": "migration_apply",
+        "migration_index": 9,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0009_recoveryrequest_decided_at",
+        "thread_cpu_seconds": 0.004770596,
+        "wall_ns": 4928229,
+        "wall_seconds": 0.004928229
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4843707,
+        "direction": "migration_unapply",
+        "migration_index": 9,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0009_recoveryrequest_decided_at",
+        "thread_cpu_seconds": 0.004843707,
+        "wall_ns": 4978484,
+        "wall_seconds": 0.004978484
+      },
+      {
+        "count": 1,
+        "cpu_ns": 15200809,
+        "direction": "migration_apply",
+        "migration_index": 10,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0010_remove_recoveryrequest_recovery_decision_binding_and_more",
+        "thread_cpu_seconds": 0.015200809,
+        "wall_ns": 15717208,
+        "wall_seconds": 0.015717208
+      },
+      {
+        "count": 1,
+        "cpu_ns": 5024755,
+        "direction": "migration_apply",
+        "migration_index": 10,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0010_remove_recoveryrequest_recovery_decision_binding_and_more",
+        "thread_cpu_seconds": 0.005024755,
+        "wall_ns": 5285582,
+        "wall_seconds": 0.005285582
+      },
+      {
+        "count": 1,
+        "cpu_ns": 10428678,
+        "direction": "migration_apply",
+        "migration_index": 10,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0010_remove_recoveryrequest_recovery_decision_binding_and_more",
+        "thread_cpu_seconds": 0.010428678,
+        "wall_ns": 10773686,
+        "wall_seconds": 0.010773686
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4941242,
+        "direction": "migration_unapply",
+        "migration_index": 10,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0010_remove_recoveryrequest_recovery_decision_binding_and_more",
+        "thread_cpu_seconds": 0.004941242,
+        "wall_ns": 5098483,
+        "wall_seconds": 0.005098483
+      },
+      {
+        "count": 1,
+        "cpu_ns": 14051764,
+        "direction": "migration_apply",
+        "migration_index": 11,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0011_alter_recoveryevidencemetadata_classification",
+        "thread_cpu_seconds": 0.014051764,
+        "wall_ns": 14806911,
+        "wall_seconds": 0.014806911
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4700582,
+        "direction": "migration_apply",
+        "migration_index": 11,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0011_alter_recoveryevidencemetadata_classification",
+        "thread_cpu_seconds": 0.004700582,
+        "wall_ns": 5079865,
+        "wall_seconds": 0.005079865
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4584840,
+        "direction": "migration_apply",
+        "migration_index": 11,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0011_alter_recoveryevidencemetadata_classification",
+        "thread_cpu_seconds": 0.00458484,
+        "wall_ns": 5023521,
+        "wall_seconds": 0.005023521
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4930495,
+        "direction": "migration_unapply",
+        "migration_index": 11,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0011_alter_recoveryevidencemetadata_classification",
+        "thread_cpu_seconds": 0.004930495,
+        "wall_ns": 5971165,
+        "wall_seconds": 0.005971165
+      },
+      {
+        "count": 1,
+        "cpu_ns": 29934820,
+        "direction": "migration_apply",
+        "migration_index": 12,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0012_phonechangeintent",
+        "thread_cpu_seconds": 0.02993482,
+        "wall_ns": 31278172,
+        "wall_seconds": 0.031278172
+      },
+      {
+        "count": 1,
+        "cpu_ns": 7234443,
+        "direction": "migration_apply",
+        "migration_index": 12,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0012_phonechangeintent",
+        "thread_cpu_seconds": 0.007234443,
+        "wall_ns": 8186969,
+        "wall_seconds": 0.008186969
+      },
+      {
+        "count": 1,
+        "cpu_ns": 7053693,
+        "direction": "migration_apply",
+        "migration_index": 12,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0012_phonechangeintent",
+        "thread_cpu_seconds": 0.007053693,
+        "wall_ns": 8230819,
+        "wall_seconds": 0.008230819
+      },
+      {
+        "count": 1,
+        "cpu_ns": 5298074,
+        "direction": "migration_unapply",
+        "migration_index": 12,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0012_phonechangeintent",
+        "thread_cpu_seconds": 0.005298074,
+        "wall_ns": 6118925,
+        "wall_seconds": 0.006118925
+      },
+      {
+        "count": 1,
+        "cpu_ns": 130770088,
+        "direction": "migration_apply",
+        "migration_index": 13,
+        "operation_count": 7,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0013_invitereferrallink_referralattribution_and_more",
+        "thread_cpu_seconds": 0.130770088,
+        "wall_ns": 134438679,
+        "wall_seconds": 0.134438679
+      },
+      {
+        "count": 1,
+        "cpu_ns": 48120382,
+        "direction": "migration_apply",
+        "migration_index": 13,
+        "operation_count": 7,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "accounts.0013_invitereferrallink_referralattribution_and_more",
+        "thread_cpu_seconds": 0.048120382,
+        "wall_ns": 50351806,
+        "wall_seconds": 0.050351806
+      },
+      {
+        "count": 1,
+        "cpu_ns": 55896317,
+        "direction": "migration_apply",
+        "migration_index": 13,
+        "operation_count": 7,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "accounts.0013_invitereferrallink_referralattribution_and_more",
+        "thread_cpu_seconds": 0.055896317,
+        "wall_ns": 60101603,
+        "wall_seconds": 0.060101603
+      },
+      {
+        "count": 1,
+        "cpu_ns": 43122017,
+        "direction": "migration_unapply",
+        "migration_index": 13,
+        "operation_count": 7,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "accounts.0013_invitereferrallink_referralattribution_and_more",
+        "thread_cpu_seconds": 0.043122017,
+        "wall_ns": 44382324,
+        "wall_seconds": 0.044382324
+      },
+      {
+        "count": 1,
+        "cpu_ns": 33981219,
+        "direction": "migration_apply",
+        "migration_index": 14,
+        "operation_count": 3,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0001_private_asset_metadata",
+        "thread_cpu_seconds": 0.033981219,
+        "wall_ns": 38084423,
+        "wall_seconds": 0.038084423
+      },
+      {
+        "count": 1,
+        "cpu_ns": 44046133,
+        "direction": "migration_apply",
+        "migration_index": 14,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0001_private_asset_metadata",
+        "thread_cpu_seconds": 0.044046133,
+        "wall_ns": 48944621,
+        "wall_seconds": 0.048944621
+      },
+      {
+        "count": 1,
+        "cpu_ns": 15937678,
+        "direction": "migration_apply",
+        "migration_index": 15,
+        "operation_count": 2,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0002_remove_assetprocessingattempt_attempt_lease_pair_and_more",
+        "thread_cpu_seconds": 0.015937678,
+        "wall_ns": 16753105,
+        "wall_seconds": 0.016753105
+      },
+      {
+        "count": 1,
+        "cpu_ns": 8908291,
+        "direction": "migration_apply",
+        "migration_index": 15,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0002_remove_assetprocessingattempt_attempt_lease_pair_and_more",
+        "thread_cpu_seconds": 0.008908291,
+        "wall_ns": 9246960,
+        "wall_seconds": 0.00924696
+      },
+      {
+        "count": 1,
+        "cpu_ns": 155452403,
+        "direction": "migration_apply",
+        "migration_index": 16,
+        "operation_count": 6,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0003_bounded_metadata",
+        "thread_cpu_seconds": 0.155452403,
+        "wall_ns": 158988447,
+        "wall_seconds": 0.158988447
+      },
+      {
+        "count": 1,
+        "cpu_ns": 71484147,
+        "direction": "migration_apply",
+        "migration_index": 16,
+        "operation_count": 6,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0003_bounded_metadata",
+        "thread_cpu_seconds": 0.071484147,
+        "wall_ns": 72958306,
+        "wall_seconds": 0.072958306
+      },
+      {
+        "count": 1,
+        "cpu_ns": 544623,
+        "direction": "migration_apply",
+        "migration_index": 17,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0004_immutable_accepted_source",
+        "thread_cpu_seconds": 0.000544623,
+        "wall_ns": 855826,
+        "wall_seconds": 0.000855826
+      },
+      {
+        "count": 1,
+        "cpu_ns": 356821,
+        "direction": "migration_apply",
+        "migration_index": 17,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0004_immutable_accepted_source",
+        "thread_cpu_seconds": 0.000356821,
+        "wall_ns": 673335,
+        "wall_seconds": 0.000673335
+      },
+      {
+        "count": 1,
+        "cpu_ns": 35592573,
+        "direction": "migration_apply",
+        "migration_index": 18,
+        "operation_count": 5,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0005_record_timestamps",
+        "thread_cpu_seconds": 0.035592573,
+        "wall_ns": 37960032,
+        "wall_seconds": 0.037960032
+      },
+      {
+        "count": 1,
+        "cpu_ns": 35868686,
+        "direction": "migration_apply",
+        "migration_index": 18,
+        "operation_count": 5,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0005_record_timestamps",
+        "thread_cpu_seconds": 0.035868686,
+        "wall_ns": 38011212,
+        "wall_seconds": 0.038011212
+      },
+      {
+        "count": 1,
+        "cpu_ns": 418114,
+        "direction": "migration_apply",
+        "migration_index": 19,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0006_lifecycle_timestamp_guard",
+        "thread_cpu_seconds": 0.000418114,
+        "wall_ns": 666094,
+        "wall_seconds": 0.000666094
+      },
+      {
+        "count": 1,
+        "cpu_ns": 401069,
+        "direction": "migration_apply",
+        "migration_index": 19,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0006_lifecycle_timestamp_guard",
+        "thread_cpu_seconds": 0.000401069,
+        "wall_ns": 626405,
+        "wall_seconds": 0.000626405
+      },
+      {
+        "count": 1,
+        "cpu_ns": 36915135,
+        "direction": "migration_apply",
+        "migration_index": 20,
+        "operation_count": 4,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0007_lifecycle_metadata",
+        "thread_cpu_seconds": 0.036915135,
+        "wall_ns": 38976027,
+        "wall_seconds": 0.038976027
+      },
+      {
+        "count": 1,
+        "cpu_ns": 26742050,
+        "direction": "migration_apply",
+        "migration_index": 20,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0007_lifecycle_metadata",
+        "thread_cpu_seconds": 0.02674205,
+        "wall_ns": 28147313,
+        "wall_seconds": 0.028147313
+      },
+      {
+        "count": 1,
+        "cpu_ns": 21572425,
+        "direction": "migration_apply",
+        "migration_index": 21,
+        "operation_count": 4,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0008_processing_authority",
+        "thread_cpu_seconds": 0.021572425,
+        "wall_ns": 23198868,
+        "wall_seconds": 0.023198868
+      },
+      {
+        "count": 1,
+        "cpu_ns": 19763768,
+        "direction": "migration_apply",
+        "migration_index": 21,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0008_processing_authority",
+        "thread_cpu_seconds": 0.019763768,
+        "wall_ns": 21253834,
+        "wall_seconds": 0.021253834
+      },
+      {
+        "count": 1,
+        "cpu_ns": 21687527,
+        "direction": "migration_apply",
+        "migration_index": 22,
+        "operation_count": 4,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0009_processing_algorithm_prompts",
+        "thread_cpu_seconds": 0.021687527,
+        "wall_ns": 23387299,
+        "wall_seconds": 0.023387299
+      },
+      {
+        "count": 1,
+        "cpu_ns": 24219608,
+        "direction": "migration_apply",
+        "migration_index": 22,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0009_processing_algorithm_prompts",
+        "thread_cpu_seconds": 0.024219608,
+        "wall_ns": 25831330,
+        "wall_seconds": 0.02583133
+      },
+      {
+        "count": 1,
+        "cpu_ns": 268458859,
+        "direction": "migration_apply",
+        "migration_index": 23,
+        "operation_count": 23,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0010_c04_public_copies",
+        "thread_cpu_seconds": 0.268458859,
+        "wall_ns": 279274782,
+        "wall_seconds": 0.279274782
+      },
+      {
+        "count": 1,
+        "cpu_ns": 547217738,
+        "direction": "migration_apply",
+        "migration_index": 23,
+        "operation_count": 23,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0010_c04_public_copies",
+        "thread_cpu_seconds": 0.547217738,
+        "wall_ns": 562808009,
+        "wall_seconds": 0.562808009
+      },
+      {
+        "count": 1,
+        "cpu_ns": 158592670,
+        "direction": "migration_apply",
+        "migration_index": 24,
+        "operation_count": 10,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "assets.0011_c04_educational_image_purpose",
+        "thread_cpu_seconds": 0.15859267,
+        "wall_ns": 164662931,
+        "wall_seconds": 0.164662931
+      },
+      {
+        "count": 1,
+        "cpu_ns": 129722074,
+        "direction": "migration_apply",
+        "migration_index": 24,
+        "operation_count": 10,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "assets.0011_c04_educational_image_purpose",
+        "thread_cpu_seconds": 0.129722074,
+        "wall_ns": 135016897,
+        "wall_seconds": 0.135016897
+      },
+      {
+        "count": 1,
+        "cpu_ns": 106488133,
+        "direction": "migration_apply",
+        "migration_index": 25,
+        "operation_count": 4,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "athletes.0001_initial",
+        "thread_cpu_seconds": 0.106488133,
+        "wall_ns": 110763468,
+        "wall_seconds": 0.110763468
+      },
+      {
+        "count": 1,
+        "cpu_ns": 337564660,
+        "direction": "migration_apply",
+        "migration_index": 25,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "athletes.0001_initial",
+        "thread_cpu_seconds": 0.33756466,
+        "wall_ns": 348986969,
+        "wall_seconds": 0.348986969
+      },
+      {
+        "count": 1,
+        "cpu_ns": 702518,
+        "direction": "migration_apply",
+        "migration_index": 26,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "athletes.0002_baseline_guards",
+        "thread_cpu_seconds": 0.000702518,
+        "wall_ns": 964578,
+        "wall_seconds": 0.000964578
+      },
+      {
+        "count": 1,
+        "cpu_ns": 836448,
+        "direction": "migration_apply",
+        "migration_index": 26,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "athletes.0002_baseline_guards",
+        "thread_cpu_seconds": 0.000836448,
+        "wall_ns": 1241641,
+        "wall_seconds": 0.001241641
+      },
+      {
+        "count": 1,
+        "cpu_ns": 444374,
+        "direction": "migration_apply",
+        "migration_index": 27,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "athletes.0003_submitted_baseline_delete_guard",
+        "thread_cpu_seconds": 0.000444374,
+        "wall_ns": 557652,
+        "wall_seconds": 0.000557652
+      },
+      {
+        "count": 1,
+        "cpu_ns": 622791,
+        "direction": "migration_apply",
+        "migration_index": 27,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "athletes.0003_submitted_baseline_delete_guard",
+        "thread_cpu_seconds": 0.000622791,
+        "wall_ns": 820433,
+        "wall_seconds": 0.000820433
+      },
+      {
+        "count": 1,
+        "cpu_ns": 41782317,
+        "direction": "migration_apply",
+        "migration_index": 28,
+        "operation_count": 10,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "athletes.0004_bounded_metadata",
+        "thread_cpu_seconds": 0.041782317,
+        "wall_ns": 43333185,
+        "wall_seconds": 0.043333185
+      },
+      {
+        "count": 1,
+        "cpu_ns": 57980193,
+        "direction": "migration_apply",
+        "migration_index": 28,
+        "operation_count": 10,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "athletes.0004_bounded_metadata",
+        "thread_cpu_seconds": 0.057980193,
+        "wall_ns": 62361574,
+        "wall_seconds": 0.062361574
+      },
+      {
+        "count": 1,
+        "cpu_ns": 34131983,
+        "direction": "migration_apply",
+        "migration_index": 29,
+        "operation_count": 2,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "athletes.0005_receipt_restriction_contracts",
+        "thread_cpu_seconds": 0.034131983,
+        "wall_ns": 34976412,
+        "wall_seconds": 0.034976412
+      },
+      {
+        "count": 1,
+        "cpu_ns": 48737322,
+        "direction": "migration_apply",
+        "migration_index": 29,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "athletes.0005_receipt_restriction_contracts",
+        "thread_cpu_seconds": 0.048737322,
+        "wall_ns": 49588156,
+        "wall_seconds": 0.049588156
+      },
+      {
+        "count": 1,
+        "cpu_ns": 744141,
+        "direction": "migration_apply",
+        "migration_index": 30,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "athletes.0006_baseline_json_contract",
+        "thread_cpu_seconds": 0.000744141,
+        "wall_ns": 1384886,
+        "wall_seconds": 0.001384886
+      },
+      {
+        "count": 1,
+        "cpu_ns": 603170,
+        "direction": "migration_apply",
+        "migration_index": 30,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "athletes.0006_baseline_json_contract",
+        "thread_cpu_seconds": 0.00060317,
+        "wall_ns": 1361210,
+        "wall_seconds": 0.00136121
+      },
+      {
+        "count": 1,
+        "cpu_ns": 21439927,
+        "direction": "migration_apply",
+        "migration_index": 31,
+        "operation_count": 2,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "athletes.0007_record_timestamps",
+        "thread_cpu_seconds": 0.021439927,
+        "wall_ns": 22210264,
+        "wall_seconds": 0.022210264
+      },
+      {
+        "count": 1,
+        "cpu_ns": 18977316,
+        "direction": "migration_apply",
+        "migration_index": 31,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "athletes.0007_record_timestamps",
+        "thread_cpu_seconds": 0.018977316,
+        "wall_ns": 19950640,
+        "wall_seconds": 0.01995064
+      },
+      {
+        "count": 1,
+        "cpu_ns": 904169,
+        "direction": "migration_apply",
+        "migration_index": 32,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "athletes.0008_lifecycle_timestamp_guard",
+        "thread_cpu_seconds": 0.000904169,
+        "wall_ns": 1074993,
+        "wall_seconds": 0.001074993
+      },
+      {
+        "count": 1,
+        "cpu_ns": 743440,
+        "direction": "migration_apply",
+        "migration_index": 32,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "athletes.0008_lifecycle_timestamp_guard",
+        "thread_cpu_seconds": 0.00074344,
+        "wall_ns": 912852,
+        "wall_seconds": 0.000912852
+      },
+      {
+        "count": 1,
+        "cpu_ns": 425505,
+        "direction": "migration_apply",
+        "migration_index": 33,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "athletes.0009_ownership_anchors",
+        "thread_cpu_seconds": 0.000425505,
+        "wall_ns": 710420,
+        "wall_seconds": 0.00071042
+      },
+      {
+        "count": 1,
+        "cpu_ns": 347378,
+        "direction": "migration_apply",
+        "migration_index": 33,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "athletes.0009_ownership_anchors",
+        "thread_cpu_seconds": 0.000347378,
+        "wall_ns": 636670,
+        "wall_seconds": 0.00063667
+      },
+      {
+        "count": 1,
+        "cpu_ns": 56626411,
+        "direction": "migration_apply",
+        "migration_index": 34,
+        "operation_count": 3,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "athletes.0010_task3_baseline_command_contracts",
+        "thread_cpu_seconds": 0.056626411,
+        "wall_ns": 57805007,
+        "wall_seconds": 0.057805007
+      },
+      {
+        "count": 1,
+        "cpu_ns": 42530261,
+        "direction": "migration_apply",
+        "migration_index": 34,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "athletes.0010_task3_baseline_command_contracts",
+        "thread_cpu_seconds": 0.042530261,
+        "wall_ns": 43113321,
+        "wall_seconds": 0.043113321
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4600475,
+        "direction": "migration_apply",
+        "migration_index": 35,
+        "operation_count": 3,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0001_initial",
+        "thread_cpu_seconds": 0.004600475,
+        "wall_ns": 6074409,
+        "wall_seconds": 0.006074409
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4315959,
+        "direction": "migration_apply",
+        "migration_index": 35,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0001_initial",
+        "thread_cpu_seconds": 0.004315959,
+        "wall_ns": 5742073,
+        "wall_seconds": 0.005742073
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1409853,
+        "direction": "migration_apply",
+        "migration_index": 36,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0002_alter_permission_name_max_length",
+        "thread_cpu_seconds": 0.001409853,
+        "wall_ns": 1519206,
+        "wall_seconds": 0.001519206
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1487861,
+        "direction": "migration_apply",
+        "migration_index": 36,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0002_alter_permission_name_max_length",
+        "thread_cpu_seconds": 0.001487861,
+        "wall_ns": 1585975,
+        "wall_seconds": 0.001585975
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1526618,
+        "direction": "migration_apply",
+        "migration_index": 37,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0003_alter_user_email_max_length",
+        "thread_cpu_seconds": 0.001526618,
+        "wall_ns": 1526757,
+        "wall_seconds": 0.001526757
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1550454,
+        "direction": "migration_apply",
+        "migration_index": 37,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0003_alter_user_email_max_length",
+        "thread_cpu_seconds": 0.001550454,
+        "wall_ns": 1550643,
+        "wall_seconds": 0.001550643
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1781939,
+        "direction": "migration_apply",
+        "migration_index": 38,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0004_alter_user_username_opts",
+        "thread_cpu_seconds": 0.001781939,
+        "wall_ns": 1782178,
+        "wall_seconds": 0.001782178
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1751082,
+        "direction": "migration_apply",
+        "migration_index": 38,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0004_alter_user_username_opts",
+        "thread_cpu_seconds": 0.001751082,
+        "wall_ns": 1751332,
+        "wall_seconds": 0.001751332
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1397155,
+        "direction": "migration_apply",
+        "migration_index": 39,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0005_alter_user_last_login_null",
+        "thread_cpu_seconds": 0.001397155,
+        "wall_ns": 1397414,
+        "wall_seconds": 0.001397414
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1398447,
+        "direction": "migration_apply",
+        "migration_index": 39,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0005_alter_user_last_login_null",
+        "thread_cpu_seconds": 0.001398447,
+        "wall_ns": 1398686,
+        "wall_seconds": 0.001398686
+      },
+      {
+        "count": 1,
+        "cpu_ns": 9294,
+        "direction": "migration_apply",
+        "migration_index": 40,
+        "operation_count": 0,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0006_require_contenttypes_0002",
+        "thread_cpu_seconds": 9.294e-06,
+        "wall_ns": 9484,
+        "wall_seconds": 9.484e-06
+      },
+      {
+        "count": 1,
+        "cpu_ns": 9544,
+        "direction": "migration_apply",
+        "migration_index": 40,
+        "operation_count": 0,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0006_require_contenttypes_0002",
+        "thread_cpu_seconds": 9.544e-06,
+        "wall_ns": 9725,
+        "wall_seconds": 9.725e-06
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1415292,
+        "direction": "migration_apply",
+        "migration_index": 41,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0007_alter_validators_add_error_messages",
+        "thread_cpu_seconds": 0.001415292,
+        "wall_ns": 1415451,
+        "wall_seconds": 0.001415451
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1444936,
+        "direction": "migration_apply",
+        "migration_index": 41,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0007_alter_validators_add_error_messages",
+        "thread_cpu_seconds": 0.001444936,
+        "wall_ns": 1445085,
+        "wall_seconds": 0.001445085
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1424195,
+        "direction": "migration_apply",
+        "migration_index": 42,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0008_alter_user_username_max_length",
+        "thread_cpu_seconds": 0.001424195,
+        "wall_ns": 1424394,
+        "wall_seconds": 0.001424394
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1671895,
+        "direction": "migration_apply",
+        "migration_index": 42,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0008_alter_user_username_max_length",
+        "thread_cpu_seconds": 0.001671895,
+        "wall_ns": 1672074,
+        "wall_seconds": 0.001672074
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1766756,
+        "direction": "migration_apply",
+        "migration_index": 43,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0009_alter_user_last_name_max_length",
+        "thread_cpu_seconds": 0.001766756,
+        "wall_ns": 1766975,
+        "wall_seconds": 0.001766975
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1412898,
+        "direction": "migration_apply",
+        "migration_index": 43,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0009_alter_user_last_name_max_length",
+        "thread_cpu_seconds": 0.001412898,
+        "wall_ns": 1413177,
+        "wall_seconds": 0.001413177
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1283676,
+        "direction": "migration_apply",
+        "migration_index": 44,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0010_alter_group_name_max_length",
+        "thread_cpu_seconds": 0.001283676,
+        "wall_ns": 1827165,
+        "wall_seconds": 0.001827165
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1292048,
+        "direction": "migration_apply",
+        "migration_index": 44,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0010_alter_group_name_max_length",
+        "thread_cpu_seconds": 0.001292048,
+        "wall_ns": 1811562,
+        "wall_seconds": 0.001811562
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1381451,
+        "direction": "migration_apply",
+        "migration_index": 45,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0011_update_proxy_permissions",
+        "thread_cpu_seconds": 0.001381451,
+        "wall_ns": 1381600,
+        "wall_seconds": 0.0013816
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1412577,
+        "direction": "migration_apply",
+        "migration_index": 45,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0011_update_proxy_permissions",
+        "thread_cpu_seconds": 0.001412577,
+        "wall_ns": 1412727,
+        "wall_seconds": 0.001412727
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1402772,
+        "direction": "migration_apply",
+        "migration_index": 46,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "auth.0012_alter_user_first_name_max_length",
+        "thread_cpu_seconds": 0.001402772,
+        "wall_ns": 1403012,
+        "wall_seconds": 0.001403012
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4853160,
+        "direction": "migration_apply",
+        "migration_index": 46,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "auth.0012_alter_user_first_name_max_length",
+        "thread_cpu_seconds": 0.00485316,
+        "wall_ns": 4853347,
+        "wall_seconds": 0.004853347
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1304397,
+        "direction": "migration_apply",
+        "migration_index": 47,
+        "operation_count": 2,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "contenttypes.0001_initial",
+        "thread_cpu_seconds": 0.001304397,
+        "wall_ns": 2048044,
+        "wall_seconds": 0.002048044
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1285269,
+        "direction": "migration_apply",
+        "migration_index": 47,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "contenttypes.0001_initial",
+        "thread_cpu_seconds": 0.001285269,
+        "wall_ns": 1988876,
+        "wall_seconds": 0.001988876
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1505405,
+        "direction": "migration_apply",
+        "migration_index": 48,
+        "operation_count": 4,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "contenttypes.0002_remove_content_type_name",
+        "thread_cpu_seconds": 0.001505405,
+        "wall_ns": 1726625,
+        "wall_seconds": 0.001726625
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1486276,
+        "direction": "migration_apply",
+        "migration_index": 48,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "contenttypes.0002_remove_content_type_name",
+        "thread_cpu_seconds": 0.001486276,
+        "wall_ns": 1678052,
+        "wall_seconds": 0.001678052
+      },
+      {
+        "count": 1,
+        "cpu_ns": 51109861,
+        "direction": "migration_apply",
+        "migration_index": 49,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0001_initial",
+        "thread_cpu_seconds": 0.051109861,
+        "wall_ns": 55126015,
+        "wall_seconds": 0.055126015
+      },
+      {
+        "count": 1,
+        "cpu_ns": 19058583,
+        "direction": "migration_apply",
+        "migration_index": 49,
+        "operation_count": 4,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0001_initial",
+        "thread_cpu_seconds": 0.019058583,
+        "wall_ns": 22753470,
+        "wall_seconds": 0.02275347
+      },
+      {
+        "count": 1,
+        "cpu_ns": 44433672,
+        "direction": "migration_apply",
+        "migration_index": 49,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0001_initial",
+        "thread_cpu_seconds": 0.044433672,
+        "wall_ns": 48233556,
+        "wall_seconds": 0.048233556
+      },
+      {
+        "count": 1,
+        "cpu_ns": 46179007,
+        "direction": "migration_unapply",
+        "migration_index": 49,
+        "operation_count": 4,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0001_initial",
+        "thread_cpu_seconds": 0.046179007,
+        "wall_ns": 48383451,
+        "wall_seconds": 0.048383451
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1124828,
+        "direction": "migration_apply",
+        "migration_index": 50,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0002_audit_append_only",
+        "thread_cpu_seconds": 0.001124828,
+        "wall_ns": 1425165,
+        "wall_seconds": 0.001425165
+      },
+      {
+        "count": 1,
+        "cpu_ns": 375611,
+        "direction": "migration_apply",
+        "migration_index": 50,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0002_audit_append_only",
+        "thread_cpu_seconds": 0.000375611,
+        "wall_ns": 684961,
+        "wall_seconds": 0.000684961
+      },
+      {
+        "count": 1,
+        "cpu_ns": 495900,
+        "direction": "migration_apply",
+        "migration_index": 50,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0002_audit_append_only",
+        "thread_cpu_seconds": 0.0004959,
+        "wall_ns": 783799,
+        "wall_seconds": 0.000783799
+      },
+      {
+        "count": 1,
+        "cpu_ns": 652494,
+        "direction": "migration_unapply",
+        "migration_index": 50,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0002_audit_append_only",
+        "thread_cpu_seconds": 0.000652494,
+        "wall_ns": 743990,
+        "wall_seconds": 0.00074399
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4054379,
+        "direction": "migration_apply",
+        "migration_index": 51,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0003_evidence_payload_constraints",
+        "thread_cpu_seconds": 0.004054379,
+        "wall_ns": 4672939,
+        "wall_seconds": 0.004672939
+      },
+      {
+        "count": 1,
+        "cpu_ns": 3544366,
+        "direction": "migration_apply",
+        "migration_index": 51,
+        "operation_count": 3,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0003_evidence_payload_constraints",
+        "thread_cpu_seconds": 0.003544366,
+        "wall_ns": 4643825,
+        "wall_seconds": 0.004643825
+      },
+      {
+        "count": 1,
+        "cpu_ns": 3240806,
+        "direction": "migration_apply",
+        "migration_index": 51,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0003_evidence_payload_constraints",
+        "thread_cpu_seconds": 0.003240806,
+        "wall_ns": 3741239,
+        "wall_seconds": 0.003741239
+      },
+      {
+        "count": 1,
+        "cpu_ns": 3649276,
+        "direction": "migration_unapply",
+        "migration_index": 51,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0003_evidence_payload_constraints",
+        "thread_cpu_seconds": 0.003649276,
+        "wall_ns": 3916991,
+        "wall_seconds": 0.003916991
+      },
+      {
+        "count": 1,
+        "cpu_ns": 352389649,
+        "direction": "migration_apply",
+        "migration_index": 52,
+        "operation_count": 12,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0004_consent_core",
+        "thread_cpu_seconds": 0.352389649,
+        "wall_ns": 357576078,
+        "wall_seconds": 0.357576078
+      },
+      {
+        "count": 1,
+        "cpu_ns": 91579312,
+        "direction": "migration_apply",
+        "migration_index": 52,
+        "operation_count": 12,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0004_consent_core",
+        "thread_cpu_seconds": 0.091579312,
+        "wall_ns": 97730113,
+        "wall_seconds": 0.097730113
+      },
+      {
+        "count": 1,
+        "cpu_ns": 163095516,
+        "direction": "migration_apply",
+        "migration_index": 52,
+        "operation_count": 12,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0004_consent_core",
+        "thread_cpu_seconds": 0.163095516,
+        "wall_ns": 167270404,
+        "wall_seconds": 0.167270404
+      },
+      {
+        "count": 1,
+        "cpu_ns": 177434455,
+        "direction": "migration_unapply",
+        "migration_index": 52,
+        "operation_count": 12,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0004_consent_core",
+        "thread_cpu_seconds": 0.177434455,
+        "wall_ns": 179092639,
+        "wall_seconds": 0.179092639
+      },
+      {
+        "count": 1,
+        "cpu_ns": 3395939,
+        "direction": "migration_apply",
+        "migration_index": 53,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0005_consent_granted_outbox",
+        "thread_cpu_seconds": 0.003395939,
+        "wall_ns": 3806897,
+        "wall_seconds": 0.003806897
+      },
+      {
+        "count": 1,
+        "cpu_ns": 3017491,
+        "direction": "migration_apply",
+        "migration_index": 53,
+        "operation_count": 3,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0005_consent_granted_outbox",
+        "thread_cpu_seconds": 0.003017491,
+        "wall_ns": 3570204,
+        "wall_seconds": 0.003570204
+      },
+      {
+        "count": 1,
+        "cpu_ns": 3104342,
+        "direction": "migration_apply",
+        "migration_index": 53,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0005_consent_granted_outbox",
+        "thread_cpu_seconds": 0.003104342,
+        "wall_ns": 3523865,
+        "wall_seconds": 0.003523865
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4022261,
+        "direction": "migration_unapply",
+        "migration_index": 53,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0005_consent_granted_outbox",
+        "thread_cpu_seconds": 0.004022261,
+        "wall_ns": 4289707,
+        "wall_seconds": 0.004289707
+      },
+      {
+        "count": 1,
+        "cpu_ns": 394469,
+        "direction": "migration_apply",
+        "migration_index": 54,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0006_consent_terminal_guards",
+        "thread_cpu_seconds": 0.000394469,
+        "wall_ns": 673234,
+        "wall_seconds": 0.000673234
+      },
+      {
+        "count": 1,
+        "cpu_ns": 284475,
+        "direction": "migration_apply",
+        "migration_index": 54,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0006_consent_terminal_guards",
+        "thread_cpu_seconds": 0.000284475,
+        "wall_ns": 602508,
+        "wall_seconds": 0.000602508
+      },
+      {
+        "count": 1,
+        "cpu_ns": 377563,
+        "direction": "migration_apply",
+        "migration_index": 54,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0006_consent_terminal_guards",
+        "thread_cpu_seconds": 0.000377563,
+        "wall_ns": 617551,
+        "wall_seconds": 0.000617551
+      },
+      {
+        "count": 1,
+        "cpu_ns": 686284,
+        "direction": "migration_unapply",
+        "migration_index": 54,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0006_consent_terminal_guards",
+        "thread_cpu_seconds": 0.000686284,
+        "wall_ns": 857579,
+        "wall_seconds": 0.000857579
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1123877,
+        "direction": "migration_apply",
+        "migration_index": 55,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0007_featureflag",
+        "thread_cpu_seconds": 0.001123877,
+        "wall_ns": 1774627,
+        "wall_seconds": 0.001774627
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1053321,
+        "direction": "migration_apply",
+        "migration_index": 55,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0007_featureflag",
+        "thread_cpu_seconds": 0.001053321,
+        "wall_ns": 1874515,
+        "wall_seconds": 0.001874515
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1040783,
+        "direction": "migration_apply",
+        "migration_index": 55,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0007_featureflag",
+        "thread_cpu_seconds": 0.001040783,
+        "wall_ns": 1731181,
+        "wall_seconds": 0.001731181
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1387380,
+        "direction": "migration_unapply",
+        "migration_index": 55,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0007_featureflag",
+        "thread_cpu_seconds": 0.00138738,
+        "wall_ns": 1708047,
+        "wall_seconds": 0.001708047
+      },
+      {
+        "count": 1,
+        "cpu_ns": 30891939,
+        "direction": "migration_apply",
+        "migration_index": 56,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0008_seed_feature_flags",
+        "thread_cpu_seconds": 0.030891939,
+        "wall_ns": 31911578,
+        "wall_seconds": 0.031911578
+      },
+      {
+        "count": 1,
+        "cpu_ns": 17534823,
+        "direction": "migration_apply",
+        "migration_index": 56,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0008_seed_feature_flags",
+        "thread_cpu_seconds": 0.017534823,
+        "wall_ns": 19402974,
+        "wall_seconds": 0.019402974
+      },
+      {
+        "count": 1,
+        "cpu_ns": 27014805,
+        "direction": "migration_apply",
+        "migration_index": 56,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0008_seed_feature_flags",
+        "thread_cpu_seconds": 0.027014805,
+        "wall_ns": 28497245,
+        "wall_seconds": 0.028497245
+      },
+      {
+        "count": 1,
+        "cpu_ns": 811290,
+        "direction": "migration_unapply",
+        "migration_index": 56,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0008_seed_feature_flags",
+        "thread_cpu_seconds": 0.00081129,
+        "wall_ns": 812081,
+        "wall_seconds": 0.000812081
+      },
+      {
+        "count": 1,
+        "cpu_ns": 92625532,
+        "direction": "migration_apply",
+        "migration_index": 57,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0009_privacyrequest_recordhold_retentionpolicy",
+        "thread_cpu_seconds": 0.092625532,
+        "wall_ns": 96780542,
+        "wall_seconds": 0.096780542
+      },
+      {
+        "count": 1,
+        "cpu_ns": 42869407,
+        "direction": "migration_apply",
+        "migration_index": 57,
+        "operation_count": 3,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0009_privacyrequest_recordhold_retentionpolicy",
+        "thread_cpu_seconds": 0.042869407,
+        "wall_ns": 46846473,
+        "wall_seconds": 0.046846473
+      },
+      {
+        "count": 1,
+        "cpu_ns": 76710668,
+        "direction": "migration_apply",
+        "migration_index": 57,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0009_privacyrequest_recordhold_retentionpolicy",
+        "thread_cpu_seconds": 0.076710668,
+        "wall_ns": 80422276,
+        "wall_seconds": 0.080422276
+      },
+      {
+        "count": 1,
+        "cpu_ns": 74815829,
+        "direction": "migration_unapply",
+        "migration_index": 57,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0009_privacyrequest_recordhold_retentionpolicy",
+        "thread_cpu_seconds": 0.074815829,
+        "wall_ns": 76521972,
+        "wall_seconds": 0.076521972
+      },
+      {
+        "count": 1,
+        "cpu_ns": 2659958,
+        "direction": "migration_apply",
+        "migration_index": 58,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0010_outboxdeliveryreceipt",
+        "thread_cpu_seconds": 0.002659958,
+        "wall_ns": 4008247,
+        "wall_seconds": 0.004008247
+      },
+      {
+        "count": 1,
+        "cpu_ns": 3134427,
+        "direction": "migration_apply",
+        "migration_index": 58,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0010_outboxdeliveryreceipt",
+        "thread_cpu_seconds": 0.003134427,
+        "wall_ns": 4110559,
+        "wall_seconds": 0.004110559
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1983088,
+        "direction": "migration_apply",
+        "migration_index": 58,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0010_outboxdeliveryreceipt",
+        "thread_cpu_seconds": 0.001983088,
+        "wall_ns": 2830451,
+        "wall_seconds": 0.002830451
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1984251,
+        "direction": "migration_unapply",
+        "migration_index": 58,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0010_outboxdeliveryreceipt",
+        "thread_cpu_seconds": 0.001984251,
+        "wall_ns": 2442713,
+        "wall_seconds": 0.002442713
+      },
+      {
+        "count": 1,
+        "cpu_ns": 83268410,
+        "direction": "migration_apply",
+        "migration_index": 59,
+        "operation_count": 7,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0011_c03_profile_contracts",
+        "thread_cpu_seconds": 0.08326841,
+        "wall_ns": 85874339,
+        "wall_seconds": 0.085874339
+      },
+      {
+        "count": 1,
+        "cpu_ns": 75187152,
+        "direction": "migration_apply",
+        "migration_index": 59,
+        "operation_count": 7,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0011_c03_profile_contracts",
+        "thread_cpu_seconds": 0.075187152,
+        "wall_ns": 77287793,
+        "wall_seconds": 0.077287793
+      },
+      {
+        "count": 1,
+        "cpu_ns": 68655378,
+        "direction": "migration_apply",
+        "migration_index": 59,
+        "operation_count": 7,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0011_c03_profile_contracts",
+        "thread_cpu_seconds": 0.068655378,
+        "wall_ns": 70783833,
+        "wall_seconds": 0.070783833
+      },
+      {
+        "count": 1,
+        "cpu_ns": 74214283,
+        "direction": "migration_unapply",
+        "migration_index": 59,
+        "operation_count": 7,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0011_c03_profile_contracts",
+        "thread_cpu_seconds": 0.074214283,
+        "wall_ns": 75351156,
+        "wall_seconds": 0.075351156
+      },
+      {
+        "count": 1,
+        "cpu_ns": 42921946,
+        "direction": "migration_apply",
+        "migration_index": 60,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0012_c03_staff_capability_width",
+        "thread_cpu_seconds": 0.042921946,
+        "wall_ns": 45136128,
+        "wall_seconds": 0.045136128
+      },
+      {
+        "count": 1,
+        "cpu_ns": 34050770,
+        "direction": "migration_apply",
+        "migration_index": 60,
+        "operation_count": 2,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0012_c03_staff_capability_width",
+        "thread_cpu_seconds": 0.03405077,
+        "wall_ns": 35897996,
+        "wall_seconds": 0.035897996
+      },
+      {
+        "count": 1,
+        "cpu_ns": 34854761,
+        "direction": "migration_apply",
+        "migration_index": 60,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0012_c03_staff_capability_width",
+        "thread_cpu_seconds": 0.034854761,
+        "wall_ns": 36492468,
+        "wall_seconds": 0.036492468
+      },
+      {
+        "count": 1,
+        "cpu_ns": 33688050,
+        "direction": "migration_unapply",
+        "migration_index": 60,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0012_c03_staff_capability_width",
+        "thread_cpu_seconds": 0.03368805,
+        "wall_ns": 36283767,
+        "wall_seconds": 0.036283767
+      },
+      {
+        "count": 1,
+        "cpu_ns": 93039969,
+        "direction": "migration_apply",
+        "migration_index": 61,
+        "operation_count": 11,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0013_c03_audit_consent_hold_contracts",
+        "thread_cpu_seconds": 0.093039969,
+        "wall_ns": 96515797,
+        "wall_seconds": 0.096515797
+      },
+      {
+        "count": 1,
+        "cpu_ns": 285954847,
+        "direction": "migration_apply",
+        "migration_index": 61,
+        "operation_count": 11,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0013_c03_audit_consent_hold_contracts",
+        "thread_cpu_seconds": 0.285954847,
+        "wall_ns": 288721490,
+        "wall_seconds": 0.28872149
+      },
+      {
+        "count": 1,
+        "cpu_ns": 70241855,
+        "direction": "migration_apply",
+        "migration_index": 61,
+        "operation_count": 11,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0013_c03_audit_consent_hold_contracts",
+        "thread_cpu_seconds": 0.070241855,
+        "wall_ns": 73104413,
+        "wall_seconds": 0.073104413
+      },
+      {
+        "count": 1,
+        "cpu_ns": 305419942,
+        "direction": "migration_unapply",
+        "migration_index": 61,
+        "operation_count": 11,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0013_c03_audit_consent_hold_contracts",
+        "thread_cpu_seconds": 0.305419942,
+        "wall_ns": 307467395,
+        "wall_seconds": 0.307467395
+      },
+      {
+        "count": 1,
+        "cpu_ns": 3685709,
+        "direction": "migration_apply",
+        "migration_index": 62,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0014_task3_baseline_read_audit",
+        "thread_cpu_seconds": 0.003685709,
+        "wall_ns": 4242236,
+        "wall_seconds": 0.004242236
+      },
+      {
+        "count": 1,
+        "cpu_ns": 4000447,
+        "direction": "migration_apply",
+        "migration_index": 62,
+        "operation_count": 2,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0014_task3_baseline_read_audit",
+        "thread_cpu_seconds": 0.004000447,
+        "wall_ns": 4702733,
+        "wall_seconds": 0.004702733
+      },
+      {
+        "count": 1,
+        "cpu_ns": 7676774,
+        "direction": "migration_apply",
+        "migration_index": 62,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0014_task3_baseline_read_audit",
+        "thread_cpu_seconds": 0.007676774,
+        "wall_ns": 8331834,
+        "wall_seconds": 0.008331834
+      },
+      {
+        "count": 1,
+        "cpu_ns": 3129769,
+        "direction": "migration_unapply",
+        "migration_index": 62,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0014_task3_baseline_read_audit",
+        "thread_cpu_seconds": 0.003129769,
+        "wall_ns": 3581601,
+        "wall_seconds": 0.003581601
+      },
+      {
+        "count": 1,
+        "cpu_ns": 7249925,
+        "direction": "migration_apply",
+        "migration_index": 63,
+        "operation_count": 5,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0015_c04_publication_metadata",
+        "thread_cpu_seconds": 0.007249925,
+        "wall_ns": 8179728,
+        "wall_seconds": 0.008179728
+      },
+      {
+        "count": 1,
+        "cpu_ns": 7018800,
+        "direction": "migration_apply",
+        "migration_index": 63,
+        "operation_count": 5,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0015_c04_publication_metadata",
+        "thread_cpu_seconds": 0.0070188,
+        "wall_ns": 8068123,
+        "wall_seconds": 0.008068123
+      },
+      {
+        "count": 1,
+        "cpu_ns": 6570232,
+        "direction": "migration_apply",
+        "migration_index": 63,
+        "operation_count": 5,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0015_c04_publication_metadata",
+        "thread_cpu_seconds": 0.006570232,
+        "wall_ns": 7685922,
+        "wall_seconds": 0.007685922
+      },
+      {
+        "count": 1,
+        "cpu_ns": 9611519,
+        "direction": "migration_unapply",
+        "migration_index": 63,
+        "operation_count": 5,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0015_c04_publication_metadata",
+        "thread_cpu_seconds": 0.009611519,
+        "wall_ns": 10581460,
+        "wall_seconds": 0.01058146
+      },
+      {
+        "count": 1,
+        "cpu_ns": 859825293,
+        "direction": "migration_apply",
+        "migration_index": 64,
+        "operation_count": 38,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0016_c04_public_moderation",
+        "thread_cpu_seconds": 0.859825293,
+        "wall_ns": 876448186,
+        "wall_seconds": 0.876448186
+      },
+      {
+        "count": 1,
+        "cpu_ns": 640759364,
+        "direction": "migration_apply",
+        "migration_index": 64,
+        "operation_count": 38,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "governance.0016_c04_public_moderation",
+        "thread_cpu_seconds": 0.640759364,
+        "wall_ns": 659950067,
+        "wall_seconds": 0.659950067
+      },
+      {
+        "count": 1,
+        "cpu_ns": 671822914,
+        "direction": "migration_apply",
+        "migration_index": 64,
+        "operation_count": 38,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "governance.0016_c04_public_moderation",
+        "thread_cpu_seconds": 0.671822914,
+        "wall_ns": 687989250,
+        "wall_seconds": 0.68798925
+      },
+      {
+        "count": 1,
+        "cpu_ns": 742118484,
+        "direction": "migration_unapply",
+        "migration_index": 64,
+        "operation_count": 38,
+        "ordinal": 1,
+        "phase": "call",
+        "source_migration": "governance.0016_c04_public_moderation",
+        "thread_cpu_seconds": 0.742118484,
+        "wall_ns": 757044217,
+        "wall_seconds": 0.757044217
+      },
+      {
+        "count": 1,
+        "cpu_ns": 10627817,
+        "direction": "migration_apply",
+        "migration_index": 65,
+        "operation_count": 7,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "marketplace.0001_public_projection",
+        "thread_cpu_seconds": 0.010627817,
+        "wall_ns": 14163783,
+        "wall_seconds": 0.014163783
+      },
+      {
+        "count": 1,
+        "cpu_ns": 9508203,
+        "direction": "migration_apply",
+        "migration_index": 65,
+        "operation_count": 7,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "marketplace.0001_public_projection",
+        "thread_cpu_seconds": 0.009508203,
+        "wall_ns": 12557495,
+        "wall_seconds": 0.012557495
+      },
+      {
+        "count": 1,
+        "cpu_ns": 77968305,
+        "direction": "migration_apply",
+        "migration_index": 66,
+        "operation_count": 23,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "marketplace.0002_persian_search",
+        "thread_cpu_seconds": 0.077968305,
+        "wall_ns": 87918768,
+        "wall_seconds": 0.087918768
+      },
+      {
+        "count": 1,
+        "cpu_ns": 73689005,
+        "direction": "migration_apply",
+        "migration_index": 66,
+        "operation_count": 23,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "marketplace.0002_persian_search",
+        "thread_cpu_seconds": 0.073689005,
+        "wall_ns": 81521100,
+        "wall_seconds": 0.0815211
+      },
+      {
+        "count": 1,
+        "cpu_ns": 556691604,
+        "direction": "migration_apply",
+        "migration_index": 67,
+        "operation_count": 16,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "marketplace.0003_owned_selections",
+        "thread_cpu_seconds": 0.556691604,
+        "wall_ns": 566678246,
+        "wall_seconds": 0.566678246
+      },
+      {
+        "count": 1,
+        "cpu_ns": 251223767,
+        "direction": "migration_apply",
+        "migration_index": 67,
+        "operation_count": 16,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "marketplace.0003_owned_selections",
+        "thread_cpu_seconds": 0.251223767,
+        "wall_ns": 259137716,
+        "wall_seconds": 0.259137716
+      },
+      {
+        "count": 1,
+        "cpu_ns": 329457828,
+        "direction": "migration_apply",
+        "migration_index": 68,
+        "operation_count": 16,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0001_profile_verification_metadata",
+        "thread_cpu_seconds": 0.329457828,
+        "wall_ns": 358040340,
+        "wall_seconds": 0.35804034
+      },
+      {
+        "count": 1,
+        "cpu_ns": 210375957,
+        "direction": "migration_apply",
+        "migration_index": 68,
+        "operation_count": 16,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0001_profile_verification_metadata",
+        "thread_cpu_seconds": 0.210375957,
+        "wall_ns": 227951682,
+        "wall_seconds": 0.227951682
+      },
+      {
+        "count": 1,
+        "cpu_ns": 941243,
+        "direction": "migration_apply",
+        "migration_index": 69,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0002_relational_guards",
+        "thread_cpu_seconds": 0.000941243,
+        "wall_ns": 2301231,
+        "wall_seconds": 0.002301231
+      },
+      {
+        "count": 1,
+        "cpu_ns": 566936,
+        "direction": "migration_apply",
+        "migration_index": 69,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0002_relational_guards",
+        "thread_cpu_seconds": 0.000566936,
+        "wall_ns": 1285777,
+        "wall_seconds": 0.001285777
+      },
+      {
+        "count": 1,
+        "cpu_ns": 841085,
+        "direction": "migration_apply",
+        "migration_index": 70,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0003_immutable_evidence_guards",
+        "thread_cpu_seconds": 0.000841085,
+        "wall_ns": 1880183,
+        "wall_seconds": 0.001880183
+      },
+      {
+        "count": 1,
+        "cpu_ns": 321951,
+        "direction": "migration_apply",
+        "migration_index": 70,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0003_immutable_evidence_guards",
+        "thread_cpu_seconds": 0.000321951,
+        "wall_ns": 931859,
+        "wall_seconds": 0.000931859
+      },
+      {
+        "count": 1,
+        "cpu_ns": 774775,
+        "direction": "migration_apply",
+        "migration_index": 71,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0004_fix_verification_decision_guard",
+        "thread_cpu_seconds": 0.000774775,
+        "wall_ns": 1090586,
+        "wall_seconds": 0.001090586
+      },
+      {
+        "count": 1,
+        "cpu_ns": 263823,
+        "direction": "migration_apply",
+        "migration_index": 71,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0004_fix_verification_decision_guard",
+        "thread_cpu_seconds": 0.000263823,
+        "wall_ns": 453305,
+        "wall_seconds": 0.000453305
+      },
+      {
+        "count": 1,
+        "cpu_ns": 258852111,
+        "direction": "migration_apply",
+        "migration_index": 72,
+        "operation_count": 2,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0005_remove_verificationtarget_target_role_declaration_pair_and_more",
+        "thread_cpu_seconds": 0.258852111,
+        "wall_ns": 261628104,
+        "wall_seconds": 0.261628104
+      },
+      {
+        "count": 1,
+        "cpu_ns": 12139302,
+        "direction": "migration_apply",
+        "migration_index": 72,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0005_remove_verificationtarget_target_role_declaration_pair_and_more",
+        "thread_cpu_seconds": 0.012139302,
+        "wall_ns": 12573139,
+        "wall_seconds": 0.012573139
+      },
+      {
+        "count": 1,
+        "cpu_ns": 779152,
+        "direction": "migration_apply",
+        "migration_index": 73,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0006_submission_set_guards",
+        "thread_cpu_seconds": 0.000779152,
+        "wall_ns": 1474409,
+        "wall_seconds": 0.001474409
+      },
+      {
+        "count": 1,
+        "cpu_ns": 360087,
+        "direction": "migration_apply",
+        "migration_index": 73,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0006_submission_set_guards",
+        "thread_cpu_seconds": 0.000360087,
+        "wall_ns": 744350,
+        "wall_seconds": 0.00074435
+      },
+      {
+        "count": 1,
+        "cpu_ns": 671332,
+        "direction": "migration_apply",
+        "migration_index": 74,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0007_assistant_nonself",
+        "thread_cpu_seconds": 0.000671332,
+        "wall_ns": 965690,
+        "wall_seconds": 0.00096569
+      },
+      {
+        "count": 1,
+        "cpu_ns": 291915,
+        "direction": "migration_apply",
+        "migration_index": 74,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0007_assistant_nonself",
+        "thread_cpu_seconds": 0.000291915,
+        "wall_ns": 447037,
+        "wall_seconds": 0.000447037
+      },
+      {
+        "count": 1,
+        "cpu_ns": 77667797,
+        "direction": "migration_apply",
+        "migration_index": 75,
+        "operation_count": 3,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0008_bounded_metadata",
+        "thread_cpu_seconds": 0.077667797,
+        "wall_ns": 79209839,
+        "wall_seconds": 0.079209839
+      },
+      {
+        "count": 1,
+        "cpu_ns": 43932432,
+        "direction": "migration_apply",
+        "migration_index": 75,
+        "operation_count": 3,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0008_bounded_metadata",
+        "thread_cpu_seconds": 0.043932432,
+        "wall_ns": 45142036,
+        "wall_seconds": 0.045142036
+      },
+      {
+        "count": 1,
+        "cpu_ns": 98439984,
+        "direction": "migration_apply",
+        "migration_index": 76,
+        "operation_count": 7,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0009_evidence_metadata_contracts",
+        "thread_cpu_seconds": 0.098439984,
+        "wall_ns": 101586701,
+        "wall_seconds": 0.101586701
+      },
+      {
+        "count": 1,
+        "cpu_ns": 77046318,
+        "direction": "migration_apply",
+        "migration_index": 76,
+        "operation_count": 7,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0009_evidence_metadata_contracts",
+        "thread_cpu_seconds": 0.077046318,
+        "wall_ns": 79369666,
+        "wall_seconds": 0.079369666
+      },
+      {
+        "count": 1,
+        "cpu_ns": 576840,
+        "direction": "migration_apply",
+        "migration_index": 77,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0010_decision_snapshot_guard",
+        "thread_cpu_seconds": 0.00057684,
+        "wall_ns": 957348,
+        "wall_seconds": 0.000957348
+      },
+      {
+        "count": 1,
+        "cpu_ns": 448780,
+        "direction": "migration_apply",
+        "migration_index": 77,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0010_decision_snapshot_guard",
+        "thread_cpu_seconds": 0.00044878,
+        "wall_ns": 734035,
+        "wall_seconds": 0.000734035
+      },
+      {
+        "count": 1,
+        "cpu_ns": 94172126,
+        "direction": "migration_apply",
+        "migration_index": 78,
+        "operation_count": 6,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0011_receipt_restriction_contracts",
+        "thread_cpu_seconds": 0.094172126,
+        "wall_ns": 96809677,
+        "wall_seconds": 0.096809677
+      },
+      {
+        "count": 1,
+        "cpu_ns": 168723002,
+        "direction": "migration_apply",
+        "migration_index": 78,
+        "operation_count": 6,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0011_receipt_restriction_contracts",
+        "thread_cpu_seconds": 0.168723002,
+        "wall_ns": 170877112,
+        "wall_seconds": 0.170877112
+      },
+      {
+        "count": 1,
+        "cpu_ns": 657531,
+        "direction": "migration_apply",
+        "migration_index": 79,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0012_profile_json_contract",
+        "thread_cpu_seconds": 0.000657531,
+        "wall_ns": 1468811,
+        "wall_seconds": 0.001468811
+      },
+      {
+        "count": 1,
+        "cpu_ns": 463651,
+        "direction": "migration_apply",
+        "migration_index": 79,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0012_profile_json_contract",
+        "thread_cpu_seconds": 0.000463651,
+        "wall_ns": 1214441,
+        "wall_seconds": 0.001214441
+      },
+      {
+        "count": 1,
+        "cpu_ns": 479846,
+        "direction": "migration_apply",
+        "migration_index": 80,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0013_evidence_source_bindings",
+        "thread_cpu_seconds": 0.000479846,
+        "wall_ns": 1024458,
+        "wall_seconds": 0.001024458
+      },
+      {
+        "count": 1,
+        "cpu_ns": 321530,
+        "direction": "migration_apply",
+        "migration_index": 80,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0013_evidence_source_bindings",
+        "thread_cpu_seconds": 0.00032153,
+        "wall_ns": 761525,
+        "wall_seconds": 0.000761525
+      },
+      {
+        "count": 1,
+        "cpu_ns": 407983002,
+        "direction": "migration_apply",
+        "migration_index": 81,
+        "operation_count": 22,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0014_record_timestamps",
+        "thread_cpu_seconds": 0.407983002,
+        "wall_ns": 427341507,
+        "wall_seconds": 0.427341507
+      },
+      {
+        "count": 1,
+        "cpu_ns": 226992578,
+        "direction": "migration_apply",
+        "migration_index": 81,
+        "operation_count": 22,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0014_record_timestamps",
+        "thread_cpu_seconds": 0.226992578,
+        "wall_ns": 237867418,
+        "wall_seconds": 0.237867418
+      },
+      {
+        "count": 1,
+        "cpu_ns": 787205,
+        "direction": "migration_apply",
+        "migration_index": 82,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0015_lifecycle_timestamp_guards",
+        "thread_cpu_seconds": 0.000787205,
+        "wall_ns": 1371506,
+        "wall_seconds": 0.001371506
+      },
+      {
+        "count": 1,
+        "cpu_ns": 436730,
+        "direction": "migration_apply",
+        "migration_index": 82,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0015_lifecycle_timestamp_guards",
+        "thread_cpu_seconds": 0.00043673,
+        "wall_ns": 832471,
+        "wall_seconds": 0.000832471
+      },
+      {
+        "count": 1,
+        "cpu_ns": 27979864,
+        "direction": "migration_apply",
+        "migration_index": 83,
+        "operation_count": 2,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0016_lifecycle_metadata",
+        "thread_cpu_seconds": 0.027979864,
+        "wall_ns": 29235010,
+        "wall_seconds": 0.02923501
+      },
+      {
+        "count": 1,
+        "cpu_ns": 21324404,
+        "direction": "migration_apply",
+        "migration_index": 83,
+        "operation_count": 2,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0016_lifecycle_metadata",
+        "thread_cpu_seconds": 0.021324404,
+        "wall_ns": 22116891,
+        "wall_seconds": 0.022116891
+      },
+      {
+        "count": 1,
+        "cpu_ns": 544924,
+        "direction": "migration_apply",
+        "migration_index": 84,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0017_ownership_anchors",
+        "thread_cpu_seconds": 0.000544924,
+        "wall_ns": 1107702,
+        "wall_seconds": 0.001107702
+      },
+      {
+        "count": 1,
+        "cpu_ns": 440226,
+        "direction": "migration_apply",
+        "migration_index": 84,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0017_ownership_anchors",
+        "thread_cpu_seconds": 0.000440226,
+        "wall_ns": 894113,
+        "wall_seconds": 0.000894113
+      },
+      {
+        "count": 1,
+        "cpu_ns": 761813706,
+        "direction": "migration_apply",
+        "migration_index": 85,
+        "operation_count": 39,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0018_c04_publication",
+        "thread_cpu_seconds": 0.761813706,
+        "wall_ns": 785332581,
+        "wall_seconds": 0.785332581
+      },
+      {
+        "count": 1,
+        "cpu_ns": 421405105,
+        "direction": "migration_apply",
+        "migration_index": 85,
+        "operation_count": 39,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0018_c04_publication",
+        "thread_cpu_seconds": 0.421405105,
+        "wall_ns": 441593043,
+        "wall_seconds": 0.441593043
+      },
+      {
+        "count": 1,
+        "cpu_ns": 812036897,
+        "direction": "migration_apply",
+        "migration_index": 86,
+        "operation_count": 35,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "professionals.0019_c04_educational_posts",
+        "thread_cpu_seconds": 0.812036897,
+        "wall_ns": 831785198,
+        "wall_seconds": 0.831785198
+      },
+      {
+        "count": 1,
+        "cpu_ns": 633092631,
+        "direction": "migration_apply",
+        "migration_index": 86,
+        "operation_count": 35,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "professionals.0019_c04_educational_posts",
+        "thread_cpu_seconds": 0.633092631,
+        "wall_ns": 747310659,
+        "wall_seconds": 0.747310659
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1291967,
+        "direction": "migration_apply",
+        "migration_index": 87,
+        "operation_count": 1,
+        "ordinal": 2,
+        "phase": "call",
+        "source_migration": "sessions.0001_initial",
+        "thread_cpu_seconds": 0.001291967,
+        "wall_ns": 1934254,
+        "wall_seconds": 0.001934254
+      },
+      {
+        "count": 1,
+        "cpu_ns": 1137557,
+        "direction": "migration_apply",
+        "migration_index": 87,
+        "operation_count": 1,
+        "ordinal": 1,
+        "phase": "setup",
+        "source_migration": "sessions.0001_initial",
+        "thread_cpu_seconds": 0.001137557,
+        "wall_ns": 1746084,
+        "wall_seconds": 0.001746084
+      }
+    ],
+    "phase_profile": {
+      "call": {
+        "migration_apply": {
+          "count": 115,
+          "self_wall_seconds": 0.604065777,
+          "thread_cpu_seconds": 8.701594816,
+          "wall_seconds": 9.023468744999999
+        },
+        "migration_execute": {
+          "count": 5,
+          "self_wall_seconds": 0.290174805,
+          "thread_cpu_seconds": 14.93697878,
+          "wall_seconds": 15.480222159
+        },
+        "migration_state": {
+          "count": 3,
+          "self_wall_seconds": 0.0042533020000000005,
+          "thread_cpu_seconds": 0.004900913,
+          "wall_seconds": 0.004903643
+        },
+        "migration_unapply": {
+          "count": 28,
+          "self_wall_seconds": 0.069735436,
+          "thread_cpu_seconds": 1.663618392,
+          "wall_seconds": 1.703001964
+        },
+        "model_reload": {
+          "count": 2239,
+          "self_wall_seconds": 0.8398283310000001,
+          "thread_cpu_seconds": 13.978020526,
+          "wall_seconds": 14.006603969
+        },
+        "model_render": {
+          "count": 1910,
+          "self_wall_seconds": 13.36457648,
+          "thread_cpu_seconds": 13.335932228999999,
+          "wall_seconds": 13.36457648
+        },
+        "state_clone": {
+          "count": 894,
+          "self_wall_seconds": 0.36739650300000004,
+          "thread_cpu_seconds": 0.368125795,
+          "wall_seconds": 0.36903647500000003
+        }
+      },
+      "setup": {
+        "migration_apply": {
+          "count": 87,
+          "self_wall_seconds": 0.414933902,
+          "thread_cpu_seconds": 4.998429398,
+          "wall_seconds": 5.313883252
+        },
+        "migration_execute": {
+          "count": 1,
+          "self_wall_seconds": 0.155848457,
+          "thread_cpu_seconds": 5.05100171,
+          "wall_seconds": 5.469731709
+        },
+        "model_reload": {
+          "count": 400,
+          "self_wall_seconds": 0.183496569,
+          "thread_cpu_seconds": 4.5772412,
+          "wall_seconds": 4.681338706
+        },
+        "model_render": {
+          "count": 849,
+          "self_wall_seconds": 4.586835437,
+          "thread_cpu_seconds": 4.485347369,
+          "wall_seconds": 4.586835437
+        },
+        "state_clone": {
+          "count": 441,
+          "self_wall_seconds": 0.156644078,
+          "thread_cpu_seconds": 0.156612636,
+          "wall_seconds": 0.157469152
+        }
+      }
+    },
+    "sampled_containers": {
+      "beat": {
+        "cpu_seconds_delta": 5.01424,
+        "oom_kill_delta": 0,
+        "samples": 5,
+        "throttled_usec_delta": 0
+      },
+      "checks": {
+        "cpu_seconds_delta": 14.309214,
+        "oom_kill_delta": 0,
+        "samples": 4,
+        "throttled_usec_delta": 0
+      },
+      "db": {
+        "cpu_seconds_delta": 1.42454,
+        "oom_kill_delta": 0,
+        "samples": 5,
+        "throttled_usec_delta": 0
+      },
+      "minio": {
+        "cpu_seconds_delta": 1.500117,
+        "oom_kill_delta": 0,
+        "samples": 5,
+        "throttled_usec_delta": 0
+      },
+      "minio-init": null,
+      "redis": {
+        "cpu_seconds_delta": 0.180972,
+        "oom_kill_delta": 0,
+        "samples": 5,
+        "throttled_usec_delta": 0
+      },
+      "scanner": {
+        "cpu_seconds_delta": 0.146109,
+        "oom_kill_delta": 0,
+        "samples": 5,
+        "throttled_usec_delta": 0
+      },
+      "scanner-signatures": null,
+      "web": {
+        "cpu_seconds_delta": 1.661483,
+        "oom_kill_delta": 0,
+        "samples": 5,
+        "throttled_usec_delta": 0
+      },
+      "worker": {
+        "cpu_seconds_delta": 5.551915,
+        "oom_kill_delta": 0,
+        "samples": 5,
+        "throttled_usec_delta": 0
+      }
+    },
+    "sampled_postgres": {
+      "available": 5,
+      "missing": 0,
+      "positive_wait_samples": {
+        "io_wait": 0,
+        "lock_wait": 0,
+        "lwlock_wait": 0,
+        "ungranted_locks": 0
+      },
+      "samples": 5,
+      "short_waits_not_excluded": true
+    },
+    "sampler": {
+      "clock_probe_attempts": 1,
+      "clock_sync": {
+        "attempts": 1,
+        "common_origin_verified": true,
+        "container_ns": 219747347876,
+        "host_after_ns": 219763661373,
+        "host_before_ns": 219575902167
+      },
+      "errors": 0,
+      "host_process_cpu_ns": 28313499,
+      "interval_seconds": 5,
+      "samples": 5,
+      "thread_stopped": true,
+      "wall_ns": 800067866
+    },
+    "schema": {
+      "content_types": 71,
+      "migrations": 87,
+      "tables": 75
+    },
+    "source_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+    "source_tree": "f4a49666111ce27d6c12cc6aff89f3430c7ea243",
+    "source_unchanged": true,
+    "stages": [
+      {
+        "end_ns": 54778817618,
+        "exit_code": 0,
+        "seconds": 0.049354768,
+        "stage": "immutable_c01",
+        "start_ns": 54729462850
+      },
+      {
+        "end_ns": 54846514389,
+        "exit_code": 0,
+        "seconds": 0.067692645,
+        "stage": "immutable_c02",
+        "start_ns": 54778821744
+      },
+      {
+        "end_ns": 54942058759,
+        "exit_code": 0,
+        "seconds": 0.095540804,
+        "stage": "immutable_c03",
+        "start_ns": 54846517955
+      },
+      {
+        "end_ns": 54971634310,
+        "exit_code": 0,
+        "seconds": 0.029571915,
+        "stage": "env",
+        "start_ns": 54942062395
+      },
+      {
+        "end_ns": 57589701168,
+        "exit_code": 0,
+        "seconds": 2.618064224,
+        "stage": "config",
+        "start_ns": 54971636944
+      },
+      {
+        "end_ns": 168839505892,
+        "exit_code": 0,
+        "seconds": 111.24980138,
+        "stage": "build",
+        "start_ns": 57589704512
+      },
+      {
+        "end_ns": 192443537479,
+        "exit_code": 0,
+        "seconds": 23.604028653,
+        "stage": "services",
+        "start_ns": 168839508826
+      },
+      {
+        "end_ns": 193417447556,
+        "exit_code": 0,
+        "seconds": 0.973908104,
+        "stage": "minio",
+        "start_ns": 192443539452
+      },
+      {
+        "end_ns": 200851395593,
+        "exit_code": 0,
+        "seconds": 7.433890892,
+        "stage": "migrate",
+        "start_ns": 193417504701
+      },
+      {
+        "end_ns": 203364094457,
+        "exit_code": 0,
+        "seconds": 2.512627298,
+        "stage": "noop",
+        "start_ns": 200851467159
+      },
+      {
+        "end_ns": 205814376734,
+        "exit_code": 0,
+        "seconds": 2.450218913,
+        "stage": "drift",
+        "start_ns": 203364157821
+      },
+      {
+        "end_ns": 214347941628,
+        "exit_code": 0,
+        "seconds": 8.434044427,
+        "stage": "runtime",
+        "start_ns": 205913897201
+      },
+      {
+        "end_ns": 214432790737,
+        "exit_code": 0,
+        "seconds": 0.084837051,
+        "stage": "scanner",
+        "start_ns": 214347953686
+      },
+      {
+        "end_ns": 239171189847,
+        "exit_code": 0,
+        "seconds": 24.738114585,
+        "stage": "matched_subset",
+        "start_ns": 214433075262
+      }
+    ],
+    "startup_interpretation": "Both original Task7 startup commands exited zero with complete nontruncated private capture; required live services were observed healthy. The exited scanner-signatures one-shot reported exit zero with unhealthy metadata, which is retained and not equated with a failed required live scanner. These Task7 observations do not classify the missing Task6 historical failure.",
+    "startup_observations_before_cleanup": [
+      {
+        "before_cleanup": {
+          "container_list_exit_code": 0,
+          "daemon_exit_code": 0,
+          "end_ns": 192443178574,
+          "inspect_exit_code": 0,
+          "services": [
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 2,
+              "oom_killed": false,
+              "running": true,
+              "service": "scanner",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 5,
+              "oom_killed": false,
+              "running": true,
+              "service": "minio",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 5,
+              "oom_killed": false,
+              "running": true,
+              "service": "db",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 5,
+              "oom_killed": false,
+              "running": true,
+              "service": "redis",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "unhealthy",
+              "health_observation_count": 1,
+              "oom_killed": false,
+              "running": false,
+              "service": "scanner-signatures",
+              "state": "exited"
+            }
+          ],
+          "start_ns": 192386667553
+        },
+        "capture": {
+          "capture_complete": true,
+          "end_ns": 192386640984,
+          "exit_code": 0,
+          "start_ns": 168839651759,
+          "stderr_bytes": 14564,
+          "stderr_truncated": false,
+          "stdout_bytes": 0,
+          "stdout_truncated": false
+        },
+        "classification": {
+          "category": "startup_succeeded",
+          "daemon_probe_exit_code": 0,
+          "matched_rule_ids": [],
+          "underlying_cause_established": false
+        },
+        "command_family": "docker_compose_up_detached_wait",
+        "command_identity": "docker compose up -d --wait db redis minio scanner",
+        "requested_services": [
+          "db",
+          "redis",
+          "minio",
+          "scanner"
+        ],
+        "stage": "services"
+      },
+      {
+        "before_cleanup": {
+          "container_list_exit_code": 0,
+          "daemon_exit_code": 0,
+          "end_ns": 214347643584,
+          "inspect_exit_code": 0,
+          "services": [
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 1,
+              "oom_killed": false,
+              "running": true,
+              "service": "beat",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 1,
+              "oom_killed": false,
+              "running": true,
+              "service": "worker",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 2,
+              "oom_killed": false,
+              "running": true,
+              "service": "web",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": null,
+              "health": "not_configured",
+              "health_observation_count": 0,
+              "oom_killed": false,
+              "running": false,
+              "service": "minio-init",
+              "state": "exited"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 5,
+              "oom_killed": false,
+              "running": true,
+              "service": "scanner",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 5,
+              "oom_killed": false,
+              "running": true,
+              "service": "minio",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 5,
+              "oom_killed": false,
+              "running": true,
+              "service": "db",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "healthy",
+              "health_observation_count": 5,
+              "oom_killed": false,
+              "running": true,
+              "service": "redis",
+              "state": "running"
+            },
+            {
+              "exit_code": 0,
+              "failing_streak": 0,
+              "health": "unhealthy",
+              "health_observation_count": 1,
+              "oom_killed": false,
+              "running": false,
+              "service": "scanner-signatures",
+              "state": "exited"
+            }
+          ],
+          "start_ns": 214277460640
+        },
+        "capture": {
+          "capture_complete": true,
+          "end_ns": 214277437396,
+          "exit_code": 0,
+          "start_ns": 205914045112,
+          "stderr_bytes": 5793,
+          "stderr_truncated": false,
+          "stdout_bytes": 0,
+          "stdout_truncated": false
+        },
+        "classification": {
+          "category": "startup_succeeded",
+          "daemon_probe_exit_code": 0,
+          "matched_rule_ids": [],
+          "underlying_cause_established": false
+        },
+        "command_family": "docker_compose_up_detached_wait",
+        "command_identity": "docker compose up -d --wait web worker beat",
+        "requested_services": [
+          "web",
+          "worker",
+          "beat"
+        ],
+        "stage": "runtime"
+      }
+    ],
+    "subset_seconds": 24.738114585,
+    "test_order_collection": {
+      "count": 2,
+      "event": "collection",
+      "mono_ns": 216789749172,
+      "sequence_sha256": "f82156e2a80b3a0593951a92b3eedd5260735ce7d83c2c6439ae719e632e956b",
+      "unknown_nodes": 0
+    },
+    "test_phases": [
+      {
+        "ordinal": 1,
+        "outcome": "passed",
+        "phase": "setup",
+        "seconds": 5.733836,
+        "sql_count": 899,
+        "sql_ns": 491516328
+      },
+      {
+        "ordinal": 1,
+        "outcome": "passed",
+        "phase": "call",
+        "seconds": 9.09507,
+        "sql_count": 478,
+        "sql_ns": 187278847
+      },
+      {
+        "ordinal": 1,
+        "outcome": "passed",
+        "phase": "teardown",
+        "seconds": 0.088569,
+        "sql_count": 56,
+        "sql_ns": 51084812
+      },
+      {
+        "ordinal": 2,
+        "outcome": "passed",
+        "phase": "setup",
+        "seconds": 0.001214,
+        "sql_count": 0,
+        "sql_ns": 0
+      },
+      {
+        "ordinal": 2,
+        "outcome": "passed",
+        "phase": "call",
+        "seconds": 6.712837,
+        "sql_count": 862,
+        "sql_ns": 619999329
+      },
+      {
+        "ordinal": 2,
+        "outcome": "passed",
+        "phase": "teardown",
+        "seconds": 0.191351,
+        "sql_count": 57,
+        "sql_ns": 105744635
+      }
+    ]
+  },
+  "limits": [
+    "Diagnostic only; no complete backend, Foundation, immutable baseline acceptance or fifteen-job acceptance manifest was run.",
+    "No same-host Task6 migration comparison or minimal-observer control was executed. Historic different-run or different-subset timings cannot establish causal source regression.",
+    "Inclusive phase timers overlap. Self time subtracts only timed descendants and can include recorder work. Thread CPU excludes other threads, workers and database server CPU.",
+    "Measured timer bookkeeping was 0.041496688 wall seconds and 0.048137017 thread CPU seconds; 10000 no-op wrapper calls took 0.045490377 wall seconds. Per-migration wrapper bookkeeping and indirect effects were not separately isolated.",
+    "Cursor counter measured overhead, hook overhead and sampler activity are numeric estimates; the cumulative sampling acquisition time overlaps test execution and must not be subtracted as additive cost.",
+    "The historical MinIO and Foundation failures remain independent unresolved acceptance blockers. Passing initialization here is not their acceptance.",
+    "The prepublication controls omitted the actual startup job environment. The resulting observed harness defect is documented, not repaired or retried under exhausted run authority."
+  ],
+  "measured_findings": [
+    "Two original real-PostgreSQL migration tests passed, with zero failure/error/skip/xfail/xpass/deselection and no observer fault or truncation. The subprocess took 24.738114585 seconds under the unchanged 300-second subset limit.",
+    "The call phase observed 894 ProjectState.clone invocations, 2239 model reload invocations, 1910 model render invocations, five executor migrate invocations, 115 apply invocations and 28 unapply invocations.",
+    "Call-phase clone wall/thread CPU was 0.369036475/0.368125795 seconds. Model rendering was 13.36457648/13.335932229 seconds. Executor migrate was 15.480222159/14.93697878 seconds. Nested inclusive measurements overlap and cannot be summed.",
+    "Setup observed 441 clones and 849 renders; executor migrate wall/thread CPU was 5.469731709/5.05100171 seconds. This is pytest bootstrap, distinct from the two call-phase historical migration exercises.",
+    "Across setup and call, 202 apply invocations covered 1022 declared operation invocations, and 28 unapply invocations covered 142 declared operation invocations. Counts describe declared operations per delegated migration invocation, not a generalized full-suite cost.",
+    "In this selected candidate workload, rendering/reload consumed substantially more measured client-thread time than cloning. This identifies measured work, not a proven regression defect or a safe optimization.",
+    "All five PostgreSQL samples were available; no sampled lock/I/O/LWLock/ungranted-lock waits were positive. Five-second sampling cannot exclude short-lived waits. No sampled container throttling or OOM-kill increments were recorded.",
+    "The accepted Task6 startup classification remains unavailable because Job A stopped at its own control test. The original short startup failure and historical acceptance timeout causes remain unresolved."
+  ],
+  "preflight": {
+    "accepted_task6_sha_tree_verified": true,
+    "diagnostic_checkpoint_sha_tree_and_eight_blob_bytes_verified": true,
+    "execution_sha_tree_verified": true,
+    "independent_agent_inventory_only_root_before_write": true,
+    "new_branch_created_exactly_at_diagnostic_checkpoint": true,
+    "no_active_or_queued_actions_before_publication": true,
+    "no_application_migration_fixture_lock_or_mandatory_workflow_change": true,
+    "phase_manager_single_writer_confirmation": true,
+    "preserved_local_seven_file_hash_manifest_verified": true,
+    "repository_full_name_verified": "alireza-anari/fitlink-v1",
+    "review_critical_or_important_before_publication": 0
+  },
+  "prepublication_controls": {
+    "limitation": "The actual RECOVERY_JOB=startup environment was not tested before publication. The hosted startup control failure was then reproduced locally. Prepublication review did not catch this environment-dependent assertion.",
+    "local_environment": "TIMING_JOB=migration with default RECOVERY_JOB=migration",
+    "new_recovery_controls_passed": 5,
+    "prior_controls_passed": 14,
+    "ruff": "passed",
+    "timing_controls_passed": 15
+  },
+  "preservation": {
+    "backend_deadline_seconds": 900,
+    "completion_checkpoint_published": false,
+    "execution_branch_unchanged": true,
+    "foundation_deadline_seconds": 1800,
+    "immutable_historical_sources_unchanged": true,
+    "locks_unchanged": true,
+    "mandatory_acceptance_workflow_unchanged": true,
+    "original_tests_and_fixtures_unchanged": true,
+    "prior_diagnostic_branch_unchanged": true,
+    "published_migrations_unchanged": true,
+    "task8_work": false
+  },
+  "schema": "c04-task07-startup-migration-observation-v1",
+  "task7_status": "IN_PROGRESS_NOT_ACCEPTED"
+}
