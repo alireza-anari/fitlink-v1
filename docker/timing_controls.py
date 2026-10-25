@@ -206,8 +206,21 @@ class Controls(unittest.TestCase):
         p = load("timing_profile")
         t = p.Tracker()
         t.context("call", 1)
-        for label in ["state_clone", "model_render", "migration_execute"]:
+        for label in [
+            "state_clone",
+            "model_render",
+            "model_reload",
+            "migration_execute",
+            "migration_apply",
+            "migration_unapply",
+        ]:
             t.wrap(label, lambda: None)()
+        t.migration_manifest = {("accounts", "0001_initial"): 1}
+        migration = SimpleNamespace(
+            app_label="accounts", name="0001_initial", operations=[]
+        )
+        for label in ["migration_apply", "migration_unapply"]:
+            t.migration_wrap(label, lambda *a, **kw: None)(migration)
         sampler = {
             "errors": 0,
             "thread_stopped": True,
@@ -280,12 +293,43 @@ class Controls(unittest.TestCase):
             (folder / "host.jsonl").write_text(json.dumps(record) + "\n")
             value = {
                 "job": "migration",
+                "migration_manifest": [
+                    {"index": 1, "app": "accounts", "migration": "0001_initial"}
+                ],
                 "profile": t.report(),
                 "calibration": {"calls": 10000, "wall_ns": 1, "fault": False},
             }
             path = folder / "timing.json"
             path.write_text(json.dumps(value))
             self.assertTrue(r.evidence_check(folder, sampler)["valid"])
+            import copy
+
+            for defect in [
+                "missing_manifest",
+                "duplicate_manifest",
+                "missing_details",
+                "bad_index",
+                "missing_reverse",
+            ]:
+                invalid = copy.deepcopy(value)
+                if defect == "missing_manifest":
+                    invalid.pop("migration_manifest")
+                elif defect == "duplicate_manifest":
+                    invalid["migration_manifest"].append(
+                        invalid["migration_manifest"][0]
+                    )
+                elif defect == "missing_details":
+                    invalid["profile"]["migrations"] = []
+                elif defect == "bad_index":
+                    invalid["profile"]["migrations"][0]["migration_index"] = 999
+                else:
+                    invalid["profile"]["migrations"] = [
+                        x
+                        for x in invalid["profile"]["migrations"]
+                        if x["direction"] != "migration_unapply"
+                    ]
+                path.write_text(json.dumps(invalid))
+                self.assertFalse(r.evidence_check(folder, sampler)["valid"], defect)
             value["profile"]["fault"] = True
             path.write_text(json.dumps(value))
             self.assertFalse(r.evidence_check(folder, sampler)["valid"])

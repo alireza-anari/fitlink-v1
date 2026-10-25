@@ -37,6 +37,8 @@ class Tracker:
         self.local = threading.local()
         self.lock = threading.Lock()
         self.stats = {}
+        self.migration_manifest = {}
+        self.migration_stats = {}
         self.registered = set()
         self.fault = False
         self.overhead_wall_ns = self.overhead_cpu_ns = 0
@@ -134,10 +136,74 @@ class Tracker:
 
         return delegate
 
+    def migration_wrap(self, label, original):
+        delegate = self.wrap(label, original)
+
+        @functools.wraps(original)
+        def measured(*args, **kwargs):
+            metadata = None
+            try:
+                migration = args[0]
+                identity = (migration.app_label, migration.name)
+                index = self.migration_manifest.get(identity)
+                if index is not None:
+                    metadata = (
+                        index,
+                        label,
+                        self.phase,
+                        self.ordinal,
+                        len(migration.operations),
+                    )
+                else:
+                    self.fault = True
+                start = time.monotonic_ns()
+                cpu = time.thread_time_ns()
+            except Exception:
+                self.fault = True
+            try:
+                return delegate(*args, **kwargs)
+            finally:
+                if metadata is not None:
+                    try:
+                        wall = time.monotonic_ns() - start
+                        consumed = time.thread_time_ns() - cpu
+                        with self.lock:
+                            if (
+                                len(self.migration_stats) >= 4096
+                                and metadata not in self.migration_stats
+                            ):
+                                self.fault = True
+                            else:
+                                row = self.migration_stats.setdefault(
+                                    metadata, {"count": 0, "wall_ns": 0, "cpu_ns": 0}
+                                )
+                                row["count"] += 1
+                                row["wall_ns"] += max(0, wall)
+                                row["cpu_ns"] += max(0, consumed)
+                    except Exception:
+                        self.fault = True
+
+        return measured
+
     def report(self):
         with self.lock:
             return {
                 "enabled": self.enabled,
+                "migrations": [
+                    {
+                        "migration_index": i,
+                        "direction": label,
+                        "phase": phase,
+                        "ordinal": ordinal,
+                        "operation_count": n,
+                        **value,
+                    }
+                    for (i, label, phase, ordinal, n), value in sorted(
+                        self.migration_stats.items()
+                    )
+                ]
+                if self.enabled
+                else None,
                 "fault": self.fault,
                 "registered_labels": sorted(self.registered) if self.enabled else None,
                 "cpu_clock": "thread_time_ns",
@@ -177,7 +243,13 @@ def install_migrations(tracker):
         for owner, name, label in targets:
             original = getattr(owner, name)
             saved.append((owner, name, original))
-            setattr(owner, name, tracker.wrap(label, original))
+            setattr(
+                owner,
+                name,
+                tracker.migration_wrap(label, original)
+                if label in {"migration_apply", "migration_unapply"}
+                else tracker.wrap(label, original),
+            )
     except BaseException:
         restore(saved)
         raise

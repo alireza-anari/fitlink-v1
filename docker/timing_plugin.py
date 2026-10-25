@@ -187,6 +187,31 @@ def pytest_configure(config):
         STATE.classes = empty_classes()
         STATE.timing_calibration = calibration()
         if STATE.enabled:
+            import importlib.util
+
+            from django.apps import apps as installed_apps
+            from django.conf import settings
+
+            identities = set()
+            for config in installed_apps.get_app_configs():
+                module = settings.MIGRATION_MODULES.get(
+                    config.label, config.name + ".migrations"
+                )
+                if module is None:
+                    continue
+                spec = importlib.util.find_spec(module)
+                if spec is None or spec.origin is None:
+                    continue
+                for path in Path(spec.origin).parent.glob("[0-9]*.py"):
+                    if re.fullmatch(
+                        r"[0-9]{4}_[a-z0-9_]{1,120}", path.stem
+                    ) and re.fullmatch(r"[a-z][a-z0-9_]{0,60}", config.label):
+                        identities.add((config.label, path.stem))
+            if not 0 < len(identities) <= 256:
+                raise ValueError("migration_manifest_bound")
+            STATE.timing.migration_manifest = {
+                key: i + 1 for i, key in enumerate(sorted(identities))
+            }
             STATE.originals.extend(install_migrations(STATE.timing))
         STATE.thread = threading.Thread(target=STATE.heartbeat, daemon=True)
         STATE.thread.start()
@@ -326,6 +351,10 @@ def pytest_sessionfinish(session, exitstatus):
                 "acceptance": False,
                 "job": job,
                 "profile": profile,
+                "migration_manifest": [
+                    {"index": i, "app": key[0], "migration": key[1]}
+                    for key, i in sorted(STATE.timing.migration_manifest.items())
+                ],
                 "calibration": STATE.timing_calibration,
             },
             sort_keys=True,

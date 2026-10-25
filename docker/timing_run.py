@@ -12,12 +12,13 @@ import sys
 import time
 from pathlib import Path
 
+import startup_observer
 import timing_metrics as m
 from timing_profile import LABELS, PHASES
 
 ROOT = Path.cwd()
-BASE = ROOT / ".runtime/timing-evidence"
-PRIVATE = ROOT / ".runtime/timing-private"
+BASE = ROOT / ".runtime/recovery-evidence"
+PRIVATE = ROOT / ".runtime/recovery-private"
 SOURCES = {
     "six": (
         "0787d7880f9fd27006bf76ae0f16e31536ef4503",
@@ -30,6 +31,7 @@ SOURCES = {
 }
 # Source order is the same relative order in the historical complete collection.
 JOB = os.environ.get("TIMING_JOB", "migration")
+RECOVERY_JOB = os.environ.get("RECOVERY_JOB", "migration")
 MIGRATION_TESTS = [
     "tests/integration/c02/test_account_migrations.py::test_populated_c01_upgrade_preserves_identity_and_sessions",
     "tests/integration/c03/test_c03_migrations.py::test_optional_profiles_not_created",
@@ -74,10 +76,15 @@ def verify(source, key):
 def configure(source, label):
     m.SOURCE = source
     m.PROJECT = (
-        "fitlink-c04-timing-" + os.environ["GITHUB_RUN_ID"] + "-" + JOB + "-" + label
+        "fitlink-c04-recovery-"
+        + os.environ["GITHUB_RUN_ID"]
+        + "-"
+        + RECOVERY_JOB
+        + "-"
+        + label
     )
     assert re.fullmatch(
-        r"fitlink-c04-timing-[0-9]+-(migration|budget)-[a-z0-9]+", m.PROJECT
+        r"fitlink-c04-recovery-[0-9]+-(migration|startup)-[a-z0-9]+", m.PROJECT
     )
     m.OUT = BASE / label
     m.OUT.mkdir(mode=0o777)
@@ -192,12 +199,18 @@ def shell_stage(summary, name, args, seconds):
         ),
         flush=True,
     )
-    code = subprocess.run(
-        ["timeout", "-k", "10s", str(seconds) + "s", *args],
-        cwd=m.SOURCE,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    ).returncode
+    if name in {"services", "runtime"}:
+        observation = startup_observer.observe(m, args, seconds, name)
+        summary.setdefault("startup_observations", []).append(observation)
+        write(m.OUT / ("startup-" + name + ".json"), observation)
+        code = observation["capture"]["exit_code"]
+    else:
+        code = subprocess.run(
+            ["timeout", "-k", "10s", str(seconds) + "s", *args],
+            cwd=m.SOURCE,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        ).returncode
     print(
         json.dumps(
             {
@@ -294,7 +307,11 @@ def paired_run(key, mode, label):
             ("minio", m.compose("run", "--rm", "minio-init"), 150),
         ]
         for name, args, limit in setup:
+            if RECOVERY_JOB == "startup" and name == "minio":
+                break
             assert shell_stage(summary, name, args, limit) == 0
+        if RECOVERY_JOB == "startup":
+            return summary
         for label2, args in [
             ("migrate", ["python", "manage.py", "migrate", "--noinput"]),
             ("noop", ["python", "manage.py", "migrate", "--noinput"]),
@@ -411,7 +428,11 @@ def paired_run(key, mode, label):
             summary["source_unchanged"] = True
         except Exception:
             summary["source_unchanged"] = False
-        summary["evidence"] = evidence_check(m.OUT, summary.get("sampler", {}), mode)
+        summary["evidence"] = (
+            {"valid": None, "reason": "startup_only_no_tests_requested"}
+            if RECOVERY_JOB == "startup"
+            else evidence_check(m.OUT, summary.get("sampler", {}), mode)
+        )
         summary["calibration_after"] = calibration()
         write(m.OUT / "summary.json", summary)
     return summary
@@ -535,6 +556,41 @@ def evidence_check(folder, sampler, mode="full"):
             and timing["calibration"]["wall_ns"] > 0
         )
         if mode == "full":
+            if RECOVERY_JOB == "migration":
+                manifest = timing["migration_manifest"]
+                assert isinstance(manifest, list) and 0 < len(manifest) <= 256
+                indices = {x["index"] for x in manifest}
+                assert indices == set(range(1, len(manifest) + 1)) and len(
+                    indices
+                ) == len(manifest)
+                assert len({(x["app"], x["migration"]) for x in manifest}) == len(
+                    manifest
+                )
+                assert all(
+                    re.fullmatch(r"[a-z][a-z0-9_]{0,60}", x["app"])
+                    and re.fullmatch(r"[0-9]{4}_[a-z0-9_]{1,120}", x["migration"])
+                    for x in manifest
+                )
+                details = profile["migrations"]
+                assert isinstance(details, list) and 0 < len(details) <= 4096
+                assert {x["direction"] for x in details} == {
+                    "migration_apply",
+                    "migration_unapply",
+                }
+                for row in details:
+                    assert row["migration_index"] in indices and row["phase"] in PHASES
+                    assert all(
+                        type(row[k]) is int and row[k] >= 0
+                        for k in [
+                            "ordinal",
+                            "operation_count",
+                            "count",
+                            "wall_ns",
+                            "cpu_ns",
+                        ]
+                    )
+                    assert row["operation_count"] <= 1000 and row["count"] > 0
+                    assert 0 <= row["ordinal"] <= c["count"]
             assert set(profile["registered_labels"]) <= LABELS
             assert {"state_clone", "model_render", "migration_execute"} <= set(
                 profile["registered_labels"]
@@ -564,7 +620,14 @@ def evidence_check(folder, sampler, mode="full"):
                 if row["phase"] == "call":
                     counts[row["label"]] = counts.get(row["label"], 0) + row["count"]
             required = (
-                {"state_clone": 1, "model_render": 1, "migration_execute": 1}
+                {
+                    "state_clone": 1,
+                    "model_render": 1,
+                    "model_reload": 1,
+                    "migration_execute": 1,
+                    "migration_apply": 1,
+                    "migration_unapply": 1,
+                }
                 if JOB == "migration"
                 else {"corpus": 100, "unpublish": 100, "search": 2, "reconcile": 4}
             )
@@ -699,10 +762,10 @@ def emergency_cleanup():
         folder = PRIVATE / label
         marker = folder / "owned"
         expected = (
-            "fitlink-c04-timing-"
+            "fitlink-c04-recovery-"
             + os.environ["GITHUB_RUN_ID"]
             + "-"
-            + JOB
+            + RECOVERY_JOB
             + "-"
             + label
         )
@@ -729,10 +792,54 @@ def emergency_cleanup():
 def main():
     if sys.argv[1:] == ["cleanup"]:
         return emergency_cleanup()
-    assert JOB in {"migration", "budget"}
+    assert JOB == "migration" and RECOVERY_JOB in {"migration", "startup"}
     BASE.mkdir(parents=True, exist_ok=False)
     PRIVATE.mkdir(mode=0o700, parents=True, exist_ok=False)
-    return paired() if sys.argv[1:] == ["paired"] else 2
+    if sys.argv[1:] != ["single"]:
+        return 2
+    key, label = (
+        ("six", "sixfull") if RECOVERY_JOB == "startup" else ("seven", "sevenfull")
+    )
+    result = paired_run(key, "full", label)
+    valid = result.get("cleanup_complete") and result.get("source_unchanged")
+    if RECOVERY_JOB == "startup":
+        observations = result.get("startup_observations", [])
+        startup_complete = len(observations) == 1 and all(
+            x["capture"]["capture_complete"]
+            and not x["capture"]["stdout_truncated"]
+            and not x["capture"]["stderr_truncated"]
+            and x["before_cleanup"]["daemon_exit_code"] == 0
+            and x["before_cleanup"]["container_list_exit_code"] == 0
+            and x["before_cleanup"]["inspect_exit_code"] == 0
+            and {s["service"] for s in x["before_cleanup"]["services"]}
+            >= {"db", "redis", "minio", "scanner"}
+            for x in observations
+        )
+        result["startup_observation_complete"] = bool(startup_complete)
+        valid = (
+            valid
+            and startup_complete
+            and any(
+                x["stage"] == "services" and x["exit_code"] == 0
+                for x in result["stages"]
+            )
+        )
+    else:
+        valid = (
+            valid
+            and result.get("pytest_exit_code") == 0
+            and result.get("evidence", {}).get("valid")
+        )
+    write(
+        BASE / "single-summary.json",
+        {
+            "acceptance": False,
+            "job": RECOVERY_JOB,
+            "valid": bool(valid),
+            "result": result,
+        },
+    )
+    return 0 if valid else 1
 
 
 if __name__ == "__main__":
