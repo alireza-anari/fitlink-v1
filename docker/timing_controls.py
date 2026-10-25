@@ -338,6 +338,16 @@ class Controls(unittest.TestCase):
             path.write_text(json.dumps(value))
             self.assertFalse(r.evidence_check(folder, sampler)["valid"])
 
+    def test_migration_evidence_rejection_is_controller_context_independent(self):
+        for context in ["migration", "startup"]:
+            with (
+                self.subTest(controller=context),
+                patch.dict(
+                    "os.environ", {"RECOVERY_JOB": context, "TIMING_JOB": "migration"}
+                ),
+            ):
+                self.test_controller_rejects_missing_profile_fault_and_wrong_counts()
+
     def test_clock_probe_only_running_and_bounded_retry(self):
         m = load("timing_metrics")
         s = m.Sampler()

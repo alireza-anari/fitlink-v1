@@ -556,7 +556,7 @@ def evidence_check(folder, sampler, mode="full"):
             and timing["calibration"]["wall_ns"] > 0
         )
         if mode == "full":
-            if RECOVERY_JOB == "migration":
+            if JOB == "migration":
                 manifest = timing["migration_manifest"]
                 assert isinstance(manifest, list) and 0 < len(manifest) <= 256
                 indices = {x["index"] for x in manifest}

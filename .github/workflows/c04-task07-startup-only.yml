@@ -1,0 +1,107 @@
+name: Task7 accepted-source startup-only diagnostic (NOT acceptance)
+'on':
+  push:
+    branches:
+    - diagnostics/c04-task07-startup-only
+    paths:
+    - .github/workflows/c04-task07-startup-only.yml
+    - docker/timing_run.py
+    - docker/timing_controls.py
+permissions:
+  contents: read
+concurrency:
+  group: task07-startup-only-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  accepted-task6-startup-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      TIMING_JOB: migration
+      RECOVERY_JOB: startup
+    steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0787d7880f9fd27006bf76ae0f16e31536ef4503
+        path: .runtime/six
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 75c551e5b9bbbfb7777ee52b09a1993b681e921a
+        path: .runtime/six/.runtime/c01
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0905be6c6ca608d469fe33e87f514b22591132d1
+        path: .runtime/six/.runtime/c02
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        ref: 0a867328a6d8ee8c71ec9bd9eeb8910221d1b270
+        path: .runtime/six/.runtime/c03
+        persist-credentials: false
+    - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+      with:
+        version: 0.12.19
+        python-version: 3.13.15
+        enable-cache: false
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      with:
+        node-version-file: .runtime/six/.node-version
+    - name: Frozen interpreter for diagnostic controls
+      working-directory: .runtime/six
+      run: uv sync --frozen --group dev
+    - name: 'Both controller contexts: valid and rejected evidence, privacy and delegation'
+      run: "set -eu\nfor context in migration startup; do\n  RECOVERY_JOB=\"$context\"\
+        \ TIMING_JOB=migration .runtime/six/.venv/bin/python docker/timing_controls.py\
+        \ -q\n  RECOVERY_JOB=\"$context\" TIMING_JOB=migration .runtime/six/.venv/bin/python\
+        \ docker/prior_controls.py -q\n  RECOVERY_JOB=\"$context\" TIMING_JOB=migration\
+        \ .runtime/six/.venv/bin/python docker/recovery_controls.py -q\ndone"
+    - name: Verify exact accepted Task6 source before preparation
+      run: 'python - <<''PY''
+
+        import subprocess,json
+
+        from pathlib import Path
+
+        p=Path(''.runtime/six'')
+
+        def get(*a):return subprocess.check_output([''git'',''-C'',str(p),*a],text=True).strip()
+
+        assert get(''rev-parse'',''HEAD'')==''0787d7880f9fd27006bf76ae0f16e31536ef4503''
+
+        assert get(''rev-parse'',''HEAD^{tree}'')==''b207a0a8e946750a0dd1213f5460e51f67dd3000''
+
+        assert get(''diff'',''HEAD'',''--'')==''''
+
+        print(json.dumps({''source_sha'':get(''rev-parse'',''HEAD''),''source_tree'':get(''rev-parse'',''HEAD^{tree}''),''verified'':True}))
+
+        PY'
+    - name: Frozen original assets six
+      working-directory: .runtime/six
+      run: 'uv sync --frozen --group dev
+
+        npm ci
+
+        npm run build:css
+
+        npm run check:js
+
+        uv run --frozen python manage.py collectstatic --noinput --settings=config.settings.build
+        --ignore=src/styles.css'
+    - name: Exactly one original Task6 service-start observation; no retry
+      run: timeout -k 30s 1800s python docker/timing_run.py single
+    - name: Owned resources only emergency cleanup
+      if: always()
+      run: timeout -k 10s 150s python docker/timing_run.py cleanup
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      if: always()
+      with:
+        name: task07-startup-only
+        path: .runtime/recovery-evidence/**/*.json
+        include-hidden-files: true
+        if-no-files-found: error
+        retention-days: 14
