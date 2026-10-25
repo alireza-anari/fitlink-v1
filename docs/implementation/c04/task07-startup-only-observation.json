@@ -1,0 +1,594 @@
+{
+  "acceptance": false,
+  "accepted_source": {
+    "controller_reverified": true,
+    "pinned_checkout_and_source_verification_step": true,
+    "sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+    "tree": "b207a0a8e946750a0dd1213f5460e51f67dd3000"
+  },
+  "artifact": {
+    "bytes": 2949,
+    "files": [
+      "emergency-cleanup.json",
+      "single-summary.json",
+      "sixfull/startup-services.json",
+      "sixfull/summary.json"
+    ],
+    "id": 12590274474,
+    "independent_byte_sha256_verified": true,
+    "name": "task07-startup-only",
+    "sha256": "fdb012754bc0393bfa3cb11fca5b659fbeab15d700c483ee910d7e3fc6ea8983"
+  },
+  "cleanup": {
+    "emergency": {
+      "acceptance": false,
+      "owned_results": {}
+    },
+    "normal_complete": true,
+    "normal_exit_code": 0,
+    "owned_resource_absence_verified": true,
+    "unrelated_resources_not_targeted": true
+  },
+  "controller_summary": {
+    "acceptance": false,
+    "job": "startup",
+    "result": {
+      "acceptance": false,
+      "calibration_after": [
+        {
+          "cpu_ns": 239583350,
+          "result": 199771713,
+          "wall_ns": 239771187
+        },
+        {
+          "cpu_ns": 239009726,
+          "result": 199771713,
+          "wall_ns": 239065310
+        },
+        {
+          "cpu_ns": 237608375,
+          "result": 199771713,
+          "wall_ns": 237621709
+        }
+      ],
+      "calibration_before": [
+        {
+          "cpu_ns": 228169543,
+          "result": 199771713,
+          "wall_ns": 228204982
+        },
+        {
+          "cpu_ns": 229499653,
+          "result": 199771713,
+          "wall_ns": 229509649
+        },
+        {
+          "cpu_ns": 227465650,
+          "result": 199771713,
+          "wall_ns": 227483799
+        }
+      ],
+      "cleanup_complete": true,
+      "cleanup_exit_code": 0,
+      "evidence": {
+        "reason": "startup_only_no_tests_requested",
+        "valid": null
+      },
+      "observer_mode": "full",
+      "source_sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+      "source_tree": "b207a0a8e946750a0dd1213f5460e51f67dd3000",
+      "source_unchanged": true,
+      "stages": [
+        {
+          "end_ns": 226302297944,
+          "exit_code": 0,
+          "stage": "immutable_c01",
+          "start_ns": 226247970592
+        },
+        {
+          "end_ns": 226395524455,
+          "exit_code": 0,
+          "stage": "immutable_c02",
+          "start_ns": 226302301270
+        },
+        {
+          "end_ns": 226539221320,
+          "exit_code": 0,
+          "stage": "immutable_c03",
+          "start_ns": 226395526980
+        },
+        {
+          "end_ns": 226573196026,
+          "exit_code": 0,
+          "stage": "env",
+          "start_ns": 226539223955
+        },
+        {
+          "end_ns": 226873710130,
+          "exit_code": 0,
+          "stage": "config",
+          "start_ns": 226573198711
+        },
+        {
+          "end_ns": 355271606232,
+          "exit_code": 0,
+          "stage": "build",
+          "start_ns": 226873713316
+        },
+        {
+          "end_ns": 385180724644,
+          "exit_code": 0,
+          "stage": "services",
+          "start_ns": 355271609007
+        }
+      ],
+      "startup_observation_complete": true,
+      "startup_observations": [
+        {
+          "before_cleanup": {
+            "container_list_exit_code": 0,
+            "daemon_exit_code": 0,
+            "end_ns": 385180298005,
+            "inspect_exit_code": 0,
+            "services": [
+              {
+                "exit_code": 0,
+                "failing_streak": 0,
+                "health": "healthy",
+                "health_observation_count": 3,
+                "oom_killed": false,
+                "running": true,
+                "service": "scanner",
+                "state": "running"
+              },
+              {
+                "exit_code": 0,
+                "failing_streak": 0,
+                "health": "healthy",
+                "health_observation_count": 5,
+                "oom_killed": false,
+                "running": true,
+                "service": "redis",
+                "state": "running"
+              },
+              {
+                "exit_code": 0,
+                "failing_streak": 0,
+                "health": "unhealthy",
+                "health_observation_count": 1,
+                "oom_killed": false,
+                "running": false,
+                "service": "scanner-signatures",
+                "state": "exited"
+              },
+              {
+                "exit_code": 0,
+                "failing_streak": 0,
+                "health": "healthy",
+                "health_observation_count": 5,
+                "oom_killed": false,
+                "running": true,
+                "service": "db",
+                "state": "running"
+              },
+              {
+                "exit_code": 0,
+                "failing_streak": 0,
+                "health": "healthy",
+                "health_observation_count": 5,
+                "oom_killed": false,
+                "running": true,
+                "service": "minio",
+                "state": "running"
+              }
+            ],
+            "start_ns": 385103433503
+          },
+          "capture": {
+            "capture_complete": true,
+            "end_ns": 385103410049,
+            "exit_code": 0,
+            "start_ns": 355271755792,
+            "stderr_bytes": 14770,
+            "stderr_truncated": false,
+            "stdout_bytes": 0,
+            "stdout_truncated": false
+          },
+          "classification": {
+            "category": "startup_succeeded",
+            "daemon_probe_exit_code": 0,
+            "matched_rule_ids": [],
+            "underlying_cause_established": false
+          },
+          "command_family": "docker_compose_up_detached_wait",
+          "command_identity": "docker compose up -d --wait db redis minio scanner",
+          "requested_services": [
+            "db",
+            "redis",
+            "minio",
+            "scanner"
+          ],
+          "stage": "services"
+        }
+      ]
+    },
+    "valid": true
+  },
+  "decision": {
+    "acceptance_retry_authorized": false,
+    "further_runs_authorized": false,
+    "product_change_authorized": false,
+    "recommendation": "Phase Manager must decide the next bounded recovery or acceptance action using the accumulated independent gate evidence. Do not repeat completed migration attribution or infer a product fix or historical root cause from this startup observation.",
+    "retry_performed": false,
+    "status": "STOP_AFTER_SINGLE_RUN_AND_VERIFIED_REPORT"
+  },
+  "diagnostic_branch": {
+    "name": "diagnostics/c04-task07-startup-only",
+    "original_diagnostic_branch_unchanged": true,
+    "parent_report_sha": "be3e7c42ad16aaeffd667c14dc09e47f08be86a3",
+    "parent_report_tree": "f9facc443bcc1ad356ef6bb62677ab25f785e52a",
+    "sha": "34d15950f73b677c02463154b0dc964f81edabe7",
+    "tree": "dbccb2a7074a2b4c1eccab3861eb217f36aa7792",
+    "workflow": ".github/workflows/c04-task07-startup-only.yml"
+  },
+  "execution_branch": {
+    "name": "marketplace/c04-cloud",
+    "sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+    "tree": "f4a49666111ce27d6c12cc6aff89f3430c7ea243",
+    "unchanged": true
+  },
+  "harness_regression": {
+    "green_hosted": {
+      "controller_contexts": [
+        "migration",
+        "startup"
+      ],
+      "failed": 0,
+      "passed": 70,
+      "test_batches": [
+        16,
+        14,
+        5,
+        16,
+        14,
+        5
+      ]
+    },
+    "green_local": {
+      "migration": {
+        "prior": 14,
+        "recovery": 5,
+        "timing": 16
+      },
+      "ruff": "passed",
+      "startup": {
+        "prior": 14,
+        "recovery": 5,
+        "timing": 16
+      },
+      "total": 70
+    },
+    "implementation_change": "Migration manifest/details validation gates on JOB derived from TIMING_JOB, replacing RECOVERY_JOB. Exact manifest/details/reverse-evidence rejection remains required.",
+    "migration_attribution_tests_executed": false,
+    "named_regression": "test_migration_evidence_rejection_is_controller_context_independent",
+    "negative_cases": [
+      "missing_manifest",
+      "duplicate_manifest",
+      "missing_details",
+      "bad_index",
+      "missing_reverse"
+    ],
+    "red": "Before correction the named regression failed in controller=startup on missing_manifest rejection.",
+    "status": "verified",
+    "valid_migration_evidence_accepted_in_both_contexts": true
+  },
+  "hosted": {
+    "artifact": {
+      "bytes": 2949,
+      "id": 12590274474,
+      "name": "task07-startup-only",
+      "sha256": "fdb012754bc0393bfa3cb11fca5b659fbeab15d700c483ee910d7e3fc6ea8983"
+    },
+    "controls": {
+      "controller_contexts": [
+        "migration",
+        "startup"
+      ],
+      "failed": 0,
+      "passed": 70,
+      "test_batches": [
+        16,
+        14,
+        5,
+        16,
+        14,
+        5
+      ]
+    },
+    "job": {
+      "conclusion": "success",
+      "id": 121106874907,
+      "name": "accepted-task6-startup-only",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Frozen interpreter for diagnostic controls",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Both controller contexts: valid and rejected evidence, privacy and delegation",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify exact accepted Task6 source before preparation",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Frozen original assets six",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Exactly one original Task6 service-start observation; no retry",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Owned resources only emergency cleanup",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    "run": {
+      "attempt": 1,
+      "conclusion": "success",
+      "created_at": "2026-10-25T07:26:07Z",
+      "id": 40172751517,
+      "sha": "34d15950f73b677c02463154b0dc964f81edabe7",
+      "status": "completed",
+      "updated_at": "2026-10-25T07:29:14Z"
+    },
+    "source_verification": true
+  },
+  "limits": [
+    "This is a startup-only observation, not acceptance or a historical full rehearsal.",
+    "No pytest migration tests, migration attribution, MinIO initialization, current backend, full Foundation or acceptance manifest is executed. Immutable content checks and original service topology dependencies remain.",
+    "Build includes original required images, including minio-init, but does not execute MinIO provisioning.",
+    "Raw stdout/stderr and probe output stay in bounded runner-private files; they are absent from the artifact and report.",
+    "Startup and snapshots are measured on this fresh runner only. A successful observation does not establish the historical failure as transient or fixed.",
+    "One-shot service health metadata is retained along with exit status; an exited-zero dependency is not equated with an unhealthy required live service.",
+    "The historical 900-second complete-backend and 1800-second Foundation limits are unchanged; neither complete gate is run here."
+  ],
+  "preflight": {
+    "all_checkpoint_shas_trees_verified": true,
+    "diagnostic_source_blob_bytes_verified": true,
+    "independent_active_agent_check_only_root": true,
+    "independent_review": {
+      "critical": 0,
+      "important": 0,
+      "minor": 0
+    },
+    "local_preserved_state_verified": true,
+    "no_active_or_queued_actions_before_publication": true,
+    "phase_manager_exclusive_writer_confirmed": true,
+    "repository_full_name_verified": "alireza-anari/fitlink-v1"
+  },
+  "preservation": {
+    "dependency_locks": true,
+    "immutable_c01_c02_c03": true,
+    "mandatory_acceptance_workflows": true,
+    "no_completion_checkpoint": true,
+    "no_task8_merge_deployment_release": true,
+    "original_tests_fixtures": true,
+    "prior_task7_migration_diagnostic": true,
+    "product_code": true,
+    "published_migrations": true,
+    "task6_checkpoint": true
+  },
+  "schema": "c04-task07-startup-only-observation-v1",
+  "stage_outcomes": [
+    {
+      "elapsed_seconds": 0.054327352,
+      "end_ns": 226302297944,
+      "exit_code": 0,
+      "stage": "immutable_c01",
+      "start_ns": 226247970592
+    },
+    {
+      "elapsed_seconds": 0.093223185,
+      "end_ns": 226395524455,
+      "exit_code": 0,
+      "stage": "immutable_c02",
+      "start_ns": 226302301270
+    },
+    {
+      "elapsed_seconds": 0.14369434,
+      "end_ns": 226539221320,
+      "exit_code": 0,
+      "stage": "immutable_c03",
+      "start_ns": 226395526980
+    },
+    {
+      "elapsed_seconds": 0.033972071,
+      "end_ns": 226573196026,
+      "exit_code": 0,
+      "stage": "env",
+      "start_ns": 226539223955
+    },
+    {
+      "elapsed_seconds": 0.300511419,
+      "end_ns": 226873710130,
+      "exit_code": 0,
+      "stage": "config",
+      "start_ns": 226573198711
+    },
+    {
+      "elapsed_seconds": 128.397892916,
+      "end_ns": 355271606232,
+      "exit_code": 0,
+      "stage": "build",
+      "start_ns": 226873713316
+    },
+    {
+      "elapsed_seconds": 29.909115637,
+      "end_ns": 385180724644,
+      "exit_code": 0,
+      "stage": "services",
+      "start_ns": 355271609007
+    }
+  ],
+  "startup": {
+    "classification": "startup_succeeded",
+    "deadline_seconds": 180,
+    "elapsed_seconds": 29.831654257,
+    "execution_count": 1,
+    "exit_code": 0,
+    "historical_failure_reproduced": false,
+    "historical_failure_underlying_cause": "not_established",
+    "maximum_executions": 1,
+    "observation_complete": true,
+    "observed": true,
+    "precleanup_observation": {
+      "before_cleanup": {
+        "container_list_exit_code": 0,
+        "daemon_exit_code": 0,
+        "end_ns": 385180298005,
+        "inspect_exit_code": 0,
+        "services": [
+          {
+            "exit_code": 0,
+            "failing_streak": 0,
+            "health": "healthy",
+            "health_observation_count": 3,
+            "oom_killed": false,
+            "running": true,
+            "service": "scanner",
+            "state": "running"
+          },
+          {
+            "exit_code": 0,
+            "failing_streak": 0,
+            "health": "healthy",
+            "health_observation_count": 5,
+            "oom_killed": false,
+            "running": true,
+            "service": "redis",
+            "state": "running"
+          },
+          {
+            "exit_code": 0,
+            "failing_streak": 0,
+            "health": "unhealthy",
+            "health_observation_count": 1,
+            "oom_killed": false,
+            "running": false,
+            "service": "scanner-signatures",
+            "state": "exited"
+          },
+          {
+            "exit_code": 0,
+            "failing_streak": 0,
+            "health": "healthy",
+            "health_observation_count": 5,
+            "oom_killed": false,
+            "running": true,
+            "service": "db",
+            "state": "running"
+          },
+          {
+            "exit_code": 0,
+            "failing_streak": 0,
+            "health": "healthy",
+            "health_observation_count": 5,
+            "oom_killed": false,
+            "running": true,
+            "service": "minio",
+            "state": "running"
+          }
+        ],
+        "start_ns": 385103433503
+      },
+      "capture": {
+        "capture_complete": true,
+        "end_ns": 385103410049,
+        "exit_code": 0,
+        "start_ns": 355271755792,
+        "stderr_bytes": 14770,
+        "stderr_truncated": false,
+        "stdout_bytes": 0,
+        "stdout_truncated": false
+      },
+      "classification": {
+        "category": "startup_succeeded",
+        "daemon_probe_exit_code": 0,
+        "matched_rule_ids": [],
+        "underlying_cause_established": false
+      },
+      "command_family": "docker_compose_up_detached_wait",
+      "command_identity": "docker compose up -d --wait db redis minio scanner",
+      "requested_services": [
+        "db",
+        "redis",
+        "minio",
+        "scanner"
+      ],
+      "stage": "services"
+    },
+    "requested_command_identity": "docker compose up -d --wait db redis minio scanner"
+  },
+  "task7_status": "IN_PROGRESS_NOT_ACCEPTED"
+}
