@@ -1,0 +1,69 @@
+name: C04 Task 7 fixture-cost diagnostic — NOT acceptance
+'on':
+  push:
+    branches:
+      - diagnostics/c04-task07-fixture-cost
+    paths:
+      - '.github/workflows/c04-task07-fixture-cost.yml'
+      - 'docker/task07_fixture_cost_probe.py'
+      - 'docker/task07_fixture_cost_plugin.py'
+permissions:
+  contents: read
+concurrency:
+  group: c04-task07-fixture-cost-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  fixture-cost:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout diagnostic control
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Pin Python and uv
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Checkout immutable Task 7 runtime source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331
+          path: .runtime/task7-source
+          persist-credentials: false
+      - name: Verify immutable source identity
+        shell: bash
+        run: |
+          test "$(git -C .runtime/task7-source rev-parse HEAD)" = "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331"
+          test "$(git -C .runtime/task7-source rev-parse 'HEAD^{tree}')" = "f4a49666111ce27d6c12cc6aff89f3430c7ea243"
+          test -z "$(git -C .runtime/task7-source status --porcelain=v1 --untracked-files=all)"
+      - name: One bounded fixture-cost diagnostic and owned cleanup
+        env:
+          FITLINK_DIAG_CONTROL_SHA: ${{ github.sha }}
+        run: python docker/task07_fixture_cost_probe.py
+      - name: Hash sanitized diagnostic evidence
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p .runtime/task07-fixture-cost
+          : > .runtime/task07-fixture-cost/SHA256SUMS.txt
+          for file in .runtime/task07-fixture-cost/*.json; do
+            if test -f "$file"; then
+              sha256sum "$file" >> .runtime/task07-fixture-cost/SHA256SUMS.txt
+            fi
+          done
+      - name: Publish sanitized diagnostic artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: task07-fixture-cost-observation-${{ github.run_id }}
+          path: |
+            .runtime/task07-fixture-cost/*.json
+            .runtime/task07-fixture-cost/SHA256SUMS.txt
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
