@@ -15,6 +15,20 @@ def command(name):
     return value
 
 
+def private_post_owner(settings):
+    """A real logged-in owner/profile without verification or public publication."""
+    from apps.professionals.models import ProfessionalPublication, Verification
+    from tests.integration.c03.test_professional_setup import owner
+    from tests.integration.c04.publication_helpers import configure
+
+    subject = owner()
+    configure(settings)  # The normal disclosure contract is still mandatory.
+    assert subject.actor.user_uuid == subject.user.public_id
+    assert not ProfessionalPublication.objects.filter(profile=subject.profile).exists()
+    assert not Verification.objects.filter(profile=subject.profile).exists()
+    return subject
+
+
 def draft(subject, text="آموزش حرکت"):
     from apps.professionals.post_contracts import PostInput
 

@@ -1,0 +1,99 @@
+name: C04 Task 7 private-draft fixture paired check (NOT acceptance)
+'on':
+  push:
+    branches:
+      - diagnostics/c04-task07-private-draft-fixture
+    paths:
+      - '.github/workflows/c04-task07-private-fixture.yml'
+      - 'docker/task07_private_fixture_gate.py'
+      - 'docker/task07_private_fixture_phase.py'
+      - 'tests/integration/c04/post_helpers.py'
+      - 'tests/integration/c04/test_educational_posts.py'
+      - 'tests/integration/c04/test_post_races.py'
+permissions:
+  contents: read
+concurrency:
+  group: c04-task07-private-fixture-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  private-draft-fixture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+        env:
+          POSTGRES_DB: fitlink
+          POSTGRES_USER: fitlink
+          POSTGRES_PASSWORD: ci-migration-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fitlink -d fitlink"
+          --health-interval 3s --health-timeout 3s --health-retries 30
+      redis:
+        image: redis@sha256:c6eabf748fc7a61dbb5a705c78bcf3d6377b1127a97d0ce965c11c44ba46896f
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 3s --health-timeout 3s --health-retries 30
+    env:
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: '5432'
+      POSTGRES_DB: fitlink
+      POSTGRES_USER: fitlink
+      POSTGRES_PASSWORD: ci-migration-only
+      REDIS_URL: redis://127.0.0.1:6379/0
+      CELERY_BROKER_URL: redis://127.0.0.1:6379/1
+      CELERY_RESULT_BACKEND: redis://127.0.0.1:6379/2
+      CHANNEL_REDIS_URL: redis://127.0.0.1:6379/3
+      OTP_RATE_REDIS_URL: redis://127.0.0.1:6379/4
+      DJANGO_SETTINGS_MODULE: config.settings.test
+    steps:
+      - name: Checkout isolated fixture-correction branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Setup pinned Python and uv
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Checkout original immutable C04 Task 7 source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331
+          path: .runtime/task07-original
+          persist-credentials: false
+      - name: Verify harness syntax
+        run: |
+          python -m py_compile docker/task07_private_fixture_gate.py
+          python -m py_compile docker/task07_private_fixture_phase.py
+      - name: One bounded paired fixture test; no retries
+        run: python docker/task07_private_fixture_gate.py
+      - name: Hash sanitized metadata
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p .runtime/task07-private-fixture
+          : > .runtime/task07-private-fixture/SHA256SUMS.txt
+          for file in .runtime/task07-private-fixture/*.json; do
+            if test -f "$file"; then
+              sha256sum "$file" >> .runtime/task07-private-fixture/SHA256SUMS.txt
+            fi
+          done
+      - name: Upload sanitized paired evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: task07-private-fixture-paired-${{ github.run_id }}
+          path: |
+            .runtime/task07-private-fixture/*.json
+            .runtime/task07-private-fixture/SHA256SUMS.txt
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

@@ -5,14 +5,14 @@ from uuid import uuid4
 import pytest
 from django.utils import timezone
 
-from tests.integration.c04.post_helpers import command, draft
+from tests.integration.c04.post_helpers import command, draft, private_post_owner
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
 
 
-def test_stale_post_edit_cannot_replace_current_revision(corpus):
+def test_stale_post_edit_cannot_replace_current_revision(settings):
     save = command("save_post")
-    subject, _ = corpus()
+    subject = private_post_owner(settings)
     post = draft(subject)
     from apps.professionals.post_contracts import PostInput
 
@@ -35,7 +35,7 @@ def test_stale_post_edit_cannot_replace_current_revision(corpus):
     )
 
 
-def test_concurrent_same_version_post_edit_has_one_winner(corpus):
+def test_concurrent_same_version_post_edit_has_one_winner(settings):
     from concurrent.futures import ThreadPoolExecutor
     from threading import Barrier
 
@@ -43,7 +43,7 @@ def test_concurrent_same_version_post_edit_has_one_winner(corpus):
     from apps.professionals.post_models import PostRevision
     from tests.integration.c03.profile_helpers import in_connection
 
-    subject, _ = corpus()
+    subject = private_post_owner(settings)
     post = draft(subject)
     barrier = Barrier(2)
 

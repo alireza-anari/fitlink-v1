@@ -6,7 +6,7 @@ import pytest
 from django.utils import timezone
 
 from tests.integration.c03.profile_helpers import make_actor
-from tests.integration.c04.post_helpers import command, draft
+from tests.integration.c04.post_helpers import command, draft, private_post_owner
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]
 
@@ -63,9 +63,26 @@ def test_post_revision_is_immutable_and_edits_withdraw_old_release(corpus):
     assert command("public_post")(post.id, timezone.now()) is None
 
 
-def test_post_receipt_payload_and_expected_version_are_fenced(corpus):
+def test_private_post_owner_has_no_public_parent(settings):
+    """Saving a private draft must not require approval or public consent."""
+    from apps.professionals.models import ProfessionalPublication, Verification
+    from apps.professionals.post_models import PostRevision
+
+    subject = private_post_owner(settings)
+    assert not ProfessionalPublication.objects.filter(profile=subject.profile).exists()
+    assert not Verification.objects.filter(profile=subject.profile).exists()
+
+    post = draft(subject)
+    revision = PostRevision.objects.get(pk=post.revision_id)
+    assert post.state == "draft"
+    assert revision.parent_revision_id is None
+    assert not ProfessionalPublication.objects.filter(profile=subject.profile).exists()
+    assert command("public_post")(post.id, timezone.now()) is None
+
+
+def test_post_receipt_payload_and_expected_version_are_fenced(settings):
     save = command("save_post")
-    subject, _ = corpus()
+    subject = private_post_owner(settings)
     from apps.professionals.post_contracts import PostInput
 
     operation = uuid4()
