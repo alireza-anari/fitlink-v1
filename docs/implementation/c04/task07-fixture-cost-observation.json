@@ -1,0 +1,283 @@
+{
+  "schema_version": 1,
+  "report_kind": "task07_fixture_cost_observation",
+  "diagnostic_only": true,
+  "task_status": "IN_PROGRESS_NOT_ACCEPTED",
+  "authorization": {
+    "scope": "Exactly one GitHub-hosted diagnostic workflow run, attempt 1, one job",
+    "run_budget_consumed": true,
+    "additional_runs_authorized": false,
+    "product_or_test_source_changes_authorized": false
+  },
+  "repository": "alireza-anari/fitlink-v1",
+  "refs": {
+    "protected_execution_branch": "marketplace/c04-cloud",
+    "protected_execution_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+    "protected_execution_tree": "f4a49666111ce27d6c12cc6aff89f3430c7ea243",
+    "diagnostic_branch": "diagnostics/c04-task07-fixture-cost",
+    "diagnostic_control_sha": "1704d0a629cd3dbf6fc8e5080b2953039db8745d",
+    "diagnostic_control_tree": "3db2727e040bdf0c5896aa043c4fa14f812fdd36",
+    "accepted_task6_sha": "0787d7880f9fd27006bf76ae0f16e31536ef4503",
+    "task6_ancestor_verified": true,
+    "runtime_source_sha": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+    "runtime_source_tree": "f4a49666111ce27d6c12cc6aff89f3430c7ea243",
+    "runtime_source_clean_before_after": true
+  },
+  "execution": {
+    "workflow_run_id": 40279946955,
+    "attempt": 1,
+    "workflow_url": "https://github.com/alireza-anari/fitlink-v1/actions/runs/40279946955",
+    "job_id": 121430830897,
+    "job_name": "fixture-cost",
+    "conclusion": "success",
+    "runner": "ubuntu-24.04",
+    "python_version": "3.13.15",
+    "cpu_count": 4,
+    "workflow_elapsed_seconds": 51,
+    "stage_seconds": {
+      "diagnostic_syntax_check": 0.041883,
+      "lock_check": 1.472976,
+      "frozen_dependency_sync": 1.494341,
+      "compose_config": 2.180011,
+      "real_service_startup": 12.428539,
+      "service_health_verification": 0.087603,
+      "pytest_subprocess": 16.853153,
+      "owned_cleanup_down": 0.386573
+    },
+    "real_services": [
+      {
+        "service": "db",
+        "state": "running",
+        "health": "healthy"
+      },
+      {
+        "service": "redis",
+        "state": "running",
+        "health": "healthy"
+      }
+    ]
+  },
+  "test_selection": [
+    "tests/integration/c04/test_educational_posts.py::test_post_receipt_payload_and_expected_version_are_fenced",
+    "tests/integration/c04/test_post_races.py::test_stale_post_edit_cannot_replace_current_revision",
+    "tests/integration/c04/test_post_races.py::test_concurrent_same_version_post_edit_has_one_winner",
+    "tests/integration/c04/test_educational_posts.py::test_confirmed_post_activates_only_complete_copies_and_edit_withdraws"
+  ],
+  "test_result": {
+    "pytest_exit_code": 0,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "xpassed": 0,
+    "not_observed": 0,
+    "errors_separately_counted": false,
+    "interpretation": "The selected four tests were all observed passing; pytest exited 0. No other tests were selected."
+  },
+  "phase_measurements": [
+    {
+      "test": "test_post_receipt_payload_and_expected_version_are_fenced",
+      "setup_wall_seconds": 7.123984,
+      "call_wall_seconds": 1.442127,
+      "teardown_wall_seconds": 0.150095,
+      "primary_thread_sql_count": 2400,
+      "primary_thread_sql_execute_seconds": 1.124876,
+      "process_cpu_seconds": 7.713267
+    },
+    {
+      "test": "test_stale_post_edit_cannot_replace_current_revision",
+      "setup_wall_seconds": 0.002141,
+      "call_wall_seconds": 1.046772,
+      "teardown_wall_seconds": 0.14801,
+      "primary_thread_sql_count": 1533,
+      "primary_thread_sql_execute_seconds": 0.587407,
+      "process_cpu_seconds": 0.715557
+    },
+    {
+      "test": "test_concurrent_same_version_post_edit_has_one_winner",
+      "setup_wall_seconds": 0.001508,
+      "call_wall_seconds": 1.043849,
+      "teardown_wall_seconds": 0.154056,
+      "primary_thread_sql_count": 1493,
+      "primary_thread_sql_execute_seconds": 0.579453,
+      "process_cpu_seconds": 0.717668
+    },
+    {
+      "test": "test_confirmed_post_activates_only_complete_copies_and_edit_withdraws",
+      "setup_wall_seconds": 0.001534,
+      "call_wall_seconds": 2.340188,
+      "teardown_wall_seconds": 0.209942,
+      "primary_thread_sql_count": 2861,
+      "primary_thread_sql_execute_seconds": 1.095847,
+      "process_cpu_seconds": 1.703713
+    }
+  ],
+  "pytest_session": {
+    "wall_seconds": 13.794514,
+    "process_cpu_seconds": 10.940644,
+    "main_thread_cpu_seconds": 10.906662,
+    "collection_wall_seconds": 0.122231,
+    "collection_process_cpu_seconds": 0.122345,
+    "primary_thread_sql_count_across_phases": 8287,
+    "primary_thread_sql_execute_seconds_across_phases": 3.387583,
+    "sql_scope": "Default Django connection on the main test thread only. SQL on worker-thread connections in the concurrent-edit test is excluded.",
+    "sql_text_or_parameters_recorded": false
+  },
+  "fixture_lifecycle_aggregates_inclusive_and_nested": [
+    {
+      "label": "full_approval_lifecycle",
+      "calls": 4,
+      "wall_seconds": 3.154171,
+      "process_cpu_seconds": 2.056798,
+      "primary_thread_sql_count": 4526,
+      "primary_thread_sql_execute_seconds": 1.48974
+    },
+    {
+      "label": "account_profile_evidence_bundle",
+      "calls": 4,
+      "wall_seconds": 1.2257,
+      "process_cpu_seconds": 0.761,
+      "primary_thread_sql_count": 1794,
+      "primary_thread_sql_execute_seconds": 0.6054
+    },
+    {
+      "label": "review_bundle_and_submission",
+      "calls": 4,
+      "wall_seconds": 2.0217,
+      "process_cpu_seconds": 1.2735,
+      "primary_thread_sql_count": 3006,
+      "primary_thread_sql_execute_seconds": 0.9982
+    },
+    {
+      "label": "target_approval_decision",
+      "calls": 12,
+      "wall_seconds": 0.8694,
+      "process_cpu_seconds": 0.5927,
+      "primary_thread_sql_count": 1216,
+      "primary_thread_sql_execute_seconds": 0.389
+    },
+    {
+      "label": "nutritionist_target_decision",
+      "calls": 4,
+      "wall_seconds": 0.299203,
+      "process_cpu_seconds": 0.204016,
+      "primary_thread_sql_count": 408,
+      "primary_thread_sql_execute_seconds": 0.132612
+    },
+    {
+      "label": "nutritionist_credential_revision",
+      "calls": 4,
+      "wall_seconds": 0.105795,
+      "process_cpu_seconds": 0.069832,
+      "primary_thread_sql_count": 164,
+      "primary_thread_sql_execute_seconds": 0.050777
+    },
+    {
+      "label": "credential_evidence_asset_construction",
+      "calls": 12,
+      "wall_seconds": 0.0392,
+      "process_cpu_seconds": 0.0151,
+      "primary_thread_sql_count": 36,
+      "primary_thread_sql_execute_seconds": 0.0291
+    },
+    {
+      "label": "reviewer_and_step_up_setup",
+      "calls": 4,
+      "wall_seconds": 0.2011,
+      "process_cpu_seconds": 0.127,
+      "primary_thread_sql_count": 372,
+      "primary_thread_sql_execute_seconds": 0.105
+    },
+    {
+      "label": "publication_configuration",
+      "calls": 4,
+      "wall_seconds": 0.007768,
+      "process_cpu_seconds": 0.004237,
+      "primary_thread_sql_count": 14,
+      "primary_thread_sql_execute_seconds": 0.003895
+    },
+    {
+      "label": "publication_draft_preparation",
+      "calls": 4,
+      "wall_seconds": 0.260756,
+      "process_cpu_seconds": 0.168134,
+      "primary_thread_sql_count": 324,
+      "primary_thread_sql_execute_seconds": 0.12332
+    },
+    {
+      "label": "publication_confirmation",
+      "calls": 4,
+      "wall_seconds": 0.24232,
+      "process_cpu_seconds": 0.160482,
+      "primary_thread_sql_count": 312,
+      "primary_thread_sql_execute_seconds": 0.112429
+    },
+    {
+      "label": "public_projection_refresh",
+      "calls": 4,
+      "wall_seconds": 0.344146,
+      "process_cpu_seconds": 0.236079,
+      "primary_thread_sql_count": 424,
+      "primary_thread_sql_execute_seconds": 0.150407
+    }
+  ],
+  "instrumentation_limits": {
+    "outer_corpus_factory_total_recorded": false,
+    "reason": "The corpus_create wrapper emitted no event. Component lifecycle events and per-test setup/call/teardown timings are present, but exact outer corpus() wall time and counterfactual savings were not measured.",
+    "timings_are_nested_and_must_not_be_summed": true,
+    "observer_sampler_thread_cpu_seconds": 0.005651,
+    "resource_samples": 15,
+    "hook_and_wrapper_cpu_separately_isolated": false
+  },
+  "resource_observation": {
+    "max_load_per_cpu": 0.179077,
+    "min_mem_available_mib": 14664.742,
+    "max_memory_psi_some_avg10": 0,
+    "sampler_thread_cpu_seconds": 0.005651,
+    "sample_count": 15
+  },
+  "preservation": {
+    "dependency_lockfiles_unchanged": true,
+    "uv_lock_sha256": "36671286a414ab75c37aa7fc1ec76aa06d6a788ac7b047e78d70b212207425a2",
+    "package_lock_sha256": "1d7c6cc4ed2cb7bf1553f1ec4fe9ea6744bb7a82880363cee51b2a4db5c029c1",
+    "source_head_and_tree_unchanged": true,
+    "source_worktree_clean_before_after": true,
+    "owned_cleanup": {
+      "compose_down_exit_code": 0,
+      "containers_remaining": 0,
+      "networks_remaining": 0,
+      "volumes_remaining": 0,
+      "private_environment_removed": true
+    },
+    "local_unpublished_workspace_accessed": false
+  },
+  "artifact": {
+    "id": 12631322393,
+    "name": "task07-fixture-cost-observation-40279946955",
+    "size_bytes": 5950,
+    "zip_sha256": "fdf00258f7ed5df56d773f3b3a324f6e87a586ef8e11fa3961191ae4198e8cb4",
+    "zip_sha256_independently_computed": true,
+    "member_sha256": {
+      "metrics.json": "96acbfffee36c03a566624518fc4111d586b4457c09114f4b900ae9d0028a3cb",
+      "outcome.json": "a64dec6bacb7e3952ba9d5362047024f875ffeba40c50897fdc9dc49bc47da26",
+      "SHA256SUMS.txt": "bb7691c5e04d8007fdebba8599a73a41cf8dd176ef4113f852d630a6f5a9adaa"
+    },
+    "embedded_sha256_manifest_matches": true
+  },
+  "decision": {
+    "measured_observation": "The four selected tests each exercised the full approval lifecycle. The average full_approval_lifecycle wall time was about 0.789s per corpus call; publication configuration, draft preparation, confirmation, and projection refresh averaged about 0.214s per call in aggregate.",
+    "candidate_1": "The nutritionist target decision alone consumed 0.299s across four calls and nutritionist credential revision construction consumed 0.106s across four calls. This shows removable work exists for coach-only scenarios, but the counterfactual coach_only fixture was not measured and suite-wide savings remain unknown.",
+    "candidate_2": "The three private-draft tests use corpus() although their assertions do not require a published parent. Aggregate stage means suggest roughly 1.0s of current approval/publication lifecycle per corpus call before accounting for the lighter owner/profile helper. This is a gross estimate, not measured net savings. A real owner/profile-only fixture appears the more promising next narrow candidate, provided characterization confirms no hidden dependency on approved/published state.",
+    "root_cause": "No production defect or full-backend timeout root cause was established. This diagnostic only measured four tests.",
+    "recommendation": "Do not alter product code or acceptance limits. If a new authorization is issued, first add a real owner/profile-only fixture and use it only in the three private-draft tests, with explicit characterization and preserved published-parent coverage. Defer broad coach_only substitutions until the targeted fixture change is validated."
+  },
+  "limits": {
+    "full_backend_not_run": true,
+    "foundation_not_run": true,
+    "acceptance_not_run": true,
+    "migrations_not_modified": true,
+    "product_source_not_modified": true,
+    "test_source_not_modified": true,
+    "task8_started": false
+  }
+}
