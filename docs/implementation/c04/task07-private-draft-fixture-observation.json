@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "kind": "c04_task07_private_draft_fixture_paired_observation",
+  "diagnostic_only": true,
+  "task_status": "IN_PROGRESS_NOT_ACCEPTED",
+  "source": {
+    "repository": "alireza-anari/fitlink-v1",
+    "protected_branch": "marketplace/c04-cloud",
+    "protected_head": "2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331",
+    "protected_tree": "f4a49666111ce27d6c12cc6aff89f3430c7ea243",
+    "diagnostic_branch": "diagnostics/c04-task07-private-draft-fixture",
+    "corrected_head": "aacc531a4e974d47880feb1fe772bbb6c96a0138",
+    "corrected_tree": "a47707deae5360cc2ccd6e618ae7ef8dbc9607cd",
+    "accepted_task6_ancestor": "0787d7880f9fd27006bf76ae0f16e31536ef4503"
+  },
+  "authorized_scope": {
+    "bounded_private_draft_fixture_change": true,
+    "only_three_existing_private_draft_test_callers": true,
+    "additional_new_characterization_test": true,
+    "four_original_tests_paired_against_corrected_source": true,
+    "four_parametrized_original_parent_authority_cases_retained": true,
+    "one_hosted_run_attempt_1_one_job": true,
+    "acceptance_run_authorized_or_invoked": false,
+    "protected_branch_write": false,
+    "correction_promotion": false
+  },
+  "files_changed": [
+    "tests/integration/c04/post_helpers.py",
+    "tests/integration/c04/test_educational_posts.py",
+    "tests/integration/c04/test_post_races.py"
+  ],
+  "control_only_files": [
+    ".github/workflows/c04-task07-private-fixture.yml",
+    "docker/task07_private_fixture_gate.py",
+    "docker/task07_private_fixture_phase.py"
+  ],
+  "design": {
+    "helper": "private_post_owner(settings) constructs an authenticated account and actual ProfessionalProfile, configures the same C04 disclosure contract, and asserts absence of ProfessionalPublication and Verification rows.",
+    "changed_tests": [
+      "test_post_receipt_payload_and_expected_version_are_fenced",
+      "test_stale_post_edit_cannot_replace_current_revision",
+      "test_concurrent_same_version_post_edit_has_one_winner"
+    ],
+    "no_original_test_assertions_removed": true,
+    "added_characterization": "test_private_post_owner_has_no_public_parent",
+    "preserved_original_published_parent_tests": true,
+    "product_source_unchanged": true,
+    "original_migrations_unchanged": true,
+    "frozen_locks_unchanged": true
+  },
+  "execution": {
+    "run_id": 40282983604,
+    "attempt": 1,
+    "workflow_url": "https://github.com/alireza-anari/fitlink-v1/actions/runs/40282983604",
+    "job_id": 121440178189,
+    "job_name": "private-draft-fixture",
+    "conclusion": "success",
+    "runner": "ubuntu-24.04",
+    "hosted_cpu_count_reported": 4,
+    "real_services": [
+      "GitHub-managed PostgreSQL",
+      "GitHub-managed Redis"
+    ],
+    "actual_jobs": 1,
+    "baseline_test_count": 4,
+    "baseline_passed": 4,
+    "candidate_test_count": 9,
+    "candidate_passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "original_test_session_wall_seconds": 13.641001,
+    "candidate_test_session_wall_seconds": 19.75122,
+    "different_test_counts_cannot_compare_session_wall_directly": true,
+    "checks_passing": [
+      "original and candidate frozen lock check",
+      "original and candidate frozen dependency sync",
+      "changed test source Ruff lint",
+      "changed test source Ruff format",
+      "migration drift check",
+      "original four-test subset",
+      "corrected nine-test subset",
+      "publication authority four parametrized cases",
+      "existing confirmed-public-post release behavior",
+      "private fixture characterization",
+      "original and candidate SHA/tree/clean status after",
+      "lock SHA-256 equality before/after",
+      "artifact upload",
+      "GitHub runner-managed service cleanup"
+    ]
+  },
+  "paired_private_test_call_wall_seconds": [
+    {
+      "test": "test_post_receipt_payload_and_expected_version_are_fenced",
+      "baseline": 1.378192,
+      "candidate": 0.198634,
+      "delta": -1.179558
+    },
+    {
+      "test": "test_stale_post_edit_cannot_replace_current_revision",
+      "baseline": 1.019161,
+      "candidate": 0.107201,
+      "delta": -0.91196
+    },
+    {
+      "test": "test_concurrent_same_version_post_edit_has_one_winner",
+      "baseline": 1.040518,
+      "candidate": 0.127193,
+      "delta": -0.913325
+    }
+  ],
+  "paired_private_test_summary": {
+    "baseline_total_seconds": 3.437871,
+    "candidate_total_seconds": 0.433028,
+    "observed_reduction_seconds": 3.004843,
+    "reduction_pct": 87.404,
+    "metric": "Sum of pytest call-phase wall durations for three private-draft tests. Excludes setup, teardown, dependency sync, and other selected tests.",
+    "pair_method": "One original then one corrected pass on the same GitHub-hosted runner.",
+    "interpretation_limits": "Test order, cold-start and host variability remain confounders; this is not a net full-suite speedup measurement."
+  },
+  "stage_wall_seconds": {
+    "original_lock_check": 1.2663,
+    "candidate_lock_check": 0.015937,
+    "original_frozen_sync": 1.270842,
+    "candidate_frozen_sync": 0.264979,
+    "candidate_ruff": 0.164235,
+    "candidate_format": 0.015903,
+    "migration_drift": 2.919906,
+    "original_four_pytest": 15.994279,
+    "corrected_nine_pytest": 21.105602
+  },
+  "source_preservation": {
+    "original_head_and_tree_unchanged": true,
+    "corrected_head_and_tree_unchanged": true,
+    "clean_worktrees_before_and_after": true,
+    "uv_lock_sha256": "36671286a414ab75c37aa7fc1ec76aa06d6a788ac7b047e78d70b212207425a2",
+    "package_lock_sha256": "1d7c6cc4ed2cb7bf1553f1ec4fe9ea6744bb7a82880363cee51b2a4db5c029c1",
+    "no_custom_docker_resources_created": true,
+    "github_managed_container_stop_step_success": true,
+    "original_unpublished_laptop_worktree_unavailable_to_cloud": true,
+    "original_unpublished_laptop_worktree_not_accessed": true
+  },
+  "artifact": {
+    "id": 12633027631,
+    "name": "task07-private-fixture-paired-40282983604",
+    "zip_sha256": "a112b963e822c94b4205424a005fccbc6af43620246ed488084793a1cd3cb235",
+    "zip_bytes_downloaded_and_hashed": true,
+    "manifest_verified": true,
+    "files": {
+      "candidate.json": "b089cbf65786f9179f4fa2f9d05ee6387df8fa14dff68d7c968e5c087d532e7d",
+      "original.json": "498ecacbc8d4df01caecb0c4aa508d5dbe3191f9052fb5a19351e59beb12d2d9",
+      "outcome.json": "eccb7c9768adb27c9e51cf8e867ed774f2509a02de98ff6e0ab79db19c21eb8f",
+      "SHA256SUMS.txt": "69edc63ee6465936e1701771d7703d5bebfacfad68ffd0caef3aa43e8e777502"
+    }
+  },
+  "decision": {
+    "targeted_fixture_correction_validated": true,
+    "full_backend_timeout_root_cause_proven": false,
+    "suite_wide_savings_measured": false,
+    "foundation_1800_seconds_issue_unresolved": true,
+    "immutable_clean_minio_failure_unclassified": true,
+    "acceptance_status": "NOT ACCEPTED",
+    "recommendation": "Keep correction on isolated branch for review. Do not claim original 900-second backend or 1800-second Foundation acceptance gates will pass from a three-second targeted saving. Do not consume a full 15-job acceptance rerun solely on this evidence; further gate-specific attribution or correction is needed.",
+    "next_phase_manager_action": "Review correction and evidence, then decide whether to integrate the isolated change into a separately authorized Task 7 implementation source. Existing full-gate blockers still require evidence-backed resolution."
+  }
+}
