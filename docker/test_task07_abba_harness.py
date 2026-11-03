@@ -29,6 +29,7 @@ class Harness(unittest.TestCase):
         phases=[dict(occurrence=i,function=functions[i],phase=phase,outcome='passed',wall_seconds=.1,
             process_cpu_seconds=.02,main_thread_cpu_seconds=.01,sql_count=1 if mode=='fixed' else None,
             sql_seconds=.001 if mode=='fixed' else None,wrapper_bookkeeping_cpu_seconds_lower_bound=.0001 if mode=='fixed' else None,
+            sql_operations={'other_sql':{'count':1,'seconds':.001}} if mode=='fixed' else {},
             lifecycle={}) for i in range(4) for phase in ('setup','call','teardown')]
         labels=[label for group in self.p.SPECS.values() for label in group.values()]
         if mode=='fixed':
