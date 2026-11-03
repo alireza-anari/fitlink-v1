@@ -1,0 +1,68 @@
+name: C04 Task 7 four-function ABBA causal diagnostic (NOT acceptance)
+'on':
+  push:
+    branches: [diagnostics/c04-task07-abba-four]
+    paths:
+      - .github/workflows/c04-task07-abba-four.yml
+permissions:
+  contents: read
+concurrency:
+  group: c04-task07-abba-four-exactly-one-authorized-run
+  cancel-in-progress: false
+jobs:
+  abba-causal-four:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 42
+    steps:
+      - name: Start strict preparation clock
+        timeout-minutes: 1
+        shell: bash
+        run: python -c 'import os,time; open(os.environ["GITHUB_ENV"],"a").write("FITLINK_PREPARATION_START="+str(time.monotonic())+"\\n")'
+      - name: Checkout isolated diagnostic controls
+        timeout-minutes: 2
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Pin Python 3.13.15 and uv 0.12.19
+        timeout-minutes: 3
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Checkout accepted Task 6 without mutation
+        timeout-minutes: 2
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0787d7880f9fd27006bf76ae0f16e31536ef4503
+          path: .runtime/task6-source
+          persist-credentials: false
+      - name: Checkout Task 7 exact failed acceptance source
+        timeout-minutes: 2
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331
+          path: .runtime/task7-source
+          persist-credentials: false
+      - name: Offline privacy, delegation, ABBA manifest and cleanup controls
+        timeout-minutes: 2
+        run: python docker/test_task07_abba_harness.py
+      - name: One bounded A-B-B-A / four original pytest functions
+        timeout-minutes: 36
+        run: timeout -k 15s 2100s python docker/task07_abba_probe.py
+      - name: Unconditional cleanup and cryptographic evidence manifest
+        if: always()
+        timeout-minutes: 3
+        run: timeout -k 10s 130s python docker/task07_abba_probe.py cleanup
+      - name: Upload finite sanitized diagnostic evidence only
+        if: always()
+        timeout-minutes: 3
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: task07-abba-four-${{ github.run_id }}
+          path: |
+            .runtime/abba-evidence/*.json
+            .runtime/abba-evidence/SHA256SUMS.txt
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
