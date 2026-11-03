@@ -1,0 +1,68 @@
+name: C04 Task 7 residual-cost diagnostic (NOT acceptance)
+'on':
+  push:
+    branches: [diagnostics/c04-task07-residual-cost-101]
+    paths:
+      - .github/workflows/c04-task07-residual-cost.yml
+      - docker/task07_residual_cost_probe.py
+      - docker/task07_residual_cost_plugin.py
+      - docker/test_task07_residual_harness.py
+permissions:
+  contents: read
+concurrency:
+  group: c04-task07-residual-cost-one-authorized-run
+  cancel-in-progress: false
+jobs:
+  residual-cost:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Start preparation clock
+        timeout-minutes: 1
+        shell: bash
+        run: python -c 'import os,time; open(os.environ["GITHUB_ENV"],"a").write("FITLINK_PREPARATION_START="+str(time.monotonic())+"\n")'
+      - name: Checkout diagnostic controls
+        timeout-minutes: 1
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Pin Python and uv
+        timeout-minutes: 2
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e
+        with:
+          version: '0.12.19'
+          python-version: '3.13.15'
+          enable-cache: false
+      - name: Checkout immutable Task 6
+        timeout-minutes: 1
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0787d7880f9fd27006bf76ae0f16e31536ef4503
+          path: .runtime/task6-source
+          persist-credentials: false
+      - name: Checkout immutable Task 7
+        timeout-minutes: 1
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331
+          path: .runtime/task7-source
+          persist-credentials: false
+      - name: Verify diagnostic harness
+        timeout-minutes: 1
+        run: python docker/test_task07_residual_harness.py
+      - name: One bounded five-pass diagnostic
+        run: python docker/task07_residual_cost_probe.py
+      - name: Unconditional owned-resource cleanup and evidence hashes
+        if: always()
+        run: python docker/task07_residual_cost_probe.py cleanup
+      - name: Publish sanitized evidence only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: task07-residual-cost-${{ github.run_id }}
+          path: |
+            .runtime/residual-evidence/*.json
+            .runtime/residual-evidence/SHA256SUMS.txt
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
