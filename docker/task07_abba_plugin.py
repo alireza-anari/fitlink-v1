@@ -5,6 +5,7 @@ import functools
 import hashlib
 import importlib
 import json
+import math
 import os
 import platform
 import sys
@@ -18,11 +19,24 @@ try:
 except ModuleNotFoundError:  # dependency-free control harness only
     pytest = None
 
+PINS = {
+    'task6': ('0787d7880f9fd27006bf76ae0f16e31536ef4503','b207a0a8e946750a0dd1213f5460e51f67dd3000'),
+    'task7': ('2b2790cdf9019338ddeb09f9df2fdfb1fa0dd331','f4a49666111ce27d6c12cc6aff89f3430c7ea243'),
+}
+ORDER = ('task6','task7','task7','task6')
+CAPABILITY_CASES = (
+    'coach_approve_nutritionist_reject','nutritionist_expiry_preserves_coach',
+    'coach_revocation_preserves_nutritionist','temporary_role_restriction_is_local',
+    'restriction_removal_reuses_valid_approval','restriction_removal_cannot_undo_revocation',
+    'add_declared_role_preserves_other_approval','deactivate_role_preserves_other_approval',
+    'inflight_requested_role_or_evidence_edit_is_stale','c04_input_excludes_unverified_declarations',
+    'concurrent_restriction_revocation_decision_consistent',
+)
 SELECTIONS = {'four': {
     'tests/integration/c04/test_search_query_plans.py::test_real_bounded_fts_trigram_query_plan': 1,
     'tests/integration/c02/test_account_migrations.py::test_populated_c01_upgrade_preserves_identity_and_sessions': 1,
     'tests/integration/c03/test_c03_migrations.py::test_optional_profiles_not_created': 1,
-    'tests/integration/c03/test_upgrade_from_c02.py::test_upgrade_replays_all_eleven_capability_cases': 1,
+    'tests/integration/c03/test_upgrade_from_c02.py::test_upgrade_replays_all_eleven_capability_cases': len(CAPABILITY_CASES),
 }}
 GROUP = 'four'
 MODE = os.environ.get('FITLINK_DIAG_MODE', 'fixed')
@@ -45,23 +59,169 @@ RESTORE_SECONDS = 0.0
 OBSERVER_ERRORS = 0
 STOP = threading.Event()
 SAMPLER = None
-RESOURCES = {'samples': 0, 'sampler_cpu_seconds': 0.0}
+RESOURCES = {'samples':0,'sampler_cpu_seconds':0.0,'sampling_error':False,
+    'min_mem_available_mib':None,'max_load_per_cpu':0.0,
+    **{f'max_{kind}_psi_{scope}_avg10':0.0 for kind in ('cpu','memory','io') for scope in ('some','full')}}
+RESOURCE_KEYS=frozenset(RESOURCES)
 # The labels name only fixed, source-neutral operations. Timers nest and overlap.
 SPECS = {'fixed': {label: label for label in (
     'corpus', 'candidate_query', 'migration_executor_init',
     'migration_build_graph', 'migration_execute', 'migration_apply',
     'migration_unapply', 'migration_state_render', 'migration_state_clone'
 )}}
+LIMITATIONS = [
+    'Main-thread class/fixture timers; primary default Django SQL connection only.',
+    'Separate historical migration aliases and worker/child SQL and CPU are not counted.',
+    'candidate_query times lazy queryset construction; fts_explain times SQL execution.',
+    'Self time excludes labelled descendants only; inclusive timings overlap.',
+    'Bookkeeping CPU is a lower bound; ABBA fixed-only comparisons are not natural runtimes.',
+]
+BUCKETS={'fts_temp_create','fts_insert_30000','fts_analyze','fts_explain','other_sql'}
 
 
-def collection_record(ids,group):
+def reject_malformed(function):
+    @functools.wraps(function)
+    def checked(*args,**kwargs):
+        try:return function(*args,**kwargs)
+        except (TypeError,ValueError,OverflowError,KeyError,IndexError):return False
+    return checked
+
+
+def closed(value,keys):
+    return type(value) is dict and set(value)==set(keys)
+
+
+def integer(value,minimum=0,maximum=10**12):
+    return type(value) is int and minimum<=value<=maximum
+
+
+def number(value):
+    return type(value) in (float,int) and math.isfinite(value) and 0<=value<=10**12
+
+
+@reject_malformed
+def check_collection(value,source,require_exact=False):
+    keys={'group','source','counts','total','unexpected_count','exact','digest'}
+    if not closed(value,keys) or source not in PINS:return False
+    if value['group']!='four' or value['source']!=source:return False
+    if not closed(value['counts'],SELECTIONS['four']):return False
+    if not all(integer(x) for x in value['counts'].values()):return False
+    if not integer(value['total']) or not integer(value['unexpected_count']):return False
+    if sum(value['counts'].values())+value['unexpected_count']!=value['total']:return False
+    if type(value['exact']) is not bool:return False
+    if type(value['digest']) is not str or len(value['digest'])!=64 or any(x not in '0123456789abcdef' for x in value['digest']):return False
+    if require_exact:
+        return value==collection_record(expected_ids(),'four',source)
+    if value['exact'] and value!=collection_record(expected_ids(),'four',source):return False
+    return True
+
+
+@reject_malformed
+def check_metrics(value,source,index,require_complete=False):
+    """Closed privacy schema is checked even when exporting failed observations."""
+    root={'schema_version','group','source','source_sha','source_tree','pass_index','kind',
+        'complete','exit_code','mode','collection','collection_timing','phases','observer_errors','truncated',
+        'actual_pytest_python_version','actual_pytest_python_implementation','actual_pytest_package_version',
+        'session_wall_seconds','session_process_cpu_seconds','session_main_thread_cpu_seconds',
+        'wrapper_bookkeeping_cpu_seconds_lower_bound','alias_installation_wall_seconds','alias_restoration_wall_seconds',
+        'fixed_callsite_labels','alias_bindings','resources','limitations'}
+    if not closed(value,root) or source not in PINS:return False
+    if type(index) is not int or not 0<=index<=len(ORDER):return False
+    if index and source!=ORDER[index-1]:return False
+    if value['schema_version']!=1 or type(value['schema_version']) is not int:return False
+    if value['group']!='four' or value['source']!=source:return False
+    if (value['source_sha'],value['source_tree'])!=PINS[source]:return False
+    if type(value['pass_index']) is not int or value['pass_index']!=index:return False
+    if value['kind']!=('measurement' if index else 'collection'):return False
+    if value['mode']!=('fixed' if index else 'minimal'):return False
+    if type(value['complete']) is not bool or type(value['truncated']) is not bool:return False
+    if not integer(value['exit_code'],0,255) or not integer(value['observer_errors']):return False
+    if not check_collection(value['collection'],source,require_complete):return False
+    timing=value['collection_timing']
+    if not closed(timing,{'wall_seconds','process_cpu_seconds','main_thread_cpu_seconds','failed'}):return False
+    if type(timing['failed']) is not bool or not all(number(timing[k]) for k in timing if k!='failed'):return False
+    if value['actual_pytest_python_version']!='3.13.15' or value['actual_pytest_python_implementation']!='CPython':return False
+    # Frozen source pins fix the dependency version; never accept free text.
+    if value['actual_pytest_package_version']!='9.1.1':return False
+    scalar=('session_wall_seconds','session_process_cpu_seconds','session_main_thread_cpu_seconds',
+        'wrapper_bookkeeping_cpu_seconds_lower_bound','alias_installation_wall_seconds','alias_restoration_wall_seconds')
+    if not all(number(value[k]) for k in scalar):return False
+    labels={label for group in SPECS.values() for label in group.values()}
+    installed=labels-{'corpus'}
+    if value['fixed_callsite_labels']!=(sorted(labels) if index else []):return False
+    if not integer(value['alias_bindings']) or value['alias_bindings']!=(len(installed) if index else 0):return False
+    if value['limitations']!=LIMITATIONS:return False
+    resource=value['resources']
+    if not closed(resource,RESOURCE_KEYS):return False
+    if not integer(resource['samples']) or type(resource['sampling_error']) is not bool:return False
+    for key,v in resource.items():
+        if key in ('samples','sampling_error'):continue
+        if key=='min_mem_available_mib' and v is None:continue
+        if not number(v):return False
+    phases=value['phases']
+    if type(phases) is not list or len(phases)>len(expected_ids())*3:return False
+    seen=set();seen_labels=set();by_call={}
+    functions=[node.split('[',1)[0] for node in expected_ids()]
+    phasekeys={'occurrence','function','phase','outcome','wall_seconds','process_cpu_seconds','main_thread_cpu_seconds',
+        'sql_count','sql_seconds','wrapper_bookkeeping_cpu_seconds_lower_bound','lifecycle','sql_operations'}
+    for row in phases:
+        if not closed(row,phasekeys):return False
+        occurrence=row['occurrence'];phase=row['phase']
+        if not integer(occurrence,0,len(functions)-1) or phase not in ('setup','call','teardown'):return False
+        if row['function']!=functions[occurrence] or (occurrence,phase) in seen:return False
+        seen.add((occurrence,phase))
+        if row['outcome'] not in ('passed','failed','skipped','unexpected_xfail'):return False
+        if not all(number(row[k]) for k in ('wall_seconds','process_cpu_seconds','main_thread_cpu_seconds','sql_seconds','wrapper_bookkeeping_cpu_seconds_lower_bound')):return False
+        if not integer(row['sql_count']):return False
+        operations=row['sql_operations']
+        if type(operations) is not dict or not set(operations)<=BUCKETS:return False
+        for op in operations.values():
+            if not closed(op,{'count','seconds'}) or not integer(op['count'],1) or not number(op['seconds']):return False
+        if sum(op['count'] for op in operations.values())!=row['sql_count']:return False
+        if not math.isclose(sum(op['seconds'] for op in operations.values()),row['sql_seconds'],rel_tol=1e-6,abs_tol=1e-7):return False
+        events=row['lifecycle']
+        if type(events) is not dict or not set(events)<=labels:return False
+        for label,event in events.items():
+            if not closed(event,{'count','raised','inclusive_seconds','self_excluding_labelled_children_seconds'}):return False
+            if not integer(event['count'],1) or not integer(event['raised'],0,event['count']):return False
+            if not number(event['inclusive_seconds']) or not number(event['self_excluding_labelled_children_seconds']):return False
+            if event['self_excluding_labelled_children_seconds']>event['inclusive_seconds']+1e-8:return False
+            seen_labels.add(label)
+        if phase=='call':by_call[occurrence]=row
+    if not index and phases:return False
+    if require_complete:
+        if not value['complete'] or value['exit_code'] or value['observer_errors'] or value['truncated'] or timing['failed']:return False
+        if index:
+            if seen!={(i,k) for i in range(len(functions)) for k in ('setup','call','teardown')}:return False
+            if any(row['outcome']!='passed' for row in phases):return False
+            if seen_labels!=labels or resource['samples']<1 or resource['sampling_error'] or resource['min_mem_available_mib'] is None:return False
+            if not {'corpus','candidate_query'}<=set(by_call[0]['lifecycle']):return False
+            if any(by_call[0]['sql_operations'].get(k,{}).get('count')!=1 for k in BUCKETS-{'other_sql'}):return False
+            for occurrence in (1,2):
+                if not {'migration_executor_init','migration_build_graph','migration_execute'}<=set(by_call[occurrence]['lifecycle']):return False
+    return True
+
+
+class EvidenceError(ValueError):
+    """Fixed category only; never carries input or exception text."""
+
+
+def expected_ids():
+    functions=list(SELECTIONS['four'])
+    return functions[:3]+[functions[3]+'['+case+']' for case in CAPABILITY_CASES]
+
+
+def collection_record(ids,group,source):
+    if group!='four':raise EvidenceError('group_mismatch')
+    if source not in PINS:raise EvidenceError('source_mismatch')
+    if not isinstance(ids,list) or any(type(node) is not str for node in ids):raise EvidenceError('collection_shape')
     counts={key:0 for key in SELECTIONS[group]};unexpected=0
     for node in ids:
         base=node.split('[',1)[0]
         if base in counts:counts[base]+=1
         else:unexpected+=1
-    return {'counts':counts,'total':len(ids),'unexpected_count':unexpected,
-        'exact':counts==SELECTIONS[group] and unexpected==0 and len(set(ids))==len(ids),
+    return {'group':group,'source':source,'counts':counts,'total':len(ids),'unexpected_count':unexpected,
+        'exact':ids==expected_ids(),
         'digest':hashlib.sha256('\n'.join(ids).encode()).hexdigest()}
 
 
@@ -71,10 +231,14 @@ def timed(label,original):
         global BOOKKEEPING_CPU
         if threading.get_ident()!=MAIN_THREAD:
             return original(*args,**kwargs)
-        tick=time.thread_time()
-        entry=[time.perf_counter(),0.0]
-        WRAPPER_STACK.append(entry)
-        BOOKKEEPING_CPU+=time.thread_time()-tick
+        entry=None
+        try:
+            tick=time.thread_time()
+            entry=[time.perf_counter(),0.0]
+            WRAPPER_STACK.append(entry)
+            BOOKKEEPING_CPU+=time.thread_time()-tick
+        except Exception:
+            observer_error()
         raised=False
         try:
             return original(*args,**kwargs)
@@ -82,15 +246,20 @@ def timed(label,original):
             raised=True
             raise
         finally:
-            tick=time.thread_time()
-            elapsed=time.perf_counter()-entry[0]
-            WRAPPER_STACK.pop()
-            row=EVENTS.setdefault(label,{'count':0,'raised':0,'inclusive_seconds':0.0,'self_excluding_labelled_children_seconds':0.0})
-            row['count']+=1;row['raised']+=int(raised)
-            row['inclusive_seconds']+=elapsed
-            row['self_excluding_labelled_children_seconds']+=max(0.0,elapsed-entry[1])
-            if WRAPPER_STACK:WRAPPER_STACK[-1][1]+=elapsed
-            BOOKKEEPING_CPU+=time.thread_time()-tick
+            if entry is not None:
+                try:
+                    tick=time.thread_time()
+                    elapsed=time.perf_counter()-entry[0]
+                    if WRAPPER_STACK and WRAPPER_STACK[-1] is entry:WRAPPER_STACK.pop()
+                    row=EVENTS.setdefault(label,{'count':0,'raised':0,'inclusive_seconds':0.0,'self_excluding_labelled_children_seconds':0.0})
+                    row['count']+=1;row['raised']+=int(raised)
+                    row['inclusive_seconds']+=elapsed
+                    row['self_excluding_labelled_children_seconds']+=max(0.0,elapsed-entry[1])
+                    if WRAPPER_STACK:WRAPPER_STACK[-1][1]+=elapsed
+                    BOOKKEEPING_CPU+=time.thread_time()-tick
+                except Exception:observer_error()
+                finally:
+                    WRAPPER_STACK[:]=[x for x in WRAPPER_STACK if x is not entry]
     return wrapped
 
 
@@ -106,22 +275,30 @@ def bind_aliases(modules,replacements):
     return records
 
 
-def restore_aliases(records):
+def observer_error():
     global OBSERVER_ERRORS
+    OBSERVER_ERRORS+=1
+
+
+def restore_aliases(records):
+    ok=True
     for module,name,original,wrapped in reversed(records):
-        if getattr(module,name) is not wrapped:OBSERVER_ERRORS+=1
-        setattr(module,name,original)
+        try:
+            if getattr(module,name) is not wrapped:observer_error();ok=False
+        except Exception:observer_error();ok=False
+        try:setattr(module,name,original)
+        except Exception:observer_error();ok=False
+    return ok
 
 
-def install_aliases():
+def class_targets():
     # Use class objects for migration instrumentation so separately imported
     # module aliases still dispatch through the exact original class method.
     from django.db.migrations.executor import MigrationExecutor
     from django.db.migrations.loader import MigrationLoader
     from django.db.migrations.state import ProjectState, StateApps
     from apps.marketplace import search
-    records = []
-    targets = (
+    return (
         (MigrationExecutor, '__init__', 'migration_executor_init'),
         (MigrationLoader, 'build_graph', 'migration_build_graph'),
         (MigrationExecutor, 'migrate', 'migration_execute'),
@@ -131,13 +308,25 @@ def install_aliases():
         (ProjectState, 'clone', 'migration_state_clone'),
         (search, 'candidate_query', 'candidate_query'),
     )
-    for owner, name, label in targets:
+def install_aliases():
+    targets=class_targets()
+    labels={x for group in SPECS.values() for x in group.values()}-{'corpus'}
+    if len(targets)!=8 or {x[2] for x in targets}!=labels or len({(id(owner),name) for owner,name,_ in targets})!=8:
+        raise RuntimeError('invalid_fixed_callsite')
+    planned=[]
+    for owner,name,label in targets:
         original = getattr(owner, name)
         if not callable(original):
             raise RuntimeError('invalid_fixed_callsite')
-        wrapped = timed(label, original)
-        setattr(owner, name, wrapped)
-        records.append((owner, name, original, wrapped))
+        planned.append((owner,name,original,timed(label,original)))
+    records=[]
+    try:
+        for owner,name,original,wrapped in planned:
+            records.append((owner,name,original,wrapped))
+            setattr(owner,name,wrapped)
+    except BaseException:
+        restore_aliases(records)
+        raise
     return records
 
 
@@ -156,24 +345,25 @@ def sql_bucket(statement):
 
 
 def sql_wrapper(execute, sql, params, many, context):
-    kind = sql_bucket(sql)
-    began = time.perf_counter()
+    try:kind=sql_bucket(sql);began=time.perf_counter()
+    except Exception:observer_error();kind='other_sql';began=None
     try:
         return execute(sql, params, many, context)
     finally:
-        elapsed = time.perf_counter() - began
-        SQL[0] += 1
-        SQL[1] += elapsed
-        entry = SQL_CLASSES.setdefault(kind, [0, 0.0])
-        entry[0] += 1
-        entry[1] += elapsed
+        if began is not None:
+            try:
+                elapsed=time.perf_counter()-began
+                SQL[0]+=1;SQL[1]+=elapsed
+                entry=SQL_CLASSES.setdefault(kind,[0,0.0]);entry[0]+=1;entry[1]+=elapsed
+            except Exception:observer_error()
 
 
 def read_resources():
     for line in Path('/proc/meminfo').read_text().splitlines():
         if line.startswith('MemAvailable:'):
             value=int(line.split()[1])/1024
-            RESOURCES['min_mem_available_mib']=min(RESOURCES.get('min_mem_available_mib',value),value)
+            old=RESOURCES.get('min_mem_available_mib')
+            RESOURCES['min_mem_available_mib']=value if old is None else min(old,value)
     load=os.getloadavg()[0]/max(1,os.cpu_count() or 1)
     RESOURCES['max_load_per_cpu']=max(RESOURCES.get('max_load_per_cpu',0),load)
     for kind in ('cpu','memory','io'):
@@ -193,7 +383,7 @@ def sample():
     try:
         while not STOP.is_set():
             read_resources();STOP.wait(1)
-    except (OSError,ValueError):RESOURCES['sampling_error']=True
+    except (OSError,ValueError,TypeError):RESOURCES['sampling_error']=True
     finally:RESOURCES['sampler_cpu_seconds']=time.thread_time()-tick
 
 
@@ -215,7 +405,15 @@ def pytest_collection(session):
 
 def pytest_collection_finish(session):
     global COLLECTION,ALIASES,SAMPLER,INSTALL_SECONDS
-    COLLECTION=collection_record([i.nodeid for i in session.items],GROUP)
+    source=os.environ.get('FITLINK_DIAG_SOURCE')
+    try:
+        index=int(os.environ.get('FITLINK_DIAG_PASS','-1'))
+        if os.environ.get('FITLINK_DIAG_GROUP')!=GROUP or source not in PINS or (os.environ.get('FITLINK_DIAG_SOURCE_SHA'),os.environ.get('FITLINK_DIAG_SOURCE_TREE'))!=PINS[source]:raise ValueError
+        if session.config.option.collectonly:
+            if index!=0 or MODE!='minimal':raise ValueError
+        elif not 1<=index<=4 or source!=ORDER[index-1] or MODE!='fixed':raise ValueError
+    except (ValueError,TypeError):raise pytest.UsageError('diagnostic_configuration') from None
+    COLLECTION=collection_record([i.nodeid for i in session.items],GROUP,source)
     for i,item in enumerate(session.items):ITEMS[item.nodeid]=i
     expected=os.environ.get('FITLINK_DIAG_EXPECT_DIGEST')
     if not COLLECTION['exact'] or expected and expected!=COLLECTION['digest']:
@@ -268,13 +466,14 @@ def pytest_runtest_call(item):
     prior = item.funcargs.get('corpus')
     if MODE == 'fixed' and callable(prior):
         item.funcargs['corpus'] = timed('corpus', prior)
-    begin_phase(item, 'call')
     try:
+        begin_phase(item, 'call')
         yield
     finally:
-        end_phase(item, 'call')
-        if prior is not None:
-            item.funcargs['corpus'] = prior
+        try:end_phase(item, 'call')
+        except Exception:observer_error()
+        finally:
+            if prior is not None:item.funcargs['corpus']=prior
 
 
 @hook
@@ -297,8 +496,17 @@ def pytest_sessionfinish(session,exitstatus):
         if SAMPLER.is_alive():OBSERVER_ERRORS+=1
     began=time.perf_counter()
     restore_aliases(ALIASES)
+    if SQL_STACK is not None:
+        try:SQL_STACK.close()
+        except Exception:observer_error()
     RESTORE_SECONDS=time.perf_counter()-began
-    result={'complete':True,'exit_code':int(exitstatus),'mode':MODE,'collection':COLLECTION,
+    source=os.environ.get('FITLINK_DIAG_SOURCE')
+    result={'schema_version':1,'group':GROUP,'source':source,
+        'source_sha':os.environ.get('FITLINK_DIAG_SOURCE_SHA'),
+        'source_tree':os.environ.get('FITLINK_DIAG_SOURCE_TREE'),
+        'pass_index':int(os.environ.get('FITLINK_DIAG_PASS','0')),
+        'kind':'collection' if session.config.option.collectonly else 'measurement',
+        'complete':True,'exit_code':int(exitstatus),'mode':MODE,'collection':COLLECTION,
         'collection_timing':COLLECTION_TIMING,'phases':PHASES,'observer_errors':OBSERVER_ERRORS,
         'truncated':False,
         'actual_pytest_python_version':platform.python_version(),
@@ -311,12 +519,7 @@ def pytest_sessionfinish(session,exitstatus):
         'alias_installation_wall_seconds':INSTALL_SECONDS,'alias_restoration_wall_seconds':RESTORE_SECONDS,
         'fixed_callsite_labels':sorted(label for functions in SPECS.values() for label in functions.values()) if MODE=='fixed' else [],
         'alias_bindings':len(ALIASES),'resources':RESOURCES,
-        'limitations':['primary-thread migration and search wrappers and default Django SQL only',
-            'worker-thread and child-process CPU/SQL/lifecycles are unobserved',
-            'self excludes only labelled descendants; inclusive timers overlap',
-            'wrapper CPU is bookkeeping lower bound, excluding dispatch and SQL-wrapper overhead',
-            'fixed mode adds default-connection SQL wrapper, class wrappers and a one-second resource sampler',
-            'SQL timing excludes separately created migration database aliases and child workers',
-            'minimal mode has phase/session hooks only; hook cost not separately isolated']}
+        'limitations':LIMITATIONS}
     path=Path(os.environ['FITLINK_DIAG_OUTPUT']);path.parent.mkdir(parents=True,exist_ok=True)
     path.write_text(json.dumps(result,sort_keys=True)+'\n')
+
